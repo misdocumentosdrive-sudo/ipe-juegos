@@ -77,6 +77,10 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .oficial .btn[disabled]{opacity:.5}
 .entreno{color:var(--verde);font-size:18px;margin:6px 0 4px;text-align:left}
 .aviso-of{background:#fff8d6;border:2px solid #fcd100;border-radius:14px;padding:12px;margin:14px 0;line-height:1.5}
+.situ{font-size:17px;line-height:1.45;text-align:center;margin:8px 4px 4px;color:var(--texto)}
+.opciones.imgs{grid-template-columns:1fr 1fr}
+.opciones.imgs .op{justify-content:center;padding:12px;aspect-ratio:1}
+.opciones.imgs .op img{width:100%;height:100%;object-fit:contain}
 #envio{margin-top:8px;font-weight:700;color:var(--verde)}
 </style>
 </head>
@@ -94,13 +98,23 @@ const TIPOS={
 };
 const SEN=RAW.map((r,i)=>({id:i,cod:r[0],tipo:r[1],sig:r[2],exp:r[3],svg:r[4]}));
 const MUESTRA={prohibicion:'P002',advertencia:'W012',obligacion:'M014',salvamento:'E003',incendios:'F001'};
+const SIT={"comun": [["El pasillo hacia la salida gira a la derecha: ¿qué señal pones en la esquina?", "E002", []], ["Tras evacuar, todo el personal debe reunirse en el patio para hacer el recuento.", "E007", []], ["Quieres indicar dónde está el desfibrilador del centro.", "E010", ["E009", "E003"]], ["Quieres indicar dónde está el botiquín.", "E003", ["E009", "E010"]], ["En caso de incendio, nadie debe bajar en el ascensor.", "P020", []], ["Marcas el lugar exacto donde cuelga el extintor.", "F001", ["F004"]], ["Señalas el botón que hay que pulsar para dar la alarma de incendio.", "F005", ["F006"]], ["El suelo del pasillo acaba de fregarse.", "W011", ["W007", "W001"]], ["Hay un hueco sin barandilla que da a la planta de abajo.", "W008", ["W001", "M018"]], ["El agua del grifo del almacén no se puede beber.", "P005", []]], "sector": {"HIG": [["Avisas del peligro en la sala donde se hacen las radiografías dentales.", "W003", ["W001"]], ["Contenedor de residuos con material manchado de sangre.", "W009", ["W001", "W016"]], ["Al limpiar el instrumental puede salpicar: obligas a usar gafas.", "M004", ["M013"]], ["En el gabinete es obligatorio llevar mascarilla.", "M016", ["M017"]], ["Recuerdas que hay que lavarse las manos antes de atender al siguiente paciente.", "M011", ["M009"]], ["El autoclave quema al sacar el material recién esterilizado.", "W017", ["W001"]], ["Indicas el equipo para lavarse los ojos tras una salpicadura de desinfectante.", "E011", ["E012", "E003"]], ["Armario con desinfectantes que dañan la piel.", "W023", ["W016", "W021", "W001"]], ["Avisas del peligro para los ojos del láser dental.", "W004", ["W001", "M004"]], ["En la sala de esterilización no se puede comer ni beber.", "P022", []]], "ITE": [["Puerta del cuarto con el cuadro eléctrico del edificio.", "W012", ["W001"]], ["En la caseta de la antena hay un equipo con partes peligrosas que no se debe tocar.", "P010", ["W012"]], ["Vas a instalar la antena en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008"]], ["Zona bajo la grúa que sube las antenas a la azotea.", "W015", ["W001", "M014"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En la obra es obligatorio llevar casco.", "M014", []], ["Vas a taladrar paredes de ladrillo: obligas a proteger los ojos.", "M004", ["M013"]], ["Junto al cuadro eléctrico: si hay fuego, el agua es peligrosa.", "P011", []], ["Trabajas en una arqueta junto al tráfico: obligas a llevar...", "M015", []], ["Al descargar bobinas de cable, obligas a proteger los pies.", "M008", []]], "STI": [["Puerta del cuarto con el cuadro eléctrico del CPD.", "W012", ["W001"]], ["Un equipo del CPD tiene partes peligrosas que nadie debe tocar.", "P010", ["W012"]], ["Sala del SAI, llena de baterías.", "W026", ["W012", "W001"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En el CPD: si hay fuego en los equipos, el agua es peligrosa.", "P011", []], ["Vas a instalar un radioenlace en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008"]], ["En el falso suelo del CPD hay placas levantadas y cables.", "W007", ["W001", "W008"]], ["Vas a taladrar el techo para pasar canaletas: obligas a proteger los ojos.", "M004", ["M013"]], ["Al descargar los armarios rack, obligas a proteger los pies.", "M008", []], ["En el almacén circulan carretillas elevadoras.", "W014", ["W001"]]], "IFC": [["Puerta de la cámara frigorífica a −20 °C.", "W010", ["W001"]], ["Almacén con botellas de gas refrigerante inflamable.", "W021", ["P003", "P002", "W001"]], ["Vas a trabajar en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008"]], ["Sala de compresores muy ruidosa: obligas a proteger el oído.", "M003", []], ["Al soldar tuberías con soplete, obligas a protegerte toda la cara.", "M013", ["M004"]], ["Junto al depósito de amoniaco de la instalación.", "W016", ["W023", "W001"]], ["Al cargar refrigerante puedes quemarte las manos por el frío: obligas a usar...", "M009", ["M010"]], ["Tuberías de descarga del compresor muy calientes.", "W017", ["W001"]], ["Cuadro eléctrico de la enfriadora.", "W012", ["W001"]], ["En la sala de máquinas con refrigerante inflamable no se puede encender fuego.", "P003", ["P002", "W021"]]]}};
+const RESTA=50, TRAMPAS=3;
+/* señal trampa: mismo dibujo y forma, color cambiado (no existe en el RD 485/1997) */
+const GIRO={prohibicion:120,obligacion:150,advertencia:180,salvamento:100,incendios:210};
+const ciclo=()=>{const m=/^[12]([A-Z]{2,5})-/.exec(ls.get('ipe_codigo',''));return m?m[1]:''};
+function situaciones(){
+ const vale=x=>SEN.some(s=>s.cod===x[1]);
+ const sec=(SIT.sector[ciclo()]||[].concat(...Object.values(SIT.sector))).filter(vale);
+ return baraja(baraja(sec).slice(0,7).concat(baraja(SIT.comun.filter(vale)).slice(0,3)));
+}
 const icono=t=>((SEN.find(s=>s.cod===MUESTRA[t])||SEN.find(s=>s.tipo===t))||{svg:''}).svg;
 
 /* ===== Estado del juego ===== */
 const NIVELES=[
- {n:1,titulo:'¿Qué tipo de señal es?',sub:'Forma y color: prohibición, advertencia, obligación, salvamento o incendios.',col:'#2f8a5b',modo:'tipo',preg:10,t:15},
- {n:2,titulo:'¿Qué significa?',sub:'Elige el significado exacto de cada señal.',col:'#0d6b4f',modo:'sig',preg:10,t:15},
- {n:3,titulo:'Contrarreloj',sub:'Mezcla de todo, con solo 7 segundos por señal.',col:'#ff5900',modo:'mix',preg:12,t:7}
+ {n:1,titulo:'¿Qué tipo de señal es?',sub:'Por la forma y el color. ¡Ojo: alguna señal está mal hecha!',col:'#2f8a5b',modo:'tipo',preg:10,t:15},
+ {n:2,titulo:'¿Qué significa?',sub:'Las cuatro respuestas son del mismo tipo: fíjate bien en el dibujo.',col:'#0d6b4f',modo:'sig',preg:10,t:15},
+ {n:3,titulo:'¿Qué señal pondrías?',sub:'Situaciones de tu sector, contrarreloj: elige la señal adecuada.',col:'#ff5900',modo:'sit',preg:10,t:12}
 ];
 /* ===== Envío de resultados (Google Form del profesor). Rellenar al crear el formulario ===== */
 const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
@@ -109,7 +123,7 @@ const JUEGO='UD2 Señales';
 const RX_COD=/^[1-2][A-Z]{2,5}-\d{1,2}$/;
 const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 const usados=()=>+ls.get('senales_oficiales',0);
-const extraDe=e=>e>=3?'0,20':e>=2?'0,15':e>=1?'0,10':'0';
+const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
 function envia(d){
  if(!FORM.url)return Promise.resolve(false);
  const f=new URLSearchParams();
@@ -121,6 +135,8 @@ const $=s=>document.querySelector(s), app=$('#app');
 const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const rec=n=>{try{return +localStorage.getItem('senales_record_'+n)||0}catch(e){return 0}};
 const guarda=(n,p)=>{try{if(p>rec(n))localStorage.setItem('senales_record_'+n,p)}catch(e){}};
+
+function trampaTxt(s){return `Tiene el dibujo y la forma de una señal de ${TIPOS[s.tipo].n.toLowerCase()}, pero no su color. ${TIPOS[s.tipo].d}`}
 
 function portada(){
  clearInterval(st.reloj);
@@ -153,28 +169,35 @@ function empieza(n,oficial){
  const l=NIVELES[n-1];
  let lista=baraja(SEN);
  while(lista.length<l.preg)lista=lista.concat(baraja(SEN));
- st={l,lista:lista.slice(0,l.preg),i:0,pts:0,racha:0,vidas:3,aciertos:0,fallos:[],oficial:oficial||null};
+ lista=lista.slice(0,l.preg);
+ if(l.modo==='tipo'){const k=new Set(baraja([...lista.keys()]).slice(0,TRAMPAS));lista=lista.map((s,i)=>k.has(i)?{...s,trampa:true}:s)}
+ if(l.modo==='sit')lista=situaciones().map(([texto,cod,excl])=>({...SEN.find(s=>s.cod===cod),texto,excl}));
+ st={l,lista,i:0,pts:0,racha:0,vidas:3,aciertos:0,fallos:[],oficial:oficial||null};
  pregunta();
 }
 
 function pregunta(){
  clearInterval(st.reloj);
  if(st.i>=st.lista.length||st.vidas<=0)return final();
- const s=st.lista[st.i], modo=st.l.modo==='mix'?(Math.random()<.5?'tipo':'sig'):st.l.modo;
+ const s=st.lista[st.i], modo=st.l.modo;
  let ops;
- if(modo==='tipo') ops=Object.keys(TIPOS).map(k=>({k,txt:TIPOS[k].n,mini:icono(k)}));
- else{
-  const otros=baraja(SEN.filter(x=>x.sig!==s.sig&&(x.tipo===s.tipo||Math.random()<.3))).slice(0,3);
+ if(modo==='tipo') ops=Object.keys(TIPOS).map(k=>({k,txt:TIPOS[k].n})).concat([{k:'trampa',txt:'Señal mal hecha: no existe'}]);
+ else if(modo==='sig'){
+  const otros=baraja(SEN.filter(x=>x.sig!==s.sig&&x.tipo===s.tipo)).concat(baraja(SEN.filter(x=>x.tipo!==s.tipo))).slice(0,3);
   ops=baraja([s,...otros]).map(x=>({k:x.sig,txt:x.sig}));
+ }else{
+  const fuera=x=>x.cod!==s.cod&&!s.excl.includes(x.cod);
+  const otros=baraja(SEN.filter(x=>fuera(x)&&x.tipo===s.tipo)).slice(0,1).concat(baraja(SEN.filter(x=>fuera(x)&&x.tipo!==s.tipo)).slice(0,2));
+  ops=baraja([s,...otros]).map(x=>({k:x.cod,img:x.svg}));
  }
- const correcta=modo==='tipo'?s.tipo:s.sig;
+ const correcta=modo==='tipo'?(s.trampa?'trampa':s.tipo):modo==='sig'?s.sig:s.cod;
+ const dibujo=s.trampa?`<div class="senal" style="filter:hue-rotate(${GIRO[s.tipo]}deg) drop-shadow(0 3px 4px rgba(0,0,0,.15))">${s.svg}</div>`:`<div class="senal">${s.svg}</div>`;
  app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?'🔥 x'+st.racha:'Señal '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
   <div class="tiempo"><i id="t"></i></div>
   <div class="tarjeta" id="tj">
-   <div class="preg">${modo==='tipo'?'¿Qué tipo de señal es?':'¿Qué significa esta señal?'}</div>
-   <div class="senal">${s.svg}</div>
-   <div class="opciones ${modo==='tipo'?'tipos':''}">${ops.map(o=>`<button class="op" data-k="${o.k}">${o.mini?`<span class="mini">${o.mini}</span>`:''}${o.txt}</button>`).join('')}</div>
+   ${modo==='sit'?`<div class="preg">¿Qué señal pondrías?</div><div class="situ">${s.texto}</div>`:`<div class="preg">${modo==='tipo'?'¿Qué tipo de señal es?':'¿Qué significa esta señal?'}</div>${dibujo}`}
+   <div class="opciones ${modo==='tipo'?'tipos':modo==='sit'?'imgs':''}">${ops.map(o=>`<button class="op" data-k="${o.k}">${o.img?o.img:o.txt}</button>`).join('')}</div>
    <div class="explica" id="ex"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
@@ -190,11 +213,14 @@ function pregunta(){
    const g=Math.round((100+Math.max(0,st.l.t-seg)*10)*(1+Math.min(st.racha-1,4)*.25));
    st.pts+=g;
    const f=document.createElement('div');f.className='puntos-flota';f.textContent='+'+g;document.body.appendChild(f);setTimeout(()=>f.remove(),900);
-   ex.className='explica ok';ex.innerHTML=`<b>¡Correcto! ${s.sig}</b>${s.exp} ${TIPOS[s.tipo].d}`;
+   ex.className='explica ok';ex.innerHTML=s.trampa?`<b>¡Bien visto! Es una trampa</b>${trampaTxt(s)}`:`<b>¡Correcto! ${s.sig}</b>${s.exp} ${TIPOS[s.tipo].d}`;
   }else{
    st.racha=0;st.vidas--;st.fallos.push(s);
+   const resta=Math.min(RESTA,st.pts);st.pts-=resta;
+   if(resta){const f=document.createElement('div');f.className='puntos-flota';f.style.color='var(--mal)';f.textContent='−'+resta;document.body.appendChild(f);setTimeout(()=>f.remove(),900)}
    $('#tj').classList.add('sacude');
-   ex.className='explica mal';ex.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}</b>Es una señal de <b style="display:inline;font-size:15px">${TIPOS[s.tipo].n.toLowerCase()}</b>: «${s.sig}». ${s.exp} ${TIPOS[s.tipo].d}`;
+   const cab=k===null?'¡Se acabó el tiempo!':'No es correcto';
+   ex.className='explica mal';ex.innerHTML=s.trampa?`<b>${cab}: era una trampa</b>${trampaTxt(s)}`:`<b>${cab}</b>${modo==='sit'?'La señal adecuada es':'Es una señal de <b style="display:inline;font-size:15px">'+TIPOS[s.tipo].n.toLowerCase()+'</b>:'} «${s.sig}». ${s.exp} ${TIPOS[s.tipo].d}`;
   }
   const pp=document.querySelector('.cab .pill');if(pp)pp.textContent=st.pts+' pts';
   const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';
@@ -207,14 +233,14 @@ function final(){
  clearInterval(st.reloj);
  const total=st.lista.length, r=st.aciertos/total, est=st.vidas<=0?0:r>=.95?3:r>=.75?2:r>=.5?1:0;
  const antes=rec(st.l.n); guarda(st.l.n,st.pts);
- const unicos=[...new Map(st.fallos.map(s=>[s.id,s])).values()];
+ const unicos=[...new Map(st.fallos.map(s=>[s.id+(s.trampa?'t':''),s])).values()];
  if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
  app.innerHTML=`<div class="final">
   <div class="marca">Nivel ${st.l.n} · ${st.l.titulo}</div>
   <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
   <div class="gran">${st.pts}</div><div>puntos · ${st.aciertos} de ${total} aciertos${st.vidas<=0?' · sin vidas':''}</div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
-  ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estas señales</h2>${unicos.map(s=>`<div class="fallo">${s.svg}<div><b>${s.sig}</b><small>${TIPOS[s.tipo].n}. ${s.exp}</small></div></div>`).join('')}</div>`:'<p style="margin-top:14px">¡Ni un fallo! Ya eres detective de señales.</p>'}
+  ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estas señales</h2>${unicos.map(s=>s.trampa?`<div class="fallo"><span style="filter:hue-rotate(${GIRO[s.tipo]}deg);display:contents">${s.svg}</span><div><b>Señal trampa</b><small>${trampaTxt(s)}</small></div></div>`:`<div class="fallo">${s.svg}<div><b>${s.sig}</b><small>${TIPOS[s.tipo].n}. ${s.exp}</small></div></div>`).join('')}</div>`:'<p style="margin-top:14px">¡Ni un fallo! Ya eres detective de señales.</p>'}
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.l.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
  </div>`;
