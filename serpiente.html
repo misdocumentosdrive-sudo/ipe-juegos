@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Serpiente PRL · IPE I</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@600;800&display=swap" rel="stylesheet">
+<style>
+
+:root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#1a8a4a;--mal:#d33a1f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--fondo);color:var(--texto);font:16px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:520px;min-height:100%;display:flex;flex-direction:column;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+h1,h2,.serif{font-family:Aleo,Georgia,serif}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.marca{font:800 13px Aleo,Georgia,serif;color:var(--verde);letter-spacing:.3px}
+.pill{background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.vidas{color:var(--mal);letter-spacing:2px}
+.barra{height:8px;background:#dde7e2;border-radius:99px;overflow:hidden;margin:6px 0 14px}
+.barra i{display:block;height:100%;background:linear-gradient(90deg,var(--verde2),var(--verde));width:0;transition:width .3s}
+.tiempo{height:5px;background:#eadfcf;border-radius:99px;overflow:hidden;margin:-8px 0 12px}
+.tiempo i{display:block;height:100%;background:var(--naranja);width:100%}
+.tarjeta{background:#fff;border-radius:22px;box-shadow:0 6px 20px rgba(0,66,48,.10);padding:18px;display:flex;flex-direction:column;align-items:center}
+.senal{width:min(62vw,230px);height:min(62vw,230px);margin:6px 0 10px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}
+.senal img{max-width:100%;max-height:100%}
+.op .mini img,.fila-sen img,.fallo img{width:100%;height:100%;object-fit:contain}
+.confeti{position:fixed;top:-12px;width:9px;height:14px;border-radius:2px;pointer-events:none;animation:cae linear forwards;z-index:9}
+@keyframes cae{to{transform:translateY(105vh) rotate(720deg)}}
+.preg{font:700 18px Aleo,Georgia,serif;color:var(--verde);text-align:center;margin:4px 0 2px}
+.opciones{display:grid;gap:10px;margin-top:14px;width:100%}
+.opciones.tipos{grid-template-columns:1fr}
+.op{border:0;border-radius:14px;padding:14px 14px;font:600 16px "Helvetica Neue",Arial,sans-serif;background:#eef4f1;color:var(--texto);text-align:left;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .08s,background .2s}
+.op:active{transform:scale(.98)}
+.op .mini{width:30px;height:30px;flex:none}
+.op:disabled{cursor:default;opacity:1;color:var(--texto)}
+.op.ok,.op.ok:disabled{background:var(--ok);color:#fff}
+.op.mal,.op.mal:disabled{background:var(--mal);color:#fff}
+.explica{margin-top:14px;width:100%;border-radius:14px;padding:12px 14px;font-size:15px;display:none}
+.explica.ok{display:block;background:#e3f4ea;color:#0b5a2f}
+.explica.mal{display:block;background:#fde8e3;color:#8c2512}
+.explica b{display:block;font:800 16px Aleo,Georgia,serif;margin-bottom:2px}
+.sig{margin-top:12px;width:100%;border:0;border-radius:14px;padding:14px;font:800 17px Aleo,Georgia,serif;background:var(--verde);color:#fff;cursor:pointer;display:none}
+.puntos-flota{position:fixed;left:50%;top:38%;transform:translate(-50%,0);font:800 34px Aleo,Georgia,serif;color:var(--ok);pointer-events:none;animation:sube .9s ease-out forwards}
+@keyframes sube{to{transform:translate(-50%,-70px);opacity:0}}
+.sacude{animation:sacude .35s}
+@keyframes sacude{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+/* portada */
+.portada{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px}
+.portada h1{font-size:32px;color:var(--verde);margin:0;line-height:1.1}
+.portada p{color:var(--gris);margin:0}
+.fila-sen{display:flex;justify-content:center;gap:8px;margin:6px 0}
+.fila-sen img{width:52px;height:52px}
+.nivel{border:0;border-radius:18px;padding:16px;text-align:left;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.07);cursor:pointer;display:flex;gap:14px;align-items:center}
+.nivel .n{flex:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 20px Aleo,Georgia,serif;color:#fff}
+.nivel b{display:block;font:800 17px Aleo,Georgia,serif;color:var(--verde)}
+.nivel span{font-size:14px;color:var(--gris)}
+.record{font-size:13px;color:var(--gris)}
+/* final */
+.final{text-align:center}
+.final .gran{font:800 56px Aleo,Georgia,serif;color:var(--verde);margin:4px 0}
+.estrellas{font-size:34px;letter-spacing:4px;color:var(--amarillo);text-shadow:0 1px 0 #c9a400}
+.fallos{text-align:left;margin-top:16px}
+.fallo{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:10px;margin-bottom:8px}
+.fallo img{width:54px;height:54px;flex:none}
+.fallo b{display:block;color:var(--verde)}
+.fallo small{color:var(--gris)}
+.btns{display:grid;gap:10px;margin-top:16px}
+.btn{border:0;border-radius:14px;padding:14px;font:800 17px Aleo,Georgia,serif;cursor:pointer}
+.btn.p{background:var(--verde);color:#fff}
+.btn.s{background:#e3ece8;color:var(--verde)}
+.pie{text-align:center;font-size:12px;color:var(--gris);margin-top:auto;padding-top:14px}
+.oficial{background:#fff;border:2px solid var(--verde);border-radius:16px;padding:14px;margin:14px 0;text-align:left;display:grid;gap:8px}
+.oficial label span,.oficial small{font-size:13px;opacity:.75}
+.oficial input{font:700 20px/1.2 inherit;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;border:2px solid #cfd8d3;border-radius:10px;width:100%;box-sizing:border-box}
+.oficial input.error{border-color:#c0392b;background:#fdecea}
+.oficial .btn[disabled]{opacity:.5}
+.entreno{color:var(--verde);font-size:18px;margin:6px 0 4px;text-align:left}
+.aviso-of{background:#fff8d6;border:2px solid #fcd100;border-radius:14px;padding:12px;margin:14px 0;line-height:1.5}
+.situ{font-size:17px;line-height:1.45;text-align:center;margin:8px 4px 4px;color:var(--texto)}
+.opciones.imgs{grid-template-columns:1fr 1fr}
+.opciones.imgs .op{justify-content:center;padding:12px;aspect-ratio:1}
+.opciones.imgs .op img{width:100%;height:100%;object-fit:contain}
+#envio{margin-top:8px;font-weight:700;color:var(--verde)}
+
+/* ===== propio de «Serpiente PRL» ===== */
+.heroe{position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;
+ background:radial-gradient(circle at 85% 10%,rgba(252,209,0,.28),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
+.heroe .hm{font:700 12px "Helvetica Neue",Arial;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+.heroe h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}
+.heroe h1 span{color:#fcd100}
+.heroe p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
+.heroe canvas{width:100%;height:70px;display:block;margin:4px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font:700 12px "Helvetica Neue",Arial;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px}
+.nivel .ico{font-size:26px;flex:none}
+.nivel{transition:transform .12s,box-shadow .12s}.nivel:active{transform:scale(.98)}
+
+.juego{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#123a2e 0%,#05150f 75%);color:#fff;display:flex;flex-direction:column;align-items:center;
+ touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;z-index:5}
+.juego .arriba{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;gap:8px}
+.juego .pill{background:rgba(255,255,255,.12);color:#fff;box-shadow:none;font-variant-numeric:tabular-nums}
+.juego .crono{font:800 22px Aleo,Georgia,serif;letter-spacing:1px;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(125,255,181,.4)}
+.juego .crono.poco{color:#ff8a5c;animation:late .6s infinite}
+@keyframes late{50%{transform:scale(1.08)}}
+.meta{width:calc(100% - 28px);max-width:492px;height:7px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:8px;overflow:hidden}
+.meta i{display:block;height:100%;width:0;background:linear-gradient(90deg,#2fd47a,#fcd100);transition:width .3s}
+.consigna{width:calc(100% - 28px);max-width:492px;margin-top:8px;border-radius:14px;padding:8px 12px;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.35);
+ transition:background .3s}
+.consigna small{display:block;font:700 11.5px "Helvetica Neue",Arial;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.consigna b{display:block;font:800 21px/1.15 Aleo,Georgia,serif}
+.consigna.nueva{animation:nueva .5s}
+@keyframes nueva{30%{transform:scale(1.06);filter:brightness(1.3)}}
+.tablero{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;padding:8px 10px 0;position:relative}
+.tablero canvas{display:block;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 2px rgba(125,255,181,.25)}
+.velo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.velo div{background:rgba(3,16,12,.82);border:1px solid rgba(125,255,181,.3);border-radius:16px;padding:14px 18px;text-align:center;font:700 16px/1.4 "Helvetica Neue",Arial;max-width:300px}
+.velo b{display:block;font:800 22px Aleo,Georgia,serif;color:#fcd100;margin-bottom:4px}
+.mando{display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(2,50px);gap:6px;justify-content:center;padding:8px 0 calc(10px + env(safe-area-inset-bottom))}
+.mando button{border:0;border-radius:14px;background:rgba(255,255,255,.12);color:#fff;font-size:22px;cursor:pointer;touch-action:none}
+.mando button:active{background:rgba(252,209,0,.45)}
+.mando .ar{grid-column:2;grid-row:1}.mando .iz{grid-column:1;grid-row:2}.mando .ab{grid-column:2;grid-row:2}.mando .de{grid-column:3;grid-row:2}
+.destello{position:fixed;inset:0;pointer-events:none;z-index:6;animation:destello .25s ease-out forwards}
+@keyframes destello{from{opacity:.18}to{opacity:0}}
+.juego .puntos-flota{z-index:9}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* «Serpiente PRL» (UD 1 · La salud laboral · CE a) del RA 2). Fichas sacadas del libro (apartados 1.2 y 1.3).
+   Cada ficha: t = texto corto (cabe en la etiqueta del tablero), i = icono, g = grupo correcto, s = ciclo (si es de un sector).
+   Nivel 3: pares factor → daño (f = factor, d = daño). */
+const GRUPOS={
+ seg:{t:'De seguridad',c:'#ff5900',e:'Condición de seguridad: lugares, equipos, instalaciones eléctricas o incendios. Su daño típico es el accidente.'},
+ amb:{t:'Medioambientales',c:'#2e7fd6',e:'Condición medioambiental: agentes físicos (ruido, vibraciones, calor, radiaciones), químicos o biológicos.'},
+ erg:{t:'Ergonómicas',c:'#9b5de5',e:'Condición ergonómica: carga física (posturas, movimientos repetidos, cargas) o carga mental.'},
+ psi:{t:'Psicosociales',c:'#e0457b',e:'Condición psicosocial: organización del trabajo (ritmo, jornada, turnos, autonomía), relaciones y tarea.'},
+ at:{t:'Accidente de trabajo',c:'#ff5900',e:'Accidente de trabajo: lesión súbita con ocasión o por consecuencia del trabajo (también in itinere, en misión o en salvamento).'},
+ ep:{t:'Enfermedad profesional',c:'#2e7fd6',e:'Enfermedad profesional: deterioro lento por un agente del cuadro del RD 1299/2006.'},
+ ine:{t:'Patología inespecífica',c:'#9b5de5',e:'Patología inespecífica: relacionada con el trabajo, pero influyen también factores personales y sociales.'},
+ nol:{t:'Daño no laboral',c:'#5b6b70',e:'Daño no laboral: no guarda relación con el trabajo (accidente no laboral o enfermedad común).'},
+ dano:{t:'Es un daño',c:'#d33a1f',e:'Es un daño (lo que ya ha pasado), no un factor de riesgo.'}
+};
+const FICHAS1=[   // nivel 1: condiciones de trabajo (apartado 1.2)
+ {t:'Suelo resbaladizo',i:'💧',g:'seg'},{t:'Escalera rota',i:'🪜',g:'seg'},{t:'Cable pelado',i:'🔌',g:'seg'},
+ {t:'Máquina sin resguardo',i:'⚙️',g:'seg'},{t:'Riesgo de incendio',i:'🔥',g:'seg'},{t:'Herramienta cortante',i:'✂️',g:'seg'},
+ {t:'Hueco sin barandilla',i:'🕳️',g:'seg'},{t:'Estantería inestable',i:'📦',g:'seg'},
+ {t:'Ruido continuo',i:'🔊',g:'amb'},{t:'Vibraciones',i:'📳',g:'amb'},{t:'Calor extremo',i:'🌡️',g:'amb'},
+ {t:'Polvo en el aire',i:'💨',g:'amb'},{t:'Productos químicos',i:'🧪',g:'amb'},{t:'Virus y bacterias',i:'🦠',g:'amb'},
+ {t:'Radiaciones',i:'☢️',g:'amb'},
+ {t:'Postura forzada',i:'🧎',g:'erg'},{t:'Movimientos repetidos',i:'🔁',g:'erg'},{t:'Levantar cargas',i:'🏋️',g:'erg'},
+ {t:'Horas de pie',i:'🦵',g:'erg'},{t:'Pantalla mal colocada',i:'🖥️',g:'erg'},{t:'Mucha carga mental',i:'🧠',g:'erg'},
+ {t:'Turnos de noche',i:'🌙',g:'psi'},{t:'Ritmo excesivo',i:'⏱️',g:'psi'},{t:'Jornadas muy largas',i:'🕰️',g:'psi'},
+ {t:'Malas relaciones',i:'😠',g:'psi'},{t:'Sin autonomía',i:'🔒',g:'psi'},{t:'Tarea monótona',i:'😐',g:'psi'},
+ // trampas: son daños, no factores (como en el caso 1.2 del libro)
+ {t:'Corte en un dedo',i:'🩹',g:'dano'},{t:'Pérdida de audición',i:'🦻',g:'dano'},{t:'Dolor de espalda',i:'🤕',g:'dano'},
+ // de cada sector (caso práctico 1.2 de la UD 1)
+ {t:'Ruido de la turbina',i:'🦷',g:'amb',s:'HIG'},{t:'Suelo mojado junto al sillón',i:'💧',g:'seg',s:'HIG'},
+ {t:'Un paciente cada 20 min',i:'📅',g:'psi',s:'HIG'},{t:'Tronco inclinado horas',i:'🧎',g:'erg',s:'HIG'},
+ {t:'Sangre y saliva',i:'🩸',g:'amb',s:'HIG'},{t:'Corte con una cureta',i:'🩹',g:'dano',s:'HIG'},
+ {t:'Compresores ruidosos',i:'🔊',g:'amb',s:'IFC'},{t:'Peldaño roto',i:'🪜',g:'seg',s:'IFC'},
+ {t:'Guardias de 24 horas',i:'📟',g:'psi',s:'IFC'},{t:'Subir una unidad de 40 kg',i:'🏋️',g:'erg',s:'IFC'},
+ {t:'Gases refrigerantes',i:'❄️',g:'amb',s:'IFC'},{t:'Quemadura por frío',i:'🩹',g:'dano',s:'IFC'},
+ {t:'Ruido de la rozadora',i:'🔊',g:'amb',s:'ITE'},{t:'Tejado sin protección',i:'🏠',g:'seg',s:'ITE'},
+ {t:'Plazos imposibles',i:'📅',g:'psi',s:'ITE'},{t:'Brazos sobre la cabeza',i:'🙌',g:'erg',s:'ITE'},
+ {t:'Polvo de yeso',i:'💨',g:'amb',s:'ITE'},{t:'Caída desde el tejado',i:'🩹',g:'dano',s:'ITE'},
+ {t:'Ventiladores del CPD',i:'🔊',g:'amb',s:'STI'},{t:'Suelo técnico levantado',i:'🧱',g:'seg',s:'STI'},
+ {t:'Disponible las 24 horas',i:'📟',g:'psi',s:'STI'},{t:'Mala postura ante la pantalla',i:'🖥️',g:'erg',s:'STI'},
+ {t:'Baterías de plomo',i:'🔋',g:'amb',s:'STI'},{t:'Descarga en un armario',i:'🩹',g:'dano',s:'STI'}
+];
+const FICHAS2=[   // nivel 2: ¿qué daño es? (apartado 1.3)
+ {t:'Corte con un cúter',i:'✂️',g:'at'},{t:'Caída de una escalera',i:'🪜',g:'at'},{t:'Descarga eléctrica',i:'⚡',g:'at'},
+ {t:'Quemadura en el taller',i:'🔥',g:'at'},{t:'Caída al ir al trabajo',i:'🚌',g:'at',nota:'Es in itinere: al ir al trabajo o al volver.'},
+ {t:'Golpe visitando a un cliente',i:'🚗',g:'at',nota:'Es un accidente en misión: desplazamiento que exige el trabajo.'},
+ {t:'Lesión al socorrer a un compañero',i:'🆘',g:'at',nota:'Acto de salvamento conectado con el trabajo.'},
+ {t:'Sordera por ruido',i:'🦻',g:'ep'},{t:'Silicosis',i:'🫁',g:'ep'},{t:'Dermatitis por tintes',i:'🧴',g:'ep'},
+ {t:'Hepatitis B sanitaria',i:'💉',g:'ep'},{t:'Túnel carpiano',i:'✋',g:'ep'},{t:'Saturnismo por plomo',i:'🔋',g:'ep'},
+ {t:'Cáncer por amianto',i:'🏭',g:'ep'},
+ {t:'Estrés',i:'😰',g:'ine'},{t:'Fatiga profesional',i:'🥱',g:'ine'},{t:'Síndrome de burnout',i:'🫠',g:'ine'},
+ {t:'Insatisfacción laboral',i:'😞',g:'ine'},{t:'Envejecimiento prematuro',i:'👴',g:'ine'},
+ {t:'Gripe contagiada en casa',i:'🤧',g:'nol'},{t:'Lesión jugando al fútbol',i:'⚽',g:'nol'},
+ {t:'Caída en la ducha de casa',i:'🚿',g:'nol'},{t:'Esguince en el gimnasio',i:'🏋️',g:'nol'},
+ // de cada sector (casos prácticos de la UD 1)
+ {t:'Corte con una cureta',i:'✂️',g:'at',s:'HIG'},{t:'Dermatitis por el látex',i:'🧤',g:'ep',s:'HIG'},
+ {t:'Ansiedad por la agenda',i:'😰',g:'ine',s:'HIG'},
+ {t:'Corte con una chapa',i:'✂️',g:'at',s:'IFC'},{t:'Sordera tras años en la sala',i:'🦻',g:'ep',s:'IFC'},
+ {t:'Caída en moto entre averías',i:'🛵',g:'at',s:'IFC',nota:'Es un accidente en misión: ir de una avería a otra es parte del trabajo.'},
+ {t:'Corte al pelar cable',i:'✂️',g:'at',s:'ITE'},{t:'Tendinitis de hombro',i:'💪',g:'ep',s:'ITE'},
+ {t:'Ansiedad por los plazos',i:'😰',g:'ine',s:'ITE'},
+ {t:'Golpe al montar un servidor',i:'🖥️',g:'at',s:'STI'},{t:'Túnel carpiano tras años',i:'✋',g:'ep',s:'STI'},
+ {t:'Burnout por las guardias',i:'🫠',g:'ine',s:'STI'}
+];
+const PARES=[    // nivel 3: del factor de riesgo a su daño
+ {f:'Ruido continuo',d:'Pérdida de audición',i:'🦻'},{f:'Cable sin aislar',d:'Contacto eléctrico',i:'⚡'},
+ {f:'Suelo resbaladizo',d:'Caída al mismo nivel',i:'🤕'},{f:'Levantar cargas pesadas',d:'Lesión de espalda',i:'🦴'},
+ {f:'Movimientos repetidos',d:'Tendinitis',i:'💪'},{f:'Ritmo excesivo',d:'Estrés',i:'😰'},
+ {f:'Polvo de sílice',d:'Silicosis',i:'🫁'},{f:'Contacto con sangre',d:'Infección',i:'🦠'},
+ {f:'Altura sin arnés',d:'Caída a distinto nivel',i:'🧗'},{f:'Vapores de disolventes',d:'Intoxicación',i:'☠️'},
+ {f:'Horas ante la pantalla',d:'Fatiga visual',i:'👁️'},{f:'Turnos de noche',d:'Trastornos del sueño',i:'🌙'},
+ {f:'Herramienta cortante',d:'Corte',i:'🩹'},{f:'Trabajo sin pausas',d:'Fatiga',i:'🥱'},
+ {f:'Látex de los guantes',d:'Dermatitis',i:'🧤',s:'HIG'},{f:'Cureta y sonda',d:'Pinchazo',i:'📍',s:'HIG'},
+ {f:'Turbina y aspirador',d:'Pérdida de audición',i:'🦻',s:'HIG'},
+ {f:'Gas refrigerante',d:'Quemadura por frío',i:'❄️',s:'IFC'},{f:'Unidad de 40 kg',d:'Lesión de espalda',i:'🦴',s:'IFC'},
+ {f:'Compresores ruidosos',d:'Pérdida de audición',i:'🦻',s:'IFC'},
+ {f:'Rozar yeso y ladrillo',d:'Enfermedad pulmonar',i:'🫁',s:'ITE'},{f:'Brazos sobre la cabeza',d:'Tendinitis de hombro',i:'💪',s:'ITE'},
+ {f:'Tejado sin protección',d:'Caída a distinto nivel',i:'🧗',s:'ITE'},
+ {f:'Baterías de plomo',d:'Saturnismo',i:'🔋',s:'STI'},{f:'Armario con tensión',d:'Contacto eléctrico',i:'⚡',s:'STI'},
+ {f:'Horas ante el monitor',d:'Fatiga visual',i:'👁️',s:'STI'}
+];
+
+
+/* ===== Configuración ===== */
+const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const JUEGO='UD1 Serpiente', PREF='serpiente', INTENTOS=3, RESTA=50;
+const RX_COD=/^[1-2][A-Z]{2,5}-\d{1,2}$/;
+const PODIO=['1','0,75','0,50'];
+const META=12, TIEMPO=100, COLS=11;
+const NIVELES=[
+ {n:1,titulo:'Condiciones de trabajo',sub:'Come solo los factores de riesgo del tipo que te piden. Cuidado: algunas fichas son daños.',col:'#0d6b4f',modo:'grupo',banco:'FICHAS1',
+  grupos:['seg','amb','erg','psi'],pide:'Come factores de riesgo de tipo',vel:[230,150],cambio:3},
+ {n:2,titulo:'¿Qué daño es?',sub:'Accidente de trabajo, enfermedad profesional, patología inespecífica o daño no laboral.',col:'#1d5fa0',modo:'grupo',banco:'FICHAS2',
+  grupos:['at','ep','ine','nol'],pide:'Come solo',vel:[215,140],cambio:3},
+ {n:3,titulo:'Del factor al daño',sub:'Te dan un factor de riesgo, muchos de tu sector: come el daño que puede causar.',col:'#d33a1f',modo:'par',vel:[200,125],cambio:1}
+];
+const ULT=NIVELES.length;
+
+/* ===== Utilidades ===== */
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const usados=()=>+ls.get(PREF+'_oficiales',0);
+const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
+const $=s=>document.querySelector(s), app=$('#app');
+const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const azar=a=>a[Math.floor(Math.random()*a.length)];
+const rec=n=>+ls.get(PREF+'_record_'+n,0);
+const guarda=(n,p)=>{if(p>rec(n))ls.set(PREF+'_record_'+n,p)};
+const ciclo=()=>{const m=/^[12]([A-Z]{2,5})-/.exec(ls.get('ipe_codigo',''));return m?m[1]:''};
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
+const vibra=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+let st={};
+
+/* ===== Sonidos (WebAudio, sin archivos; los mismos que «Cada minuto cuenta») ===== */
+let actx=null;
+function tono(f,dur,tipo='sine',vol=.2,d=0){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const t0=actx.currentTime+d,o=actx.createOscillator(),g=actx.createGain();
+ o.type=tipo;o.frequency.value=f;g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.015);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+ o.connect(g).connect(actx.destination);o.start(t0);o.stop(t0+dur+.02)}catch(e){}}
+function zumbido(){tono(220,.16,'square',.16);tono(160,.16,'square',.16,.13)}
+function fallo(){zumbido();vibra(150)}
+function ñam(r){const b=520*Math.pow(1.06,Math.min(r,8));tono(b,.12,'sine',.22);tono(b*1.5,.14,'sine',.2,.07);vibra(25)}
+function fanfarria(){[523,659,784,1047].forEach((f,i)=>tono(f,.22,'triangle',.2,i*.11))}
+
+function envia(d){
+ const f=new URLSearchParams();
+ f.append(FORM.campo,`${JUEGO} | ${d.codigo} | intento ${d.intento} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')} | ${d.puntos} pts | +${d.extra}`);
+ return fetch(FORM.url,{method:'POST',mode:'no-cors',body:f}).then(()=>true).catch(()=>false);
+}
+async function puesto(codigo,pts,nuevo){
+ try{
+  const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>r.text());
+  const g=grupoDe(codigo);
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(f[2]||'').trim()===JUEGO).map(f=>+f[1]||0);
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  return {pos,total};
+ }catch(e){return null}
+}
+const recien=()=>Date.now()-(+ls.get(PREF+'_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar el ranking. Inténtalo más tarde desde el menú.';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Ranking provisional: se actualiza cada pocos minutos.</small>`;
+}
+
+/* ===== Portada ===== */
+function para(){clearInterval(st.reloj);cancelAnimationFrame(st.raf||0);cancelAnimationFrame(st.rafDemo||0);clearTimeout(st.tReanuda);document.onkeydown=null}
+function portada(){
+ para();
+ app.innerHTML=`<div class="portada">
+  <div class="heroe">
+   <div class="hm">IPE I · Unidad 1 · La salud laboral</div>
+   <h1>Serpiente<br><span>PRL</span></h1>
+   <canvas id="demo"></canvas>
+   <p>Desliza el dedo para guiar a la serpiente. Come solo las fichas que encajan con lo que te piden: factores de riesgo, tipos de daño y qué daño causa cada factor.</p>
+   <div class="chips"><span>Factores de riesgo</span><span>Accidente o enfermedad</span><span>Del factor al daño</span></div>
+  </div>
+  <div class="oficial">
+   <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
+   <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
+   <button class="btn p" id="ofi" ${usados()>=INTENTOS?'disabled':''}>${usados()>=INTENTOS?'Ya has usado tus 3 intentos':'Partida oficial · intento '+(usados()+1)+' de '+INTENTOS}</button>
+   <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
+  </div>
+  ${+ls.get(PREF+'_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div>`:''}
+  <h2 class="serif entreno">Entrena cuando quieras</h2>
+  ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span><span class="ico">${['🧩','🩹','🎯'][l.n-1]}</span></button>`).join('')}
+ </div><div class="pie">CPIFP Los Viveros · Ley 31/1995 de Prevención de Riesgos Laborales · LGSS (arts. 156 y 157) · RD 1299/2006</div>`;
+ app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
+ if(+ls.get(PREF+'_mejor',0))puesto(ls.get('ipe_codigo',''),+ls.get(PREF+'_mejor',0),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,+ls.get(PREF+'_mejor',0))});
+ $('#ofi').onclick=()=>{
+  const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
+  if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
+  if(!confirm('Vas a gastar el intento '+(usados()+1)+' de '+INTENTOS+' con el código '+c+'. ¿Empezamos?'))return;
+  ls.set('ipe_codigo',c);ls.set(PREF+'_oficiales',usados()+1);
+  empieza(1,{codigo:c,intento:usados(),est:[],pts:0});
+ };
+ demo();
+}
+/* serpiente de adorno en la portada: da vueltas sola */
+function demo(){
+ const cv=$('#demo');if(!cv)return;
+ const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+ const c=cv.getContext('2d');c.scale(dpr,dpr);
+ const t0=performance.now();
+ const dib=now=>{
+  const t=(now-t0)/1000;c.clearRect(0,0,W,H);
+  const pts=[];for(let i=0;i<26;i++){const x=((t*70-i*9)%(W+120))-40;pts.push({x,y:H/2+Math.sin((x/W)*Math.PI*3+t*2)*16})}
+  const fichas=[{x:W*.3,e:'🔊'},{x:W*.62,e:'🪜'},{x:W*.88,e:'🧪'}];
+  fichas.forEach(f=>{if(!pts.slice(0,3).some(p=>Math.abs(p.x-f.x)<14)){c.fillStyle='rgba(255,255,255,.92)';c.beginPath();c.arc(f.x,H/2,13,0,7);c.fill();c.font='15px serif';c.textAlign='center';c.textBaseline='middle';c.fillText(f.e,f.x,H/2+1)}});
+  for(let i=pts.length-1;i>=0;i--){const p=pts[i];c.fillStyle=colorCuerpo(i,pts.length);c.beginPath();c.arc(p.x,p.y,i?8:10,0,7);c.fill()}
+  ojos(c,pts[0],{x:1,y:0},10);
+  st.rafDemo=requestAnimationFrame(dib);
+ };
+ st.rafDemo=requestAnimationFrame(dib);
+}
+
+/* ===== Juego ===== */
+function empieza(n,oficial){
+ para();
+ const l=NIVELES[n-1];
+ st={l,pts:0,racha:0,vidas:3,aciertos:0,fallos:[],oficial:oficial||null,crece:0,cola:[],usados:new Set(),enObj:0,vel:l.vel[0],t:TIEMPO,empezado:false,fichas:[]};
+ const sec=ciclo();
+ st.banco=l.modo==='par'?PARES.filter(p=>!p.s||p.s===sec):(l.banco==='FICHAS1'?FICHAS1:FICHAS2).filter(x=>!x.s||x.s===sec);
+ app.innerHTML=`<div class="juego" id="esc">
+  <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">${TIEMPO}</span><span class="pill vidas" id="vi">♥♥♥</span></div>
+  <div class="meta"><i id="me"></i></div>
+  <div class="consigna" id="co"></div>
+  <div class="tablero" id="tab"><canvas id="cv"></canvas><div class="velo" id="velo"><div><b>Nivel ${l.n} · ${l.titulo}</b>${l.sub}<br><br>Desliza el dedo o usa las flechas.<br><b style="font-size:17px;margin-top:8px">Toca para empezar</b></div></div></div>
+  <div class="mando"><button class="ar" data-d="0,-1">▲</button><button class="iz" data-d="-1,0">◀</button><button class="ab" data-d="0,1">▼</button><button class="de" data-d="1,0">▶</button></div>
+ </div>`;
+ medir();
+ const c=Math.floor(st.rows/2);
+ st.snake=[3,2,1,0].map(x=>({x:x+1,y:c}));st.prev=st.snake.map(p=>({...p}));st.dir={x:1,y:0};
+ nuevoObjetivo();
+ controles();
+ st.tPaso=performance.now();
+ st.raf=requestAnimationFrame(bucle);
+}
+function medir(fijas){
+ const tab=$('#tab'),cv=$('#cv');
+ const W=Math.min(tab.clientWidth-20,460),H=tab.clientHeight-8;
+ st.cel=Math.floor(W/COLS);
+ if(!fijas)st.rows=Math.max(10,Math.min(18,Math.floor(H/st.cel)));
+ if(st.rows*st.cel>H)st.cel=Math.floor(H/st.rows);
+ st.W=st.cel*COLS;st.H=st.cel*st.rows;
+ const dpr=window.devicePixelRatio||1;
+ cv.width=st.W*dpr;cv.height=st.H*dpr;cv.style.width=st.W+'px';cv.style.height=st.H+'px';
+ st.ctx=cv.getContext('2d');st.ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function controles(){
+ const gira=(x,y)=>{
+  if(!st.empezado)return arranca();
+  const ult=st.cola.length?st.cola[st.cola.length-1]:st.dir;
+  if((x===ult.x&&y===ult.y)||(x===-ult.x&&y===-ult.y))return;
+  if(st.cola.length<2)st.cola.push({x,y});
+ };
+ const esc=$('#esc');let ini=null;
+ esc.addEventListener('touchstart',e=>{const t=e.touches[0];ini={x:t.clientX,y:t.clientY};if(!st.empezado&&!e.target.closest('.mando'))arranca()},{passive:true});
+ esc.addEventListener('touchmove',e=>{
+  if(!ini)return;const t=e.touches[0],dx=t.clientX-ini.x,dy=t.clientY-ini.y;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<22)return;
+  if(Math.abs(dx)>Math.abs(dy))gira(Math.sign(dx),0);else gira(0,Math.sign(dy));
+  ini={x:t.clientX,y:t.clientY};e.preventDefault();
+ },{passive:false});
+ esc.addEventListener('touchend',()=>ini=null);
+ $('#tab').addEventListener('mousedown',()=>{if(!st.empezado)arranca()});
+ app.querySelectorAll('.mando button').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();const [x,y]=b.dataset.d.split(',').map(Number);gira(x,y)}));
+ document.onkeydown=e=>{
+  const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];
+  if(k){e.preventDefault();gira(k[0],k[1])}else if(e.key===' '||e.key==='Enter'){if(!st.empezado)arranca()}
+ };
+}
+function arranca(){
+ if(st.empezado)return;
+ st.empezado=true;st.pausa=false;$('#velo').innerHTML='';
+ tono(440,.08);
+ st.tPaso=performance.now();
+ const t0=Date.now();
+ st.reloj=setInterval(()=>{
+  if(st.pausa)return;
+  st.t=Math.max(0,TIEMPO-Math.floor((Date.now()-t0-(st.pausado||0))/1000));
+  const cr=$('#cr');if(cr){cr.textContent=st.t;cr.classList.toggle('poco',st.t<=10)}
+  if(st.t<=0)termina();
+ },200);
+}
+
+/* ===== Objetivo y fichas ===== */
+function nuevoObjetivo(){
+ const l=st.l;st.enObj=0;
+ if(l.modo==='grupo'){
+  const otros=l.grupos.filter(g=>g!==st.obj);st.obj=azar(otros);
+  const G=GRUPOS[st.obj];
+  pintaConsigna(`<small>${l.pide}</small><b>${G.t}</b>`,G.c);
+ }else{
+  const sec=ciclo();
+  let cand=st.banco.filter(p=>!st.usados.has(p.f)&&(!st.obj||p.d!==st.obj.d));
+  if(!cand.length){st.usados.clear();cand=st.banco.filter(p=>!st.obj||p.d!==st.obj.d)}
+  const propios=cand.filter(p=>p.s===sec);
+  st.obj=propios.length&&Math.random()<.45?azar(propios):azar(cand);st.usados.add(st.obj.f);
+  pintaConsigna(`<small>Factor de riesgo · come el daño que causa</small><b>${st.obj.f}</b>`,'#b8321a');
+ }
+ ponFichas();
+}
+function pintaConsigna(html,col){const c=$('#co');c.innerHTML=html;c.style.background=col;c.classList.remove('nueva');void c.offsetWidth;c.classList.add('nueva')}
+function ponFichas(){
+ const l=st.l,sec=ciclo();let fichas;
+ if(l.modo==='grupo'){
+  let buenas=st.banco.filter(x=>x.g===st.obj&&!st.usados.has(x.t));
+  if(!buenas.length){st.banco.filter(x=>x.g===st.obj).forEach(x=>st.usados.delete(x.t));buenas=st.banco.filter(x=>x.g===st.obj)}
+  const propias=buenas.filter(x=>x.s===sec);
+  const ok=propias.length&&Math.random()<.4?azar(propias):azar(buenas);
+  const malas=baraja(st.banco.filter(x=>x.g!==st.obj&&x.t!==ok.t)).slice(0,2);
+  fichas=[{...ok,ok:true},...malas.map(m=>({...m,ok:false}))];
+ }else{
+  const ds=new Set([st.obj.d]);
+  const malas=baraja(st.banco).filter(p=>{if(ds.has(p.d))return false;ds.add(p.d);return true}).slice(0,2);
+  fichas=[{t:st.obj.d,i:st.obj.i,ok:true,par:st.obj},...malas.map(m=>({t:m.d,i:m.i,ok:false,par:m}))];
+ }
+ st.fichas=[];
+ for(const f of baraja(fichas)){const p=hueco();if(p)st.fichas.push({...f,...p,nace:performance.now()})}
+}
+function hueco(){
+ const h=st.snake[0];
+ for(let n=0;n<400;n++){
+  const x=Math.floor(Math.random()*COLS),y=1+Math.floor(Math.random()*(st.rows-1));
+  if(st.snake.some(p=>p.x===x&&p.y===y))continue;
+  if(Math.abs(x-h.x)+Math.abs(y-h.y)<4)continue;
+  if(st.fichas.some(f=>Math.abs(f.x-x)<4&&Math.abs(f.y-y)<3))continue;
+  if(x===0||x===COLS-1||y===st.rows-1)if(n<200)continue;
+  return {x,y};
+ }
+ return null;
+}
+
+/* ===== Bucle ===== */
+function bucle(now){
+ if(st.empezado&&!st.pausa&&now-st.tPaso>=st.vel){st.tPaso=now;paso();}
+ dibuja(now);
+ if(!st.fin)st.raf=requestAnimationFrame(bucle);
+}
+function paso(){
+ if(st.cola.length)st.dir=st.cola.shift();
+ const h=st.snake[0],n={x:h.x+st.dir.x,y:h.y+st.dir.y};
+ st.prev=st.snake.map(p=>({...p}));
+ const cuerpo=st.crece>0?st.snake:st.snake.slice(0,-1);
+ if(n.x<0||n.y<0||n.x>=COLS||n.y>=st.rows||cuerpo.some(p=>p.x===n.x&&p.y===n.y))return choque();
+ st.snake.unshift(n);
+ if(st.crece>0)st.crece--;else st.snake.pop();
+ const k=st.fichas.findIndex(f=>f.x===n.x&&f.y===n.y);
+ if(k>=0)come(st.fichas[k]);
+}
+function come(f){
+ const l=st.l;
+ st.fichas=[];
+ if(f.ok){
+  st.aciertos++;st.racha++;
+  const g=Math.round(100*(1+Math.min(st.racha-1,4)*.25));
+  st.pts+=g;flotaEn(f,'+'+g,'#7dffb5');chispas(f,'#7dffb5');ñam(st.racha);
+  st.crece+=1;st.vel=Math.max(l.vel[1],st.vel-7);
+  if(l.modo==='grupo')st.usados.add(f.t);
+  $('#me').style.width=Math.min(100,st.aciertos/META*100)+'%';
+  if(st.aciertos>=META)return termina();
+  if(++st.enObj>=l.cambio)nuevoObjetivo();else ponFichas();
+ }else{
+  st.racha=0;st.vidas--;
+  const r=Math.min(RESTA,st.pts);st.pts-=r;
+  flotaEn(f,r?'−'+r:'✗','#ff6b4a');chispas(f,'#ff6b4a');fallo();sacude();destello('#d33a1f');
+  st.fallos.push({f,obj:st.obj});
+  const quita=Math.min(2,st.snake.length-3);if(quita>0){st.snake.splice(-quita);st.prev.splice(-quita)}
+  if(st.vidas<=0)return termina();
+  ponFichas();
+ }
+ pintaMarcador();
+}
+function choque(){
+ st.racha=0;st.vidas--;fallo();sacude();destello('#d33a1f');
+ st.choques=(st.choques||0)+1;
+ pintaMarcador();
+ if(st.vidas<=0)return termina();
+ st.pausa=true;const tp=Date.now();
+ $('#velo').innerHTML='<div><b>¡Choque!</b>Pierdes una vida. Sigues en un momento…</div>';
+ st.tReanuda=setTimeout(()=>{
+  const c=Math.floor(st.rows/2),largo=Math.max(4,Math.min(st.snake.length,7));
+  st.snake=Array.from({length:largo},(_,i)=>({x:largo-i,y:c}));
+  st.prev=st.snake.map(p=>({...p}));st.dir={x:1,y:0};st.cola=[];
+  st.fichas=[];ponFichas();
+  $('#velo').innerHTML='';st.pausado=(st.pausado||0)+(Date.now()-tp);st.pausa=false;st.tPaso=performance.now();
+ },1100);
+}
+function pintaMarcador(){
+ const p=$('#pts');if(p)p.textContent=st.pts+' pts';
+ const v=$('#vi');if(v)v.textContent='♥'.repeat(Math.max(0,st.vidas))+'♡'.repeat(3-Math.max(0,st.vidas));
+}
+function sacude(){const c=$('#cv');if(!c)return;c.classList.remove('sacude');void c.offsetWidth;c.classList.add('sacude')}
+function destello(col){const d=document.createElement('div');d.className='destello';d.style.background=col;document.body.appendChild(d);setTimeout(()=>d.remove(),260)}
+function aPantalla(f){const r=$('#cv').getBoundingClientRect();return {x:r.left+(f.x+.5)*st.cel,y:r.top+(f.y+.5)*st.cel}}
+function flotaEn(f,txt,col){const p=aPantalla(f),d=document.createElement('div');d.className='puntos-flota';d.style.cssText=`left:${p.x}px;top:${p.y-20}px;color:${col};font-size:26px;z-index:9`;d.textContent=txt;document.body.appendChild(d);setTimeout(()=>d.remove(),900)}
+function chispas(f,col){st.chispas=(st.chispas||[]).concat(Array.from({length:14},()=>({x:(f.x+.5)*st.cel,y:(f.y+.5)*st.cel,vx:(Math.random()-.5)*6,vy:(Math.random()-.5)*6,v:1,col})))}
+
+/* ===== Dibujo ===== */
+function colorCuerpo(i,n){const t=n>1?i/(n-1):0;const a=[252,209,0],b=[47,180,110];return `rgb(${a.map((v,k)=>Math.round(v+(b[k]-v)*t)).join(',')})`}
+function ojos(c,p,d,r){
+ const px=-d.y,py=d.x;
+ [[1],[-1]].forEach(([s])=>{const ex=p.x+d.x*r*.35+px*r*.42*s,ey=p.y+d.y*r*.35+py*r*.42*s;
+  c.fillStyle='#fff';c.beginPath();c.arc(ex,ey,r*.28,0,7);c.fill();c.fillStyle='#10241c';c.beginPath();c.arc(ex+d.x*r*.1,ey+d.y*r*.1,r*.14,0,7);c.fill()});
+}
+function etiqueta(c,txt,cx,cy,arriba){
+ const s=st.cel,fs=Math.max(10,Math.round(s*.36)),maxW=s*4.2;
+ c.font=`700 ${fs}px "Helvetica Neue",Arial,sans-serif`;
+ const pal=txt.split(' '),lin=[];let a='';
+ for(const w of pal){const p=a?a+' '+w:w;if(c.measureText(p).width>maxW&&a){lin.push(a);a=w}else a=p}lin.push(a);
+ const w=Math.max(...lin.map(x=>c.measureText(x).width))+10,h=lin.length*(fs+2)+6;
+ let x=Math.max(2,Math.min(st.W-w-2,cx-w/2)),y=arriba?cy-s*.62-h:cy+s*.62;
+ if(y<2)y=cy+s*.62;if(y+h>st.H-2)y=cy-s*.62-h;
+ c.fillStyle='rgba(3,16,12,.82)';c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=1;
+ c.beginPath();c.roundRect?c.roundRect(x,y,w,h,7):c.rect(x,y,w,h);c.fill();c.stroke();
+ c.fillStyle='#fff';c.textAlign='center';c.textBaseline='top';
+ lin.forEach((t,i)=>c.fillText(t,x+w/2,y+4+i*(fs+2)));
+}
+function dibuja(now){
+ const c=st.ctx,s=st.cel;if(!c)return;
+ c.clearRect(0,0,st.W,st.H);
+ c.fillStyle='#0b231b';c.fillRect(0,0,st.W,st.H);
+ for(let y=0;y<st.rows;y++)for(let x=0;x<COLS;x++)if((x+y)%2){c.fillStyle='rgba(255,255,255,.025)';c.fillRect(x*s,y*s,s,s)}
+ // fichas
+ st.fichas.forEach(f=>{
+  const cx=(f.x+.5)*s,cy=(f.y+.5)*s,k=Math.min(1,(now-f.nace)/250),pul=1+Math.sin(now/260+f.x)*.05;
+  c.save();c.translate(cx,cy);c.scale(k*pul,k*pul);
+  c.fillStyle='rgba(255,255,255,.95)';c.shadowColor='rgba(252,209,0,.55)';c.shadowBlur=12;
+  c.beginPath();c.arc(0,0,s*.47,0,7);c.fill();c.shadowBlur=0;
+  c.font=`${Math.round(s*.6)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(f.i,0,s*.04);
+  c.restore();
+ });
+ // serpiente (posiciones suavizadas entre paso y paso)
+ const fr=st.pausa||!st.empezado?1:Math.min(1,(now-st.tPaso)/st.vel);
+ const pos=st.snake.map((p,i)=>{const o=st.prev[i]||p;return {x:(o.x+(p.x-o.x)*fr+.5)*s,y:(o.y+(p.y-o.y)*fr+.5)*s}});
+ const n=pos.length;
+ for(let i=n-1;i>=0;i--){
+  const p=pos[i],r=i?s*.4*(1-i/n*.3):s*.48;
+  if(i<n-1){const q=pos[i+1];c.fillStyle=colorCuerpo(i,n);c.beginPath();c.arc((p.x+q.x)/2,(p.y+q.y)/2,r*.95,0,7);c.fill()}
+  c.fillStyle=colorCuerpo(i,n);c.beginPath();c.arc(p.x,p.y,r,0,7);c.fill();
+  if(i%2===0&&i){c.fillStyle='rgba(0,0,0,.12)';c.beginPath();c.arc(p.x,p.y,r*.45,0,7);c.fill()}
+ }
+ if(n){ojos(c,pos[0],st.dir,s*.48);}
+ // etiquetas encima de todo
+ st.fichas.forEach(f=>{if(now-f.nace>120)etiqueta(c,f.t,(f.x+.5)*s,(f.y+.5)*s,f.y>1)});
+ // chispas
+ if(st.chispas&&st.chispas.length){st.chispas.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.v-=.035;c.globalAlpha=Math.max(0,p.v);c.fillStyle=p.col;c.beginPath();c.arc(p.x,p.y,3,0,7);c.fill()});c.globalAlpha=1;st.chispas=st.chispas.filter(p=>p.v>0)}
+}
+
+/* ===== Final de cada nivel y partida oficial ===== */
+function termina(){
+ if(st.fin)return;st.fin=true;st.pausa=true;
+ clearInterval(st.reloj);clearTimeout(st.tReanuda);document.onkeydown=null;
+ const meta=st.aciertos>=META;
+ if(meta){const b=st.t*5;st.pts+=b;st.bonus=b}
+ st.est=meta&&st.vidas>=2?3:st.aciertos>=8?2:st.aciertos>=4?1:0;
+ st.resumen=`${st.aciertos} de ${META} fichas buenas${st.vidas<=0?' · sin vidas':st.t<=0&&!meta?' · se acabó el tiempo':''}`;
+ if(meta)fanfarria();
+ setTimeout(final,meta?700:900);
+}
+function repaso(){
+ const vistos=new Set(),out=[];
+ for(const {f,obj} of st.fallos){
+  if(vistos.has(f.t))continue;vistos.add(f.t);
+  if(st.l.modo==='grupo'){const G=GRUPOS[f.g];out.push({b:`«${f.t}» → ${G.t}`,e:`${f.nota?f.nota+" ":""}${G.e} Te pedían: ${GRUPOS[obj].t}.`})}
+  else{const o=out.find(x=>x.f===obj.f),txt=`«${f.t}» suele venir de «${f.par.f}».`;
+   if(o)o.e+=' '+txt;else out.push({f:obj.f,b:`${obj.f} → ${obj.d}`,e:`No era: ${txt}`})}
+ }
+ return out;
+}
+function final(){
+ cancelAnimationFrame(st.raf||0);
+ const l=st.l,est=st.est;
+ const antes=rec(l.n);guarda(l.n,st.pts);
+ const rep=repaso();
+ if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
+ app.innerHTML=`<div class="final">
+  <div class="marca">Nivel ${l.n} · ${l.titulo}</div>
+  <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
+  <div class="gran">${st.pts}</div><div>puntos · ${st.resumen}${st.bonus?` · +${st.bonus} por el tiempo que te sobró`:''}</div>
+  <p style="color:var(--gris);font-size:14px;margin:8px 0 0">3 estrellas: las ${META} fichas sin perder más de una vida · 2: al menos 8 · 1: al menos 4</p>
+  ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
+  ${rep.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa</h2>${rep.map(s=>`<div class="fallo"><div><b>${s.b}</b><small>${s.e}</small></div></div>`).join('')}</div>`:''}
+  ${st.oficial?bloqueOficial(est):''}
+  <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${l.n<ULT?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
+ </div>`;
+ window.scrollTo(0,0);
+ if(st.oficial)return finOficial();
+ $('#otra').onclick=()=>empieza(l.n);
+ $('#menu').onclick=portada;
+ if($('#sigui'))$('#sigui').onclick=()=>empieza(l.n+1);
+}
+function bloqueOficial(est){
+ const o=st.oficial;o.est[st.l.n-1]=est;o.pts+=st.pts;
+ if(st.l.n<ULT)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
+ const m=Math.min(...o.est);
+ return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de factores de riesgo y daños (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+}
+function finOficial(){
+ const o=st.oficial;
+ if(st.l.n<ULT){$('#ofsig').onclick=()=>empieza(st.l.n+1,o);return}
+ $('#ofmenu').onclick=portada;
+ const m=Math.min(...o.est);
+ const antes=+ls.get(PREF+'_mejor',0), mejor=Math.max(antes,o.pts);ls.set(PREF+'_mejor',mejor);
+ if(!antes)ls.set(PREF+'_primer_envio',Date.now());
+ puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
+ envia({codigo:o.codigo,intento:o.intento,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
+  $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'No se ha podido enviar. Haz una captura de esta pantalla y enséñasela a tu profesor.';
+ });
+}
+window.addEventListener('resize',()=>{if(st.ctx&&!st.fin&&$('#cv'))medir(true)});
+portada();
+</script>
+</body>
+</html>
