@@ -100,6 +100,26 @@ const SEN=RAW.map((r,i)=>({id:i,cod:r[0],tipo:r[1],sig:r[2],exp:r[3],svg:r[4]}))
 const MUESTRA={prohibicion:'P002',advertencia:'W012',obligacion:'M014',salvamento:'E003',incendios:'F001'};
 const SIT={"comun": [["El pasillo hacia la salida gira a la derecha: ¿qué señal pones en la esquina?", "E002", []], ["Tras evacuar, todo el personal debe reunirse en el patio para hacer el recuento.", "E007", []], ["Quieres indicar dónde está el desfibrilador del centro.", "E010", ["E009", "E003"]], ["Quieres indicar dónde está el botiquín.", "E003", ["E009", "E010"]], ["En caso de incendio, nadie debe bajar en el ascensor.", "P020", []], ["Marcas el lugar exacto donde cuelga el extintor.", "F001", ["F004"]], ["Señalas el botón que hay que pulsar para dar la alarma de incendio.", "F005", ["F006"]], ["El suelo del pasillo acaba de fregarse.", "W011", ["W007", "W001"]], ["Hay un hueco sin barandilla que da a la planta de abajo.", "W008", ["W001", "M018"]], ["El agua del grifo del almacén no se puede beber.", "P005", []]], "sector": {"HIG": [["Avisas del peligro en la sala donde se hacen las radiografías dentales.", "W003", ["W001"]], ["Contenedor de residuos con material manchado de sangre.", "W009", ["W001", "W016"]], ["Al limpiar el instrumental puede salpicar: obligas a usar gafas.", "M004", ["M013"]], ["En el gabinete es obligatorio llevar mascarilla.", "M016", ["M017"]], ["Recuerdas que hay que lavarse las manos antes de atender al siguiente paciente.", "M011", ["M009"]], ["El autoclave quema al sacar el material recién esterilizado.", "W017", ["W001"]], ["Indicas el equipo para lavarse los ojos tras una salpicadura de desinfectante.", "E011", ["E012", "E003"]], ["Armario con desinfectantes que dañan la piel.", "W023", ["W016", "W021", "W001"]], ["Avisas del peligro para los ojos del láser dental.", "W004", ["W001", "M004"]], ["En la sala de esterilización no se puede comer ni beber.", "P022", []]], "ITE": [["Puerta del cuarto con el cuadro eléctrico del edificio.", "W012", ["W001"]], ["En la caseta de la antena hay un equipo con partes peligrosas que no se debe tocar.", "P010", ["W012"]], ["Vas a instalar la antena en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008"]], ["Zona bajo la grúa que sube las antenas a la azotea.", "W015", ["W001", "M014"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En la obra es obligatorio llevar casco.", "M014", []], ["Vas a taladrar paredes de ladrillo: obligas a proteger los ojos.", "M004", ["M013"]], ["Junto al cuadro eléctrico: si hay fuego, el agua es peligrosa.", "P011", []], ["Trabajas en una arqueta junto al tráfico: obligas a llevar...", "M015", []], ["Al descargar bobinas de cable, obligas a proteger los pies.", "M008", []]], "STI": [["Puerta del cuarto con el cuadro eléctrico del CPD.", "W012", ["W001"]], ["Un equipo del CPD tiene partes peligrosas que nadie debe tocar.", "P010", ["W012"]], ["Sala del SAI, llena de baterías.", "W026", ["W012", "W001"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En el CPD: si hay fuego en los equipos, el agua es peligrosa.", "P011", []], ["Vas a instalar un radioenlace en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008"]], ["En el falso suelo del CPD hay placas levantadas y cables.", "W007", ["W001", "W008"]], ["Vas a taladrar el techo para pasar canaletas: obligas a proteger los ojos.", "M004", ["M013"]], ["Al descargar los armarios rack, obligas a proteger los pies.", "M008", []], ["En el almacén circulan carretillas elevadoras.", "W014", ["W001"]]], "IFC": [["Puerta de la cámara frigorífica a −20 °C.", "W010", ["W001"]], ["Almacén con botellas de gas refrigerante inflamable.", "W021", ["P003", "P002", "W001"]], ["Vas a trabajar en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008"]], ["Sala de compresores muy ruidosa: obligas a proteger el oído.", "M003", []], ["Al soldar tuberías con soplete, obligas a protegerte toda la cara.", "M013", ["M004"]], ["Junto al depósito de amoniaco de la instalación.", "W016", ["W023", "W001"]], ["Al cargar refrigerante puedes quemarte las manos por el frío: obligas a usar...", "M009", ["M010"]], ["Tuberías de descarga del compresor muy calientes.", "W017", ["W001"]], ["Cuadro eléctrico de la enfriadora.", "W012", ["W001"]], ["En la sala de máquinas con refrigerante inflamable no se puede encender fuego.", "P003", ["P002", "W021"]]]}};
 const RESTA=50, TRAMPAS=3;
+/* ranking en directo: tabla pública SOLO con grupo y puntos (sin códigos ni nombres) */
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const PODIO=['1','0,75','0,50'];
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
+async function puesto(codigo,pts,nuevo){
+ try{
+  const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>r.text());
+  const g=grupoDe(codigo);
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g).map(f=>+f[1]||0);
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  return {pos,total};
+ }catch(e){return null}
+}
+/* la tabla publicada tarda unos minutos: hasta 10 min después del primer envío, el móvil se cuenta a sí mismo */
+const recien=()=>Date.now()-(+ls.get('senales_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar el ranking. Inténtalo más tarde desde el menú.';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Ranking provisional: se actualiza cada pocos minutos.</small>`;
+}
 /* señal trampa: mismo dibujo y forma, color cambiado (no existe en el RD 485/1997) */
 const GIRO={prohibicion:120,obligacion:150,advertencia:180,salvamento:100,incendios:210};
 const ciclo=()=>{const m=/^[12]([A-Z]{2,5})-/.exec(ls.get('ipe_codigo',''));return m?m[1]:''};
@@ -150,12 +170,14 @@ function portada(){
    <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo',ls.get('senales_codigo',''))}">
    <button class="btn p" id="ofi" ${usados()>=INTENTOS?'disabled':''}>${usados()>=INTENTOS?'Ya has usado tus 3 intentos':'Partida oficial · intento '+(usados()+1)+' de '+INTENTOS}</button>
-   <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento.</small>
+   <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
+  ${+ls.get('senales_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · RD 485/1997 y UNE-EN ISO 7010 · Pictogramas: Wikimedia Commons (dominio público)</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
+ if(+ls.get('senales_mejor',0))puesto(ls.get('ipe_codigo',''),+ls.get('senales_mejor',0),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,+ls.get('senales_mejor',0))});
  $('#ofi').onclick=()=>{
   const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
   if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
@@ -253,13 +275,16 @@ function bloqueOficial(est){
  const o=st.oficial; o.est[st.l.n-1]=est; o.pts+=st.pts;
  if(st.l.n<3)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
  const m=Math.min(...o.est);
- return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de señalización (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+ return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de señalización (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
 }
 function finOficial(){
  const o=st.oficial;
  if(st.l.n<3){$('#ofsig').onclick=()=>empieza(st.l.n+1,o);return}
  $('#ofmenu').onclick=portada;
  const m=Math.min(...o.est);
+ const antes=+ls.get('senales_mejor',0), mejor=Math.max(antes,o.pts); ls.set('senales_mejor',mejor);
+ if(!antes)ls.set('senales_primer_envio',Date.now());
+ puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
  envia({codigo:o.codigo,intento:o.intento,n1:o.est[0],n2:o.est[1],n3:o.est[2],puntos:o.pts,extra:extraDe(m)}).then(ok=>{
   $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'No se ha podido enviar. Haz una captura de esta pantalla y enséñasela a tu profesor.';
  });
