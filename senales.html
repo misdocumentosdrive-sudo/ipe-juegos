@@ -108,7 +108,7 @@ async function puesto(codigo,pts,nuevo){
  try{
   const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>r.text());
   const g=grupoDe(codigo);
-  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g).map(f=>+f[1]||0);
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(!f[2]||f[2].trim()===JUEGO)).map(f=>+f[1]||0);
   const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
   return {pos,total};
  }catch(e){return null}
