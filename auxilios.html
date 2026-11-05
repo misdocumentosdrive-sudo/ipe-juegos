@@ -235,6 +235,12 @@ let st={};
 let actx=null;
 function clic(f=1100){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.07);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+.08)}catch(e){}}
 
+/* sonido de fallo: dos tonos graves que bajan (José, 5-11-2026: «cuando falla, un sonido además de moverse la pantalla») */
+function zumbido(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const t0=actx.currentTime;
+ [[220,0],[160,.13]].forEach(([f,d])=>{const o=actx.createOscillator(),g=actx.createGain();o.type='square';o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.16,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.16);
+  o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.18)})}catch(e){}}
+function fallo(){zumbido();vibra(150)}
 function envia(d){
  const f=new URLSearchParams();
  f.append(FORM.campo,`${JUEGO} | ${d.codigo} | intento ${d.intento} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')} | ${d.puntos} pts | +${d.extra}`);
@@ -333,7 +339,7 @@ function pregunta(){
   }else{
    st.racha=0;st.vidas--;st.fallos.push(s);
    const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');
-   $('#tj').classList.add('sacude');
+   $('#tj').classList.add('sacude');fallo();
    ex.className='explica mal';ex.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}</b>Lo correcto: «${s.ok}». ${s.e}`;
   }
   const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);
@@ -471,7 +477,7 @@ function pls(){
   if(!c)return;
   const paso=PLS_PASOS[st.paso];
   if(c.dataset.id!==paso.id){   // parte equivocada o fuera de orden
-   st.errores++;vibra(120);$('#esc').classList.add('sacude');setTimeout(()=>$('#esc')&&$('#esc').classList.remove('sacude'),400);
+   st.errores++;fallo();$('#esc').classList.add('sacude');setTimeout(()=>$('#esc')&&$('#esc').classList.remove('sacude'),400);
    $('#msg').textContent='Ese no es el paso que toca. Piensa en el orden: brazo cercano, mano lejana, pierna lejana, girar y cabeza.';
    return;
   }
@@ -495,7 +501,7 @@ function pls(){
    $('#ayuda').textContent=st.paso<5?'Paso '+(st.paso+1)+' de 5: ¿qué mueves ahora?':'¡Posición lateral de seguridad conseguida!';
    if(st.paso>=5){clearInterval(st.reloj);asas.innerHTML='';return setTimeout(()=>acabaPls(true,t0),1800)}
   }else{
-   st.errores++;$('#msg').textContent='Casi: llévalo hasta el círculo verde.';
+   st.errores++;fallo();$('#msg').textContent='Casi: llévalo hasta el círculo verde.';
   }
   asasDe();
  };
@@ -551,8 +557,8 @@ const crono=()=>st.t0?(Date.now()-st.t0)/1000:0;
 function tic(){
  if(!$('#cr'))return;
  const s=Math.floor(crono());$('#cr').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
- if(st.compa&&!st.relevo&&s>=140&&!st.agotado){st.agotado=true;st.errores++;aviso('Llevas más de 2 minutos: te estás agotando y las compresiones pierden profundidad. ¡Pide el relevo!');$('#rel').classList.add('alarma')}
- if(st.fase==='dea3'&&Date.now()-st.deaT>4000){st.errores++;st.fase='dea4';aviso('El DEA no puede analizar si alguien toca a la persona. ¡Que nadie la toque!');pasoDea()}
+ if(st.compa&&!st.relevo&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();aviso('Llevas más de 2 minutos: te estás agotando y las compresiones pierden profundidad. ¡Pide el relevo!');$('#rel').classList.add('alarma')}
+ if(st.fase==='dea3'&&Date.now()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';aviso('El DEA no puede analizar si alguien toca a la persona. ¡Que nadie la toque!');pasoDea()}
 }
 function aviso(t){const m=$('#msg');if(m)m.innerHTML=t}
 function pintaPts(){const p=$('#pts');if(p)p.textContent=Math.max(0,puntosRcp())+' pts'}
@@ -569,15 +575,15 @@ function toque(p){
    aviso('¡Bien! Talón de la mano en el centro del pecho y la otra encima, brazos rectos. <b>Comprime: 30 veces, a 100-120 por minuto.</b>');
    metronomo(true);
   }else{
-   st.sitioOk=false;st.errores++;vibra(150);marca(p,'#ff6b4a');
+   st.sitioOk=false;st.errores++;fallo();marca(p,'#ff6b4a');
    aviso('Ahí no. Las manos van en el <b>centro del pecho</b>: ni sobre el corazón, ni en el estómago, ni junto al cuello.');
   }
   return pintaPts();
  }
  if(st.fase==='dea2')return poneParche(p);
  if(st.fase!=='comp')return;
- if(dist(p,SITIO)>60){st.errores++;marca(p,'#ff6b4a');aviso('¡Las manos en el centro del pecho!');return pintaPts()}
- if(st.cuenta>=30){st.errores++;vibra(150);aviso('Ya van 30: ahora, <b>2 ventilaciones</b>.');return pintaPts()}
+ if(dist(p,SITIO)>60){st.errores++;fallo();marca(p,'#ff6b4a');aviso('¡Las manos en el centro del pecho!');return pintaPts()}
+ if(st.cuenta>=30){st.errores++;fallo();aviso('Ya van 30: ahora, <b>2 ventilaciones</b>.');return pintaPts()}
  const ahora=Date.now();if(!st.t0)st.t0=ahora;
  st.cuenta++;st.ecg.push(ahora);vibra(25);marca(p,'#7dffb5');
  const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.7)'},{transform:'scale(1)'}],{duration:200});const fg=$('#fig');if(fg)fg.animate([{transform:'scale(1)'},{transform:'scale(.985)'},{transform:'scale(1)'}],{duration:200});const co=$('#cor');if(co){co.classList.remove('latido');void co.offsetWidth;co.classList.add('latido')}
@@ -603,7 +609,7 @@ function metronomo(on){
 }
 function ventilar(){
  if(st.fase!=='comp')return;
- if(st.cuenta<30){st.errores++;aviso('Aún no llevas 30 compresiones.');return pintaPts()}
+ if(st.cuenta<30){st.errores++;fallo();aviso('Aún no llevas 30 compresiones.');return pintaPts()}
  st.fase='vent';$('#vent').disabled=true;$('#vent').classList.remove('alarma');
  aviso('Abre la vía aérea (frente atrás y mentón arriba) y da 2 ventilaciones de 1 segundo cada una…');
  setTimeout(()=>{
@@ -618,7 +624,7 @@ function ventilar(){
 }
 function relevar(){
  if(!st.compa||st.relevo)return;
- if(crono()<110){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');vibra(150);return pintaPts()}
+ if(crono()<110){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
  st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
  st.fase='dea0';clearInterval(st.metro);
  combo('🔄 ¡Relevo!');
@@ -631,7 +637,7 @@ function opcionesDea(txt,ops,ok,sig){
  const orden=baraja(ops.map((o,k)=>k));      // la correcta no sale siempre en el mismo sitio
  $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${txt}</p>${orden.map(k=>`<button class="op" data-k="${k}">${ops[k]}</button>`).join('')}</div>`;
  $('#bot').querySelectorAll('.op').forEach(b=>b.onclick=()=>{
-  if(+b.dataset.k===ok){st.deaPaso++;clic(880);sig()}else{st.errores++;vibra(150);b.classList.add('mal');b.disabled=true;pintaPts()}
+  if(+b.dataset.k===ok){st.deaPaso++;clic(880);sig()}else{st.errores++;fallo();b.classList.add('mal');b.disabled=true;pintaPts()}
  });
 }
 function pasoDea(){
@@ -648,7 +654,7 @@ function pasoDea(){
 }
 function poneParche(p){
  const k=PARCHES.findIndex(q=>dist(p,q)<30&&!q.puesto);
- if(k<0){st.errores++;marca(p,'#ff6b4a');vibra(150);aviso('Ahí no va el parche: uno bajo la clavícula derecha y otro en el costado izquierdo, bajo la axila.');return pintaPts()}
+ if(k<0){st.errores++;marca(p,'#ff6b4a');fallo();aviso('Ahí no va el parche: uno bajo la clavícula derecha y otro en el costado izquierdo, bajo la axila.');return pintaPts()}
  PARCHES[k].puesto=true;st.parches++;clic(880);
  $('#marcas').innerHTML+=`<rect x="${PARCHES[k].x-16}" y="${PARCHES[k].y-12}" width="32" height="24" rx="5" fill="#fff" stroke="#2fd47a" stroke-width="3"/>`;
  if(st.parches===2){
