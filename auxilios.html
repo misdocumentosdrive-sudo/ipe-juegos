@@ -431,15 +431,17 @@ const manosSocorrista=`<g id="manos" style="transform-origin:150px 152px;transfo
 </g>`;
 /* Ilustraciones de plastilina (José, 5-11-2026): aux1 boca arriba … aux5 PLS. Coordenadas en el viewBox 300 x 402 */
 const IMG=n=>`aux${n}.jpg`, ALTO=402;
-const imgPaso=p=>p>=4?5:p+1;
-function escena(n){return `<g id="fig" clip-path="url(#marco)" style="transform-origin:150px 152px;transform-box:view-box"><image id="im0" href="${IMG(n)}" x="0" y="0" width="300" height="${ALTO}"/><image id="im1" x="0" y="0" width="300" height="${ALTO}" opacity="0"/><rect width="300" height="${ALTO}" fill="url(#vin)" pointer-events="none"/></g>`}
+const imgPaso=p=>p+1;      // aux1 … aux6, una por paso (aux5: de lado con la cabeza sin inclinar; aux6: inclinada)
+function escena(n){return `<g id="fig" clip-path="url(#marco)" style="transform-origin:150px 152px;transform-box:view-box"><image id="im0" href="${IMG(n)}" x="0" y="0" width="300" height="${ALTO}"/><image id="im1" x="0" y="0" width="300" height="${ALTO}" style="opacity:0"/><rect width="300" height="${ALTO}" fill="url(#vin)" pointer-events="none"/></g>`}
 function cambiaImg(n){
+ // fundido de la postura anterior a la nueva; el cambio queda hecho aunque la animación no termine (pestaña en segundo plano)
  const a=$('#im0'),b=$('#im1');if(!a)return;
- b.setAttribute('href',IMG(n));
- const an=b.animate([{opacity:0},{opacity:1}],{duration:650,easing:'ease-out',fill:'forwards'});
- an.onfinish=()=>{a.setAttribute('href',IMG(n));an.cancel()};
+ clearTimeout(st.fundido);
+ b.setAttribute('href',IMG(n));b.style.transition='none';b.style.opacity=0;void b.getBoundingClientRect();
+ b.style.transition='opacity .65s ease-out';b.style.opacity=1;
+ st.fundido=setTimeout(()=>{a.setAttribute('href',IMG(n));b.style.transition='none';b.style.opacity=0},700);
 }
-[1,2,3,4,5].forEach(n=>{const i=new Image();i.src=IMG(n)});
+[1,2,3,4,5,6].forEach(n=>{const i=new Image();i.src=IMG(n)});
 function svgPunto(svg,ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 
@@ -449,7 +451,7 @@ const PLS_PASOS=[
  {id:'mano_lejos',txt:'El brazo más lejano, cruzado sobre el pecho: el dorso de su mano contra su mejilla más cercana a ti.',de:{x:98,y:225},a:{x:161,y:92}},
  {id:'rodilla',txt:'Dobla la pierna más lejana: la rodilla hacia arriba y el pie apoyado en el suelo.',de:{x:121,y:357},a:{x:128,y:319}},
  {id:'rodilla2',txt:'Tira de esa rodilla hacia ti para girarla de lado, sin soltar la mano de la mejilla.',de:{x:120,y:268},a:{x:192,y:259}},
- {id:'cabeza',txt:'Inclina la cabeza hacia atrás para que la vía aérea quede abierta. Y vigila que siga respirando.',de:{x:176,y:92},a:{x:205,y:62}}
+ {id:'cabeza',txt:'Inclina la cabeza hacia atrás para que la vía aérea quede abierta. Y vigila que siga respirando.',de:{x:176,y:96},a:{x:205,y:62}}
 ];
 function pls(){
  const t0=Date.now();
@@ -463,7 +465,7 @@ function pls(){
  const svg=$('#svg'), asas=$('#asas'), meta=$('#meta');
  const asasDe=()=>{   // las cuatro «agarraderas» posibles: todas visibles, para que haya que saber el orden
   const p=st.paso;
-  const lista=p>=5?[]:p>=4?[{id:'cabeza',x:176,y:92}]:[
+  const lista=p>=5?[]:p>=4?[{id:'cabeza',x:176,y:96}]:[
    {id:'mano_cerca',x:p>=1?241:203,y:p>=1?58:228},{id:'mano_lejos',x:p>=2?161:98,y:p>=2?92:225},
    p>=3?{id:'rodilla2',x:120,y:268}:{id:'rodilla',x:121,y:357}];
   asas.innerHTML=lista.map(a=>`<circle class="asa" data-id="${a.id}" cx="${a.x}" cy="${a.y}" r="17" fill="rgba(252,209,0,.28)" stroke="#fcd100" stroke-width="3" stroke-dasharray="5 4"/>`).join('');
