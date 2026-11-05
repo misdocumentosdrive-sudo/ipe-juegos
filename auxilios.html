@@ -252,6 +252,11 @@ function zumbido(){try{actx=actx||new (window.AudioContext||window.webkitAudioCo
   g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.16,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.16);
   o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.18)})}catch(e){}}
 function fallo(){zumbido();vibra(150)}
+/* sonido de acierto: dos tonos que suben (José, 5-11-2026: el relevo bien hecho también suena) */
+function acierto(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const t0=actx.currentTime;
+ [[660,0],[990,.12]].forEach(([f,d])=>{const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.25,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.22);
+  o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.24)})}catch(e){}vibra([40,40,40])}
 /* voz del DEA (José, 5-11-2026): la del propio móvil, en español; si no hay voz, no pasa nada */
 function habla(txt){try{const s=window.speechSynthesis;if(!s)return;s.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=.95;
  const v=s.getVoices().find(x=>/^es(-|_)ES/i.test(x.lang))||s.getVoices().find(x=>/^es/i.test(x.lang));if(v)u.voice=v;s.speak(u)}catch(e){}}
@@ -553,7 +558,7 @@ function pls(){
    if(st.paso>=5)$('#meta').innerHTML='<g filter="url(#brillo)"><path d="M196 72 q12 -6 20 3 M200 60 q16 -8 27 5" stroke="#7dffb5" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
    $('#msg').textContent='✔ '+paso.txt;$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
    $('#ayuda').textContent=st.paso<5?'Paso '+(st.paso+1)+' de 5: ¿qué mueves ahora?':'¡Posición lateral de seguridad conseguida!';
-   if(st.paso>=5){clearInterval(st.reloj);asas.innerHTML='';return setTimeout(()=>acabaPls(true,t0),1800)}
+   if(st.paso>=5){clearInterval(st.reloj);asas.innerHTML='';acierto();return setTimeout(()=>acabaPls(true,t0),1800)}
   }else{
    st.errores++;fallo();$('#msg').textContent='Casi: llévalo hasta el círculo verde.';
   }
@@ -683,7 +688,7 @@ function relevar(){
  if(crono()<118){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
  st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
  st.fase='dea0';clearInterval(st.metro);
- combo('🔄 ¡Relevo!');
+ combo('🔄 ¡Relevo!');if(st.relevo==='ok')acierto();
  aviso('Tu compañera sigue con las compresiones, sin parar. Acaba de llegar el <b>DEA</b>: te toca a ti.');
  st.compRitmo=setInterval(()=>{st.ecg.push(Date.now());const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.86)'},{transform:'scale(1)'}],{duration:200})},MET);
  setTimeout(()=>{st.fase='dea1';pasoDea()},1800);
@@ -707,7 +712,7 @@ function pasoDea(){
   habla('Descarga recomendada. Apártense del paciente. Pulse el botón de descarga.');
   return opcionesDea('«Descarga recomendada. Apártense del paciente».',['⚡ Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
  }
- if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{st.fase='fin';aviso('¡Muy bien! Seguís con la RCP y el DEA hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');setTimeout(acabaRcp,2200)});
+ if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{st.fase='fin';acierto();aviso('¡Muy bien! Seguís con la RCP y el DEA hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');setTimeout(acabaRcp,2200)});
 }
 function poneParche(p){
  const k=PARCHES.findIndex(q=>dist(p,q)<30&&!q.puesto);
