@@ -85,6 +85,17 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 #envio{margin-top:8px;font-weight:700;color:var(--verde)}
 
 /* ===== propio de «Cada minuto cuenta» ===== */
+.grafica{background:#fff;border-radius:16px;padding:10px 10px 6px;margin-top:14px;box-shadow:0 2px 10px rgba(0,66,48,.08)}
+.grafica h2{color:var(--verde);font-size:17px;margin:2px 4px 6px;text-align:left}
+.grafica svg{width:100%;display:block}
+.grafica .ley{margin:4px 4px 2px;font-size:12.5px;line-height:1.5;color:var(--gris);text-align:left}
+.grafica .ley span{font-weight:700;margin-right:6px;white-space:nowrap}
+.chips112{display:grid;gap:8px;margin-top:12px;width:100%}
+.chip112{border:2px dashed #b9cdc4;background:#f4f9f6;border-radius:12px;padding:10px 12px;text-align:left;font:600 14.5px/1.3 "Helvetica Neue",Arial;color:var(--texto);cursor:pointer}
+.chip112 small{display:block;font-weight:400;color:var(--gris);font-size:13px}
+.chip112.usada{opacity:.35;pointer-events:none}
+.llamada{width:100%;min-height:54px;margin-top:10px;border-radius:12px;background:#0f2f25;color:#dff3ea;padding:10px 12px;font-size:14px;line-height:1.45;text-align:left}
+.llamada b{color:#7dffb5}
 .icoesc{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:-4px auto 6px;box-shadow:0 6px 14px rgba(0,0,0,.18)}
 .heroe{position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;
  background:radial-gradient(circle at 85% 10%,rgba(255,89,0,.35),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
@@ -241,6 +252,9 @@ function zumbido(){try{actx=actx||new (window.AudioContext||window.webkitAudioCo
   g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.16,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.16);
   o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.18)})}catch(e){}}
 function fallo(){zumbido();vibra(150)}
+/* voz del DEA (José, 5-11-2026): la del propio móvil, en español; si no hay voz, no pasa nada */
+function habla(txt){try{const s=window.speechSynthesis;if(!s)return;s.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=.95;
+ const v=s.getVoices().find(x=>/^es(-|_)ES/i.test(x.lang))||s.getVoices().find(x=>/^es/i.test(x.lang));if(v)u.voice=v;s.speak(u)}catch(e){}}
 function envia(d){
  const f=new URLSearchParams();
  f.append(FORM.campo,`${JUEGO} | ${d.codigo} | intento ${d.intento} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')} | ${d.puntos} pts | +${d.extra}`);
@@ -301,6 +315,7 @@ function empieza(n,oficial){
   const banco=BANCOS[l.banco], sec=banco.filter(x=>x.s===ciclo()), com=baraja(banco.filter(x=>!x.s));
   const s3=baraja(sec).slice(0,3);
   st.lista=baraja(s3.concat(com.slice(0,l.preg-s3.length)));
+  if(l.banco==='pas'){st.lista.pop();st.lista.splice(1+Math.floor(Math.random()*(st.lista.length-1)),0,LLAMADA)}
   return pregunta();
  }
  if(l.modo==='pls')return pls();
@@ -312,6 +327,7 @@ function pregunta(){
  clearInterval(st.reloj);
  if(st.i>=st.lista.length||st.vidas<=0)return final();
  const s=st.lista[st.i];
+ if(s.tipo==='llamada')return llamada(s);
  const ops=baraja([s.ok,...s.no]);
  app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?'🔥 x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
@@ -347,6 +363,41 @@ function pregunta(){
   b.onclick=()=>{st.i++;pregunta()};
  };
  app.querySelectorAll('.op').forEach(b=>b.onclick=()=>responde(+b.dataset.k));
+}
+/* La llamada al 112 (José, 5-11-2026): se construye tocando las tarjetas en orden; una es trampa */
+const LLAMADA={tipo:'llamada',t:'Llamas al 112 con el altavoz puesto. Toca las tarjetas en el orden en que lo cuentas.',
+ ok:'Quién eres, dónde estás exactamente, qué ha pasado, cuántas personas heridas y cómo están',
+ e:'Avisar: quién eres, dónde estás exactamente, qué ha pasado, cuántas personas heridas hay y cómo están. Y no cuelgues hasta que te lo indiquen.',
+ orden:[['Quién eres','«Soy compañera de trabajo de la persona herida»'],['Dónde estás exactamente','«Calle Feria, 12, Sevilla; planta baja, al fondo del pasillo»'],
+  ['Qué ha pasado','«Un compañero se ha desplomado de repente»'],['Cuántas personas heridas','«Hay una persona herida»'],['Cómo están','«No responde y no respira con normalidad»']],
+ trampa:['Cuelgo ya','«Cuelgo para no ocupar la línea»']};
+function llamada(s){
+ const fichas=baraja(s.orden.map((x,k)=>({k,x})).concat([{k:-1,x:s.trampa}]));
+ let paso=0,hecho=false;
+ app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?'🔥 x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
+  <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div><div class="tiempo"><i id="t"></i></div>
+  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}"><div class="icoesc" style="background:${st.l.col}">📞</div>
+   <div class="preg">Llamada al 112</div><div class="escena">${s.t}</div>
+   <div class="llamada" id="ll"><small>Tu llamada:</small></div>
+   <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
+   <div class="explica" id="ex"></div><button class="sig" id="sig">Siguiente</button></div>`;
+ const T=(st.l.t+15)*1000,t0=Date.now(),barra=$('#t');
+ const acaba=ok=>{
+  if(hecho)return;hecho=true;clearInterval(st.reloj);app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
+  const ex=$('#ex'),seg=(Date.now()-t0)/1000;
+  if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.max(0,T/1000-seg)*6)*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}
+  else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();ex.className='explica mal';ex.innerHTML=`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así'}</b>${s.e}`}
+  const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);
+  b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';b.onclick=()=>{st.i++;pregunta()};
+ };
+ st.reloj=setInterval(()=>{const q=1-(Date.now()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)acaba(false)},50);
+ app.querySelectorAll('.chip112').forEach(b=>b.onclick=()=>{
+  const k=+b.dataset.k;
+  if(k!==paso)return acaba(false);
+  b.classList.add('usada');clic(880);paso++;
+  $('#ll').innerHTML+=`<div><b>${paso}.</b> ${s.orden[k][1]}</div>`;
+  if(paso===s.orden.length)acaba(true);
+ });
 }
 function flota(txt,col){const f=document.createElement('div');f.className='puntos-flota';f.style.color=col;f.textContent=txt;f.style.zIndex=9;document.body.appendChild(f);setTimeout(()=>f.remove(),900)}
 
@@ -442,6 +493,7 @@ function cambiaImg(n){
  st.fundido=setTimeout(()=>{a.setAttribute('href',IMG(n));b.style.transition='none';b.style.opacity=0},700);
 }
 [1,2,3,4,5,6].forEach(n=>{const i=new Image();i.src=IMG(n)});
+try{speechSynthesis.getVoices()}catch(e){}
 function svgPunto(svg,ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 
@@ -522,7 +574,7 @@ function acabaPls(completa,t0){
 const SITIO={x:150,y:152}, PARCHES=[{x:127,y:125},{x:184,y:161}];
 const MET=545;              // 110 por minuto
 function rcp(){
- Object.assign(st,{fase:'intro',cuenta:0,cicloN:1,t0:0,ultimo:0,inter:[],enRitmo:0,total:0,errores:0,compa:false,relevo:false,agotado:false,deaPaso:0,parches:0,sitioOk:true,combo:0,ecg:[]});
+ Object.assign(st,{serie:[],fase:'intro',cuenta:0,cicloN:1,t0:0,ultimo:0,inter:[],enRitmo:0,total:0,errores:0,compa:false,relevo:false,agotado:false,deaPaso:0,parches:0,sitioOk:true,combo:0,ecg:[]});
  app.innerHTML=`<div class="rcp" id="esc">
   <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">0:00</span><span class="pill" id="ci">Ciclo 1</span></div>
   <div class="monitor"><span class="et">ECG · RCP</span><span class="corazon" id="cor">❤️</span><svg class="ecg" id="ecg" viewBox="0 0 300 46" preserveAspectRatio="none"><polyline id="lin" fill="none" stroke="#7dffb5" stroke-width="2" points=""/></svg></div>
@@ -592,7 +644,7 @@ function toque(p){
  if(st.ultimo&&st.cuenta>1){
   const iv=ahora-st.ultimo;st.inter.push(iv);if(st.inter.length>3)st.inter.shift();
   const v=60000/(st.inter.reduce((a,b)=>a+b,0)/st.inter.length), inst=60000/iv;
-  st.total++;st.aguja(v);$('#bpm').innerHTML=Math.round(v)+'<small>por minuto</small>';
+  st.total++;st.aguja(v);(st.serie=st.serie||[]).push({r:inst,c:st.cicloN});$('#bpm').innerHTML=Math.round(v)+'<small>por minuto</small>';
   if(inst>=100&&inst<=120){st.enRitmo++;st.combo++;destello('#2fd47a');if(st.combo>=5)combo('¡Ritmo perfecto! x'+st.combo)}
   else{st.combo=0;destello(inst<100?'#ff9a3d':'#ff4a4a');aviso(inst<100?'¡Más rápido!':'¡Más despacio!')}
  }
@@ -644,13 +696,14 @@ function opcionesDea(txt,ops,ok,sig){
 }
 function pasoDea(){
  pintaPts();
- if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='dea2';st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». <b>Toca los dos sitios donde van.</b>');$('#bot').innerHTML='<div class="tarjeta-rcp" style="flex:1"><p>Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.</p></div>'});
+ if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='dea2';habla('Coloque los parches sobre el pecho desnudo del paciente.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». <b>Toca los dos sitios donde van.</b>');$('#bot').innerHTML='<div class="tarjeta-rcp" style="flex:1"><p>Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.</p></div>'});
  if(st.fase==='dea4'||st.fase==='dea3'){
   if(st.fase==='dea3')return;
  }
  if(st.fase==='dea4'){
   clearInterval(st.compRitmo);
-  return opcionesDea('«Descarga recomendada. Apártense del paciente».',['⚡ Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');vibra([60,40,60]);pasoDea()});
+  habla('Descarga recomendada. Apártense del paciente. Pulse el botón de descarga.');
+  return opcionesDea('«Descarga recomendada. Apártense del paciente».',['⚡ Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
  }
  if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{st.fase='fin';aviso('¡Muy bien! Seguís con la RCP y el DEA hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');setTimeout(acabaRcp,2200)});
 }
@@ -661,7 +714,7 @@ function poneParche(p){
  $('#marcas').innerHTML+=`<rect x="${PARCHES[k].x-16}" y="${PARCHES[k].y-12}" width="32" height="24" rx="5" fill="#fff" stroke="#2fd47a" stroke-width="3"/>`;
  if(st.parches===2){
   st.deaPaso++;st.fase='dea3';st.deaT=Date.now();
-  aviso('«Analizando el ritmo cardiaco»… Tu compañera sigue comprimiendo.');
+  aviso('«Analizando el ritmo cardiaco»… Tu compañera sigue comprimiendo.');habla('Analizando el ritmo cardiaco. No toque al paciente.');
   $('#bot').innerHTML='<button class="btn alarma" id="apart" style="flex:1">✋ ¡Que nadie la toque!</button>';
   $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';aviso('Bien: nadie la toca mientras el DEA analiza.');pasoDea()};
  }
@@ -673,8 +726,24 @@ function acabaRcp(){
  const r=st.total?st.enRitmo/st.total:0, e=st.errores;
  st.estrellas=r>=.7&&e<=1?3:r>=.5&&e<=3?2:r>=.3?1:0;
  st.pts=Math.max(0,puntosRcp());st.aciertos=st.enRitmo;st.lista={length:st.total};
+ st.grafica=graficaRitmo(st.serie);
  st.resumen=`Compresiones con buen ritmo (100-120 por minuto): <b>${Math.round(r*100)} %</b> (${st.enRitmo} de ${st.total}). Fallos: ${e}. Relevo: ${st.relevo==='ok'?'a tiempo':st.relevo==='tarde'?'tarde (más de 2 minutos)':'sin hacer'}.`;
  final();
+}
+
+/* gráfica de la RCP: el ritmo de cada compresión sobre la franja verde de 100-120 por minuto */
+function graficaRitmo(serie){
+ if(!serie||serie.length<3)return '';
+ const W=320,H=150,MIN=70,MAX=150,X0=26,y=v=>8+(MAX-Math.min(MAX,Math.max(MIN,v)))/(MAX-MIN)*(H-18),x=i=>X0+i*(W-X0-6)/Math.max(1,serie.length-1);
+ const col=v=>v>=100&&v<=120?'#1a8a4a':v<100?'#e07a1f':'#d33a1f';
+ let cortes='';for(let i=1;i<serie.length;i++)if(serie[i].c!==serie[i-1].c)cortes+=`<line x1="${(x(i)+x(i-1))/2}" y1="6" x2="${(x(i)+x(i-1))/2}" y2="${H-8}" stroke="#c9d6d0" stroke-dasharray="3 3"/>`;
+ const et=v=>`<text x="${X0-4}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="${v===100||v===120?'#1a8a4a':'#8a9a95'}" font-weight="${v===100||v===120?700:400}">${v}</text>`;
+ return `<div class="grafica"><h2 class="serif">Tu ritmo, compresión a compresión</h2><svg viewBox="0 0 ${W} ${H}">
+  <rect x="${X0}" y="${y(120)}" width="${W-X0-2}" height="${y(100)-y(120)}" fill="#dff3e7" rx="3"/>
+  ${[80,100,120,140].map(et).join('')}
+  ${cortes}<polyline fill="none" stroke="#9fb3ab" stroke-width="1.4" points="${serie.map((p,i)=>x(i)+','+y(p.r).toFixed(1)).join(' ')}"/>
+  ${serie.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.r).toFixed(1)}" r="2.6" fill="${col(p.r)}"/>`).join('')}</svg>
+  <p class="ley"><span style="color:#1a8a4a">● buen ritmo (100-120)</span> <span style="color:#e07a1f">● lento</span> <span style="color:#d33a1f">● rápido</span><br>Las líneas de puntos separan los ciclos de 30 compresiones.</p></div>`;
 }
 
 /* ===== Final de cada nivel y partida oficial ===== */
@@ -692,6 +761,7 @@ function final(){
   <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
   <div class="gran">${st.pts}</div><div>puntos · ${st.resumen}</div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
+  ${l.modo==='rcp'?(st.grafica||''):''}
   ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa</h2>${unicos.map(s=>`<div class="fallo"><div><b>${s.ok}</b><small>${s.e}</small></div></div>`).join('')}</div>`:''}
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${l.n<ULT?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
