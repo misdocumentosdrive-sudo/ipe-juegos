@@ -670,15 +670,17 @@ function ventilar(){
   if(st.fase!=='vent')return;
   st.cicloN++;st.cuenta=0;st.ultimo=0;st.inter=[];
   if(st.cicloN===2&&!st.compa){st.compa=true;$('#rel').disabled=false}
+  // salto de tiempo (José, 5-11-2026: «el RCP se me ha hecho eterno»): tras dos ciclos, el cronómetro salta a 1:40
+  if(st.cicloN===3&&!st.saltado){st.saltado=true;st.t0=Date.now()-100000;combo('⏩ +1 minuto')}
   $('#ci').textContent='Ciclo '+st.cicloN;$('#cuenta').innerHTML='0<small>/30</small>';
   st.fase='comp';
-  aviso(st.compa&&!st.relevo?'Tu compañera ya está aquí y el DEA viene de camino. Seguid: <b>relevaos cada 2 minutos</b>.':'Otra vez: 30 compresiones.');
+  aviso(st.cicloN===3&&!st.relevo?'⏩ Seguís comprimiendo… <b>han pasado casi 2 minutos</b>. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>':st.compa&&!st.relevo?'Tu compañera ya está aquí y el DEA viene de camino. Seguid: <b>relevaos cada 2 minutos</b>.':'Otra vez: 30 compresiones.');
   metronomo(true);
  },2600);
 }
 function relevar(){
  if(!st.compa||st.relevo)return;
- if(crono()<110){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
+ if(crono()<118){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
  st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
  st.fase='dea0';clearInterval(st.metro);
  combo('🔄 ¡Relevo!');
