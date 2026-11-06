@@ -104,6 +104,15 @@ const RESTA=50, TRAMPAS=3;
 const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
 const PODIO=['1','0,75','0,50'];
 const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
+/* Fin de plazo de cada grupo (hora del móvil): después se puede entrenar, pero la partida oficial ya no cuenta. */
+const CIERRES={HIG:'2026-11-20T23:59:59',IFC:'2026-11-20T23:59:59',ITE:'2026-11-20T23:59:59',STI:'2026-11-20T23:59:59'};
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
+function textoPlazo(c){const f=plazo(c);if(!f)return '';
+ const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+const $cod0=()=>(ls.get('ipe_codigo',ls.get('senales_codigo',''))||'').toUpperCase();
 async function puesto(codigo,pts,nuevo){
  try{
   const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>r.text());
@@ -170,6 +179,7 @@ function portada(){
    <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo',ls.get('senales_codigo',''))}">
    <button class="btn p" id="ofi" ${usados()>=INTENTOS?'disabled':''}>${usados()>=INTENTOS?'Ya has usado tus 3 intentos':'Partida oficial · intento '+(usados()+1)+' de '+INTENTOS}</button>
+   <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
    <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
   ${+ls.get('senales_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div>`:''}
@@ -177,10 +187,12 @@ function portada(){
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · RD 485/1997 y UNE-EN ISO 7010 · Pictogramas: Wikimedia Commons (dominio público)</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
+ $('#cod').oninput=()=>{const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
  if(+ls.get('senales_mejor',0))puesto(ls.get('ipe_codigo',''),+ls.get('senales_mejor',0),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,+ls.get('senales_mejor',0))});
  $('#ofi').onclick=()=>{
   const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
   if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
+  {const f=plazo(c);if(f&&new Date()>f){alert('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
   if(!confirm('Vas a gastar el intento '+(usados()+1)+' de '+INTENTOS+' con el código '+c+'. ¿Empezamos?'))return;
   ls.set('ipe_codigo',c);ls.set('senales_oficiales',usados()+1);
   empieza(1,{codigo:c,intento:usados(),est:[],pts:0});
