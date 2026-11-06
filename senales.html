@@ -125,9 +125,9 @@ async function puesto(codigo,pts,nuevo){
 /* la tabla publicada tarda unos minutos: hasta 10 min después del primer envío, el móvil se cuenta a sí mismo */
 const recien=()=>Date.now()-(+ls.get('senales_primer_envio',0))<10*60*1000;
 function textoPuesto(r,pts){
- if(!r)return 'No se ha podido consultar el ranking. Inténtalo más tarde desde el menú.';
+ if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
  const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Ranking provisional: se actualiza cada pocos minutos.</small>`;
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 /* señal trampa: mismo dibujo y forma, color cambiado (no existe en el RD 485/1997) */
 /* Trampa: todas acaban en morado, un color que ninguna señal real usa (revisión 6-11-2026: la azul pasaba a roja y
@@ -184,7 +184,7 @@ function portada(){
    <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
    <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
-  ${+ls.get('senales_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div>`:''}
+  ${+ls.get('senales_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · RD 485/1997 y UNE-EN ISO 7010 · Pictogramas: Wikimedia Commons (dominio público)</div>`;
@@ -291,7 +291,7 @@ function bloqueOficial(est){
  const o=st.oficial; o.est[st.l.n-1]=est; o.pts+=st.pts;
  if(st.l.n<3)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
  const m=Math.min(...o.est);
- return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de señalización (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+ return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de señalización (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
 }
 function finOficial(){
  const o=st.oficial;
