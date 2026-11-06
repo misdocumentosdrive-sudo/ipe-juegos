@@ -145,15 +145,15 @@ const GRUPOS={
 };
 const FICHAS1=[   // nivel 1: condiciones de trabajo (apartado 1.2)
  {t:'Suelo resbaladizo',i:'💧',g:'seg'},{t:'Escalera rota',i:'🪜',g:'seg'},{t:'Cable pelado',i:'🔌',g:'seg'},
- {t:'Máquina sin resguardo',i:'⚙️',g:'seg'},{t:'Riesgo de incendio',i:'🔥',g:'seg'},{t:'Herramienta cortante',i:'✂️',g:'seg'},
+ {t:'Máquina sin resguardo',i:'⚙️',g:'seg'},{t:'Material inflamable',i:'🔥',g:'seg'},{t:'Herramienta cortante',i:'✂️',g:'seg'},
  {t:'Hueco sin barandilla',i:'🕳️',g:'seg'},{t:'Estantería inestable',i:'📦',g:'seg'},
  {t:'Ruido continuo',i:'🔊',g:'amb'},{t:'Vibraciones',i:'📳',g:'amb'},{t:'Calor extremo',i:'🌡️',g:'amb'},
  {t:'Polvo en el aire',i:'💨',g:'amb'},{t:'Productos químicos',i:'🧪',g:'amb'},{t:'Virus y bacterias',i:'🦠',g:'amb'},
  {t:'Radiaciones',i:'☢️',g:'amb'},
  {t:'Postura forzada',i:'🧎',g:'erg'},{t:'Movimientos repetidos',i:'🔁',g:'erg'},{t:'Levantar cargas',i:'🏋️',g:'erg'},
- {t:'Horas de pie',i:'🦵',g:'erg'},{t:'Pantalla mal colocada',i:'🖥️',g:'erg'},{t:'Mucha carga mental',i:'🧠',g:'erg'},
- {t:'Turnos de noche',i:'🌙',g:'psi'},{t:'Ritmo excesivo',i:'⏱️',g:'psi'},{t:'Jornadas muy largas',i:'🕰️',g:'psi'},
- {t:'Malas relaciones',i:'😠',g:'psi'},{t:'Sin autonomía',i:'🔒',g:'psi'},{t:'Tarea monótona',i:'😐',g:'psi'},
+ {t:'Horas de pie',i:'🦵',g:'erg'},{t:'Pantalla mal colocada',i:'🖥️',g:'erg'},{t:'Agacharse sin parar',i:'🙇',g:'erg'},
+ {t:'Turnos de noche',i:'🌙',g:'psi'},{t:'Ritmo excesivo',i:'⏱️',g:'psi',nota:'El ritmo es organización del trabajo (tabla del apartado 1.2).'},{t:'Jornadas muy largas',i:'🕰️',g:'psi'},
+ {t:'Malas relaciones',i:'😠',g:'psi'},{t:'Sin autonomía',i:'🔒',g:'psi'},{t:'Horario que cambia cada semana',i:'📆',g:'psi'},
  // trampas: son daños, no factores (como en el caso 1.2 del libro)
  {t:'Corte en un dedo',i:'🩹',g:'dano'},{t:'Pérdida de audición',i:'🦻',g:'dano'},{t:'Dolor de espalda',i:'🤕',g:'dano'},
  // de cada sector (caso práctico 1.2 de la UD 1)
@@ -178,9 +178,9 @@ const FICHAS2=[   // nivel 2: ¿qué daño es? (apartado 1.3)
  {t:'Sordera por ruido',i:'🦻',g:'ep'},{t:'Silicosis',i:'🫁',g:'ep'},{t:'Dermatitis por tintes',i:'🧴',g:'ep'},
  {t:'Hepatitis B sanitaria',i:'💉',g:'ep'},{t:'Túnel carpiano',i:'✋',g:'ep'},{t:'Saturnismo por plomo',i:'🔋',g:'ep'},
  {t:'Cáncer por amianto',i:'🏭',g:'ep'},
- {t:'Estrés',i:'😰',g:'ine'},{t:'Fatiga profesional',i:'🥱',g:'ine'},{t:'Síndrome de burnout',i:'🫠',g:'ine'},
+ {t:'Estrés',i:'😰',g:'ine',nota:'Influyen también factores personales y sociales.'},{t:'Fatiga profesional',i:'🥱',g:'ine'},{t:'Síndrome de burnout',i:'🫠',g:'ine'},
  {t:'Insatisfacción laboral',i:'😞',g:'ine'},{t:'Envejecimiento prematuro',i:'👴',g:'ine'},
- {t:'Gripe contagiada en casa',i:'🤧',g:'nol'},{t:'Lesión jugando al fútbol',i:'⚽',g:'nol'},
+ {t:'Gripe contagiada en casa',i:'🤧',g:'nol'},{t:'Lesión en el fútbol del domingo',i:'⚽',g:'nol'},
  {t:'Caída en la ducha de casa',i:'🚿',g:'nol'},{t:'Esguince en el gimnasio',i:'🏋️',g:'nol'},
  // de cada sector (casos prácticos de la UD 1)
  {t:'Corte con una cureta',i:'✂️',g:'at',s:'HIG'},{t:'Dermatitis por el látex',i:'🧤',g:'ep',s:'HIG'},
@@ -209,6 +209,19 @@ const PARES=[    // nivel 3: del factor de riesgo a su daño
  {f:'Baterías de plomo',d:'Saturnismo',i:'🔋',s:'STI'},{f:'Armario con tensión',d:'Contacto eléctrico',i:'⚡',s:'STI'},
  {f:'Horas ante el monitor',d:'Fatiga visual',i:'👁️',s:'STI'}
 ];
+/* Familias de daños (revisión 6-11-2026, quejas del alumnado: el nivel 3 daba por mala una respuesta que también
+   valía, p. ej. «Fatiga» para «Ritmo excesivo» o «Enfermedad pulmonar» para «Polvo de sílice»). Las fichas falsas
+   nunca son de la familia del daño correcto ni de las familias que el factor también puede causar (x). */
+const FAMILIA={'Pérdida de audición':'oido','Contacto eléctrico':'elec','Caída al mismo nivel':'caida1','Caída a distinto nivel':'caida2',
+ 'Lesión de espalda':'musc','Tendinitis':'musc','Tendinitis de hombro':'musc','Estrés':'psico','Fatiga':'psico','Trastornos del sueño':'psico',
+ 'Fatiga visual':'psico','Silicosis':'pulmon','Enfermedad pulmonar':'pulmon','Infección':'herida','Pinchazo':'herida','Corte':'herida',
+ 'Intoxicación':'quim','Saturnismo':'quim','Quemadura por frío':'quim','Dermatitis':'piel'};
+const TAMBIEN={'Ruido continuo':['psico'],'Turbina y aspirador':['psico'],'Compresores ruidosos':['psico'],'Suelo resbaladizo':['musc','caida2'],
+ 'Altura sin arnés':['musc','caida1'],'Tejado sin protección':['musc','caida1'],'Levantar cargas pesadas':['psico'],'Unidad de 40 kg':['psico'],
+ 'Horas ante la pantalla':['musc'],'Horas ante el monitor':['musc'],'Trabajo sin pausas':['musc'],'Ritmo excesivo':['musc'],
+ 'Vapores de disolventes':['piel','pulmon','psico'],'Gas refrigerante':['piel'],'Baterías de plomo':['piel'],'Látex de los guantes':['quim'],
+ 'Polvo de sílice':['quim'],'Rozar yeso y ladrillo':['quim'],'Contacto con sangre':['piel'],'Cable sin aislar':['herida'],'Armario con tensión':['herida'],
+ 'Movimientos repetidos':['psico'],'Brazos sobre la cabeza':['psico']};
 
 
 /* ===== Configuración ===== */
@@ -217,6 +230,14 @@ const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0V
 const JUEGO='UD1 Serpiente', PREF='serpiente', INTENTOS=3, RESTA=50;
 const RX_COD=/^[1-2][A-Z]{2,5}-\d{1,2}$/;
 const PODIO=['1','0,75','0,50'];
+/* Fin de plazo de cada grupo (hora del móvil): después se puede entrenar, pero la partida oficial ya no cuenta. */
+const CIERRES={IFC:'2026-11-13T23:59:59',HIG:'2026-11-13T23:59:59'};
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
+function textoPlazo(c){const f=plazo(c);if(!f)return '';
+ const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
 const META=12, TIEMPO=100, COLS=11;
 const NIVELES=[
  {n:1,titulo:'Condiciones de trabajo',sub:'Come solo los factores de riesgo del tipo que te piden. Cuidado: algunas fichas son daños.',col:'#0d6b4f',modo:'grupo',banco:'FICHAS1',
@@ -274,6 +295,7 @@ function textoPuesto(r,pts){
 
 /* ===== Portada ===== */
 function para(){clearInterval(st.reloj);cancelAnimationFrame(st.raf||0);cancelAnimationFrame(st.rafDemo||0);clearTimeout(st.tReanuda);document.onkeydown=null}
+const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
 function portada(){
  para();
  app.innerHTML=`<div class="portada">
@@ -288,6 +310,7 @@ function portada(){
    <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
    <button class="btn p" id="ofi" ${usados()>=INTENTOS?'disabled':''}>${usados()>=INTENTOS?'Ya has usado tus 3 intentos':'Partida oficial · intento '+(usados()+1)+' de '+INTENTOS}</button>
+   <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
    <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
   ${+ls.get(PREF+'_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en el ranking…</div>`:''}
@@ -295,10 +318,12 @@ function portada(){
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span><span class="ico">${['🧩','🩹','🎯'][l.n-1]}</span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · Ley 31/1995 de Prevención de Riesgos Laborales · LGSS (arts. 156 y 157) · RD 1299/2006</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
+ $('#cod').oninput=()=>{const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
  if(+ls.get(PREF+'_mejor',0))puesto(ls.get('ipe_codigo',''),+ls.get(PREF+'_mejor',0),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,+ls.get(PREF+'_mejor',0))});
  $('#ofi').onclick=()=>{
   const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
   if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
+  {const f=plazo(c);if(f&&new Date()>f){alert('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
   if(!confirm('Vas a gastar el intento '+(usados()+1)+' de '+INTENTOS+' con el código '+c+'. ¿Empezamos?'))return;
   ls.set('ipe_codigo',c);ls.set(PREF+'_oficiales',usados()+1);
   empieza(1,{codigo:c,intento:usados(),est:[],pts:0});
@@ -421,8 +446,8 @@ function ponFichas(){
   const malas=baraja(st.banco.filter(x=>x.g!==st.obj&&x.t!==ok.t)).slice(0,2);
   fichas=[{...ok,ok:true},...malas.map(m=>({...m,ok:false}))];
  }else{
-  const ds=new Set([st.obj.d]);
-  const malas=baraja(st.banco).filter(p=>{if(ds.has(p.d))return false;ds.add(p.d);return true}).slice(0,2);
+  const ds=new Set([st.obj.d]),fx=new Set([FAMILIA[st.obj.d],...(TAMBIEN[st.obj.f]||[])]);
+  const malas=baraja(st.banco).filter(p=>{if(ds.has(p.d)||fx.has(FAMILIA[p.d]))return false;ds.add(p.d);fx.add(FAMILIA[p.d]);return true}).slice(0,2);
   fichas=[{t:st.obj.d,i:st.obj.i,ok:true,par:st.obj},...malas.map(m=>({t:m.d,i:m.i,ok:false,par:m}))];
  }
  st.fichas=[];
