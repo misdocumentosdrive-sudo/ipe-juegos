@@ -338,7 +338,20 @@ portada();
   const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
   btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
  }
- btn.onclick=()=>{(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs)};
+ const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ btn.onclick=()=>{salio=false;pide()};
+ // automático (José, 9-11-2026): en tablet u ordenador, el primer toque o clic pone la pantalla completa.
+ // El navegador no deja hacerlo sin un toque; si la persona sale con Esc, no se vuelve a forzar (queda el botón).
+ let salio=false;
+ function auto(e){
+  if(e&&e.target&&e.target.closest&&e.target.closest('#pcomp'))return;   // el botón ya lo pide
+  if(salio||innerWidth<700||!(document.fullscreenEnabled||document.webkitFullscreenEnabled))return;
+  if(document.fullscreenElement||document.webkitFullscreenElement)return;
+  pide();
+ }
+ document.addEventListener('click',auto,true);document.addEventListener('touchend',auto,true);
+ const sale=()=>{if(!(document.fullscreenElement||document.webkitFullscreenElement))salio=true};
+ document.addEventListener('fullscreenchange',sale);document.addEventListener('webkitfullscreenchange',sale);
  document.addEventListener('fullscreenchange',()=>{boton();setTimeout(ajusta,150)});
  document.addEventListener('webkitfullscreenchange',()=>{boton();setTimeout(ajusta,150)});
  addEventListener('resize',boton);boton();
