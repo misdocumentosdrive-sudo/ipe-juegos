@@ -84,8 +84,6 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 #envio{margin-top:8px;font-weight:700;color:var(--verde)}
 
 /* Tablets y ordenadores (José, 9-11-2026): en pantallas grandes, todo más grande (en el móvil, igual que antes) */
-@media (min-width:760px) and (min-height:660px){#app:not(:has(.rcp)){zoom:1.22}}
-@media (min-width:1000px) and (min-height:860px){#app:not(:has(.rcp)){zoom:1.4}}
 </style>
 </head>
 <body>
@@ -310,6 +308,41 @@ function finOficial(){
  });
 }
 portada();
+</script>
+<style>
+#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+</style>
+<button id="pcomp" type="button">⛶ Pantalla completa</button>
+<script>
+/* Tablets y ordenadores (José, 9-11-2026): cada pantalla se escala para llenar la pantalla, como en el móvil,
+   y un botón pone el navegador a pantalla completa. En el móvil no cambia nada. */
+(function(){
+ const app=document.getElementById('app'),btn=document.getElementById('pcomp');
+ let midiendo=false;
+ function ajusta(){
+  if(midiendo)return;midiendo=true;
+  const fija=app.querySelector('.rcp,.juego');           // pantallas de juego a pantalla completa: sin escalar
+  btn.style.visibility=fija?'hidden':'';                 // el botón no tapa el tablero mientras se juega
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';midiendo=false;return}
+  app.style.zoom='1';app.style.minHeight='0';
+  const t=app.getBoundingClientRect().top,h=Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16,w=540;
+  const z=Math.max(1,Math.min(innerWidth/w,(innerHeight-8)/h,2.4));
+  app.style.zoom=z.toFixed(3);
+  midiendo=false;
+ }
+ new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true,subtree:true});
+ addEventListener('resize',ajusta);ajusta();
+ const fs=document.documentElement;
+ function boton(){
+  const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+ }
+ btn.onclick=()=>{(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs)};
+ document.addEventListener('fullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ document.addEventListener('webkitfullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ addEventListener('resize',boton);boton();
+})();
 </script>
 </body>
 </html>
