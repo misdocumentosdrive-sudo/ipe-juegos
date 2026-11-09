@@ -162,6 +162,52 @@ const JUEGO='UD2 Señales';
 const RX_COD=/^[1-2][A-Z]{2,5}-\d{1,2}$/;
 const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 const usados=()=>+ls.get('senales_oficiales',0);
+const CLAVE_OF='senales_oficiales';
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») =====
+   Pestaña «Intentos» de la hoja de resultados, publicada como CSV: juego, código e intentos (sin nombres ni puntos). */
+const INTENTOS_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=14024659&single=true&output=csv';
+const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m?m[1]+'-'+m[2]:''};
+function locales(c){
+ const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
+ if(v!==null)return +v||0;
+ return normCod(ls.get('ipe_codigo',''))===normCod(c)?+ls.get(CLAVE_OF,0):0;   // contador antiguo (por dispositivo)
+}
+function ponLocales(c,n){ls.set(CLAVE_OF+'_'+normCod(c),n)}
+const pendientes=c=>enCola().filter(t=>normCod((/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(t)||[])[1])===normCod(c)).length;
+async function remotos(c){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),6000);
+  const txt=await fetch(INTENTOS_CSV+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.text()});
+  clearTimeout(tt);
+  const f=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).find(x=>(x[0]||'').trim()===JUEGO&&normCod(x[1])===normCod(c));
+  return f?+f[2]||0:0;
+ }catch(e){return null}
+}
+async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:Math.max(l,r+pendientes(c)),sin:r===null}}
+function pintaOfi(n){
+ const b=document.getElementById('ofi');if(!b)return;
+ b.disabled=n>=INTENTOS;
+ b.textContent=n>=INTENTOS?'Ya has usado tus 3 partidas oficiales':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+}
+let tOfi=0;
+function revisaOfi(){
+ clearTimeout(tOfi);
+ tOfi=setTimeout(async()=>{
+  const i=document.getElementById('cod');if(!i)return;
+  const c=i.value;if(!normCod(c)){pintaOfi(0);return}
+  pintaOfi(locales(c));
+  const r=await intentosDe(c);if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n);
+ },400);
+}
+async function empiezaOficial(c){
+ const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
+ const r=await intentosDe(c);pintaOfi(r.n);
+ if(r.n>=INTENTOS){alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
+ if(!confirm('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.'+(r.sin?'\n\nAhora no hay internet y no puedo comprobar si ya has jugado en otro dispositivo: si ya llevas 3 partidas oficiales, esta no contará.':'')+'\n\n¿Empezamos?'))return;
+ ls.set('ipe_codigo',c);ponLocales(c,r.n+1);
+ empieza(1,{codigo:c,intento:r.n+1,est:[],pts:0});
+}
+
 const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
 
 /* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
@@ -205,7 +251,7 @@ function portada(){
   <div class="oficial">
    <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo',ls.get('senales_codigo',''))}">
-   <button class="btn p" id="ofi" ${usados()>=INTENTOS?'disabled':''}>${usados()>=INTENTOS?'Ya has usado tus 3 intentos':'Partida oficial · intento '+(usados()+1)+' de '+INTENTOS}</button>
+   <button class="btn p" id="ofi" ${locales($cod0())>=INTENTOS?'disabled':''}>${locales($cod0())>=INTENTOS?'Ya has usado tus 3 partidas oficiales':'Partida oficial · intento '+(locales($cod0())+1)+' de '+INTENTOS}</button>
    <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
    <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues y con o sin internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
@@ -214,16 +260,15 @@ function portada(){
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · RD 485/1997 y UNE-EN ISO 7010 · Pictogramas: Wikimedia Commons (dominio público)</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
- $('#cod').oninput=()=>{const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
+ $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
  if(+ls.get('senales_mejor',0))puesto(ls.get('ipe_codigo',''),+ls.get('senales_mejor',0),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,+ls.get('senales_mejor',0))});
  $('#ofi').onclick=()=>{
   const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
   if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
   {const f=plazo(c);if(f&&new Date()>f){alert('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
-  if(!confirm('Vas a gastar el intento '+(usados()+1)+' de '+INTENTOS+' con el código '+c+'.\n\nOjo: solo valen tus 3 primeras partidas oficiales en total, aunque juegues en otro dispositivo o sin internet. ¿Empezamos?'))return;
-  ls.set('ipe_codigo',c);ls.set('senales_oficiales',usados()+1);
-  empieza(1,{codigo:c,intento:usados(),est:[],pts:0});
+  empiezaOficial(c);
  };
+ revisaOfi();
 }
 
 function empieza(n,oficial){
