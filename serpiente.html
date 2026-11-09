@@ -124,6 +124,24 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .destello{position:fixed;inset:0;pointer-events:none;z-index:6;animation:destello .25s ease-out forwards}
 @keyframes destello{from{opacity:.18}to{opacity:0}}
 .juego .puntos-flota{z-index:9}
+/* Tablets y ordenadores (José, 9-11-2026): el tablero crece con la pantalla y, con ratón, sin botones en pantalla */
+@media (min-width:700px){
+ #app{max-width:640px}
+ .juego .arriba{max-width:min(92vw,900px);padding-top:16px}
+ .meta,.consigna{max-width:min(92vw,880px)}
+ .juego .pill{font-size:17px;padding:8px 16px}
+ .juego .crono{font-size:28px}
+ .consigna{padding:10px 16px}
+ .consigna small{font-size:13px}
+ .consigna b{font-size:26px}
+ .velo div{max-width:420px;font-size:19px;padding:20px 26px}
+ .velo b{font-size:28px}
+ .mando{grid-template-columns:repeat(3,76px);grid-template-rows:repeat(2,58px)}
+}
+@media (hover:hover) and (pointer:fine){
+ .mando{display:none}
+ .tablero{padding-bottom:16px}
+}
 </style>
 </head>
 <body>
@@ -359,20 +377,21 @@ function empieza(n,oficial){
   <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">${TIEMPO}</span><span class="pill vidas" id="vi">♥♥♥</span></div>
   <div class="meta"><i id="me"></i></div>
   <div class="consigna" id="co"></div>
-  <div class="tablero" id="tab"><canvas id="cv"></canvas><div class="velo" id="velo"><div><b>Nivel ${l.n} · ${l.titulo}</b>${l.sub}<br><br>Desliza el dedo o usa las flechas.<br><b style="font-size:17px;margin-top:8px">Toca para empezar</b></div></div></div>
+  <div class="tablero" id="tab"><canvas id="cv"></canvas><div class="velo" id="velo"><div><b>Nivel ${l.n} · ${l.titulo}</b>${l.sub}<br><br>${matchMedia("(hover:hover) and (pointer:fine)").matches?"Usa las flechas del teclado.":"Desliza el dedo o usa las flechas."}<br><b style="font-size:17px;margin-top:8px">Toca para empezar</b></div></div></div>
   <div class="mando"><button class="ar" data-d="0,-1">▲</button><button class="iz" data-d="-1,0">◀</button><button class="ab" data-d="0,1">▼</button><button class="de" data-d="1,0">▶</button></div>
  </div>`;
  medir();
  const c=Math.floor(st.rows/2);
  st.snake=[3,2,1,0].map(x=>({x:x+1,y:c}));st.prev=st.snake.map(p=>({...p}));st.dir={x:1,y:0};
  nuevoObjetivo();
+ requestAnimationFrame(()=>medir(true));   // con la consigna ya escrita, el tablero cabe entero (tablets y ordenadores)
  controles();
  st.tPaso=performance.now();
  st.raf=requestAnimationFrame(bucle);
 }
 function medir(fijas){
  const tab=$('#tab'),cv=$('#cv');
- const W=Math.min(tab.clientWidth-20,460),H=tab.clientHeight-8;
+ const W=Math.min(tab.clientWidth-20,900),H=tab.clientHeight-8;   // antes, 460 como máximo: en tablets y ordenadores salía pequeño
  st.cel=Math.floor(W/COLS);
  if(!fijas)st.rows=Math.max(10,Math.min(18,Math.floor(H/st.cel)));
  if(st.rows*st.cel>H)st.cel=Math.floor(H/st.rows);

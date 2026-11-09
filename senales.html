@@ -82,6 +82,10 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .opciones.imgs .op{justify-content:center;padding:12px;aspect-ratio:1}
 .opciones.imgs .op img{width:100%;height:100%;object-fit:contain}
 #envio{margin-top:8px;font-weight:700;color:var(--verde)}
+
+/* Tablets y ordenadores (José, 9-11-2026): en pantallas grandes, todo más grande (en el móvil, igual que antes) */
+@media (min-width:760px) and (min-height:660px){#app:not(:has(.rcp)){zoom:1.22}}
+@media (min-width:1000px) and (min-height:860px){#app:not(:has(.rcp)){zoom:1.4}}
 </style>
 </head>
 <body>
