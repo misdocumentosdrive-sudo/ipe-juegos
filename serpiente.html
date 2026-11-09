@@ -126,11 +126,11 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .juego .puntos-flota{z-index:9}
 /* Tablets y ordenadores (José, 9-11-2026): el tablero crece con la pantalla y, con ratón, sin botones en pantalla */
 @media (min-width:700px){
- .juego .arriba{max-width:min(92vw,900px);padding-top:16px}
- .meta,.consigna{max-width:min(92vw,880px)}
+ .juego .arriba{max-width:none;padding:16px 24px 0}
+ .meta,.consigna{max-width:none;width:calc(100% - 48px)}
  .juego .pill{font-size:17px;padding:8px 16px}
  .juego .crono{font-size:28px}
- .consigna{padding:10px 16px}
+ .consigna{padding:10px 16px;min-height:66px}   /* alto fijo: el tablero se mide antes de escribir la consigna */
  .consigna small{font-size:13px}
  .consigna b{font-size:26px}
  .velo div{max-width:420px;font-size:19px;padding:20px 26px}
@@ -255,7 +255,8 @@ function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
 function textoPlazo(c){const f=plazo(c);if(!f)return '';
  const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
  return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
-const META=12, TIEMPO=100, COLS=11;
+const META=12, TIEMPO=100;
+let COLS=11;   // en el móvil, 11 columnas; en pantallas apaisadas (tablet, ordenador) más, para llenar todo el ancho
 const NIVELES=[
  {n:1,titulo:'Condiciones de trabajo',sub:'Come solo los factores de riesgo del tipo que te piden. Cuidado: algunas fichas son daños.',col:'#0d6b4f',modo:'grupo',banco:'FICHAS1',
   grupos:['seg','amb','erg','psi'],pide:'Come factores de riesgo de tipo',vel:[230,150],cambio:3},
@@ -390,10 +391,15 @@ function empieza(n,oficial){
 }
 function medir(fijas){
  const tab=$('#tab'),cv=$('#cv');
- const W=Math.min(tab.clientWidth-20,900),H=tab.clientHeight-8;   // antes, 460 como máximo: en tablets y ordenadores salía pequeño
- st.cel=Math.floor(W/COLS);
- if(!fijas)st.rows=Math.max(10,Math.min(18,Math.floor(H/st.cel)));
- if(st.rows*st.cel>H)st.cel=Math.floor(H/st.rows);
+ const W=tab.clientWidth-20,H=tab.clientHeight-8;
+ if(!fijas){
+  if(W>H*1.15){            // apaisada (José, 9-11-2026: el tablero llena toda la pantalla de la tablet o del ordenador)
+   st.rows=11;st.cel=Math.floor(H/st.rows);COLS=Math.max(11,Math.min(24,Math.floor(W/st.cel)));
+  }else{                   // vertical, como en el móvil
+   COLS=11;st.cel=Math.floor(W/COLS);st.rows=Math.max(10,Math.min(18,Math.floor(H/st.cel)));
+  }
+ }
+ st.cel=Math.floor(Math.min(W/COLS,H/st.rows));
  st.W=st.cel*COLS;st.H=st.cel*st.rows;
  const dpr=window.devicePixelRatio||1;
  cv.width=st.W*dpr;cv.height=st.H*dpr;cv.style.width=st.W+'px';cv.style.height=st.H+'px';
