@@ -327,7 +327,9 @@ portada();
   if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';midiendo=false;return}
   app.style.zoom='1';app.style.minHeight='0';
   const t=app.getBoundingClientRect().top,h=Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16,w=540;
-  const z=Math.max(1,Math.min(innerWidth/w,(innerHeight-8)/h,2.4));
+  // si la pantalla cabe entera, la llena; si es larga (portada, resultados), se agranda igual y se baja con la rueda
+  const zMin=innerWidth>=1000?1.35:1.15;
+  const z=Math.max(1,Math.min(innerWidth/w,Math.max((innerHeight-8)/h,zMin),2.4));
   app.style.zoom=z.toFixed(3);
   midiendo=false;
  }
