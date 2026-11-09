@@ -269,10 +269,26 @@ function acierto(){try{actx=actx||new (window.AudioContext||window.webkitAudioCo
 /* voz del DEA (José, 5-11-2026): la del propio móvil, en español; si no hay voz, no pasa nada */
 function habla(txt){try{const s=window.speechSynthesis;if(!s)return;s.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=.95;
  const v=s.getVoices().find(x=>/^es(-|_)ES/i.test(x.lang))||s.getVoices().find(x=>/^es/i.test(x.lang));if(v)u.voice=v;s.speak(u)}catch(e){}}
+
+/* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
+   al volver la conexión (o la próxima vez que se abra el juego). */
+const COLA='cola_envios_'+JUEGO;
+function manda(txt){const f=new URLSearchParams();f.append(FORM.campo,txt);return fetch(FORM.url,{method:'POST',mode:'no-cors',body:f}).then(()=>true).catch(()=>false)}
+function enCola(){try{return JSON.parse(localStorage.getItem(COLA)||'[]')}catch(e){return[]}}
+function guardaCola(c){try{localStorage.setItem(COLA,JSON.stringify(c))}catch(e){}}
+async function vaciaCola(){
+ const c=enCola();if(!c.length||!FORM.url)return;
+ const quedan=[];for(const t of c){if(!(await manda(t)))quedan.push(t)}
+ guardaCola(quedan);
+}
+addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
+function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
+ const l=[...new Set((d.fallos||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
+ return l.length?' | fallos: '+l.join('; '):'';
+}
 function envia(d){
- const f=new URLSearchParams();
- f.append(FORM.campo,`${JUEGO} | ${d.codigo} | intento ${d.intento} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')} | ${d.puntos} pts | +${d.extra}`);
- return fetch(FORM.url,{method:'POST',mode:'no-cors',body:f}).then(()=>true).catch(()=>false);
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ return manda(txt).then(ok=>{if(!ok){const c=enCola();c.push(txt);guardaCola(c)}return ok});
 }
 async function puesto(codigo,pts,nuevo){
  try{
@@ -789,7 +805,7 @@ function final(){
  if($('#sigui'))$('#sigui').onclick=()=>empieza(l.n+1);
 }
 function bloqueOficial(est){
- const o=st.oficial;o.est[st.l.n-1]=est;o.pts+=st.pts;
+ const o=st.oficial;o.est[st.l.n-1]=est;o.fallos=(o.fallos||[]).concat(st.fallos.map(x=>`N${st.l.n} ${x.t||''}`));o.pts+=st.pts;
  if(st.l.n<ULT)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
  const m=Math.min(...o.est);
  return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de primeros auxilios (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
@@ -802,8 +818,8 @@ function finOficial(){
  const antes=+ls.get(PREF+'_mejor',0), mejor=Math.max(antes,o.pts);ls.set(PREF+'_mejor',mejor);
  if(!antes)ls.set(PREF+'_primer_envio',Date.now());
  puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
- envia({codigo:o.codigo,intento:o.intento,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
-  $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'No se ha podido enviar. Haz una captura de esta pantalla y enséñasela a tu profesor.';
+ envia({codigo:o.codigo,intento:o.intento,fallos:o.fallos,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
+  $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'Sin conexión: tu resultado queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet (abre el juego otra vez si hace falta).';
  });
 }
 portada();
