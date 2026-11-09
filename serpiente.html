@@ -313,8 +313,9 @@ function fallosTxt(d){                // los fallos de la partida oficial, para 
  const l=[...new Set((d.fallos||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
  return l.length?' | fallos: '+l.join('; '):'';
 }
+const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
 function envia(d){
- const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
  return manda(txt).then(ok=>{if(!ok){const c=enCola();c.push(txt);guardaCola(c)}return ok});
 }
 async function puesto(codigo,pts,nuevo){
@@ -351,7 +352,7 @@ function portada(){
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
    <button class="btn p" id="ofi" ${usados()>=INTENTOS?'disabled':''}>${usados()>=INTENTOS?'Ya has usado tus 3 intentos':'Partida oficial · intento '+(usados()+1)+' de '+INTENTOS}</button>
    <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
-   <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
+   <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues y con o sin internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
   ${+ls.get(PREF+'_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
@@ -364,7 +365,7 @@ function portada(){
   const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
   if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
   {const f=plazo(c);if(f&&new Date()>f){alert('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
-  if(!confirm('Vas a gastar el intento '+(usados()+1)+' de '+INTENTOS+' con el código '+c+'. ¿Empezamos?'))return;
+  if(!confirm('Vas a gastar el intento '+(usados()+1)+' de '+INTENTOS+' con el código '+c+'.\n\nOjo: solo valen tus 3 primeras partidas oficiales en total, aunque juegues en otro dispositivo o sin internet. ¿Empezamos?'))return;
   ls.set('ipe_codigo',c);ls.set(PREF+'_oficiales',usados()+1);
   empieza(1,{codigo:c,intento:usados(),est:[],pts:0});
  };
