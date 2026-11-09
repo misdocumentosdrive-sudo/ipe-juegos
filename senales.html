@@ -185,31 +185,35 @@ async function pideServicio(a,c){
 }
 async function remotos(c){const r=await pideServicio('consulta',c);return r?r.n:null}
 async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:Math.max(l,r),sin:r===null}}
-function pintaOfi(n){
+function pintaOfi(n,estado){
  const b=document.getElementById('ofi');if(!b)return;
+ if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
+ if(estado==='sinred'){b.disabled=true;b.textContent='Sin conexión: la partida oficial necesita internet';return}
+ if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
  b.disabled=n>=INTENTOS;
- b.textContent=n>=INTENTOS?'Ya has usado tus 3 partidas oficiales':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
 }
 let tOfi=0;
 function revisaOfi(){
  clearTimeout(tOfi);
+ {const i=document.getElementById('cod');if(i&&normCod(i.value))pintaOfi(0,'mirando')}
  tOfi=setTimeout(async()=>{
   const i=document.getElementById('cod');if(!i)return;
-  const c=i.value;if(!normCod(c)){pintaOfi(0);return}
-  pintaOfi(locales(c));
-  const r=await intentosDe(c);if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n);
+  const c=i.value;if(!normCod(c)){pintaOfi(0,'libre');return}
+  pintaOfi(0,'mirando');
+  const r=await intentosDe(c);if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n,r.sin?'sinred':'');
  },400);
 }
 async function empiezaOficial(c){
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
- const r=await intentosDe(c);pintaOfi(r.n);
+ const r=await intentosDe(c);pintaOfi(r.n,r.sin?'sinred':'');
  if(r.sin){alert('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en los niveles de abajo.');return}
  if(r.n>=INTENTOS){alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
  if(!confirm('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.'+'\n\n¿Empezamos?'))return;
  /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
  const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
  const ini=await pideServicio('inicio',c);
- if(!ini){pintaOfi(r.n);alert('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini){pintaOfi(r.n,'sinred');alert('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
  if(!ini.ok){pintaOfi(ini.n);alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);
  empieza(1,{codigo:c,intento:ini.n,est:[],pts:0});
@@ -258,7 +262,7 @@ function portada(){
   <div class="oficial">
    <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo',ls.get('senales_codigo',''))}">
-   <button class="btn p" id="ofi" ${locales($cod0())>=INTENTOS?'disabled':''}>${locales($cod0())>=INTENTOS?'Ya has usado tus 3 partidas oficiales':'Partida oficial · intento '+(locales($cod0())+1)+' de '+INTENTOS}</button>
+   <button class="btn p" id="ofi" ${normCod($cod0())?'disabled':''}>${normCod($cod0())?'Comprobando tus intentos…':'Partida oficial'}</button>
    <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
    <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
