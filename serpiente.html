@@ -685,13 +685,18 @@ portada();
   if(midiendo)return;midiendo=true;
   const fija=app.querySelector('.rcp,.juego');           // pantallas de juego a pantalla completa: sin escalar
   btn.style.visibility=fija?'hidden':'';                 // el botón no tapa el tablero mientras se juega
-  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';midiendo=false;return}
-  app.style.zoom='1';app.style.minHeight='0';
-  const t=app.getBoundingClientRect().top,h=Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16,w=540;
-  // si la pantalla cabe entera, la llena; si es larga (portada, resultados), se agranda igual y se baja con la rueda
-  const zMin=innerWidth>=1000?1.35:1.15;
-  const z=Math.max(1,Math.min(innerWidth/w,Math.max((innerHeight-8)/h,zMin),2.4));
-  app.style.zoom=z.toFixed(3);
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
+  const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
+  const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
+  let z=H/alto();
+  if(z>=zw){z=zw}                                   // vertical: llena el ancho, como en el móvil
+  else if(z<1){z=zMin;app.style.maxWidth=Math.floor(innerWidth/z)+'px'}   // pantalla larga: grande y con rueda
+  else{                                             // apaisada: la columna llena todo el ancho y el contenido, todo el alto
+   for(let k=0;k<3;k++){app.style.maxWidth=Math.floor(innerWidth/z)+'px';z=Math.min(2.4,H/alto())}
+   z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
+  }
+  app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
   midiendo=false;
  }
  new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true,subtree:true});
