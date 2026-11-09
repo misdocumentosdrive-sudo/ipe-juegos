@@ -1,0 +1,23 @@
+{
+ "name": "Serpiente PRL · IPE I",
+ "short_name": "Serpiente",
+ "start_url": "serpiente.html",
+ "scope": "./",
+ "display": "fullscreen",
+ "background_color": "#004230",
+ "theme_color": "#004230",
+ "lang": "es",
+ "icons": [
+  {
+   "src": "icono-serpiente-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icono-serpiente-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

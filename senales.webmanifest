@@ -1,0 +1,23 @@
+{
+ "name": "Detective de señales · IPE I",
+ "short_name": "Señales",
+ "start_url": "senales.html",
+ "scope": "./",
+ "display": "fullscreen",
+ "background_color": "#004230",
+ "theme_color": "#004230",
+ "lang": "es",
+ "icons": [
+  {
+   "src": "icono-senales-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icono-senales-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

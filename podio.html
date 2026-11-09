@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Podio en directo · Juegos IPE I</title>
+<meta name="theme-color" content="#004230">
+<!-- Pantalla para el proyector (José, 9-11-2026): podio del grupo en directo mientras juegan.
+     Lee la pestaña «Ranking» publicada (solo grupo, puntos y juego: SIN códigos ni nombres) y se actualiza sola. -->
+<style>
+:root{--verde:#004230;--naranja:#ff5900;--amarillo:#fcd100;--gris:#5b6b70;--fondo:#f3f7f5}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--verde);color:#fff;font-family:"Helvetica Neue",Arial,sans-serif;display:flex;flex-direction:column;min-height:100vh}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:18px 3vw}
+h1{font-family:Aleo,Georgia,serif;font-size:clamp(24px,4vw,52px);margin:0;line-height:1.1}
+h1 small{display:block;font-size:.45em;color:var(--amarillo);font-family:"Helvetica Neue",Arial,sans-serif;font-weight:700;margin-top:6px}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap}
+select,button{font:700 16px "Helvetica Neue",Arial,sans-serif;border:0;border-radius:999px;padding:10px 16px;background:#fff;color:var(--verde);cursor:pointer}
+button{background:var(--naranja);color:#fff}
+button:focus-visible,select:focus-visible{outline:3px solid var(--amarillo);outline-offset:2px}
+main{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 3vw 3vh}
+.podio{display:flex;align-items:flex-end;justify-content:center;gap:2.5vw;width:100%;max-width:1400px}
+.puesto{flex:1;max-width:380px;display:flex;flex-direction:column;align-items:center}
+.pts{font-size:clamp(28px,5.5vw,84px);font-weight:900;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums}
+.pts small{display:block;font-size:.3em;font-weight:700;opacity:.85;text-align:center;margin-top:4px}
+.bloque{width:100%;border-radius:18px 18px 0 0;display:flex;justify-content:center;padding-top:2vh;font-size:clamp(40px,8vw,120px);font-weight:900;color:var(--verde);transition:height .8s}
+.p1 .bloque{background:var(--amarillo);height:42vh}
+.p2 .bloque{background:#dfe7e3;height:31vh}
+.p3 .bloque{background:#f0a46c;height:23vh}
+.vacio .pts{opacity:.4}
+.info{margin-top:2.5vh;font-size:clamp(16px,2vw,26px);text-align:center;color:#d8e6df}
+.info b{color:#fff}
+.resto{margin-top:1.5vh;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:1200px}
+.resto span{background:rgba(255,255,255,.12);border-radius:999px;padding:6px 14px;font-size:clamp(14px,1.6vw,20px);font-variant-numeric:tabular-nums}
+.nota{font-size:13px;color:#b8cbc2;text-align:center;padding:0 3vw 14px}
+.nuevo{animation:salta .9s}
+@keyframes salta{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.nuevo{animation:none}.bloque{transition:none}}
+@media (max-width:600px){.podio{gap:8px}.p1 .bloque{height:30vh}.p2 .bloque{height:22vh}.p3 .bloque{height:16vh}}
+</style>
+</head>
+<body>
+<header>
+ <h1 id="tit">Podio en directo<small id="sub">Cargando…</small></h1>
+ <div class="ctrl">
+  <select id="grupo" aria-label="Grupo"><option>HIG</option><option>IFC</option><option>ITE</option><option>STI</option></select>
+  <select id="juego" aria-label="Juego">
+   <option value="UD1 Serpiente">Serpiente PRL (UD 1)</option>
+   <option value="UD2 Señales">Detective de señales (UD 2)</option>
+   <option value="UD3 Auxilios">Cada minuto cuenta (UD 3)</option>
+  </select>
+  <button id="pc" type="button">⛶ Pantalla completa</button>
+ </div>
+</header>
+<main>
+ <div class="podio" id="podio"></div>
+ <div class="info" id="info"></div>
+ <div class="resto" id="resto"></div>
+</main>
+<p class="nota">Mejor partida oficial de cada persona. Sin nombres ni códigos. Se actualiza sola cada 30 segundos (la hoja tarda unos minutos en reflejar las partidas nuevas).</p>
+<script>
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const $=s=>document.querySelector(s);
+const L={get:(k,d)=>{try{return localStorage.getItem(k)||d}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const q=new URLSearchParams(location.search);
+$('#grupo').value=(q.get('g')||L.get('podio_g','IFC')).toUpperCase();
+$('#juego').value=q.get('j')||L.get('podio_j','UD1 Serpiente');
+if(!$('#grupo').value)$('#grupo').value='IFC';
+if(!$('#juego').value)$('#juego').value='UD1 Serpiente';
+let antes='';
+const fmt=n=>n.toLocaleString('es-ES');
+async function carga(){
+ const g=$('#grupo').value,j=$('#juego').value;
+ L.set('podio_g',g);L.set('podio_j',j);
+ $('#sub').textContent=`1º ${g} · ${$('#juego').selectedOptions[0].textContent}`;
+ let lista;
+ try{
+  const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>{if(!r.ok)throw 0;return r.text()});
+  lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(f[2]||'').trim()===j).map(f=>+f[1]||0).sort((a,b)=>b-a);
+ }catch(e){$('#info').innerHTML='No se ha podido leer la clasificación. Se vuelve a intentar en 30 segundos.';return}
+ const clave=g+j+lista.join();
+ const orden=[2,1,3];
+ $('#podio').innerHTML=orden.map(p=>{const v=lista[p-1];return `<div class="puesto p${p}${v===undefined?' vacio':''}">
+   <div class="pts">${v===undefined?'—':fmt(v)}<small>${v===undefined?'libre':'puntos'}</small></div>
+   <div class="bloque">${p}</div></div>`}).join('');
+ if(antes&&clave!==antes)document.querySelectorAll('.puesto:not(.vacio) .pts').forEach(e=>e.classList.add('nuevo'));
+ antes=clave;
+ $('#info').innerHTML=lista.length?`<b>${lista.length}</b> ${lista.length===1?'persona ha':'personas han'} jugado la partida oficial`:'Todavía no hay partidas oficiales en este grupo.';
+ $('#resto').innerHTML=lista.slice(3,15).map((v,i)=>`<span>${i+4}.º · ${fmt(v)}</span>`).join('');
+}
+$('#grupo').onchange=$('#juego').onchange=()=>{antes='';carga()};
+$('#pc').onclick=()=>{const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
+carga();setInterval(carga,30000);
+</script>
+</body>
+</html>

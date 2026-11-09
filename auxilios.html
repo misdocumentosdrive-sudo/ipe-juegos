@@ -168,6 +168,12 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
  .rcp .cuenta{font-size:42px}.rcp .bpm{font-size:30px}
 }
 </style>
+<link rel="manifest" href="auxilios.webmanifest">
+<meta name="theme-color" content="#004230">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cada minuto cuenta">
+<link rel="apple-touch-icon" href="icono-auxilios-192.png">
 </head>
 <body>
 <div id="app"></div>
@@ -367,7 +373,7 @@ function pregunta(){
    <div class="preg">${st.l.banco==='pas'?'¿Qué haces?':'¿Qué le pasa y qué haces?'}</div>
    <div class="escena">${s.t}</div>
    <div class="opciones textos">${ops.map((o,k)=>`<button class="op" data-k="${k}">${o}</button>`).join('')}</div>
-   <div class="explica" id="ex"></div>
+   <div class="explica" id="ex" role="status" aria-live="polite"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
  const T=st.l.t*1000,t0=Date.now(),barra=$('#t');
@@ -410,7 +416,7 @@ function llamada(s){
    <div class="preg">Llamada al 112</div><div class="escena">${s.t}</div>
    <div class="llamada" id="ll"><small>Tu llamada:</small></div>
    <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
-   <div class="explica" id="ex"></div><button class="sig" id="sig">Siguiente</button></div>`;
+   <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div>`;
  const T=(st.l.t+15)*1000,t0=Date.now(),barra=$('#t');
  const acaba=ok=>{
   if(hecho)return;hecho=true;clearInterval(st.reloj);app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
@@ -794,7 +800,8 @@ function final(){
   <div class="gran">${st.pts}</div><div>puntos · ${st.resumen}</div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
   ${l.modo==='rcp'?(st.grafica||''):''}
-  ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa</h2>${unicos.map(s=>`<div class="fallo"><div><b>${s.ok}</b><small>${s.e}</small></div></div>`).join('')}</div>`:''}
+  ${l.modo!=='test'?`<p class="libro" style="margin-top:10px">${l.modo==='pls'?libro(3,'PLS','3.6.1'):libro(3,'3.6.1')}</p>`:''}
+  ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa</h2><p class="libro">${l.n===1?libro(3,'3.6'):libro(3,'3.6.1')}</p>${unicos.map(s=>`<div class="fallo"><div><b>${s.ok}</b><small>${s.e}</small></div></div>`).join('')}</div>`:''}
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${l.n<ULT?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
  </div>`;
@@ -877,6 +884,83 @@ portada();
  document.addEventListener('fullscreenchange',()=>{boton();setTimeout(ajusta,150)});
  document.addEventListener('webkitfullscreenchange',()=>{boton();setTimeout(ajusta,150)});
  addEventListener('resize',boton);boton();
+})();
+</script>
+<script>
+/* Generado por herramientas/juegos_paginas.py: no tocar a mano. */
+const PAGINAS={"UD1": {"HIG": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "IFC": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "ITE": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "STI": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}}, "UD2": {"HIG": {"2.2.3": 9}, "IFC": {"2.2.3": 9}, "ITE": {"2.2.3": 9}, "STI": {"2.2.3": 9}}, "UD3": {"HIG": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "IFC": {}, "ITE": {"3.6": 17, "3.6.1": 17, "PLS": 19}, "STI": {"3.6": 17, "3.6.1": 18, "PLS": 20}}};
+/* ===== Común a los tres juegos (José, 9-11-2026): libro, sonido sí/no, accesibilidad e instalable =====
+   Lo meten los montar_*.py antes de </body>, junto con PAGINAS (paginas_libro.js). */
+
+/* «Repasa» con la página del libro de tu ciclo (sale del código de lista; sin código, solo el apartado). */
+function libro(ud, ap, txt) {
+  let c = '';
+  try { c = (/^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase()) || [])[1] || '' } catch (e) {}
+  const p = (((typeof PAGINAS !== 'undefined' && PAGINAS['UD' + ud]) || {})[c] || {})[ap];
+  return `📖 En el libro: UD ${ud}, apartado ${txt || ap}${p ? `, página ${p}` : ''}`;
+}
+
+(function () {
+  const L = {
+    get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v } catch (e) { return d } },
+    set: (k, v) => { try { localStorage.setItem(k, v) } catch (e) {} }
+  };
+  const app = document.getElementById('app');
+  const css = document.createElement('style');
+  css.textContent = `
+.libro{display:block;margin-top:5px;color:#004230;font-weight:700;font-size:13px}
+p.libro{margin:0 0 8px}
+.opcs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 4px}
+.opc{border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
+.opc[aria-pressed="false"]{background:#5b6b70}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
+.op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
+.op.mal::after{content:"✗";margin-left:auto;font-size:20px;font-weight:900}
+@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}}`;
+  document.head.appendChild(css);
+
+  /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
+  const caja = document.createElement('div');
+  caja.className = 'opcs';
+  function boton(texto, activo, alCambiar) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opc';
+    const pinta = v => { b.setAttribute('aria-pressed', v ? 'true' : 'false'); b.textContent = texto(v) };
+    let v = activo; pinta(v);
+    b.onclick = e => { e.stopPropagation(); v = !v; pinta(v); alCambiar(v) };
+    caja.appendChild(b);
+    return b;
+  }
+  const muestra = () => { const p = app && app.querySelector('.portada'); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
+  if (app) new MutationObserver(muestra).observe(app, { childList: true });
+
+  /* Sonido sí/no (serpiente y auxilios tienen sonido; señales no). */
+  if (typeof actx !== 'undefined') {
+    const aplica = () => {
+      try {
+        if (window.SILENCIO) { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); actx.suspend() }
+        else if (actx && actx.state === 'suspended') actx.resume();
+      } catch (e) {}
+    };
+    window.SILENCIO = L.get('ipe_silencio', '0') === '1';
+    boton(v => v ? '🔊 Sonido' : '🔇 Sin sonido', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
+    aplica();
+    /* si el juego crea el sonido después, se vuelve a silenciar */
+    document.addEventListener('click', () => setTimeout(aplica, 0), true);
+    document.addEventListener('touchend', () => setTimeout(aplica, 0), true);
+  }
+
+  /* Ayuda de colores para daltonismo (solo señales: escribe el color de la señal en el nivel 1). */
+  if (typeof GIRO !== 'undefined') {
+    window.AYUDA_COLOR = L.get('ipe_ayuda_color', '0') === '1';
+    boton(v => v ? '👁 Ayuda de colores: sí' : '👁 Ayuda de colores: no', window.AYUDA_COLOR,
+      v => { window.AYUDA_COLOR = v; L.set('ipe_ayuda_color', v ? '1' : '0') });
+  }
+  muestra();
+
+  /* Instalable y sin conexión: el service worker guarda el juego para abrirlo sin internet. */
+  if ('serviceWorker' in navigator && location.protocol === 'https:')
+    navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 </script>
 </body>
