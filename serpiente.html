@@ -315,8 +315,9 @@ function revisaOfi(){
 async function empiezaOficial(c){
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
  const r=await intentosDe(c);pintaOfi(r.n);
+ if(r.sin){alert('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en los niveles de abajo.');return}
  if(r.n>=INTENTOS){alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
- if(!confirm('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.'+(r.sin?'\n\nAhora no hay internet y no puedo comprobar si ya has jugado en otro dispositivo: si ya llevas 3 partidas oficiales, esta no contará.':'')+'\n\n¿Empezamos?'))return;
+ if(!confirm('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.'+'\n\n¿Empezamos?'))return;
  ls.set('ipe_codigo',c);ponLocales(c,r.n+1);
  empieza(1,{codigo:c,intento:r.n+1,est:[],pts:0});
 }
@@ -398,7 +399,7 @@ function portada(){
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
    <button class="btn p" id="ofi" ${locales($cod0())>=INTENTOS?'disabled':''}>${locales($cod0())>=INTENTOS?'Ya has usado tus 3 partidas oficiales':'Partida oficial · intento '+(locales($cod0())+1)+' de '+INTENTOS}</button>
    <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
-   <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues y con o sin internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
+   <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
   ${+ls.get(PREF+'_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
@@ -732,7 +733,7 @@ function finOficial(){
  if(!antes)ls.set(PREF+'_primer_envio',Date.now());
  puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
  envia({codigo:o.codigo,intento:o.intento,fallos:o.fallos,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
-  $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'Sin conexión: tu resultado queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet (abre el juego otra vez si hace falta).';
+  $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'⚠ Se ha cortado la conexión y tu resultado no ha llegado todavía. Se queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet: vuelve a abrir el juego con conexión.';
  });
 }
 window.addEventListener('resize',()=>{if(st.ctx&&!st.fin&&$('#cv'))medir(true)});
@@ -865,7 +866,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
   }
   muestra();
 
-  /* Instalable y sin conexión: el service worker guarda el juego para abrirlo sin internet. */
+  /* Instalable (solo en línea desde el 9-11-2026: sw.js no guarda copias, siempre carga de internet). */
   if ('serviceWorker' in navigator && location.protocol === 'https:')
     navigator.serviceWorker.register('sw.js').catch(() => {});
 })();

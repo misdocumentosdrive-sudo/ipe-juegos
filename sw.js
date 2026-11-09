@@ -1,13 +1,11 @@
-/* Juegos IPE I: guarda una copia de cada juego para abrirlo sin internet (9-11-2026).
-   Siempre pide primero la versión de internet (así llegan los cambios); la copia solo se usa sin conexión. */
-const CACHE = 'ipe-juegos-1';
+/* Juegos IPE I (José, 9-11-2026): SOLO EN LÍNEA. No guarda copias (borra las que hubiera de la versión anterior):
+   siempre carga de internet, para que el juego sepa en todo momento los intentos reales. Se mantiene solo para que los
+   juegos se puedan seguir instalando como app. */
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener('activate', e => e.waitUntil(
+  caches.keys().then(k => Promise.all(k.map(x => caches.delete(x)))).then(() => self.clients.claim())));
 self.addEventListener('fetch', e => {
   const r = e.request;
-  if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;   // formulario y ranking: directos
-  e.respondWith(fetch(r).then(res => {
-    if (res.ok) { const c = res.clone(); caches.open(CACHE).then(k => k.put(r, c)) }
-    return res;
-  }).catch(() => caches.match(r, { ignoreSearch: true })));
+  if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;
+  e.respondWith(fetch(r));
 });
