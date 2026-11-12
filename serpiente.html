@@ -392,7 +392,7 @@ function textoPuesto(r,pts){
 }
 
 /* ===== Portada ===== */
-function para(){clearInterval(st.reloj);cancelAnimationFrame(st.raf||0);cancelAnimationFrame(st.rafDemo||0);clearTimeout(st.tReanuda);document.onkeydown=null}
+function para(){if(st.vigia)st.vigia.disconnect();clearInterval(st.reloj);cancelAnimationFrame(st.raf||0);cancelAnimationFrame(st.rafDemo||0);clearTimeout(st.tReanuda);document.onkeydown=null}
 const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
 function portada(){
  para();
@@ -452,6 +452,9 @@ function empieza(n,oficial){
  st={l,pts:0,racha:0,vidas:3,aciertos:0,fallos:[],oficial:oficial||null,crece:0,cola:[],usados:new Set(),enObj:0,vel:l.vel[0],t:TIEMPO,empezado:false,fichas:[]};
  const sec=ciclo();
  st.banco=l.modo==='par'?PARES.filter(p=>!p.s||p.s===sec):(l.banco==='FICHAS1'?FICHAS1:FICHAS2).filter(x=>!x.s||x.s===sec);
+ // 12-11-2026: la portada va con zoom en tablet y ordenador; se quita ANTES de medir el tablero
+ // (si no, el tablero se medía con zoom y al quitarlo quedaba pequeño hasta pulsar Ctrl+0)
+ app.style.zoom='';app.style.maxWidth='';app.style.minHeight='';
  app.innerHTML=`<div class="juego" id="esc">
   <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">${TIEMPO}</span><span class="pill vidas" id="vi">♥♥♥</span></div>
   <div class="meta"><i id="me"></i></div>
@@ -464,6 +467,7 @@ function empieza(n,oficial){
  st.snake=[3,2,1,0].map(x=>({x:x+1,y:c}));st.prev=st.snake.map(p=>({...p}));st.dir={x:1,y:0};
  nuevoObjetivo();
  requestAnimationFrame(()=>medir(true));   // con la consigna ya escrita, el tablero cabe entero (tablets y ordenadores)
+ vigilaTablero();
  controles();
  st.tPaso=performance.now();
  st.raf=requestAnimationFrame(bucle);
@@ -483,6 +487,24 @@ function medir(fijas){
  const dpr=window.devicePixelRatio||1;
  cv.width=st.W*dpr;cv.height=st.H*dpr;cv.style.width=st.W+'px';cv.style.height=st.H+'px';
  st.ctx=cv.getContext('2d');st.ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+/* 12-11-2026: si cambia el tamaño del tablero (pantalla completa, zoom, girar, ventana), se vuelve a medir.
+   Antes de empezar se rehace entero para llenar la pantalla nueva; ya en juego se conserva la cuadrícula. */
+function remide(){
+ if(!st.ctx||st.fin||!$('#cv'))return;
+ if(st.empezado){medir(true);return}
+ medir();
+ const c=Math.floor(st.rows/2);
+ st.snake=[3,2,1,0].map(x=>({x:x+1,y:c}));st.prev=st.snake.map(p=>({...p}));st.dir={x:1,y:0};st.cola=[];
+ const vie=st.fichas||[];st.fichas=[];
+ for(const f of vie){const p=hueco();if(p)st.fichas.push({...f,...p})}
+}
+function vigilaTablero(){
+ if(st.vigia)st.vigia.disconnect();
+ if(!window.ResizeObserver)return;
+ let ultimo='';
+ st.vigia=new ResizeObserver(()=>{const tab=$('#tab');if(!tab)return;const k=tab.clientWidth+'x'+tab.clientHeight;if(k===ultimo)return;ultimo=k;requestAnimationFrame(remide)});
+ st.vigia.observe($('#tab'));
 }
 function controles(){
  const gira=(x,y)=>{
@@ -746,7 +768,7 @@ function finOficial(){
   $('#envio').textContent=ok?'✔ Resultado enviado a tu profesor.':'⚠ Se ha cortado la conexión y tu resultado no ha llegado todavía. Se queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet: vuelve a abrir el juego con conexión.';
  });
 }
-window.addEventListener('resize',()=>{if(st.ctx&&!st.fin&&$('#cv'))medir(true)});
+window.addEventListener('resize',()=>requestAnimationFrame(remide));
 portada();
 </script>
 <style>
