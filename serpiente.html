@@ -254,7 +254,7 @@ const JUEGO='UD1 Serpiente', PREF='serpiente', INTENTOS=3, RESTA=50;
 const RX_COD=/^[1-2][A-Z]{2,5}-\d{1,2}$/;
 const PODIO=['1','0,75','0,50'];
 /* Fin de plazo de cada grupo (hora del móvil): después se puede entrenar, pero la partida oficial ya no cuenta. */
-const CIERRES={IFC:'2026-11-13T23:59:59',HIG:'2026-11-13T23:59:59'};
+const CIERRES={HIG:'2026-11-20T23:59:59',IFC:'2026-11-20T23:59:59',ITE:'2026-11-20T23:59:59',STI:'2026-11-20T23:59:59'};  /* José, 13-11-2026: ampliado al 20-11 y para los 4 grupos */
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
