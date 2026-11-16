@@ -234,7 +234,7 @@ const BANCOS = {
 const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
 const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
 const JUEGO='UD3 Auxilios', PREF='auxilios', INTENTOS=3, RESTA=50;
-const RX_COD=/^[1-2][A-Z]{2,5}-\d{1,2}$/;
+const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
 const PODIO=['1','0,75','0,50'];
 const NIVELES=[
  {n:1,titulo:'Proteger, avisar y socorrer',sub:'Escenas de tu sector: ¿qué haces primero? Cuidado con las trampas.',col:'#2f8a5b',modo:'test',banco:'pas',preg:8,t:20},
@@ -253,7 +253,15 @@ const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
    Desde el 9-11-2026 (noche) los cuenta el servicio de abajo; la pestaña «Intentos» ya no está publicada. */
 /* Servicio «Juegos IPE · intentos» (Apps Script de José, juegos/servicio_intentos): cuenta AL MOMENTO y apunta cada inicio. */
 const SERVICIO='https://script.google.com/macros/s/AKfycbw56Jq-wbMnwqNgdTatBKiyfdN3TP8fM0IarXeM2YD1d79qJKXgrPpOLip2Bb0BFRhqrQ/exec';
-const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m?m[1]+'-'+m[2]:''};
+const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m&&RX_COD.test(m[1]+'-'+m[2])?m[1]+'-'+m[2]:''};
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+const CLAVE_MEJOR=PREF+'_mejor';
+function mejorDe(c){c=normCod(c);if(!c)return 0;const v=ls.get(CLAVE_MEJOR+'_'+c,null);if(v!==null)return +v||0;const viejo=+ls.get(CLAVE_MEJOR,0);if(!viejo)return 0;
+ let mio=false,otro=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf(CLAVE_OF+'_')!==0||!(+localStorage.getItem(k)>0))continue;if(k===CLAVE_OF+'_'+c)mio=true;else otro=true}}catch(e){}
+ return mio&&!otro?viejo:0}
+const ponMejor=(c,v)=>{if(normCod(c))ls.set(CLAVE_MEJOR+'_'+normCod(c),v)};
+
 function locales(c){
  const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
  if(v!==null)return +v||0;
@@ -388,15 +396,15 @@ function portada(){
    <button class="btn p" id="ofi" ${normCod($cod0())?'disabled':''}>${normCod($cod0())?'Comprobando tus intentos…':'Partida oficial'}</button>
    <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
-  ${+ls.get(PREF+'_mejor',0)?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
+  ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span><span class="ico">${['🛡️','🩺','🫱','🫀'][l.n-1]}</span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · Recomendaciones del Consejo Europeo de Reanimación (2025) · La profundidad de las compresiones se practica con el maniquí</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
- if(+ls.get(PREF+'_mejor',0))puesto(ls.get('ipe_codigo',''),+ls.get(PREF+'_mejor',0),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,+ls.get(PREF+'_mejor',0))});
+ if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
   const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
-  if(!RX_COD.test(c)){$('#cod').classList.add('error');$('#cod').focus();return}
+  if(!RX_COD.test(c)){alert('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
   empiezaOficial(c);
  };
  $('#cod').oninput=revisaOfi;
@@ -881,7 +889,7 @@ function finOficial(){
  if(st.l.n<ULT){$('#ofsig').onclick=()=>empieza(st.l.n+1,o);return}
  $('#ofmenu').onclick=portada;
  const m=Math.min(...o.est);
- const antes=+ls.get(PREF+'_mejor',0), mejor=Math.max(antes,o.pts);ls.set(PREF+'_mejor',mejor);
+ const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts);ponMejor(o.codigo,mejor);
  if(!antes)ls.set(PREF+'_primer_envio',Date.now());
  puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
  envia({codigo:o.codigo,intento:o.intento,fallos:o.fallos,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
