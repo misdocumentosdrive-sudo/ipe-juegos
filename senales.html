@@ -16,10 +16,42 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .marca{font:800 13px Aleo,Georgia,serif;color:var(--verde);letter-spacing:.3px}
 .pill{background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .vidas{color:var(--mal);letter-spacing:2px}
-.barra{height:8px;background:#dde7e2;border-radius:99px;overflow:hidden;margin:6px 0 14px}
+/* fase 5, 17-11-2026: progreso y racha en la misma fila; el reloj se anima con CSS (scaleX), en rojo y palpitando los 3 últimos segundos */
+.estado{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
+.barra{flex:1;height:8px;background:#dde7e2;border-radius:99px;overflow:hidden}
 .barra i{display:block;height:100%;background:linear-gradient(90deg,var(--verde2),var(--verde));width:0;transition:width .3s}
+.racha{flex:none;min-width:66px;text-align:center;font:800 14px/1.2 Aleo,Georgia,serif;color:var(--gris);background:#e3ece8;border-radius:999px;padding:4px 10px;transition:background .2s,color .2s}
+.racha.on{background:var(--amarillo);color:var(--verde)}
 .tiempo{height:5px;background:#eadfcf;border-radius:99px;overflow:hidden;margin:-8px 0 12px}
-.tiempo i{display:block;height:100%;background:var(--naranja);width:100%}
+.tiempo i{display:block;height:100%;background:var(--naranja);transform-origin:left center;transform:scaleX(1);will-change:transform}
+.tiempo.urgente i{background:var(--mal)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){
+ .tiempo.urgente{animation:palpita .5s ease-in-out infinite alternate}
+ .tiempo.quieto{animation-play-state:paused}
+ .racha.pop{animation:pop .4s cubic-bezier(.3,1.8,.5,1)}
+ .tarjeta.entra{animation:entra .24s ease-out both}
+ .tarjeta.entra .senal{animation:sella .5s cubic-bezier(.25,1.6,.45,1) .08s both}
+ .fam{animation:entra .3s ease-out both}
+ .estrellas.revela span{opacity:0;transform:scale(0)}
+ .estrellas.revela span.ve{animation:estrella .5s cubic-bezier(.3,1.8,.5,1) forwards}
+}
+@keyframes palpita{to{transform:scaleY(2.2)}}
+@keyframes pop{40%{transform:scale(1.35)}}
+@keyframes entra{from{transform:translateX(40px);opacity:0}}
+@keyframes sella{0%{transform:scale(1.5) rotate(-8deg);opacity:0}55%{opacity:1}100%{transform:none}}
+@keyframes estrella{0%{opacity:0;transform:scale(0) rotate(-40deg)}100%{opacity:1;transform:none}}
+/* tutorial de la primera vez */
+.tuto{display:flex;flex-direction:column;gap:10px}
+.tuto h2{margin:0;color:var(--verde);font-size:23px}
+.tuto>p{margin:0;color:var(--gris);font-size:15px}
+.familias{display:grid;gap:8px}
+.fam{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:8px 12px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.fam .mini{width:46px;height:46px;flex:none}
+.fam .mini img{width:100%;height:100%;object-fit:contain}
+.fam b{display:block;font:800 16px Aleo,Georgia,serif;color:var(--verde)}
+.fam small{color:var(--gris);font-size:13.5px}
+.saltar{background:none;border:0;color:var(--verde);font:700 15px "Helvetica Neue",Arial,sans-serif;text-decoration:underline;padding:8px 4px;min-height:44px;cursor:pointer}
 .tarjeta{position:relative;background:#fff;border-radius:22px;box-shadow:0 6px 20px rgba(0,66,48,.10);padding:18px;display:flex;flex-direction:column;align-items:center}
 .senal{width:min(62vw,230px);height:min(62vw,230px);margin:6px 0 10px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}
 .senal img{max-width:100%;max-height:100%}
@@ -59,6 +91,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .final{text-align:center}
 .final .gran{font:800 56px Aleo,Georgia,serif;color:var(--verde);margin:4px 0}
 .estrellas{font-size:34px;letter-spacing:4px;color:var(--amarillo);text-shadow:0 1px 0 #c9a400}
+.estrellas span{display:inline-block}
 .fallos{text-align:left;margin-top:16px}
 .fallo{display:flex;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:10px;margin-bottom:8px}
 .fallo img{width:54px;height:54px;flex:none}
@@ -110,6 +143,16 @@ const SEN=RAW.map((r,i)=>({id:i,cod:r[0],tipo:r[1],sig:r[2],exp:r[3],svg:r[4]}))
 const MUESTRA={prohibicion:'P002',advertencia:'W012',obligacion:'M014',salvamento:'E003',incendios:'F001'};
 const SIT={"comun": [["Marcas la puerta por la que hay que salir del edificio en una emergencia.", "E002", ["E001"]], ["Tras evacuar, todo el personal debe reunirse en el patio para hacer el recuento.", "E007", []], ["Quieres indicar dónde está el desfibrilador del centro.", "E010", ["E009", "E003"]], ["Quieres indicar dónde está el botiquín.", "E003", ["E009", "E010"]], ["En caso de incendio, nadie debe bajar en el ascensor.", "P020", []], ["Marcas el lugar exacto donde cuelga el extintor.", "F001", ["F004"]], ["Señalas el botón que hay que pulsar para dar la alarma de incendio.", "F005", ["F006"]], ["El suelo del pasillo acaba de fregarse.", "W011", ["W007", "W001"]], ["Hay un hueco sin barandilla que da a la planta de abajo.", "W008", ["W001", "M018"]], ["El agua del grifo del almacén no se puede beber.", "P005", ["P022"]]], "sector": {"HIG": [["Avisas del peligro en la sala donde se hacen las radiografías dentales.", "W003", ["W001"]], ["Contenedor de residuos con material manchado de sangre.", "W009", ["W001", "W016"]], ["Al limpiar el instrumental puede salpicar: obligas a usar gafas.", "M004", ["M013"]], ["En el gabinete es obligatorio llevar mascarilla.", "M016", ["M017"]], ["Recuerdas que hay que lavarse las manos antes de atender al siguiente paciente.", "M011", ["M009"]], ["El autoclave quema al sacar el material recién esterilizado.", "W017", ["W001", "P010"]], ["Indicas el equipo para lavarse los ojos tras una salpicadura de desinfectante.", "E011", ["E012", "E003"]], ["Armario con desinfectantes que dañan la piel.", "W023", ["W016", "W021", "W001", "M009"]], ["Avisas del peligro para los ojos del láser dental.", "W004", ["W001", "M004"]], ["En la sala de esterilización no se puede comer ni beber.", "P022", []]], "ITE": [["Puerta del cuarto con el cuadro eléctrico del edificio.", "W012", ["W001", "P010"]], ["En la caseta de la antena hay un equipo con partes peligrosas que no se debe tocar.", "P010", ["W012", "W001"]], ["Vas a instalar la antena en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008", "M014"]], ["Zona bajo la grúa que sube las antenas a la azotea.", "W015", ["W001", "M014", "P004"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En la obra es obligatorio llevar casco.", "M014", []], ["Vas a taladrar paredes de ladrillo: obligas a proteger los ojos.", "M004", ["M013"]], ["Junto al cuadro eléctrico: si hay fuego, el agua es peligrosa.", "P011", ["F001"]], ["Trabajas en una arqueta junto al tráfico: obligas a llevar...", "M015", []], ["Al descargar bobinas de cable, obligas a proteger los pies.", "M008", []]], "STI": [["Puerta del cuarto con el cuadro eléctrico del CPD.", "W012", ["W001", "P010"]], ["Un equipo del CPD tiene partes peligrosas que nadie debe tocar.", "P010", ["W012", "W001"]], ["Sala del SAI, llena de baterías.", "W026", ["W012", "W001", "W023", "W021", "P002", "P003"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En el CPD: si hay fuego en los equipos, el agua es peligrosa.", "P011", ["F001"]], ["Vas a instalar un radioenlace en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008", "M014"]], ["En el falso suelo del CPD hay placas levantadas y cables.", "W007", ["W001", "W008"]], ["Vas a taladrar el techo para pasar canaletas: obligas a proteger los ojos.", "M004", ["M013"]], ["Al descargar los armarios rack, obligas a proteger los pies.", "M008", []], ["En el almacén circulan carretillas elevadoras.", "W014", ["W001", "P004"]]], "IFC": [["Puerta de la cámara frigorífica a −20 °C.", "W010", ["W001"]], ["Almacén con botellas de gas refrigerante inflamable.", "W021", ["P003", "P002", "W001"]], ["Vas a trabajar en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008", "M014"]], ["Sala de compresores muy ruidosa: obligas a proteger el oído.", "M003", []], ["Al soldar tuberías con soplete, obligas a protegerte toda la cara.", "M013", ["M004"]], ["Junto al depósito de amoniaco de la instalación.", "W016", ["W023", "W001", "M016", "M017"]], ["Al cargar refrigerante puedes quemarte las manos por el frío: obligas a usar...", "M009", ["M010", "W010"]], ["Tuberías de descarga del compresor muy calientes.", "W017", ["W001", "P010"]], ["Cuadro eléctrico de la enfriadora.", "W012", ["W001", "P010"]], ["En la sala de máquinas con refrigerante inflamable no se puede encender fuego.", "P003", ["P002", "W021"]]]}};
 const RESTA=50, TRAMPAS=3;
+/* fase 5, 17-11-2026: sensación de juego. actx lo usa comun.js (sonido y botón «Sin sonido» con el mismo contexto).
+   GIRO solo es la marca con la que comun.js pone el botón «Ayuda de colores» (desde la fase 4 ya no gira colores y el botón
+   había desaparecido). suena/tiembla/quieto: lo de comun.js, sin romperse si faltara. */
+let actx=null;
+const GIRO=true;
+const suena=(n,k)=>{try{sfx(n,k)}catch(e){}}, tiembla=p=>{try{vibrar(p)}catch(e){}};
+const quieto=()=>{try{return MOV_REDUCIDO}catch(e){return false}};
+const multTxt=r=>'×'+String(r>1?1+Math.min(r-1,4)*.25:1).replace('.',',');   // el mismo multiplicador que suma los puntos
+const vidasHtml=v=>`<span aria-hidden="true">${'♥'.repeat(v)}${'♡'.repeat(3-v)}</span>`;
+const attr=x=>String(x).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 /* Fin de plazo de cada grupo (hora del móvil): después se puede entrenar, pero la partida oficial ya no cuenta. */
 const CIERRES={};  /* José, 13-11-2026: sin fecha hasta que se abra en Classroom */
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -370,7 +413,7 @@ function contraste(s,k,modo){
 }
 
 function portada(){
- clearInterval(st.reloj);
+ clearInterval(st.reloj);st.activa=false;
  const muestra=['prohibicion','advertencia','obligacion','salvamento','incendios'].map(icono).join('');
  app.innerHTML=`<div class="portada">
   <div class="heroe">
@@ -403,7 +446,58 @@ function portada(){
  revisaOfi();
 }
 
+/* ===== Tutorial jugable de la primera vez (fase 5, 17-11-2026): antes del nivel 1 de entrenamiento, nunca en la oficial.
+   Las 5 familias con su forma y color y una señal de prueba sin reloj ni puntos (~15 s). Se puede saltar. */
+const CLAVE_TUTO='senales_tutorial';
+const FAMILIA={prohibicion:'Redonda · borde y banda rojos, fondo blanco. Prohíbe.',advertencia:'Triangular · fondo amarillo, borde negro. Avisa de un peligro.',
+ obligacion:'Redonda · fondo azul, dibujo blanco. Obliga.',salvamento:'Cuadrada o rectangular · fondo verde. Salidas y socorro.',
+ incendios:'Cuadrada o rectangular · fondo rojo. Equipos contra incendios.'};
+function tutorial(){
+ clearInterval(st.reloj);st.activa=false;window.scrollTo(0,0);
+ const fin=()=>{ls.set(CLAVE_TUTO,'1');empieza(1)};
+ const cab=`<div class="cab"><span class="marca">Antes de empezar · 15 segundos</span><button class="saltar" id="saltar" type="button">Saltar</button></div>`;
+ app.innerHTML=`<div class="tuto">${cab}
+  <h2 class="serif">Cinco familias de señales</h2>
+  <p>La forma y el color te dicen el tipo de señal antes de mirar el dibujo.</p>
+  <div class="familias">${Object.keys(TIPOS).map((t,i)=>`<div class="fam" style="animation-delay:${i*70}ms"><span class="mini">${icono(t)}</span><span><b>${TIPOS[t].n}</b><small>${FAMILIA[t]}</small></span></div>`).join('')}</div>
+  <p>Ojo: alguna señal estará mal hecha (una forma o un color que no le toca). Entonces, «Señal mal hecha».</p>
+  <button class="btn p" id="probar" type="button">Probar con una señal</button></div>`;
+ $('#saltar').onclick=fin;
+ $('#probar').onclick=()=>{
+  const muestras=Object.values(MUESTRA), cand=SEN.filter(x=>!muestras.includes(x.cod)), s=cand[Math.floor(Math.random()*cand.length)]||SEN[0];
+  const ops=Object.keys(TIPOS).map(k=>({k,txt:TIPOS[k].n})).concat([{k:'trampa',txt:'Señal mal hecha: no existe'}]);
+  app.innerHTML=`<div class="tuto">${cab}
+   <div class="tarjeta entra" id="tj"><div class="preg">Prueba: ¿qué tipo de señal es?</div><div class="senal">${s.svg}</div>
+    <small style="color:var(--gris)">Sin reloj y sin puntos</small>
+    <div class="opciones tipos">${ops.map(o=>`<button class="op" data-k="${o.k}">${o.txt}</button>`).join('')}</div>
+    <div class="explica" id="ex" role="status" aria-live="polite"></div>
+    <button class="sig" id="sig">¡A jugar!</button></div></div>`;
+  $('#saltar').onclick=fin;
+  const pintada=Date.now();
+  app.querySelectorAll('.op').forEach(b=>b.onclick=()=>{
+   if(Date.now()-pintada<350)return;
+   const k=b.dataset.k, ok=k===s.tipo;
+   app.querySelectorAll('.op').forEach(x=>{x.disabled=true;if(x.dataset.k===s.tipo)x.classList.add('ok');else if(x.dataset.k===k)x.classList.add('mal')});
+   if(ok)suena('acierto',1);else{suena('fallo');sacudirTj()}
+   const ex=$('#ex');ex.className='explica '+(ok?'ok':'mal');
+   ex.innerHTML=`<b>${ok?'¡Eso es!':'Casi: es de '+TIPOS[s.tipo].n.toLowerCase()} · ${s.sig}</b>${TIPOS[s.tipo].d}`;
+   const g=$('#sig');g.style.display='block';g.onclick=fin;g.focus({preventScroll:true});
+   setTimeout(()=>g.scrollIntoView({behavior:quieto()?'auto':'smooth',block:'nearest'}),150);
+  });
+ };
+}
+const sacudirTj=()=>{try{sacudir($('#tj'),8)}catch(e){}};
+/* la tarjeta sale de lado y después entra la siguiente (con movimiento reducido, al momento) */
+function sale(cb){
+ const tj=$('#tj');
+ if(!tj||quieto()||!tj.animate||document.hidden)return cb();
+ let hecho=false;const fin=()=>{if(!hecho){hecho=true;cb()}};
+ tj.animate([{transform:'none',opacity:1},{transform:'translateX(-48px)',opacity:0}],{duration:170,easing:'ease-in',fill:'forwards'}).onfinish=fin;
+ setTimeout(fin,320);   // por si la animación no termina (pestaña en segundo plano)
+}
+
 function empieza(n,oficial){
+ if(n===1&&!oficial&&ls.get(CLAVE_TUTO,'')!=='1')return tutorial();
  const l=NIVELES[n-1];
  let lista=baraja(SEN);
  while(lista.length<l.preg)lista=lista.concat(baraja(SEN));
@@ -423,25 +517,29 @@ function pregunta(){
  else if(modo==='sig'){
   ops=baraja([s,...distractores(s,[])]).map(x=>({k:x.sig,txt:x.sig}));
  }else{
-  ops=baraja([s,...distractores(s,s.excl)]).map(x=>({k:x.cod,img:x.svg}));   // fase 4, 17-11-2026: antes, 1 del mismo tipo y 2 de otro (bastaba el color)
+  ops=baraja([s,...distractores(s,s.excl)]).map(x=>({k:x.cod,img:x.svg,nom:x.sig}));   // fase 4, 17-11-2026: antes, 1 del mismo tipo y 2 de otro (bastaba el color)
  }
  const correcta=modo==='tipo'?(s.trampa?'trampa':s.tipo):modo==='sig'?s.sig:s.cod;
  const COLOR={prohibicion:'rojo y blanco',obligacion:'azul',advertencia:'amarillo',salvamento:'verde',incendios:'rojo'};
  const ayuda=modo==='tipo'&&window.AYUDA_COLOR?`<div class="libro" style="text-align:center;font-size:15px">Color de la señal: ${s.trampa?s.trampa.c:COLOR[s.tipo]}</div>`:'';
  const dibujo=`<div class="senal">${s.svg}</div>${ayuda}`;
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?'🔥 x'+st.racha:'Señal '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
-  <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
-  <div class="tiempo"><i id="t"></i></div>
-  <div class="tarjeta" id="tj">
+ /* fase 5: la racha tiene su contador (el multiplicador de los puntos) y el progreso no se pierde; vidas, progreso y reloj con nombre accesible */
+ app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">Señal ${st.i+1}/${st.lista.length}</span><span class="pill vidas" role="img" aria-label="Vidas: ${st.vidas} de 3">${vidasHtml(st.vidas)}</span></div>
+  <div class="estado"><div class="barra" role="progressbar" aria-label="Progreso del nivel" aria-valuemin="0" aria-valuemax="${st.lista.length}" aria-valuenow="${st.i}"><i style="width:${st.i/st.lista.length*100}%"></i></div>${rachaHtml()}</div>
+  <div class="tiempo" role="progressbar" aria-label="Tiempo para responder" aria-valuemin="0" aria-valuemax="${st.l.t}" aria-valuenow="${st.l.t}" aria-valuetext="${st.l.t} segundos"><i id="t"></i></div>
+  <div class="tarjeta entra" id="tj">
    ${modo==='sit'?`<div class="preg">¿Qué señal pondrías?</div><div class="situ">${s.texto}</div>`:`<div class="preg">${modo==='tipo'?'¿Qué tipo de señal es?':'¿Qué significa esta señal?'}</div>${dibujo}`}
-   <div class="opciones ${modo==='tipo'?'tipos':modo==='sit'?'imgs':''}">${ops.map(o=>`<button class="op" data-k="${o.k}">${o.img?o.img:o.txt}</button>`).join('')}</div>
+   <div class="opciones ${modo==='tipo'?'tipos':modo==='sit'?'imgs':''}">${ops.map(o=>`<button class="op" data-k="${o.k}"${o.nom?` aria-label="${attr(o.nom)}"`:''}>${o.img?o.img:o.txt}</button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
- const T=st.l.t*1000, barra=$('#t'), pintada=Date.now();st.t0=Date.now();st.activa=true;
- st.reloj=setInterval(()=>{if(st.parado)return;const q=1-(Date.now()-st.t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
+ /* fase 5: la barra la mueve el navegador (transición CSS); el intervalo solo cuenta los segundos, hace «tic» y acaba el tiempo */
+ const T=st.l.t*1000, pintada=Date.now();st.t0=Date.now();st.T=T;st.seg=st.l.t;st.activa=true;
+ barraT();
+ st.reloj=setInterval(()=>{if(st.parado)return;const resto=T-(Date.now()-st.t0);segundos(resto);if(resto<=0)responde(null)},100);
  const responde=k=>{
   clearInterval(st.reloj);st.activa=false;
+  barraT(Date.now());const tb=$('.tiempo');if(tb)tb.classList.remove('urgente');
   const ok=k===correcta, seg=(Date.now()-st.t0)/1000;
   app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(b.dataset.k===correcta)b.classList.add('ok');else if(b.dataset.k===k)b.classList.add('mal')});
   const ex=$('#ex');
@@ -449,28 +547,54 @@ function pregunta(){
    st.racha++;st.aciertos++;
    const g=Math.round((100+Math.max(0,st.l.t-seg)*10)*(1+Math.min(st.racha-1,4)*.25));
    st.pts+=g;
+   suena('acierto',st.racha);pintaRacha(true);
+   if(st.racha===3||st.racha===5)setTimeout(()=>suena('premio'),170);   // racha ×1,5 y ×2 (el máximo)
    const f=document.createElement('div');f.className='puntos-flota';f.textContent='+'+g;document.body.appendChild(f);setTimeout(()=>f.remove(),900);
    ex.className='explica ok';ex.innerHTML=s.trampa?`<b>¡Bien visto! Es una trampa</b>${trampaTxt(s)}`:`<b>¡Correcto! ${s.sig}</b>${s.exp} ${TIPOS[s.tipo].d}`;
   }else{
    st.racha=0;st.vidas--;st.fallos.push(s);
    const resta=Math.min(RESTA,st.pts);st.pts-=resta;
    if(resta){const f=document.createElement('div');f.className='puntos-flota';f.style.color='var(--mal)';f.textContent='−'+resta;document.body.appendChild(f);setTimeout(()=>f.remove(),900)}
-   $('#tj').classList.add('sacude');
+   suena('fallo');tiembla(90);sacudirTj();pintaRacha(false);
+   const pv=$('.cab .vidas');if(pv){pv.innerHTML=vidasHtml(Math.max(0,st.vidas));pv.setAttribute('aria-label',`Vidas: ${Math.max(0,st.vidas)} de 3`)}
    const cab=k===null?'¡Se acabó el tiempo!':'No es correcto';
    ex.className='explica mal';ex.innerHTML=s.trampa?`<b>${cab}: era una trampa</b>${contraste(s,k,modo)}${trampaTxt(s)}`:`<b>${cab}</b>${contraste(s,k,modo)}${modo==='sit'?'La señal adecuada es':'Es una señal de <b style="display:inline;font-size:15px">'+TIPOS[s.tipo].n.toLowerCase()+'</b>:'} «${s.sig}». ${s.exp} ${TIPOS[s.tipo].d}`;
   }
   const pp=document.querySelector('.cab .pill');if(pp)pp.textContent=st.pts+' pts';
   const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'nearest'}),150);b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';
-  b.onclick=()=>{st.i++;pregunta()};
+  b.onclick=()=>{b.onclick=null;sale(()=>{st.i++;pregunta()})};   // una sola vez aunque se toque dos veces durante la salida
  };
  app.querySelectorAll('.op').forEach(b=>b.onclick=()=>{if(Date.now()-pintada<350||st.parado)return;responde(b.dataset.k)});   // 17-11-2026: el segundo toque de «Siguiente» ya no responde la pregunta nueva
+}
+/* fase 5: barra del reloj con CSS. barraT() la pone donde toca según st.t0 y la lleva a 0 en el tiempo que queda;
+   barraT(momento) la congela en ese momento (al responder y en la pausa). */
+function barraT(congela){
+ const b=$('#t');if(!b||!st.T)return;
+ const q=Math.max(0,Math.min(1,1-((congela||Date.now())-st.t0)/st.T));
+ b.style.setProperty('transition','none','important');b.style.transform=`scaleX(${q})`;
+ if(congela)return;
+ b.getBoundingClientRect();   // fija el punto de partida antes de animar
+ b.style.setProperty('transition',`transform ${Math.round(q*st.T)}ms linear`,'important');b.style.transform='scaleX(0)';
+}
+function segundos(resto){
+ const s=Math.max(0,Math.ceil(resto/1000)), t=$('.tiempo');
+ if(s===st.seg||!t)return;st.seg=s;
+ t.setAttribute('aria-valuenow',s);t.setAttribute('aria-valuetext',s===1?'1 segundo':s+' segundos');
+ if(s>=1&&s<=3){t.classList.add('urgente');suena('tic')}
+}
+function rachaHtml(){return `<span class="racha${st.racha>1?' on':''}" id="racha"><span class="sr">Multiplicador de racha: </span><span aria-hidden="true">${st.racha>1?'🔥 ':''}</span>${multTxt(st.racha)}</span>`}
+function pintaRacha(sube){
+ const r=$('#racha');if(!r)return;
+ r.outerHTML=rachaHtml();
+ if(sube&&st.racha>1){const n=$('#racha');n.classList.add('pop');n.addEventListener('animationend',()=>n.classList.remove('pop'),{once:true})}
 }
 /* 17-11-2026: si la página se oculta (llamada, bloqueo, otra aplicación) se tapa la pregunta y el reloj se para */
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden||!st.activa||st.parado)return;
- st.parado=Date.now();const tj=$('#tj');if(!tj)return;
+ st.parado=Date.now();barraT(st.parado);const tb=$('.tiempo');if(tb)tb.classList.add('quieto');
+ const tj=$('#tj');if(!tj)return;
  const p=document.createElement('button');p.className='pausa';p.type='button';p.innerHTML='<b>Pausa</b>El tiempo está parado.<span>Toca para seguir</span>';
- p.onclick=()=>{st.t0+=Date.now()-st.parado;st.parado=0;p.remove()};tj.appendChild(p);
+ p.onclick=()=>{st.t0+=Date.now()-st.parado;st.parado=0;p.remove();const tq=$('.tiempo');if(tq)tq.classList.remove('quieto');barraT()};tj.appendChild(p);
 });
 
 function final(){
@@ -478,20 +602,32 @@ function final(){
  const total=st.lista.length, est=Math.max(0,st.vidas);   // 17-11-2026: estrellas = vidas que te quedan (0 fallos 3★, 1 fallo 2★, 2 fallos 1★)
  const antes=rec(st.l.n); guarda(st.l.n,st.pts);
  const unicos=[...new Map(st.fallos.map(s=>[s.id+(s.trampa?'t'+s.trampa.k:''),s])).values()];
- if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
+ const confeti=()=>{if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}};
+ const rapido=quieto()||document.hidden;   // fase 5: sin animar, todo a la vez
  app.innerHTML=`<div class="final">
   <div class="marca">Nivel ${st.l.n} · ${st.l.titulo}</div>
-  <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
-  <div class="gran">${st.pts}</div><div>puntos · ${st.aciertos} de ${total} aciertos${st.vidas<=0?' · sin vidas':''}</div>
+  <div class="estrellas${rapido?'':' revela'}" role="img" aria-label="${est} de 3 estrellas">${[0,1,2].map(i=>`<span aria-hidden="true">${i<est?'★':'☆'}</span>`).join('')}</div>
+  <div class="gran" id="gran" aria-hidden="true">${rapido?st.pts:0}</div><div><span class="sr">${st.pts} </span>puntos · ${st.aciertos} de ${total} aciertos${st.vidas<=0?' · sin vidas':''}</div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
   ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estas señales</h2><p class="libro">${libro(2,'2.2.3')}</p>${unicos.map(s=>s.trampa?`<div class="fallo">${s.svg}<div><b>Señal trampa</b><small>${trampaTxt(s)}</small></div></div>`:`<div class="fallo">${s.svg}<div><b>${s.sig}</b><small>${TIPOS[s.tipo].n}. ${s.exp}</small></div></div>`).join('')}</div>`:'<p style="margin-top:14px">¡Ni un fallo! Ya eres detective de señales.</p>'}
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.l.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
  </div>`;
+ revela(est,st.pts,rapido,confeti);
  if(st.oficial)return finOficial();
  $('#otra').onclick=()=>empieza(st.l.n);
  $('#menu').onclick=portada;
  if($('#sigui'))$('#sigui').onclick=()=>empieza(st.l.n+1);
+}
+/* fase 5: los puntos suben desde 0 y las estrellas salen una a una, cada una con su nota (más aguda la siguiente) */
+function revela(est,pts,rapido,alFinal){
+ const g=$('#gran');
+ if(rapido){if(est)suena(est===3?'fanfarria':'premio');return alFinal()}
+ const t0=performance.now(),D=900;
+ const paso=t=>{if(!g.isConnected)return;const k=Math.min(1,(t-t0)/D);g.textContent=Math.round(pts*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(paso)};
+ requestAnimationFrame(paso);setTimeout(()=>{if(g.isConnected)g.textContent=pts},D+300);   // por si se para requestAnimationFrame
+ app.querySelectorAll('.estrellas span').forEach((e,i)=>setTimeout(()=>{if(!g.isConnected)return;e.classList.add('ve');if(i<est)suena('acierto',2+i*2)},450+i*380));
+ setTimeout(()=>{if(!g.isConnected)return;if(est===3)suena('fanfarria');alFinal()},450+3*380);   // si ya se ha ido de la pantalla, nada
 }
 function bloqueOficial(est){
  const o=st.oficial; o.est[st.l.n-1]=est;o.fallos=(o.fallos||[]).concat(st.fallos.map(x=>`N${st.l.n} ${x.trampa?'trampa '+x.cod:(x.texto?'situación «'+x.texto.slice(0,40)+'» → '+x.cod:x.cod+' '+x.sig)}`)); o.pts+=st.pts;
@@ -608,6 +744,69 @@ function dialogo(txt, op) {
   });
 }
 
+/* ===== Sonido y respuesta física comunes (fase 5, 17-11-2026) =====
+   Todo sintetizado con WebAudio (sin archivos). Un solo contexto: el «actx» del juego si lo declara (let actx=null) y,
+   si no, uno propio. Pasa por un volumen general y un compresor para que nada sature. Respeta «Sin sonido» (SILENCIO),
+   que también quita la vibración. Se desbloquea con el primer toque (iOS).
+   sfx('toque'|'acierto'|'fallo'|'tic'|'golpe'|'rompe'|'premio'|'fanfarria'|'alarma'|'barrido'|'paso', n) · vibrar(ms o patrón)
+   sacudir(elemento, px) · parada(ms) → promesa (pausa de impacto; el juego decide qué congela) */
+const AUDIO = { ctx: null, maestro: null, ruido: null };
+function audio() {
+  try {
+    let c = typeof actx !== 'undefined' ? actx : AUDIO.ctx;
+    if (!c) { c = new (window.AudioContext || window.webkitAudioContext)(); if (typeof actx !== 'undefined') actx = c; }
+    AUDIO.ctx = c;
+    if (!AUDIO.maestro || AUDIO.maestro.context !== c) {
+      const comp = c.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      AUDIO.maestro = c.createGain(); AUDIO.maestro.gain.value = .8; AUDIO.maestro.connect(comp).connect(c.destination);
+      const b = c.createBuffer(1, c.sampleRate * .5, c.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      AUDIO.ruido = b;
+    }
+    if (c.state === 'suspended' && !window.SILENCIO) c.resume();
+    return c;
+  } catch (e) { return null }
+}
+function nota(f, dur, tipo = 'sine', vol = .2, d = 0, hasta = 0) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, o = c.createOscillator(), g = c.createGain();
+  o.type = tipo; o.frequency.setValueAtTime(f, t0); if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+  g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + .012); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g).connect(AUDIO.maestro); o.start(t0); o.stop(t0 + dur + .03);
+}
+function ruido(dur, vol = .2, filtro = 1200, d = 0, q = 1) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = AUDIO.ruido; f.type = 'bandpass'; f.frequency.value = filtro; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  s.connect(f).connect(g).connect(AUDIO.maestro); s.start(t0); s.stop(t0 + dur + .02);
+}
+const PENTA = [0, 2, 4, 7, 9];
+const escala = n => 523.25 * Math.pow(2, (PENTA[n % 5] + 12 * Math.floor(n / 5)) / 12);   // do pentatónico que sube con n
+function sfx(nombre, n = 0) {
+  switch (nombre) {
+    case 'toque': nota(1400, .035, 'triangle', .12); break;
+    case 'paso': nota(320 + n * 6, .03, 'sine', .05); break;
+    case 'tic': nota(1000, .03, 'square', .07); break;
+    case 'acierto': { const b = escala(Math.min(n, 9)); nota(b, .12, 'triangle', .22); nota(b * 1.5, .16, 'triangle', .2, .07); break }
+    case 'fallo': nota(220, .16, 'square', .14); nota(155, .2, 'square', .14, .12); break;
+    case 'golpe': nota(160, .09, 'sine', .3, 0, 60); ruido(.05, .12, 900); break;
+    case 'rompe': ruido(.09, .22, 1800 + Math.min(n, 12) * 180, 0, 2); nota(escala(Math.min(n, 12)), .07, 'triangle', .1); break;
+    case 'premio': [0, 2, 4].forEach((k, i) => nota(escala(k + 5), .14, 'sine', .18, i * .07)); break;
+    case 'fanfarria': [523, 659, 784, 1047].forEach((f, i) => nota(f, .22, 'triangle', .2, i * .11)); break;
+    case 'alarma': nota(880, .12, 'square', .1); nota(880, .12, 'square', .1, .2); break;
+    case 'barrido': ruido(.25, .08, 600, 0, .7); break;
+  }
+}
+function vibrar(p) { try { if (!window.SILENCIO && navigator.vibrate) navigator.vibrate(p) } catch (e) {} }
+const MOV_REDUCIDO = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } })();
+function sacudir(el, px = 6) {
+  if (!el || MOV_REDUCIDO || !el.animate) return;
+  el.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: 'translate(0,0)' }], { duration: 220, easing: 'ease-out' });
+}
+const parada = ms => new Promise(r => setTimeout(r, MOV_REDUCIDO ? 0 : ms));
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (!window.SILENCIO) audio() }, { capture: true, passive: true }));
+
 /* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
 try {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
@@ -666,16 +865,17 @@ button,a,input,.op,.resp{touch-action:manipulation}
   const muestra = () => { const p = app && app.querySelector('.portada'); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
   if (app) new MutationObserver(muestra).observe(app, { childList: true });
 
-  /* Sonido sí/no (serpiente y auxilios tienen sonido; señales no). */
-  if (typeof actx !== 'undefined') {
+  /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
+  {
     const aplica = () => {
       try {
-        if (window.SILENCIO) { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); actx.suspend() }
-        else if (actx && actx.state === 'suspended') actx.resume();
+        const c = typeof actx !== 'undefined' && actx ? actx : AUDIO.ctx;
+        if (window.SILENCIO) { if (c) c.suspend(); try { window.speechSynthesis && speechSynthesis.cancel() } catch (e) {} }
+        else if (c && c.state === 'suspended') c.resume();
       } catch (e) {}
     };
     window.SILENCIO = L.get('ipe_silencio', '0') === '1';
-    boton(v => v ? '🔊 Sonido' : '🔇 Sin sonido', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
     aplica();
     /* si el juego crea el sonido después, se vuelve a silenciar */
     document.addEventListener('click', () => setTimeout(aplica, 0), true);

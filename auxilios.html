@@ -103,12 +103,17 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .heroe h1 span{color:#fcd100}
 .heroe p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
 .hecg{width:100%;height:54px;display:block}
-.hecg .trazo{fill:none;stroke:#7dffb5;stroke-width:3;stroke-linejoin:round;stroke-dasharray:640;stroke-dashoffset:640;animation:traza 2.4s linear infinite;filter:drop-shadow(0 0 5px rgba(125,255,181,.9))}
-@keyframes traza{to{stroke-dashoffset:-640}}
+.hecg path{fill:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+/* fase 5: antes solo había el trazo animado (dasharray) y, al empezar y al acabar cada pasada, se veía un guion suelto
+   que parecía un icono sin cargar. Ahora la línea completa está siempre (tenue) y por encima corre el barrido. */
+.hecg .base{stroke:rgba(125,255,181,.3)}
+.hecg .trazo{stroke:#7dffb5;stroke-dasharray:90 410;stroke-dashoffset:90;animation:traza 2.4s linear infinite}
+@keyframes traza{to{stroke-dashoffset:-410}}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips span{font:700 12px "Helvetica Neue",Arial;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px}
-.nivel .ico{font-size:26px;flex:none}
-.nivel{transition:transform .12s,box-shadow .12s}.nivel:active{transform:scale(.98)}
+.nivel .ico{flex:none;width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;color:var(--verde);background:#eef4f1;box-shadow:inset 0 2px 0 #fff,inset 0 -3px 0 rgba(0,66,48,.1)}
+.nivel .ico .pic{width:28px;height:28px}
+.nivel{transition:transform .1s,box-shadow .1s}.nivel:active{transform:translateY(2px)}
 
 .escena{font-size:16px;line-height:1.45;text-align:center;margin:8px 4px 4px}
 .opciones.textos .op{font-weight:600;font-size:15px;line-height:1.3}
@@ -119,20 +124,20 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .rcp .crono{font:800 22px Aleo,Georgia,serif;letter-spacing:1px}
 .monitor{width:calc(100% - 28px);max-width:492px;margin-top:8px;border-radius:14px;background:#03100c;border:1px solid rgba(125,255,181,.25);box-shadow:inset 0 0 24px rgba(47,212,122,.08),0 6px 20px rgba(0,0,0,.4);position:relative;overflow:hidden;
  background-image:linear-gradient(rgba(125,255,181,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(125,255,181,.07) 1px,transparent 1px);background-size:14px 14px}
-.monitor .ecg{width:100%;height:58px;display:block;filter:drop-shadow(0 0 4px rgba(125,255,181,.8))}
+.monitor .ecg{width:100%;height:58px;display:block}   /* fase 5: lienzo a 30 fps, sin filtros (antes, polilínea SVG + drop-shadow en cada fotograma) */
 .monitor .et{position:absolute;left:10px;top:6px;font:700 10px "Helvetica Neue",Arial;letter-spacing:.12em;color:#7dffb5;opacity:.8}
-.monitor .corazon{position:absolute;right:10px;top:6px;font-size:20px;filter:drop-shadow(0 0 6px rgba(255,80,80,.8))}
+.monitor .corazon{position:absolute;right:10px;top:5px;width:22px;height:22px}.monitor .corazon .pic{width:22px;height:22px;display:block}
 .latido{animation:latido .25s ease-out}
 @keyframes latido{40%{transform:scale(1.35)}}
 .rcp .msg{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;margin:8px 14px 0;padding:8px 12px;width:calc(100% - 28px);max-width:492px;font-weight:600}
 .rcp .msg b{color:#7dffb5}
 .rcp .arriba .crono{font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(125,255,181,.4)}
 .rcp .cuenta,.rcp .bpm{font-variant-numeric:tabular-nums}
-.rcp .botones .btn{border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+.rcp .botones .btn{border-radius:16px}
 .rcp .abajo{background:linear-gradient(180deg,rgba(3,16,12,0),rgba(3,16,12,.85) 30%)}
 .rcp .msg{min-height:44px;max-width:480px;text-align:center;font:700 16px/1.3 "Helvetica Neue",Arial,sans-serif;padding:4px 14px;color:#dff3ea}
 .rcp .cuerpo{flex:1;width:100%;max-width:420px;min-height:0;position:relative}
-.rcp .cuerpo svg{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5))}
+.rcp .cuerpo svg{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));will-change:transform}
 .asa{animation:asa 1.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes asa{50%{transform:scale(1.18)}}
 .rcp .abajo{width:100%;max-width:520px;padding:6px 14px calc(14px + env(safe-area-inset-bottom));display:grid;gap:8px}
@@ -149,11 +154,13 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .rcp .btn.alarma{background:#c24400;color:#fff;animation:late .6s infinite}
 .rcp .btn[disabled]{opacity:.28}
 @keyframes late{50%{transform:scale(1.04);filter:brightness(1.25)}}
-.rcp .combo{position:absolute;left:0;right:0;top:6%;text-align:center;font:800 26px Aleo,Georgia,serif;color:#7dffb5;text-shadow:0 0 14px rgba(125,255,181,.6);pointer-events:none;opacity:0;transition:opacity .2s}
+.rcp .combo{position:absolute;left:0;right:0;top:6%;text-align:center;font:800 26px Aleo,Georgia,serif;color:#7dffb5;text-shadow:0 0 14px rgba(125,255,181,.6);pointer-events:none;opacity:0;transition:opacity .2s;z-index:2}
+.rcp .combo.rotulo{left:50%;right:auto;transform:translateX(-50%);white-space:nowrap;font-size:22px;color:#062a1f;text-shadow:none;background:#fcd100;border-radius:999px;padding:8px 18px;box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -4px 0 rgba(0,0,0,.18),0 8px 20px rgba(0,0,0,.4)}
 .onda{position:absolute;border:3px solid #7dffb5;border-radius:50%;pointer-events:none;animation:onda .55s ease-out forwards}
 @keyframes onda{from{width:10px;height:10px;opacity:.9;transform:translate(-50%,-50%)}to{width:150px;height:150px;opacity:0;transform:translate(-50%,-50%)}}
-.destello{position:fixed;inset:0;pointer-events:none;z-index:6;animation:destello .25s ease-out forwards}
-@keyframes destello{from{opacity:.16}to{opacity:0}}
+/* fase 5: sin destellos a pantalla completa; solo un brillo local sobre el cuerpo (descarga del DEA) */
+.brillo{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 50% 38%,var(--c) 0,transparent 58%);animation:brillo .45s ease-out forwards}
+@keyframes brillo{from{opacity:.6}to{opacity:0}}
 .rcp .tarjeta-rcp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:12px;display:grid;gap:8px}
 .rcp .tarjeta-rcp .op{background:rgba(255,255,255,.92)}
 .rcp .tarjeta-rcp p{margin:0;text-align:center;font-size:15px;line-height:1.4}
@@ -168,6 +175,44 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 }
 .pausa-j{position:fixed;inset:0;z-index:50;border:0;width:100%;background:#0b1f19;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:700 18px/1.4 "Helvetica Neue",Arial,sans-serif;cursor:pointer}
 .pausa-j b{font:800 30px Aleo,Georgia,serif;color:#fcd100}
+/* ===== fase 5 (17-11-2026): pictogramas propios y relieve suave de plastilina, coherente con las ilustraciones ===== */
+.pic{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex:none}
+.icoesc{color:#fff;font-size:0}.icoesc .pic{width:28px;height:28px}
+.btn .pic,.op .pic{width:20px;height:20px;vertical-align:-4px;margin-right:6px}
+.pill .pic{width:15px;height:15px;vertical-align:-2px;margin-right:2px;color:#c24400}
+.rcp .msg .pic{width:18px;height:18px;vertical-align:-3px;color:#7dffb5;margin-right:4px}
+.tarjeta{border-radius:24px;box-shadow:0 10px 24px rgba(0,66,48,.12),0 2px 4px rgba(0,66,48,.06),inset 0 2px 0 rgba(255,255,255,.95),inset 0 -5px 0 rgba(0,66,48,.06)}
+.op{box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -3px 0 rgba(0,66,48,.12),0 2px 5px rgba(0,66,48,.08);transition:transform .08s,box-shadow .08s,background .2s}
+.op:active:not(:disabled){transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,66,48,.12),0 1px 2px rgba(0,66,48,.08)}
+.op.ok,.op.mal{box-shadow:inset 0 2px 0 rgba(255,255,255,.25),inset 0 -3px 0 rgba(0,0,0,.18)}
+.btn,.sig{box-shadow:inset 0 2px 0 rgba(255,255,255,.22),inset 0 -4px 0 rgba(0,0,0,.2),0 4px 10px rgba(0,66,48,.18);transition:transform .08s,box-shadow .08s}
+.btn.s{box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -4px 0 rgba(0,66,48,.12),0 3px 8px rgba(0,66,48,.1)}
+.btn:active:not([disabled]),.sig:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -1px 0 rgba(0,0,0,.2),0 1px 3px rgba(0,66,48,.18)}
+.nivel{box-shadow:0 6px 14px rgba(0,66,48,.09),inset 0 2px 0 #fff,inset 0 -4px 0 rgba(0,66,48,.07)}
+.nivel .n{box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.22)}
+.pill{box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,66,48,.08),0 2px 4px rgba(0,66,48,.08)}
+.icoesc{box-shadow:inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 0 rgba(0,0,0,.2),0 6px 14px rgba(0,0,0,.18)}
+.chip112{box-shadow:0 2px 5px rgba(0,66,48,.06)}
+.oficial{box-shadow:inset 0 2px 0 #fff,0 6px 14px rgba(0,66,48,.08)}
+.rcp .pill{box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.25)}
+.rcp .botones .btn,.rcp .tarjeta-rcp .op{box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -4px 0 rgba(0,0,0,.25),0 6px 16px rgba(0,0,0,.35)}
+.rcp .tarjeta-rcp{box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 8px 20px rgba(0,0,0,.3)}
+.rcp .crono.urge{color:#fcd100}
+/* salir de los niveles 3 y 4 */
+.rcp .izq{display:flex;align-items:center;gap:8px}
+.rcp .salir{flex:none;width:40px;height:40px;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.25)}
+.rcp .salir .pic{width:20px;height:20px}
+/* compresión con cuerpo: sombra de las manos */
+#sombraM{transform-box:fill-box;transform-origin:center}
+/* tutorial jugable del nivel 4 */
+.tuto{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:10px 14px;background:rgba(3,16,12,.86);border-radius:18px;text-align:center}
+.tuto h3{margin:0;font:800 20px Aleo,Georgia,serif;color:#fcd100}
+.tuto p{margin:0;font-size:15px;line-height:1.4;color:#dff3ea;max-width:330px}
+.tuto .pad{width:min(150px,24vh);height:min(150px,24vh);border-radius:50%;border:0;padding:0;cursor:pointer;touch-action:none;will-change:transform;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#7dffb5;font:800 16px "Helvetica Neue",Arial,sans-serif;
+ background:radial-gradient(circle at 40% 32%,#2d5e4c,#123a2d 70%);box-shadow:inset 0 4px 0 rgba(255,255,255,.16),inset 0 -8px 0 rgba(0,0,0,.32),0 0 0 3px #7dffb5,0 10px 24px rgba(0,0,0,.45)}
+.tuto .pad .pic{width:44px;height:44px}
+.tuto .fb{min-height:22px;font-weight:700}
+.tuto .saltar{background:transparent;border:2px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:9px 18px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -270,6 +315,31 @@ const BANCOS = {
   {s:'',t:'Una mujer embarazada está inconsciente y respira con normalidad.',ok:'De lado sobre el costado izquierdo',no:['De lado sobre el costado derecho','Boca arriba con las piernas en alto','Sentada con la espalda apoyada en la pared'],e:'A una mujer embarazada se la coloca sobre el costado izquierdo.'}
  ]
 };
+
+/* Pictogramas propios de «Cada minuto cuenta» (fase 5, 17-11-2026). Dibujados para el juego: trazos simples, viewBox 24×24,
+   trazo 2 redondeado, color con currentColor (el que ponga cada sitio: #004230, #c24400, #FCD100 o blanco).
+   Sustituyen a los emojis de la interfaz, que cambian de un móvil a otro (🫱 salía como un cuadro vacío en Android antiguo).
+   ico('nombre', 'clase') → <svg>. Lo mete montar_auxilios.py en la marca de iconos de la plantilla. */
+const ICO={
+ escudo:'<path d="M12 3l7 3v5c0 4.6-3 8-7 10-4-2-7-5.4-7-10V6z"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4"/>',
+ fonendo:'<path d="M5 3h2M13 3h2"/><path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M10 12v3a5 5 0 0 0 10 0v-2.2"/><circle cx="20" cy="10.8" r="2"/>',
+ lateral:'<circle cx="5.5" cy="9.5" r="2.5"/><path d="M8.5 11.5h6.5l3 3.5h3"/><path d="M15 11.5l-2.5 3.5H10"/><path d="M8.5 11.5L10 15"/><path d="M2 19h20"/>',
+ corazon:'<path d="M12 20s-7.5-4.6-7.5-10.4A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z"/><path d="M6.5 12.5h3l1.3-2.5 2.2 5 1.3-2.5h3.2"/>',
+ corazonLleno:'<path d="M12 20s-7.5-4.6-7.5-10.4A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20z" fill="#c24400" stroke="#c24400"/><path d="M6.5 12.5h3l1.3-2.5 2.2 5 1.3-2.5h3.2" stroke="#fff"/>',
+ telefono:'<path d="M5.5 3.5h3l2 5-2.4 1.6a11 11 0 0 0 5.8 5.8l1.6-2.4 5 2v3a2 2 0 0 1-2 2A16.5 16.5 0 0 1 3.5 5.5a2 2 0 0 1 2-2z"/>',
+ aire:'<path d="M3 9h10a3 3 0 1 0-3-3"/><path d="M3 15h13a3 3 0 1 1-3 3"/><path d="M3 12h7"/>',
+ relevo:'<path d="M19 9A7.5 7.5 0 0 0 5.6 6.6"/><path d="M5 3v4h4"/><path d="M5 15a7.5 7.5 0 0 0 13.4 2.4"/><path d="M19 21v-4h-4"/>',
+ camiseta:'<path d="M8.5 4L3 7l2 4 2-1v10h10V10l2 1 2-4-5.5-3a3.5 3.5 0 0 1-7 0z"/>',
+ rayo:'<path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/>',
+ mano:'<path d="M7 13V6.5a1.5 1.5 0 0 1 3 0V11"/><path d="M10 10.5V4.5a1.5 1.5 0 0 1 3 0v6"/><path d="M13 10.5V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5a6 6 0 0 1-5-2.7L4.3 15a1.6 1.6 0 0 1 2.6-1.9L7 13.2"/>',
+ llama:'<path d="M12 21a6 6 0 0 0 6-6c0-4.2-3-6.5-4.2-11-2 2-3.3 4.3-3.3 6.6-1-.8-1.6-1.8-1.7-3.1C7.2 10 6 12.5 6 15a6 6 0 0 0 6 6z"/>',
+ avance:'<path d="M3.5 6.5l7 5.5-7 5.5z"/><path d="M12.5 6.5l7 5.5-7 5.5z"/>',
+ hecho:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ pantalla:'<path d="M4 9V4h5"/><path d="M15 4h5v5"/><path d="M20 15v5h-5"/><path d="M9 20H4v-5"/>',
+ salir:'<path d="M10 4H5.5a1.5 1.5 0 0 0-1.5 1.5v13A1.5 1.5 0 0 0 5.5 20H10"/><path d="M15 8l4 4-4 4"/><path d="M19 12H9"/>',
+ reloj:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9.5 2.5h5"/>'
+};
+const ico=(n,c='')=>`<svg class="pic ${c}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[n]||''}</svg>`;
 
 
 const JUEGO='UD3 Auxilios', PREF='auxilios', INTENTOS=3, RESTA=50;
@@ -448,7 +518,7 @@ const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Ma
 const rec=n=>+ls.get(PREF+'_record_'+n,0);
 const guarda=(n,p)=>{if(p>rec(n))ls.set(PREF+'_record_'+n,p)};
 const ciclo=()=>{const m=/^[12]([A-Z]{2,5})-/.exec(ls.get('ipe_codigo',''));return m?m[1]:''};
-const vibra=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+const vibra=ms=>vibrar(ms);   // fase 5: la de comun.js (respeta «Sin sonido ni vibración»)
 let st={};
 
 /* 17-11-2026: reloj del juego. Si la página se oculta (llamada, bloqueo, otra aplicación) se para, y al volver se sigue
@@ -462,21 +532,27 @@ document.addEventListener('visibilitychange',()=>{
  p.onclick=()=>{st.pausadoT=(st.pausadoT||0)+(Date.now()-st.parado);st.parado=0;st.ultimo=0;st.inter=[];p.remove()};
  document.body.appendChild(p);
 });
-/* sonido: un «clic» corto para el pulso de ayuda (WebAudio, sin archivos) */
+/* Sonido (fase 5, 17-11-2026): con la API común de comun.js (nota, sfx, vibrar), que respeta «Sin sonido» y usa este actx.
+   Se mantiene el carácter de antes: clic seco del metrónomo, dos tonos graves que bajan al fallar (José, 5-11-2026)
+   y tonos que suben al acertar (el relevo bien hecho también suena). */
 let actx=null;
-function clic(f=1100){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.07);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+.08)}catch(e){}}
-
-/* sonido de fallo: dos tonos graves que bajan (José, 5-11-2026: «cuando falla, un sonido además de moverse la pantalla») */
-function zumbido(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const t0=actx.currentTime;
- [[220,0],[160,.13]].forEach(([f,d])=>{const o=actx.createOscillator(),g=actx.createGain();o.type='square';o.frequency.value=f;
-  g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.16,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.16);
-  o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.18)})}catch(e){}}
-function fallo(){zumbido();vibra(150)}
-/* sonido de acierto: dos tonos que suben (José, 5-11-2026: el relevo bien hecho también suena) */
-function acierto(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const t0=actx.currentTime;
- [[660,0],[990,.12]].forEach(([f,d])=>{const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;
-  g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.25,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.22);
-  o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.24)})}catch(e){}vibra([40,40,40])}
+const clic=(f=1100)=>nota(f,.07,'sine',.25);
+function fallo(){sfx('fallo');vibra(150)}
+function acierto(){sfx('premio');vibra([40,40,40])}
+const golpeSordo=(v=1)=>nota(150,.08,'sine',.12*v,0,70);   // el «cuerpo» de cada compresión, muy suave
+/* Capa de tensión (fase 5): un latido grave y muy discreto que se acelera según se acaba el tiempo (preguntas y PLS).
+   q() devuelve lo que queda, de 1 a 0. Se calla con calla() o en cuanto cambia la partida (st nuevo). */
+function latido(q){
+ const id={};st.lat=id;clearTimeout(st.latT);
+ const late=()=>{
+  if(st.lat!==id)return;
+  const v=q();if(v==null||v<=0)return;
+  if(!st.parado&&!document.hidden){nota(80,.12,'triangle',.07,0,52);nota(72,.1,'triangle',.045,.16,48)}
+  st.latT=setTimeout(late,Math.round(420+620*Math.max(0,Math.min(1,v))));   // de ~1 latido por segundo a más de 2
+ };
+ st.latT=setTimeout(late,500);
+}
+function calla(){st.lat=null;clearTimeout(st.latT)}
 /* voz del DEA (José, 5-11-2026): la del propio móvil, en español; si no hay voz, no pasa nada */
 function habla(txt){try{const s=window.speechSynthesis;if(!s||window.SILENCIO||st.parado)return;s.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=.95;
  const v=s.getVoices().find(x=>/^es(-|_)ES/i.test(x.lang))||s.getVoices().find(x=>/^es/i.test(x.lang));if(v)u.voice=v;s.speak(u)}catch(e){}}
@@ -487,12 +563,12 @@ addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
 
 /* ===== Portada ===== */
 function portada(){
- clearInterval(st.reloj);clearInterval(st.metro);cancelAnimationFrame(st.raf||0);
+ clearInterval(st.reloj);clearInterval(st.metro);clearInterval(st.compRitmo);clearInterval(st.salto);clearTimeout(st.tutoT);cancelAnimationFrame(st.raf||0);calla();
  app.innerHTML=`<div class="portada">
   <div class="heroe">
    <div class="hm">IPE I · Unidad 3 · Primeros auxilios</div>
    <h1>Cada minuto<br><span>cuenta</span></h1>
-   <svg class="hecg" viewBox="0 0 320 60" preserveAspectRatio="none"><path class="trazo" d="M0 34 H70 l8 -6 l6 6 H110 l6 -26 l8 44 l7 -30 l5 12 H190 l8 -6 l6 6 H230 l6 -26 l8 44 l7 -30 l5 12 H320"/></svg>
+   <svg class="hecg" viewBox="0 0 320 60" preserveAspectRatio="none" aria-hidden="true"><path class="base" d="M0 34 H70 l8 -6 l6 6 H110 l6 -26 l8 44 l7 -30 l5 12 H190 l8 -6 l6 6 H230 l6 -26 l8 44 l7 -30 l5 12 H320"/><path class="trazo" d="M0 34 H70 l8 -6 l6 6 H110 l6 -26 l8 44 l7 -30 l5 12 H190 l8 -6 l6 6 H230 l6 -26 l8 44 l7 -30 l5 12 H320"/></svg>
    <p>Proteger, avisar y socorrer. Valorar, colocar en posición lateral de seguridad y hacer una RCP de calidad, con relevo y desfibrilador.</p>
    <div class="chips"><span>PAS · 112</span><span>PLS</span><span>RCP 30:2</span><span>DEA</span></div>
   </div>
@@ -504,7 +580,7 @@ function portada(){
   </div>
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
-  ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span><span class="ico">${['🛡️','🩺','🫱','🫀'][l.n-1]}</span></button>`).join('')}
+  ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span><span class="ico">${ico(['escudo','fonendo','lateral','corazon'][l.n-1])}</span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · Recomendaciones del Consejo Europeo de Reanimación (2025) · La profundidad de las compresiones se practica con el maniquí</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
@@ -540,11 +616,11 @@ function pregunta(){
  const s=st.lista[st.i];
  if(s.tipo==='llamada')return llamada(s);
  const ops=baraja([s.ok,...s.no]);
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?'🔥 x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
+ app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
   <div class="tiempo"><i id="t"></i></div>
   <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">
-   <div class="icoesc" style="background:${st.l.col}">${st.l.banco==='pas'?'🛡️':'🩺'}</div>
+   <div class="icoesc" style="background:${st.l.col}">${ico(st.l.banco==='pas'?'escudo':'fonendo')}</div>
    <div class="preg">${st.l.banco==='pas'?'¿Qué haces?':'¿Qué le pasa y qué haces?'}</div>
    <div class="escena">${s.t}</div>
    <div class="opciones textos">${ops.map((o,k)=>`<button class="op" data-k="${k}">${o}</button>`).join('')}</div>
@@ -553,15 +629,16 @@ function pregunta(){
   </div>`;
  const T=st.l.t*1000,t0=ahoraJ(),barra=$('#t');
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
+ latido(()=>1-(ahoraJ()-t0)/T);
  const responde=k=>{
-  clearInterval(st.reloj);
+  clearInterval(st.reloj);calla();
   const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=(ahoraJ()-t0)/1000;
   app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(ops[b.dataset.k]===s.ok)b.classList.add('ok');else if(+b.dataset.k===k)b.classList.add('mal')});
   const ex=$('#ex');
   if(ok){
    st.racha++;st.aciertos++;
    const g=Math.round((100+Math.min(30,Math.max(0,st.l.t-seg)*6))*(1+Math.min(st.racha-1,4)*.25));   // fase 3: la rapidez suma como mucho 30 (antes hasta 120): manda saber, no leer deprisa
-   st.pts+=g;flota('+'+g,'var(--ok)');
+   st.pts+=g;flota('+'+g,'var(--ok)');sfx('acierto',st.racha-1);   // fase 5: el tono sube con la racha
    ex.className='explica ok';ex.innerHTML=`<b>¡Correcto!</b>${s.e}`;
   }else{
    st.racha=0;st.vidas--;st.fallos.push(s);
@@ -585,27 +662,28 @@ const LLAMADA={tipo:'llamada',t:'Llamas al 112 con el altavoz puesto. Toca las t
 function llamada(s){
  const fichas=baraja(s.orden.map((x,k)=>({k,x})).concat([{k:-1,x:s.trampa}]));
  let paso=0,hecho=false;
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?'🔥 x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
+ app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div><div class="tiempo"><i id="t"></i></div>
-  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}"><div class="icoesc" style="background:${st.l.col}">📞</div>
+  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}"><div class="icoesc" style="background:${st.l.col}">${ico('telefono')}</div>
    <div class="preg">Llamada al 112</div><div class="escena">${s.t}</div>
    <div class="llamada" id="ll"><small>Tu llamada:</small></div>
    <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div>`;
  const T=(st.l.t+15)*1000,t0=ahoraJ(),barra=$('#t');
  const acaba=ok=>{
-  if(hecho)return;hecho=true;clearInterval(st.reloj);app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
+  if(hecho)return;hecho=true;clearInterval(st.reloj);calla();app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
   const ex=$('#ex'),seg=(ahoraJ()-t0)/1000;
-  if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.min(45,Math.max(0,T/1000-seg)*6))*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}
+  if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.min(45,Math.max(0,T/1000-seg)*6))*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');sfx('premio');ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}
   else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();ex.className='explica mal';ex.innerHTML=`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así'}</b>${s.e}`}
   const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';b.onclick=()=>{st.i++;pregunta()};
  };
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)acaba(false)},50);
+ latido(()=>hecho?null:1-(ahoraJ()-t0)/T);
  app.querySelectorAll('.chip112').forEach(b=>b.onclick=()=>{
   const k=+b.dataset.k;
   if(k!==paso)return acaba(false);
-  b.classList.add('usada');clic(880);paso++;
+  b.classList.add('usada');sfx('acierto',paso);paso++;   // fase 5: cada tarjeta bien puesta, un tono más alto
   $('#ll').innerHTML+=`<div><b>${paso}.</b> ${s.orden[k][1]}</div>`;
   if(paso===s.orden.length)acaba(true);
  });
@@ -686,7 +764,7 @@ function figura(e){
  return `<rect x="-60" y="-40" width="420" height="500" fill="url(#baldosa)"/>
   <ellipse cx="150" cy="250" rx="125" ry="190" fill="rgba(0,0,0,.18)"/>${cuerpo}`;
 }
-const manosSocorrista=`<g id="manos" style="transform-origin:150px 152px;transform-box:view-box">
+const manosSocorrista=`<ellipse id="sombraM" cx="150" cy="160" rx="36" ry="15" fill="#000" opacity=".28"/><g id="manos" style="transform-origin:150px 152px;transform-box:view-box">
  <circle cx="150" cy="152" r="30" fill="rgba(125,255,181,.16)" stroke="#7dffb5" stroke-width="3" filter="url(#brillo)"/>
  <circle cx="150" cy="152" r="44" fill="none" stroke="rgba(125,255,181,.45)" stroke-width="1.5" stroke-dasharray="3 5"/>
  <circle cx="150" cy="152" r="9" fill="#7dffb5"/>
@@ -726,12 +804,13 @@ function pls(){
  const t0=ahoraJ();
  Object.assign(st,{paso:0,errores:0,arrastre:null,pista:0});
  app.innerHTML=`<div class="rcp pls" id="esc">
-  <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span></div>
+  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span></div>
   <div class="msg" id="msg">No responde, pero respira con normalidad y no ha sufrido golpes. Arrastra con el dedo, en orden, para ponerla en posición lateral de seguridad. Estás a su lado, a la derecha de la pantalla.</div>
   <div class="cuerpo"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}<g id="asas"></g><g id="meta"></g></svg><div class="combo" id="combo"></div></div>
   <div class="abajo"><div class="tarjeta-rcp"><p id="ayuda">Toca y arrastra la parte del cuerpo que se mueve primero.</p></div></div>
  </div>`;
  const svg=$('#svg'), asas=$('#asas'), meta=$('#meta');
+ $('#salir').onclick=sal;
  const asasDe=()=>{   // las cuatro «agarraderas» posibles: todas visibles, para que haya que saber el orden
   const p=st.paso;
   const lista=p>=5?[]:p>=4?[{id:'cabeza',x:176,y:96}]:[
@@ -740,7 +819,10 @@ function pls(){
   asas.innerHTML=lista.map(a=>`<circle class="asa" data-id="${a.id}" cx="${a.x}" cy="${a.y}" r="17" fill="rgba(252,209,0,.28)" stroke="#fcd100" stroke-width="3" stroke-dasharray="5 4"/>`).join('');
  };
  asasDe();
- st.reloj=setInterval(()=>{const q=60-Math.floor((ahoraJ()-t0)/1000);$('#cr').textContent=Math.max(0,q);if(q<=0){clearInterval(st.reloj);acabaPls(false)}},250);
+ st.reloj=setInterval(()=>{const q=60-Math.floor((ahoraJ()-t0)/1000),cr=$('#cr');if(!cr)return clearInterval(st.reloj);cr.textContent=Math.max(0,q);
+  if(q<=10&&q>0&&q!==st.ultTic&&st.paso<5){st.ultTic=q;sfx('tic');cr.classList.add('urge')}   // fase 5: tic en los últimos 10 s
+  if(q<=0){clearInterval(st.reloj);acabaPls(false)}},250);
+ latido(()=>st.paso>=5?null:1-(ahoraJ()-t0)/60000);
  svg.onpointerdown=ev=>{
   if(st.paso>=5)return;
   const p=svgPunto(svg,ev);
@@ -765,12 +847,12 @@ function pls(){
   const p=svgPunto(svg,ev), paso=PLS_PASOS[st.paso];
   const movido=dist(p,st.arrastre.ini);st.arrastre=null;meta.innerHTML='';
   if(dist(p,paso.a)<26&&movido>18){
-   st.paso++;st.pista=0;vibra(40);clic(880);
+   st.paso++;st.pista=0;vibra(40);sfx('acierto',st.paso-1);
    cambiaImg(imgPaso(st.paso));
    if(st.paso>=5)$('#meta').innerHTML='<g filter="url(#brillo)"><path d="M196 72 q12 -6 20 3 M200 60 q16 -8 27 5" stroke="#7dffb5" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
-   $('#msg').textContent='✔ '+paso.txt;$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
+   $('#msg').innerHTML=ico('hecho')+paso.txt;$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
    $('#ayuda').textContent=st.paso<5?'Paso '+(st.paso+1)+' de 5: ¿qué mueves ahora?':'¡Posición lateral de seguridad conseguida!';
-   if(st.paso>=5){clearInterval(st.reloj);asas.innerHTML='';acierto();return setTimeout(()=>acabaPls(true,t0),1800)}
+   if(st.paso>=5){clearInterval(st.reloj);calla();$('#cr').classList.remove('urge');asas.innerHTML='';acierto();return setTimeout(()=>acabaPls(true,t0),1800)}
   }else{
    st.errores++;fallo();$('#msg').textContent='Casi: llévalo hasta el círculo verde.';
   }
@@ -778,7 +860,8 @@ function pls(){
  };
 }
 function acabaPls(completa,t0){
- clearInterval(st.reloj);
+ if(st.salido)return;                 // fase 5: ya se ha salido al menú
+ clearInterval(st.reloj);calla();
  const seg=t0?(ahoraJ()-t0)/1000:60;
  st.aciertos=completa?5:Math.min(st.paso,5);st.lista={length:5};
  st.pts=Math.max(0,(completa?500:st.paso*80)+(completa?Math.round(Math.min(125,Math.max(0,60-seg)*8)):0)-st.errores*RESTA);
@@ -793,8 +876,8 @@ const MET=545;              // 110 por minuto
 function rcp(){
  Object.assign(st,{serie:[],fase:'intro',cuenta:0,cicloN:1,t0:0,ultimo:0,inter:[],enRitmo:0,total:0,errores:0,compa:false,relevo:false,agotado:false,deaPaso:0,parches:0,sitioOk:true,combo:0,ecg:[]});
  app.innerHTML=`<div class="rcp" id="esc">
-  <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">0:00</span><span class="pill" id="ci">Ciclo 1</span></div>
-  <div class="monitor"><span class="et">ECG · RCP</span><span class="corazon" id="cor">❤️</span><svg class="ecg" id="ecg" viewBox="0 0 300 46" preserveAspectRatio="none"><polyline id="lin" fill="none" stroke="#7dffb5" stroke-width="2" points=""/></svg></div>
+  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">0:00</span><span class="pill" id="ci">Ciclo 1</span></div>
+  <div class="monitor"><span class="et">ECG · RCP</span><span class="corazon" id="cor">${ico('corazonLleno')}</span><canvas class="ecg" id="ecg" aria-hidden="true"></canvas></div>
   <div class="msg" id="msg">Una persona se desploma. No responde y no respira con normalidad. Tu compañera llama al 112 (con el altavoz) y va a por el DEA. <b>Toca dónde pones las manos.</b></div>
   <div class="cuerpo" id="cu"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}<g id="marcas"></g><g id="manosg"></g></svg><div class="combo" id="combo"></div></div>
   <div class="abajo">
@@ -804,7 +887,7 @@ function rcp(){
      <path id="verde" fill="none" stroke="#2fd47a" stroke-width="12" filter="url(#gb)"/><text id="t100" font-size="9" fill="#bfeedd" text-anchor="middle">100</text><text id="t120" font-size="9" fill="#bfeedd" text-anchor="middle">120</text>
      <line id="aguja" x1="75" y1="78" x2="75" y2="22" stroke="#fff" stroke-width="4" stroke-linecap="round" filter="url(#gb)"/><circle cx="75" cy="78" r="7" fill="#fff"/></svg>
     <div class="bpm" id="bpm">—<small>por minuto</small></div></div>
-   <div class="botones" id="bot"><button class="btn vent" id="vent" disabled>💨 2 ventilaciones</button><button class="btn rel" id="rel" disabled>🔄 ¡Relevo!</button></div>
+   <div class="botones" id="bot"><button class="btn vent" id="vent" disabled>${ico('aire')}2 ventilaciones</button><button class="btn rel" id="rel" disabled>${ico('relevo')}¡Relevo!</button></div>
   </div></div>`;
  // zona verde 100-120 en el semicírculo (60 a 160 por minuto)
  const ang=v=>Math.PI*(1-(Math.min(160,Math.max(60,v))-60)/100), pt=v=>[75+63*Math.cos(ang(v)),78-63*Math.sin(ang(v))];
@@ -816,13 +899,30 @@ function rcp(){
  svg.onpointerdown=ev=>{ev.preventDefault();toque(svgPunto(svg,ev),ev)};
  $('#vent').onclick=ventilar;
  $('#rel').onclick=relevar;
+ $('#salir').onclick=sal;
  st.reloj=setInterval(tic,200);
- const dibuja=()=>{   // línea de ECG que avanza
-  const ahora=ahoraJ();st.ecg=st.ecg.filter(t=>ahora-t<4000);
-  const pts=[];for(let x=0;x<=300;x+=3){const t=ahora-(300-x)/300*4000;let y=34;for(const k of st.ecg){const d=t-k;if(d>=0&&d<120)y-=Math.sin(d/120*Math.PI)*(d<60?26:-8)}pts.push(x+','+y.toFixed(1))}
-  const l=$('#lin');if(l){l.setAttribute('points',pts.join(' '));st.raf=requestAnimationFrame(dibuja)}
+ /* fase 5: el ECG se pinta en un lienzo a 30 fotogramas por segundo, con un halo hecho con un segundo trazo ancho y tenue
+    (antes: 100 puntos de polilínea SVG en cada fotograma con filter: drop-shadow, que el móvil recalculaba entero) */
+ const cv=$('#ecg'),g=cv.getContext&&cv.getContext('2d'),dpr=Math.min(2,window.devicePixelRatio||1);
+ let ultF=0;
+ const dibuja=ts=>{
+  if(!document.getElementById('ecg'))return;
+  st.raf=requestAnimationFrame(dibuja);
+  if(ts-ultF<32)return;ultF=ts;
+  const W=Math.round((cv.clientWidth||300)*dpr),H=Math.round((cv.clientHeight||58)*dpr);
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}
+  const ahora=ahoraJ();st.ecg=st.ecg.filter(k=>ahora-k<4000);
+  const sx=W/300,sy=H/46;
+  g.clearRect(0,0,W,H);g.beginPath();
+  let y=34;
+  for(let x=0;x<=300;x+=3){const t=ahora-(300-x)/300*4000;y=34;for(const k of st.ecg){const d=t-k;if(d>=0&&d<120)y-=Math.sin(d/120*Math.PI)*(d<60?26:-8)}x?g.lineTo(x*sx,y*sy):g.moveTo(0,y*sy)}
+  g.lineJoin='round';g.lineCap='round';
+  g.strokeStyle='rgba(125,255,181,.2)';g.lineWidth=6*dpr;g.stroke();
+  g.strokeStyle='#7dffb5';g.lineWidth=2*dpr;g.stroke();
+  g.fillStyle='#d9ffe9';g.beginPath();g.arc(W-2*dpr,y*sy,2.6*dpr,0,7);g.fill();   // el punto que escribe
  };
- st.raf=requestAnimationFrame(dibuja);
+ if(g)st.raf=requestAnimationFrame(dibuja);
+ if(ls.get(CLAVE_TUTO,'')!=='1')tutorial();   // fase 5: la primera vez, práctica de ritmo
 }
 const crono=()=>st.t0?(ahoraJ()-st.t0)/1000:0;
 function tic(){
@@ -858,27 +958,40 @@ function toque(p,ev){
  if(st.cuenta>=30){st.errores++;fallo();aviso('Ya van 30: ahora, <b>2 ventilaciones</b>.');return pintaPts()}
  const tarde=ev&&ev.timeStamp?Math.min(150,Math.max(0,performance.now()-ev.timeStamp)):0;   // 17-11-2026: la hora del toque, no la de cuando se atiende
  const ahora=ahoraJ()-tarde;if(!st.t0)st.t0=ahora;
- st.cuenta++;st.ecg.push(ahora);vibra(25);marca(p,'#7dffb5');
- const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.7)'},{transform:'scale(1)'}],{duration:200});const fg=$('#fig');if(fg)fg.animate([{transform:'scale(1)'},{transform:'scale(.985)'},{transform:'scale(1)'}],{duration:200});const co=$('#cor');if(co){co.classList.remove('latido');void co.offsetWidth;co.classList.add('latido')}
+ st.cuenta++;st.ecg.push(ahora);vibra(25);hunde(1);
+ const co=$('#cor');if(co){co.classList.remove('latido');void co.offsetWidth;co.classList.add('latido')}
+ let col='#7dffb5';
  if(st.ultimo&&st.cuenta>1){
   const iv=ahora-st.ultimo;st.inter.push(iv);if(st.inter.length>3)st.inter.shift();
   const v=60000/(st.inter.reduce((a,b)=>a+b,0)/st.inter.length), inst=60000/iv;
   st.total++;st.aguja(v);(st.serie=st.serie||[]).push({r:inst,c:st.cicloN});$('#bpm').innerHTML=Math.round(v)+'<small>por minuto</small>';
-  if(inst>=100&&inst<=120){st.enRitmo++;st.combo++;destello('#2fd47a');if(st.combo>=5)combo('¡Ritmo perfecto! x'+st.combo)}
-  else{st.combo=0;destello(inst<100?'#ff9a3d':'#ff4a4a');aviso(inst<100?'¡Más rápido!':'¡Más despacio!')}
+  // fase 5: el color del ritmo va en la onda de las manos (brillo local), no en un destello de toda la pantalla
+  if(inst>=100&&inst<=120){st.enRitmo++;st.combo++;col='#2fd47a';if(st.combo>=5)combo('¡Ritmo perfecto! x'+st.combo);if(st.combo%5===0)sfx('acierto',st.combo/5-1)}   // tono de racha: sube cada 5 seguidas
+  else{st.combo=0;col=inst<100?'#ff9a3d':'#ff4a4a';aviso(inst<100?'¡Más rápido!':'¡Más despacio!')}
  }
+ marca(p,col);
  st.ultimo=ahora;
  $('#cuenta').innerHTML=st.cuenta+'<small>/30</small>';
  if(st.cuenta===10&&st.oficial)metronomo(false);
  if(st.cuenta===30){$('#vent').disabled=false;$('#vent').classList.add('alarma');aviso('¡30! Ahora, <b>2 ventilaciones</b>.');metronomo(false)}
  pintaPts();
 }
-function combo(t){const c=$('#combo');if(!c)return;c.textContent=t;c.style.opacity=1;clearTimeout(st.cto);st.cto=setTimeout(()=>c.style.opacity=0,500)}
-function destello(col){const d=document.createElement('div');d.className='destello';d.style.background=col;document.body.appendChild(d);setTimeout(()=>d.remove(),260)}
+function combo(t,ms=500,clase=''){const c=$('#combo');if(!c)return;c.className='combo '+clase;c.innerHTML=t;c.style.opacity=1;clearTimeout(st.cto);st.cto=setTimeout(()=>c.style.opacity=0,ms)}
+/* fase 5: brillo local sobre el cuerpo (la descarga del DEA); ya no hay destellos a pantalla completa */
+function destello(col){const cu=$('#cu');if(!cu||MOV_REDUCIDO)return;const d=document.createElement('div');d.className='brillo';d.style.setProperty('--c',col);cu.appendChild(d);setTimeout(()=>d.remove(),480)}
+/* Compresión con cuerpo (fase 5): la ilustración se hunde unos píxeles y rebota, las manos bajan y su sombra se aprieta.
+   Solo transform y opacity (el SVG va en su propia capa con will-change), así el toque no tarda más en atenderse. */
+function hunde(f=1,suena=true,ms=260){
+ const s=$('#svg'),ma=$('#manos'),so=$('#sombraM'),y=+(6*f).toFixed(1);
+ if(s&&s.animate)s.animate([{transform:'translateY(0)'},{transform:`translateY(${y}px) scale(.992)`,offset:.4},{transform:`translateY(${-y/4}px)`,offset:.75},{transform:'translateY(0)'}],{duration:ms,easing:'ease-out'});
+ if(ma&&ma.animate)ma.animate([{transform:'translateY(0) scale(1)'},{transform:`translateY(${y*.8}px) scale(${1-.14*f})`,offset:.4},{transform:'translateY(-1px) scale(1.03)',offset:.75},{transform:'translateY(0) scale(1)'}],{duration:ms-20,easing:'ease-out'});
+ if(so&&so.animate)so.animate([{opacity:.28,transform:'scale(1)'},{opacity:.5,transform:`scale(${1-.2*f})`,offset:.4},{opacity:.28,transform:'scale(1)'}],{duration:ms-20});
+ if(suena)golpeSordo(f);
+}
 function metronomo(on){
  clearInterval(st.metro);
  if(!on)return;
- st.metro=setInterval(()=>{if(st.fase!=='comp'||(st.oficial&&st.cuenta>=10)||st.cuenta>=30)return clearInterval(st.metro);clic();const c=$('#cuenta');if(c)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})},MET);
+ st.metro=setInterval(()=>{if(st.fase!=='comp'||(st.oficial&&st.cuenta>=10)||st.cuenta>=30)return clearInterval(st.metro);clic();const c=$('#cuenta');if(c&&c.animate)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})},MET);
 }
 function ventilar(){
  if(st.fase!=='comp')return;
@@ -892,11 +1005,11 @@ function ventilar(){
   // la compañera vuelve con el DEA tras el primer ciclo; el relevo de los 2 minutos llega después de la descarga
   if(st.cicloN===2&&!st.compa){st.compa=true;st.fase='dea1';ritmoCompa();$('#ci').textContent='DEA';
    aviso('Tu compañera vuelve <b>con el DEA</b> y sigue ella con las compresiones, sin parar. <b>Pon el DEA ya.</b>');return pasoDea()}
-  // salto de tiempo (José, 5-11-2026: «el RCP se me ha hecho eterno»): tras dos ciclos, el cronómetro salta a 1:40
-  if(st.cicloN===3&&!st.saltado){st.saltado=true;st.t0=ahoraJ()-100000;combo('⏩ +1 minuto')}
+  // salto de tiempo (José, 5-11-2026: «el RCP se me ha hecho eterno»): tras dos ciclos, los ciclos 3 y 4 pasan en avance rápido
+  if(st.cicloN===3&&!st.saltado){st.saltado=true;return avanceRapido()}
   $('#ci').textContent='Ciclo '+st.cicloN;$('#cuenta').innerHTML='0<small>/30</small>';
   st.fase='comp';
-  aviso(st.cicloN===3&&!st.relevo?'⏩ Seguís comprimiendo… <b>han pasado casi 2 minutos</b>. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>':st.compa&&!st.relevo?'Otra vez: 30 compresiones. <b>Relevaos cada 2 minutos.</b>':'Otra vez: 30 compresiones.');
+  aviso(st.compa&&!st.relevo?'Otra vez: 30 compresiones. <b>Relevaos cada 2 minutos.</b>':'Otra vez: 30 compresiones.');
   metronomo(true);
  },2600);
 }
@@ -905,31 +1018,31 @@ function relevar(){
  if(crono()<118){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
  st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
  st.fase='fin';clearInterval(st.metro);ritmoCompa();
- combo('🔄 ¡Relevo!');if(st.relevo==='ok')acierto();
+ combo(ico('relevo')+' ¡Relevo!',900);if(st.relevo==='ok')acierto();
  aviso('Tu compañera sigue con las compresiones. Seguís así, con el DEA puesto y relevándoos cada 2 minutos, hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');
  setTimeout(acabaRcp,2600);   // fase 4, 17-11-2026: antes el relevo traía el DEA; ahora cierra el nivel
  pintaPts();
 }
 /* fase 4, 17-11-2026: las compresiones de la compañera (animación y ECG) y los botones de RCP de vuelta tras el DEA */
-function ritmoCompa(){clearInterval(st.compRitmo);st.compRitmo=setInterval(()=>{st.ecg.push(ahoraJ());const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.86)'},{transform:'scale(1)'}],{duration:200})},MET)}
-function botonesRcp(){$('#bot').innerHTML='<button class="btn vent" id="vent" disabled>💨 2 ventilaciones</button><button class="btn rel" id="rel">🔄 ¡Relevo!</button>';$('#vent').onclick=ventilar;$('#rel').onclick=relevar}
+function ritmoCompa(){clearInterval(st.compRitmo);st.compRitmo=setInterval(()=>{st.ecg.push(ahoraJ());hunde(.6,false)},MET)}
+function botonesRcp(){$('#bot').innerHTML=`<button class="btn vent" id="vent" disabled>${ico('aire')}2 ventilaciones</button><button class="btn rel" id="rel">${ico('relevo')}¡Relevo!</button>`;$('#vent').onclick=ventilar;$('#rel').onclick=relevar}
 function opcionesDea(txt,ops,ok,sig){
  const orden=baraja(ops.map((o,k)=>k));      // la correcta no sale siempre en el mismo sitio
  $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${txt}</p>${orden.map(k=>`<button class="op" data-k="${k}">${ops[k]}</button>`).join('')}</div>`;
  $('#bot').querySelectorAll('.op').forEach(b=>b.onclick=()=>{
-  if(+b.dataset.k===ok){st.deaPaso++;clic(880);sig()}else{st.errores++;fallo();b.classList.add('mal');b.disabled=true;pintaPts()}
+  if(+b.dataset.k===ok){st.deaPaso++;sfx('acierto',st.deaPaso);sig()}else{st.errores++;fallo();b.classList.add('mal');b.disabled=true;pintaPts()}
  });
 }
 function pasoDea(){
  pintaPts();
- if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='pecho';habla('Coloque los parches sobre el pecho desnudo del paciente.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». Pero lleva ropa…');$('#bot').innerHTML='<button class="btn alarma" id="desc" style="flex:1">👕 Descubrir el pecho</button>';$('#desc').onclick=descubre});
+ if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='pecho';habla('Coloque los parches sobre el pecho desnudo del paciente.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». Pero lleva ropa…');$('#bot').innerHTML=`<button class="btn alarma" id="desc" style="flex:1">${ico('camiseta')}Descubrir el pecho</button>`;$('#desc').onclick=descubre});
  if(st.fase==='dea4'||st.fase==='dea3'){
   if(st.fase==='dea3')return;
  }
  if(st.fase==='dea4'){
   clearInterval(st.compRitmo);
   habla('Descarga recomendada. Apártense del paciente. Pulse el botón de descarga.');
-  return opcionesDea('«Descarga recomendada. Apártense del paciente».',['⚡ Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
+  return opcionesDea('«Descarga recomendada. Apártense del paciente».',['Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');sfx('golpe');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
  }
  if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{
   // fase 4, 17-11-2026: tras la descarga sigues tú comprimiendo (tu compañera descansa) y el relevo llega a los 2 minutos
@@ -941,24 +1054,115 @@ function pasoDea(){
 /* fase 4, 17-11-2026: los parches van sobre la piel: antes se descubre el pecho (botón o tocando el pecho). En la partida oficial no se dice dónde van */
 function descubre(){
  if(st.fase!=='pecho')return;
- st.fase='dea2';clic(880);
+ st.fase='dea2';sfx('toque');
  aviso('Le abres la ropa: pecho descubierto. Tu compañera sigue comprimiendo. <b>Toca los dos sitios donde van los parches.</b>');
  $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${st.oficial?'Toca los dos sitios del pecho donde se pegan los parches.':'Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.'}</p></div>`;
 }
 function poneParche(p){
  const k=PARCHES.findIndex(q=>dist(p,q)<30&&!q.puesto);
  if(k<0){st.errores++;marca(p,'#ff6b4a');fallo();aviso('Ahí no va el parche: uno bajo la clavícula derecha y otro en el costado izquierdo, bajo la axila.');return pintaPts()}
- PARCHES[k].puesto=true;st.parches++;clic(880);
+ PARCHES[k].puesto=true;st.parches++;sfx('acierto',st.parches);
  $('#marcas').innerHTML+=`<rect x="${PARCHES[k].x-16}" y="${PARCHES[k].y-12}" width="32" height="24" rx="5" fill="#fff" stroke="#2fd47a" stroke-width="3"/>`;
  if(st.parches===2){
   st.deaPaso++;st.fase='dea3';st.deaT=ahoraJ();
   aviso('«Analizando el ritmo cardiaco»… Tu compañera sigue comprimiendo.');habla('Analizando el ritmo cardiaco. No toque al paciente.');
-  $('#bot').innerHTML='<button class="btn alarma" id="apart" style="flex:1">✋ ¡Que nadie la toque!</button>';
+  $('#bot').innerHTML=`<button class="btn alarma" id="apart" style="flex:1">${ico('mano')}¡Que nadie la toque!</button>`;
   $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';aviso('Bien: nadie la toca mientras el DEA analiza.');pasoDea()};
  }
  pintaPts();
 }
+/* ===== fase 5 (17-11-2026): avance rápido narrado, tutorial de ritmo y salir ===== */
+/* Salto de tiempo narrado: antes el reloj saltaba de golpe a 1:40 con «+1 minuto». Ahora corre a la vista unos 3 s mientras
+   se cuentan los ciclos 3 y 4, y un rótulo explica que 5 ciclos son unos 2 minutos. No suma ni quita puntos ni compresiones
+   (no pasa por toque(): ni enRitmo, ni total, ni la gráfica). */
+function avanceRapido(){
+ st.fase='salto';metronomo(false);sfx('barrido');
+ const de=crono(),a=100,D=3000,ini=ahoraJ();
+ let ult=-1;
+ aviso(`${ico('avance')}Seguís con la RCP: 30 compresiones y 2 ventilaciones… <b>ciclos 3 y 4</b>`);
+ clearInterval(st.salto);
+ st.salto=setInterval(()=>{
+  if(!$('#cr')||st.salido)return clearInterval(st.salto);
+  const k=Math.min(1,(ahoraJ()-ini)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;   // arranca, corre y frena
+  st.t0=ahoraJ()-(de+(a-de)*e)*1000;tic();
+  const n=Math.min(59,Math.floor(k*60));                                   // 60 compresiones: dos ciclos de 30
+  if(n!==ult){
+   $('#ci').textContent='Ciclo '+(3+Math.floor(n/30));$('#cuenta').innerHTML=(n%30+1)+'<small>/30</small>';
+   if(Math.floor(n/3)!==Math.floor(ult/3)){st.ecg.push(ahoraJ());hunde(.45,false,180)}
+   ult=n;
+  }
+  if(k>=1){
+   clearInterval(st.salto);
+   st.cicloN=5;st.cuenta=0;st.ultimo=0;st.inter=[];
+   $('#ci').textContent='Ciclo 5';$('#cuenta').innerHTML='0<small>/30</small>';
+   combo('5 ciclos ≈ 2 minutos',2400,'rotulo');sfx('premio');
+   st.fase='comp';
+   aviso('Han pasado <b>casi 2 minutos</b>. Ciclo 5: 30 compresiones más. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>');
+   metronomo(true);
+  }
+ },50);
+}
+
+/* Tutorial jugable del nivel 4: la primera vez, unos segundos para coger el ritmo en una almohadilla de práctica (fuera del
+   cuerpo, para no chivar dónde van las manos). Sin puntos ni reloj, y se puede saltar. Se recuerda en el dispositivo. */
+const CLAVE_TUTO=PREF+'_tuto_rcp', TUTO_N=8;
+function tutorial(){
+ const cu=$('#cu');if(!cu)return;
+ st.fase='tuto';
+ aviso('Antes de empezar, coge el ritmo de las compresiones.');
+ const d=document.createElement('div');d.className='tuto';d.id='tuto';
+ d.innerHTML=`<h3>Práctica de ritmo</h3><p>Sin puntos ni reloj. Toca el círculo <b>al ritmo del pitido</b>: entre 100 y 120 por minuto, fuerte y sin pausas.</p>
+  <button class="pad" id="pad" type="button" aria-label="Comprimir">${ico('mano')}<span id="tn">0/${TUTO_N}</span></button>
+  <p class="fb" id="tfb" role="status" aria-live="polite">Escucha el pitido y empieza cuando quieras.</p>
+  <button class="saltar" id="tsal" type="button">Saltar la práctica</button>`;
+ cu.appendChild(d);
+ const pad=$('#pad'),fb=$('#tfb'),pulsa=f=>{if(pad.animate)pad.animate([{transform:'translateY(0) scale(1)'},{transform:`translateY(${5*f}px) scale(${1-.06*f})`,offset:.4},{transform:'translateY(-1px) scale(1.01)',offset:.75},{transform:'translateY(0) scale(1)'}],{duration:240,easing:'ease-out'})};
+ let n=0,ult=0,inter=[],hecho=false;
+ clearInterval(st.metro);
+ st.metro=setInterval(()=>{if(st.fase!=='tuto')return clearInterval(st.metro);if(st.parado)return;clic();if(!n)pulsa(.5)},MET);   // demostración: late solo hasta el primer toque
+ const fin=()=>{
+  if(hecho)return;hecho=true;clearInterval(st.metro);clearTimeout(st.tutoT);ls.set(CLAVE_TUTO,'1');d.remove();
+  if(st.salido||st.fase!=='tuto')return;
+  st.ecg=[];st.ultimo=0;st.inter=[];st.aguja(110);$('#bpm').innerHTML='—<small>por minuto</small>';
+  st.fase='sitio';
+  aviso('Una persona se desploma. No responde y no respira con normalidad. Tu compañera llama al 112 (con el altavoz) y va a por el DEA. <b>Toca dónde pones las manos.</b>');
+ };
+ pad.onpointerdown=ev=>{
+  ev.preventDefault();ev.stopPropagation();
+  if(hecho||n>=TUTO_N)return;
+  const tarde=ev.timeStamp?Math.min(150,Math.max(0,performance.now()-ev.timeStamp)):0, ahora=ahoraJ()-tarde;   // como en toque()
+  n++;pulsa(1);golpeSordo();vibra(25);st.ecg.push(ahora);
+  if(ult){
+   const iv=ahora-ult;inter.push(iv);if(inter.length>3)inter.shift();
+   const v=60000/(inter.reduce((a,b)=>a+b,0)/inter.length),inst=60000/iv,bien=inst>=100&&inst<=120;
+   st.aguja(v);$('#bpm').innerHTML=Math.round(v)+'<small>por minuto</small>';
+   fb.textContent=bien?'¡Así! Buen ritmo':inst<100?'Un poco más rápido':'Un poco más despacio';
+   fb.style.color=bien?'#7dffb5':'#ffb27a';
+  }
+  ult=ahora;$('#tn').textContent=n+'/'+TUTO_N;
+  if(n>=TUTO_N){clearInterval(st.metro);fb.style.color='#fcd100';fb.textContent='¡Ya lo tienes! Ahora, con la persona.';st.tutoT=setTimeout(fin,1200)}
+ };
+ $('#tsal').onclick=fin;
+ st.tutoT=setTimeout(()=>{const b=$('#tsal');if(b&&!hecho)b.textContent='Empezar ya'},10000);
+}
+
+/* Salir de los niveles 3 y 4 (antes solo se salía recargando la página). En la partida oficial se pregunta antes, con el tiempo
+   parado mientras se decide: el intento se apunta al empezar, así que salir lo deja gastado y sin resultado. */
+async function sal(){
+ if(st.oficial){
+  const yo=st;if(!yo.parado)yo.parado=Date.now();
+  const si=await dialogo('¿Salir de la partida oficial?\n\nSi sales ahora, la partida se termina sin resultado y el intento '+yo.oficial.intento+' de '+INTENTOS+' queda gastado.',{si:'Salir',no:'Seguir jugando'});
+  if(st!==yo)return;
+  if(!si){if(!document.querySelector('.pausa-j')){yo.pausadoT=(yo.pausadoT||0)+(Date.now()-yo.parado);yo.parado=0;yo.ultimo=0;yo.inter=[]}return}
+ }
+ st.salido=true;st.fase='fuera';
+ clearInterval(st.compRitmo);clearInterval(st.salto);clearTimeout(st.tutoT);
+ PARCHES.forEach(q=>delete q.puesto);
+ try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
+ portada();
+}
 function acabaRcp(){
+ if(st.salido)return;                 // fase 5: ya se ha salido al menú
  clearInterval(st.reloj);clearInterval(st.metro);clearInterval(st.compRitmo);cancelAnimationFrame(st.raf||0);
  PARCHES.forEach(q=>delete q.puesto);
  const r=st.total?st.enRitmo/st.total:0, e=st.errores;
@@ -986,7 +1190,7 @@ function graficaRitmo(serie){
 
 /* ===== Final de cada nivel y partida oficial ===== */
 function final(){
- clearInterval(st.reloj);clearInterval(st.metro);
+ clearInterval(st.reloj);clearInterval(st.metro);calla();
  const l=st.l;
  let est;
  if(l.modo==='test'){const total=st.lista.length,r=st.aciertos/total;est=st.vidas<=0?0:r>=.95?3:r>=.75?2:r>=.5?1:0;st.resumen=`${st.aciertos} de ${total} aciertos${st.vidas<=0?' · sin vidas':''}`}
@@ -1035,7 +1239,7 @@ portada();
 #pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;
  background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
-<button id="pcomp" type="button">⛶ Pantalla completa</button>
+<button id="pcomp" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:-4px;margin-right:6px"><path d="M4 9V4h5"/><path d="M15 4h5v5"/><path d="M20 15v5h-5"/><path d="M9 20H4v-5"/></svg>Pantalla completa</button>
 <script>
 /* Tablets y ordenadores (José, 9-11-2026): cada pantalla se escala para llenar la pantalla, como en el móvil,
    y un botón pone el navegador a pantalla completa. En el móvil no cambia nada. */
@@ -1126,6 +1330,69 @@ function dialogo(txt, op) {
   });
 }
 
+/* ===== Sonido y respuesta física comunes (fase 5, 17-11-2026) =====
+   Todo sintetizado con WebAudio (sin archivos). Un solo contexto: el «actx» del juego si lo declara (let actx=null) y,
+   si no, uno propio. Pasa por un volumen general y un compresor para que nada sature. Respeta «Sin sonido» (SILENCIO),
+   que también quita la vibración. Se desbloquea con el primer toque (iOS).
+   sfx('toque'|'acierto'|'fallo'|'tic'|'golpe'|'rompe'|'premio'|'fanfarria'|'alarma'|'barrido'|'paso', n) · vibrar(ms o patrón)
+   sacudir(elemento, px) · parada(ms) → promesa (pausa de impacto; el juego decide qué congela) */
+const AUDIO = { ctx: null, maestro: null, ruido: null };
+function audio() {
+  try {
+    let c = typeof actx !== 'undefined' ? actx : AUDIO.ctx;
+    if (!c) { c = new (window.AudioContext || window.webkitAudioContext)(); if (typeof actx !== 'undefined') actx = c; }
+    AUDIO.ctx = c;
+    if (!AUDIO.maestro || AUDIO.maestro.context !== c) {
+      const comp = c.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      AUDIO.maestro = c.createGain(); AUDIO.maestro.gain.value = .8; AUDIO.maestro.connect(comp).connect(c.destination);
+      const b = c.createBuffer(1, c.sampleRate * .5, c.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      AUDIO.ruido = b;
+    }
+    if (c.state === 'suspended' && !window.SILENCIO) c.resume();
+    return c;
+  } catch (e) { return null }
+}
+function nota(f, dur, tipo = 'sine', vol = .2, d = 0, hasta = 0) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, o = c.createOscillator(), g = c.createGain();
+  o.type = tipo; o.frequency.setValueAtTime(f, t0); if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+  g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + .012); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g).connect(AUDIO.maestro); o.start(t0); o.stop(t0 + dur + .03);
+}
+function ruido(dur, vol = .2, filtro = 1200, d = 0, q = 1) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = AUDIO.ruido; f.type = 'bandpass'; f.frequency.value = filtro; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  s.connect(f).connect(g).connect(AUDIO.maestro); s.start(t0); s.stop(t0 + dur + .02);
+}
+const PENTA = [0, 2, 4, 7, 9];
+const escala = n => 523.25 * Math.pow(2, (PENTA[n % 5] + 12 * Math.floor(n / 5)) / 12);   // do pentatónico que sube con n
+function sfx(nombre, n = 0) {
+  switch (nombre) {
+    case 'toque': nota(1400, .035, 'triangle', .12); break;
+    case 'paso': nota(320 + n * 6, .03, 'sine', .05); break;
+    case 'tic': nota(1000, .03, 'square', .07); break;
+    case 'acierto': { const b = escala(Math.min(n, 9)); nota(b, .12, 'triangle', .22); nota(b * 1.5, .16, 'triangle', .2, .07); break }
+    case 'fallo': nota(220, .16, 'square', .14); nota(155, .2, 'square', .14, .12); break;
+    case 'golpe': nota(160, .09, 'sine', .3, 0, 60); ruido(.05, .12, 900); break;
+    case 'rompe': ruido(.09, .22, 1800 + Math.min(n, 12) * 180, 0, 2); nota(escala(Math.min(n, 12)), .07, 'triangle', .1); break;
+    case 'premio': [0, 2, 4].forEach((k, i) => nota(escala(k + 5), .14, 'sine', .18, i * .07)); break;
+    case 'fanfarria': [523, 659, 784, 1047].forEach((f, i) => nota(f, .22, 'triangle', .2, i * .11)); break;
+    case 'alarma': nota(880, .12, 'square', .1); nota(880, .12, 'square', .1, .2); break;
+    case 'barrido': ruido(.25, .08, 600, 0, .7); break;
+  }
+}
+function vibrar(p) { try { if (!window.SILENCIO && navigator.vibrate) navigator.vibrate(p) } catch (e) {} }
+const MOV_REDUCIDO = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } })();
+function sacudir(el, px = 6) {
+  if (!el || MOV_REDUCIDO || !el.animate) return;
+  el.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: 'translate(0,0)' }], { duration: 220, easing: 'ease-out' });
+}
+const parada = ms => new Promise(r => setTimeout(r, MOV_REDUCIDO ? 0 : ms));
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (!window.SILENCIO) audio() }, { capture: true, passive: true }));
+
 /* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
 try {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
@@ -1184,16 +1451,17 @@ button,a,input,.op,.resp{touch-action:manipulation}
   const muestra = () => { const p = app && app.querySelector('.portada'); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
   if (app) new MutationObserver(muestra).observe(app, { childList: true });
 
-  /* Sonido sí/no (serpiente y auxilios tienen sonido; señales no). */
-  if (typeof actx !== 'undefined') {
+  /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
+  {
     const aplica = () => {
       try {
-        if (window.SILENCIO) { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); actx.suspend() }
-        else if (actx && actx.state === 'suspended') actx.resume();
+        const c = typeof actx !== 'undefined' && actx ? actx : AUDIO.ctx;
+        if (window.SILENCIO) { if (c) c.suspend(); try { window.speechSynthesis && speechSynthesis.cancel() } catch (e) {} }
+        else if (c && c.state === 'suspended') c.resume();
       } catch (e) {}
     };
     window.SILENCIO = L.get('ipe_silencio', '0') === '1';
-    boton(v => v ? '🔊 Sonido' : '🔇 Sin sonido', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
     aplica();
     /* si el juego crea el sonido después, se vuelve a silenciar */
     document.addEventListener('click', () => setTimeout(aplica, 0), true);
