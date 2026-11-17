@@ -181,52 +181,93 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 <script>
 /* «Cada minuto cuenta» · bancos de preguntas (José, 5-11-2026). Todo sale de la UD 3 del libro, apartado 3.6
    (ERC 2025): PAS, 112, valoración, SVB y RCP, lesiones, Heimlich y botiquín. s = sector ('' = común a todos).
-   ok = la respuesta correcta; no = tres trampas; e = la explicación (lo que dice el libro). */
+   ok = la respuesta correcta; no = tres trampas; e = la explicación (lo que dice el libro).
+   Fase 4, 17-11-2026: trampas con errores reales y de largo parecido a la correcta (antes la correcta era la más larga
+   en 29 de 41); 10 escenas por sector (salen 3 al azar); columna, torniquete y Toxicológico cotejados con ERC 2025.
+   ll = escena del 112 que ya trata la llamada por tarjetas: la llamada sale después (fase 4, 17-11-2026). */
 const BANCOS = {
  pas: [
-  {s:'',t:'Una compañera ha recibido una descarga y sigue tocando el cuadro eléctrico. ¿Qué haces primero?',ok:'Cortar la corriente antes de tocarla',no:['Tirar de su brazo para separarla','Echarle agua para reanimarla','Llamar al 112 y no hacer nada más'],e:'Proteger: si la tocas con corriente, serás otra víctima. Primero se corta la corriente.'},
-  {s:'',t:'Llamas al 112. ¿Qué tienes que decir?',ok:'Quién eres, dónde estás, qué ha pasado, cuántas personas heridas y cómo están',no:['Solo «venid rápido, es urgente»','El nombre completo y el DNI de la víctima','Si la víctima tiene seguro médico'],e:'Avisar: quién eres, dónde estás exactamente, qué ha pasado, cuántas personas heridas hay y cómo están.'},
-  {s:'',t:'Estás hablando con el 112. ¿Cuándo cuelgas?',ok:'Cuando te lo indiquen',no:['En cuanto des la dirección','Al minuto, para no ocupar la línea','Cuando llegue la ambulancia a la puerta'],e:'No cuelgues hasta que te lo indiquen: pueden guiarte paso a paso para hacer la RCP. Pon el altavoz.'},
-  {s:'',t:'Tienes que socorrer y a la vez hablar con el 112. ¿Qué haces con el móvil?',ok:'Ponerlo en altavoz para tener las manos libres',no:['Sujetarlo con el hombro','Colgar y llamar luego','Pasárselo a la víctima'],e:'Con el altavoz tienes las manos libres para socorrer mientras te guían.'},
-  {s:'',t:'¿Qué significa el método PAS?',ok:'Proteger, Avisar y Socorrer',no:['Parar, Analizar y Salir','Prevenir, Ayudar y Sanar','Pedir ayuda, Animar y Sujetar'],e:'PAS: Proteger (que no haya más peligros), Avisar (112) y Socorrer.'},
-  {s:'',t:'Hay humo en el almacén y una persona tirada en el suelo. ¿Qué haces?',ok:'No entrar sin protección y avisar al 112',no:['Entrar corriendo a sacarla','Encender la luz para verla mejor','Entrar con un pañuelo en la boca'],e:'Primero, tu seguridad: si hay humo o gas, no entres sin protección.'},
-  {s:'',t:'Una persona se ha caído de una escalera, está consciente y le duele el cuello.',ok:'No moverla, sujetarle la cabeza como está y llamar al 112',no:['Ayudarla a levantarse despacio','Sentarla para que respire mejor','Girarle el cuello para ver si se mueve'],e:'Posible lesión de columna: no se mueve salvo peligro inmediato; cabeza, cuello y tronco alineados.'},
-  {s:'',t:'¿Le das agua a una persona herida grave que tiene mucha sed?',ok:'No: no se da de comer ni de beber',no:['Sí, con azúcar','Sí, a sorbos pequeños','Solo si es agua fría'],e:'A una persona herida grave no se le da de comer ni de beber.'},
-  {s:'',t:'¿Qué lleva el botiquín de la empresa para quien se hace daño?',ok:'Material de curas, pero ningún medicamento',no:['Analgésicos para el dolor','Antibióticos en pastillas','Tranquilizantes para los nervios'],e:'El botiquín de la empresa no lleva medicamentos: solo material de primeros auxilios.'},
-  {s:'',t:'Hay varias personas heridas. ¿A quién atiendes primero?',ok:'A quien no responde o no respira con normalidad y a las hemorragias graves',no:['A quien más grita','A quien conoces','A la herida más fácil de curar'],e:'Quien grita respira. Primero, quien no responde o no respira con normalidad y las hemorragias graves.'},
-  {s:'',t:'Ha habido un atropello en la puerta y siguen pasando coches. ¿Qué haces primero?',ok:'Señalizar la zona para que no haya otro atropello',no:['Levantar a la víctima y llevarla a la acera','Hacer una foto para el parte','Darle agua para que se recupere'],e:'Proteger: comprueba que no hay más peligros (tráfico, corriente, fuego, gas) y señaliza.'},
-  {s:'HIG',t:'Un paciente se desploma en el sillón dental. ¿Qué haces primero?',ok:'Hablarle y tocarle los hombros para ver si responde',no:['Echarle agua fría en la cara','Darle un caramelo por si es una bajada de azúcar','Esperar a que se le pase'],e:'Socorrer empieza por la evaluación primaria: ¿responde? Háblale y tócale los hombros.'},
-  {s:'HIG',t:'A una compañera le salpica desinfectante en un ojo.',ok:'Lavar con agua abundante 15-20 minutos con los párpados abiertos',no:['Frotar el ojo con una gasa','Echar colirio y seguir trabajando','Taparlo con un parche'],e:'Quemadura química: agua abundante 15-20 minutos; en los ojos, con los párpados abiertos.'},
-  {s:'HIG',t:'Una persona se atraganta en la sala de espera, pero tose con fuerza.',ok:'Animarla a seguir tosiendo',no:['Darle golpes en la espalda ya','Hacerle la maniobra de Heimlich','Darle agua para que pase'],e:'Si la tos es eficaz, es el mejor remedio: anímala a toser y no le des golpes.'},
-  {s:'ITE',t:'Un compañero se queda pegado a un cable con tensión en la caja de registro.',ok:'Cortar la corriente antes de tocarlo',no:['Separarlo con las manos','Tirarle del cinturón','Echarle agua'],e:'Contacto eléctrico: cortar la corriente antes de tocar a la persona.'},
-  {s:'ITE',t:'Un compañero se cae del tejado al montar una antena y está consciente.',ok:'No moverlo, pedirle que no se mueva y llamar al 112',no:['Incorporarlo para ver si puede andar','Llevarlo en brazos al coche','Darle un analgésico'],e:'Caída desde altura: no se mueve salvo peligro; se le sujeta la cabeza y se llama al 112.'},
-  {s:'ITE',t:'Al taladrar, un trozo de metal se queda clavado en el brazo de tu compañero.',ok:'No sacarlo, sujetarlo y llamar al 112',no:['Sacarlo rápido para que no se infecte','Tirar de él con alicates','Lavar la herida con alcohol y seguir'],e:'Herida grave: no se extraen los objetos clavados.'},
-  {s:'STI',t:'En el CPD salta la extinción por gas y hay una persona dentro inconsciente.',ok:'No entrar sin protección y avisar al 112',no:['Entrar a sacarla aguantando la respiración','Abrir la puerta y esperar dentro','Entrar a apagar el sistema'],e:'Primero, tu seguridad: con gas o humo no se entra sin protección.'},
-  {s:'STI',t:'Un compañero toca una parte con tensión de un rack y queda inconsciente.',ok:'Cortar la corriente antes de tocarlo',no:['Separarlo con las manos','Empezar la RCP sin cortar la corriente','Echarle agua'],e:'Contacto eléctrico: cortar la corriente antes de tocar a la persona.'},
-  {s:'STI',t:'Un compañero se cae de la escalera al pasar cable por el techo y le duele la espalda.',ok:'No moverlo y llamar al 112',no:['Ayudarlo a levantarse','Sentarlo en una silla','Llevarlo al coche'],e:'Posible lesión de columna: no se mueve salvo peligro inmediato.'},
-  {s:'IFC',t:'Hay una fuga de refrigerante en la sala de máquinas y un compañero inconsciente dentro.',ok:'No entrar sin protección y avisar al 112',no:['Entrar corriendo a sacarlo','Encender la luz para verlo mejor','Entrar con un pañuelo en la boca'],e:'Con gas no se entra sin protección: no te conviertas en otra víctima.'},
-  {s:'IFC',t:'Un compañero se cae de la cubierta al instalar una máquina exterior. Está consciente.',ok:'No moverlo, pedirle que no se mueva y llamar al 112',no:['Incorporarlo para ver si puede andar','Bajarlo por la escalera','Darle agua'],e:'Caída desde altura: no se mueve salvo peligro; se le sujeta la cabeza y se llama al 112.'},
-  {s:'IFC',t:'Un compañero se corta con una chapa y sangra mucho.',ok:'Presión directa con gasas (y guantes) y llamar al 112',no:['Lavar con alcohol y esperar','Echarle agua oxigenada sin tapar','Hacer un torniquete con un cable'],e:'Hemorragia: presión directa, firme y continua con gasas o un apósito, con guantes, y 112.'}
+  {s:'',t:'Una compañera ha recibido una descarga y sigue tocando el cuadro eléctrico. ¿Qué haces primero?',ok:'Cortar la corriente antes de tocarla',no:['Tirar de su brazo con fuerza para separarla','Apartarla empujándola con una barra metálica','Tocarla un segundo para ver si da calambre'],e:'Proteger: si la tocas con corriente, serás otra víctima. Primero se corta la corriente.'},
+  /* fase 4, 17-11-2026: fuera «¿Qué tienes que decir al 112?»: es la misma pregunta que la llamada por tarjetas */
+  {s:'',ll:1,t:'Estás hablando con el 112. ¿Cuándo cuelgas?',ok:'Cuando te lo indiquen',no:['En cuanto hayas dado la dirección exacta','Al minuto, para dejar la línea libre','Cuando veas llegar la ambulancia a la puerta'],e:'No cuelgues hasta que te lo indiquen: pueden guiarte paso a paso para hacer la RCP. Pon el altavoz.'},
+  {s:'',ll:1,t:'Tienes que socorrer y a la vez hablar con el 112. ¿Qué haces con el móvil?',ok:'Ponerlo en altavoz para tener las manos libres',no:['Sujetarlo entre el hombro y la oreja','Colgar y volver a llamar cuando hayas terminado','Seguir con el móvil en una mano y socorrer con la otra'],e:'Con el altavoz tienes las manos libres para socorrer mientras te guían.'},
+  {s:'',t:'¿Qué significa el método PAS?',ok:'Proteger, Avisar y Socorrer',no:['Parar, Analizar y Salir','Prevenir, Ayudar y Sanar','Pedir ayuda, Atender y Señalizar'],e:'PAS: Proteger (que no haya más peligros), Avisar (112) y Socorrer.'},
+  {s:'',t:'Hay humo en el almacén y una persona tirada en el suelo. ¿Qué haces?',ok:'No entrar sin protección y avisar al 112',no:['Entrar corriendo a sacarla antes de que sea tarde','Entrar agachado con un pañuelo mojado en la boca','Abrir y entrar a por ella aguantando la respiración'],e:'Primero, tu seguridad: si hay humo o gas, no entres sin protección.'},
+  /* fase 4, 17-11-2026: ERC 2025, persona despierta con posible lesión de cuello: que lo mantenga quieto ella misma; sujetar la cabeza es para quien no responde */
+  {s:'',t:'Una persona se ha caído de una escalera, está consciente y le duele el cuello.',ok:'Pedirle que no se mueva y llamar al 112',no:['Ayudarla a levantarse despacio','Sentarla apoyada en la pared para que respire mejor','Ponerle una chaqueta doblada bajo la cabeza'],e:'Posible lesión de columna: no se la mueve salvo peligro inmediato. Si está consciente, se le pide que mantenga el cuello quieto en la postura en que esté cómoda; nunca se la obliga a cambiar de postura.'},
+  {s:'',t:'¿Le das agua a una persona herida grave que tiene mucha sed?',ok:'No: no se da de comer ni de beber',no:['Sí, agua con azúcar para que no se maree','Sí, pero solo a sorbos pequeños','Sí, si lo pide y está consciente'],e:'A una persona herida grave no se le da de comer ni de beber.'},
+  {s:'',t:'¿Qué lleva el botiquín de la empresa para quien se hace daño?',ok:'Material de curas, pero ningún medicamento',no:['Analgésicos y antiinflamatorios para el dolor','Antibióticos en pastillas por si hay infección','Tranquilizantes por si alguien se pone nervioso'],e:'El botiquín de la empresa no lleva medicamentos: solo material de primeros auxilios.'},
+  {s:'',t:'Hay varias personas heridas. ¿A quién atiendes primero?',ok:'A quien no responde o tiene una hemorragia grave',no:['A quien más grita, porque es quien peor lo pasa','A quien conoces, porque sabes cómo se llama','A la persona herida más cercana a la puerta'],e:'Quien grita respira. Primero, quien no responde o no respira con normalidad y las hemorragias graves.'},
+  {s:'',t:'Ha habido un atropello en la puerta y siguen pasando coches. ¿Qué haces primero?',ok:'Señalizar la zona para que no haya otro atropello',no:['Arrodillarte a su lado en la calzada y empezar a atenderla','Incorporarla para ver si puede andar','Darle agua para que se recupere del susto'],e:'Proteger: comprueba que no hay más peligros (tráfico, corriente, fuego, gas) y señaliza.'},
+  /* ---- HIG (fase 4, 17-11-2026: de 3 a 10 escenas) ---- */
+  {s:'HIG',t:'La persona que está en el sillón dental deja de contestar de repente. ¿Qué haces primero?',ok:'Hablarle y tocarle los hombros para ver si responde',no:['Echarle agua fría en la cara para despertarla','Sentarla derecha en el sillón para que le llegue el aire','Esperar un rato a ver si se le pasa sola'],e:'Socorrer empieza por la evaluación primaria: ¿responde? Háblale y tócale los hombros.'},
+  {s:'HIG',t:'A una compañera le salpica desinfectante en un ojo.',ok:'Lavarlo con mucha agua 15-20 minutos, párpados abiertos',no:['Frotarlo con una gasa húmeda para retirar bien el producto','Echarle colirio y seguir trabajando con cuidado','Taparlo con un parche y esperar a que deje de picar'],e:'Quemadura química: agua abundante 15-20 minutos; en los ojos, con los párpados abiertos.'},
+  {s:'HIG',t:'Una persona se atraganta en la sala de espera, pero tose con fuerza.',ok:'Animarla a seguir tosiendo',no:['Darle golpes en la espalda enseguida','Hacerle la maniobra de Heimlich ya','Darle agua para que le baje lo que tiene'],e:'Si la tos es eficaz, es el mejor remedio: anímala a toser y no le des golpes.'},
+  {s:'HIG',t:'Una persona se desploma en la sala de espera: no responde y no respira con normalidad. En recepción hay un DEA.',ok:'112, que traigan el DEA y empezar la RCP',no:['Ponerla en posición lateral de seguridad','Buscarle el pulso en la muñeca durante un minuto','Echarle agua en la cara para que reaccione'],e:'No responde y no respira con normalidad: es una parada. 112 (con altavoz), que alguien traiga el DEA y RCP sin esperar.'},
+  {s:'HIG',t:'Una persona se cae por la escalera de la clínica. No responde, pero respira con normalidad.',ok:'Dejarla boca arriba, sujetarle la cabeza y llamar al 112',no:['Ponerla de lado, en posición lateral de seguridad, y esperar','Sentarla en una silla para ver si se despierta','Ponerle una chaqueta doblada bajo la cabeza'],e:'Si hay un golpe o una caída no se usa la posición lateral de seguridad (ERC 2025): se la deja boca arriba, se le sujeta la cabeza con las dos manos para que el cuello no se mueva, se vigila que respire y se llama al 112.'},
+  {s:'HIG',t:'Una compañera se corta la mano con el cristal de una vitrina y sangra mucho.',ok:'Presión directa y firme con gasas, con guantes, y 112',no:['Levantarle el brazo y esperar a que deje de sangrar','Lavar la herida con alcohol y luego taparla','Dejar que sangre un poco para que se limpie'],e:'Hemorragia: presión directa, firme y continua con gasas o un apósito, con guantes, y 112.'},
+  {s:'HIG',t:'Al ponerse unos guantes de látex, una persona se llena de ronchas, se le hincha la cara y le cuesta respirar.',ok:'112 y ayudarla con su autoinyector, si lo lleva',no:['Darle agua fría para que le baje la hinchazón','Que salga a caminar al aire libre para que respire mejor','Esperar a ver si se le pasa al quitarse los guantes'],e:'Reacción alérgica grave (anafilaxia): 112, que siga sentada o tumbada y, si lleva autoinyector de adrenalina, se pone cuanto antes en la cara externa del muslo (ERC 2025).'},
+  {s:'HIG',t:'Una persona con diabetes está sudorosa, temblorosa y confusa en el gabinete, pero puede tragar.',ok:'Darle azúcar: glucosa o un zumo',no:['Ponerle su insulina, que la lleva en el bolso','Tumbarla y no darle nada por si se atraganta','Mandarla a casa a descansar'],e:'Posible bajada de azúcar: si está despierta y puede tragar, glucosa o, si no hay, azúcar (un zumo, caramelos). Si a los 15 minutos no mejora, otra vez y 112 (ERC 2025).'},
+  {s:'HIG',t:'Una persona que espera su turno se lleva la mano al pecho: tiene un dolor opresivo que le baja al brazo.',ok:'Sentarla tranquila, llamar al 112 y no dejarla sola',no:['Que vaya andando a urgencias, que está cerca','Darle agua con azúcar y esperar a que se le pase','Que coja su coche y vaya a su centro de salud'],e:'Dolor en el pecho: tranquilízala, que se siente o se tumbe como esté más cómoda, 112 y quédate con ella hasta que llegue la ayuda (ERC 2025).'},
+  {s:'HIG',t:'En pleno agosto, una persona llega a la clínica tras caminar al sol: está confusa y muy caliente.',ok:'A la sombra, enfriarla con agua y llamar al 112',no:['Abrigarla para que no tenga escalofríos','Darle una bebida muy fría aunque esté confusa','Dejarla descansar en la sala hasta que se le pase'],e:'Golpe de calor: apartarla del calor, quitarle ropa y enfriarla con agua fría cuanto antes; 112 (ERC 2025).'},
+  /* ---- IFC (fase 4, 17-11-2026: de 3 a 10 escenas) ---- */
+  {s:'IFC',t:'Hay una fuga de refrigerante en la sala de máquinas y un compañero inconsciente dentro.',ok:'No entrar sin protección y avisar al 112',no:['Entrar corriendo a sacarlo, que son segundos','Encender la luz para ver dónde está','Entrar con un pañuelo mojado tapándote la boca'],e:'Con gas no se entra sin protección: no te conviertas en otra víctima.'},
+  {s:'IFC',t:'Un compañero se cae de la cubierta al instalar una máquina exterior. Está consciente.',ok:'Pedirle que no se mueva y llamar al 112',no:['Quitarle el casco para que respire mejor','Incorporarlo para ver si puede andar','Bajarlo por la escalera entre dos personas'],e:'Caída desde altura: posible lesión de columna. No se le mueve salvo peligro; se le pide que mantenga el cuello quieto, sin quitarle el casco, y se llama al 112.'},
+  /* fase 4, 17-11-2026: la trampa ya no dice que todo torniquete es malo: el error es saltarse la presión directa */
+  {s:'IFC',t:'Un compañero se corta con una chapa y sangra mucho.',ok:'Presión directa con gasas (y guantes) y llamar al 112',no:['Atarle un cable muy fuerte sin apretar antes la herida','Lavar con alcohol y esperar a ver si para','Levantarle el brazo y esperar a que deje de sangrar'],e:'Hemorragia: primero, presión directa, firme y continua con gasas o un apósito, con guantes, y 112. El torniquete (mejor uno de fábrica) solo si la presión no basta.'},
+  {s:'IFC',t:'Al purgar el circuito, a tu compañera le salpica refrigerante en los ojos.',ok:'Lavarlos con mucha agua 15-20 minutos, párpados abiertos',no:['Frotarlos con un trapo limpio para quitar el líquido','Echarle colirio y seguir con la carga de gas','Taparlos con la mano y esperar a que pase'],e:'Salpicadura en los ojos: agua abundante 15-20 minutos con los párpados abiertos, sin frotar, y al médico.'},
+  {s:'IFC',t:'Un compañero se desploma en la azotea mientras cargáis gas: no responde y no respira con normalidad.',ok:'112, pedir un DEA y empezar la RCP',no:['Ponerlo en posición lateral de seguridad','Buscarle el pulso en el cuello durante un minuto','Esperar a que se le pase el mareo a la sombra'],e:'No responde y no respira con normalidad: es una parada. 112 (con altavoz), que alguien traiga el DEA y RCP sin esperar.'},
+  {s:'IFC',t:'Tu compañera se cae del andamio. No responde, pero respira con normalidad.',ok:'Dejarla boca arriba, sujetarle la cabeza y llamar al 112',no:['Ponerla de lado, en posición lateral de seguridad, y esperar','Quitarle el casco y el arnés para que respire mejor','Sentarla apoyada en la pared para que se despierte'],e:'Si hay un golpe o una caída no se usa la posición lateral de seguridad (ERC 2025): se la deja boca arriba, se le sujeta la cabeza con las dos manos para que el cuello no se mueva, se vigila que respire y se llama al 112.'},
+  {s:'IFC',t:'En una cubierta, a tu compañero le pica una avispa: se le hincha la cara y le cuesta respirar.',ok:'112 y ayudarle con su autoinyector, si lo lleva',no:['Ponerle barro en la picadura y seguir trabajando','Que baje solo por la escalera a tomar el aire','Darle agua fría para que le baje la hinchazón'],e:'Reacción alérgica grave (anafilaxia): 112, que siga sentado o tumbado y, si lleva autoinyector de adrenalina, se pone cuanto antes en la cara externa del muslo (ERC 2025).'},
+  {s:'IFC',t:'Un compañero con diabetes está sudoroso, tembloroso y confuso en la obra, pero puede tragar.',ok:'Darle azúcar: glucosa o un zumo',no:['Ponerle su insulina','Tumbarlo sin darle nada','Que descanse en la furgoneta'],e:'Posible bajada de azúcar: si está despierto y puede tragar, glucosa o, si no hay, azúcar (un zumo, caramelos). Si a los 15 minutos no mejora, otra vez y 112 (ERC 2025).'},
+  {s:'IFC',t:'Montando un equipo, tu compañera nota un dolor opresivo en el pecho que le baja al brazo.',ok:'Sentarla tranquila, llamar al 112 y no dejarla sola',no:['Que conduzca la furgoneta hasta urgencias','Darle agua con azúcar y esperar a que se le pase','Que termine la instalación y luego vaya al médico'],e:'Dolor en el pecho: tranquilízala, que se siente o se tumbe como esté más cómoda, 112 y quédate con ella hasta que llegue la ayuda (ERC 2025).'},
+  {s:'IFC',t:'En julio, instalando una máquina en la cubierta, tu compañero está confuso y muy caliente.',ok:'A la sombra, enfriarlo con agua y llamar al 112',no:['Abrigarlo para que no tenga escalofríos','Darle una bebida muy fría aunque esté confuso','Que siga trabajando más despacio y bebiendo mucha agua'],e:'Golpe de calor: apartarlo del calor, quitarle ropa y enfriarlo con agua fría cuanto antes; 112 (ERC 2025).'},
+  /* ---- ITE (fase 4, 17-11-2026: de 3 a 10 escenas) ---- */
+  {s:'ITE',t:'Un compañero se queda pegado a un cable con tensión en la caja de registro.',ok:'Cortar la corriente antes de tocarlo',no:['Separarlo tirando de su ropa','Apartarlo empujándolo con una escalera metálica','Agarrarlo con los guantes de trabajo y tirar fuerte'],e:'Contacto eléctrico: cortar la corriente antes de tocar a la persona. Los guantes de trabajo no aíslan.'},
+  {s:'ITE',t:'Un compañero se cae del tejado al montar una antena y está consciente.',ok:'Pedirle que no se mueva y llamar al 112',no:['Incorporarlo para ver si puede andar','Llevarlo en brazos hasta el coche','Quitarle el casco para que respire mejor'],e:'Caída desde altura: posible lesión de columna. No se le mueve salvo peligro; se le pide que mantenga el cuello quieto, sin quitarle el casco, y se llama al 112.'},
+  {s:'ITE',t:'Al taladrar, un trozo de metal se queda clavado en el brazo de tu compañero.',ok:'No sacarlo, sujetarlo y llamar al 112',no:['Sacarlo rápido para que no se infecte','Tirar de él con unos alicates con cuidado','Lavar con alcohol y seguir trabajando'],e:'Herida grave: no se extraen los objetos clavados.'},
+  {s:'ITE',t:'En el sótano de un edificio, un compañero está tirado junto al cuarto de contadores y huele mucho a gas.',ok:'No entrar ni encender nada y llamar al 112',no:['Entrar a sacarlo aguantando la respiración','Encender la luz para verlo mejor','Entrar con un pañuelo mojado tapándote la boca'],e:'Con gas no se entra sin protección ni se enciende nada: no te conviertas en otra víctima.'},
+  {s:'ITE',t:'Pelando cable coaxial, tu compañera se corta con el cúter y sangra mucho de la mano.',ok:'Presión directa y firme con gasas, con guantes, y 112',no:['Levantarle el brazo y esperar a que deje de sangrar','Echarle alcohol y taparlo con cinta aislante','Dejar que sangre un poco para que se limpie'],e:'Hemorragia: presión directa, firme y continua con gasas o un apósito, con guantes, y 112.'},
+  {s:'ITE',t:'Tu compañero se cae de la escalera en un patio. No responde, pero respira con normalidad.',ok:'Dejarlo boca arriba, sujetarle la cabeza y llamar al 112',no:['Ponerlo de lado, en posición lateral de seguridad, y esperar','Quitarle el casco para que respire mejor','Sentarlo apoyado en la pared para que se despierte'],e:'Si hay un golpe o una caída no se usa la posición lateral de seguridad (ERC 2025): se le deja boca arriba, se le sujeta la cabeza con las dos manos para que el cuello no se mueva, se vigila que respire y se llama al 112.'},
+  {s:'ITE',t:'En un edificio, tu compañera se desploma junto al armario de telecomunicaciones: no responde y no respira con normalidad.',ok:'112, pedir el DEA y empezar la RCP',no:['Ponerla en posición lateral de seguridad','Buscarle el pulso en el cuello durante un minuto','Echarle agua en la cara para que reaccione'],e:'No responde y no respira con normalidad: es una parada. 112 (con altavoz), que alguien traiga el DEA y RCP sin esperar.'},
+  {s:'ITE',t:'Montando una antena, a tu compañero le pica una avispa: se le hincha la cara y le cuesta respirar.',ok:'112 y ayudarle con su autoinyector, si lo lleva',no:['Ponerle barro en la picadura y seguir trabajando','Que baje solo del tejado a tomar el aire','Darle agua fría para que le baje la hinchazón'],e:'Reacción alérgica grave (anafilaxia): 112, que siga sentado o tumbado y, si lleva autoinyector de adrenalina, se pone cuanto antes en la cara externa del muslo (ERC 2025).'},
+  {s:'ITE',t:'Una compañera con diabetes está sudorosa, temblorosa y confusa en la obra, pero puede tragar.',ok:'Darle azúcar: glucosa o un zumo',no:['Ponerle su insulina','Tumbarla sin darle nada','Que descanse en la furgoneta'],e:'Posible bajada de azúcar: si está despierta y puede tragar, glucosa o, si no hay, azúcar (un zumo, caramelos). Si a los 15 minutos no mejora, otra vez y 112 (ERC 2025).'},
+  {s:'ITE',t:'Tirando cable por una fachada, tu compañero nota un dolor opresivo en el pecho que le baja al brazo.',ok:'Sentarlo tranquilo, llamar al 112 y no dejarlo solo',no:['Que conduzca la furgoneta hasta urgencias','Darle agua con azúcar y esperar a que se le pase','Que termine el tendido y luego vaya al médico'],e:'Dolor en el pecho: tranquilízalo, que se siente o se tumbe como esté más cómodo, 112 y quédate con él hasta que llegue la ayuda (ERC 2025).'},
+  {s:'ITE',t:'En julio, orientando una antena en el tejado, tu compañera está confusa y muy caliente.',ok:'A la sombra, enfriarla con agua y llamar al 112',no:['Abrigarla para que no tenga escalofríos','Darle una bebida muy fría aunque esté confusa','Que siga trabajando más despacio y bebiendo mucha agua'],e:'Golpe de calor: apartarla del calor, quitarle ropa y enfriarla con agua fría cuanto antes; 112 (ERC 2025).'},
+  /* ---- STI (fase 4, 17-11-2026: de 3 a 10 escenas) ---- */
+  {s:'STI',t:'En el CPD salta la extinción por gas y hay una persona dentro inconsciente.',ok:'No entrar sin protección y avisar al 112',no:['Entrar a sacarla aguantando la respiración','Entrar a apagar el sistema de extinción','Entrar tapándote la boca con la camiseta'],e:'Primero, tu seguridad: con gas o humo no se entra sin protección.'},
+  {s:'STI',t:'Un compañero toca una parte con tensión de un rack y queda inconsciente.',ok:'Cortar la corriente antes de tocarlo',no:['Separarlo con las manos, sin perder tiempo','Empezar la RCP sin cortar la corriente','Apartarlo con la pulsera antiestática puesta'],e:'Contacto eléctrico: cortar la corriente antes de tocar a la persona.'},
+  {s:'STI',t:'Un compañero se cae de la escalera al pasar cable por el techo y le duele la espalda.',ok:'Pedirle que no se mueva y llamar al 112',no:['Ayudarlo a levantarse poco a poco','Sentarlo en una silla con respaldo','Llevarlo en el coche a urgencias'],e:'Posible lesión de columna: no se le mueve salvo peligro inmediato; se le pide que se quede quieto y se llama al 112.'},
+  {s:'STI',t:'En la oficina técnica, tu compañera se desploma: no responde y no respira con normalidad. En recepción hay un DEA.',ok:'112, que traigan el DEA y empezar la RCP',no:['Ponerla en posición lateral de seguridad','Buscarle el pulso en el cuello durante un minuto','Echarle agua en la cara para que reaccione'],e:'No responde y no respira con normalidad: es una parada. 112 (con altavoz), que alguien traiga el DEA y RCP sin esperar.'},
+  {s:'STI',t:'Tu compañero se cae de la escalera en el CPD. No responde, pero respira con normalidad.',ok:'Dejarlo boca arriba, sujetarle la cabeza y llamar al 112',no:['Ponerlo de lado, en posición lateral de seguridad, y esperar','Sentarlo en una silla para ver si se despierta','Ponerle una chaqueta doblada bajo la cabeza'],e:'Si hay un golpe o una caída no se usa la posición lateral de seguridad (ERC 2025): se le deja boca arriba, se le sujeta la cabeza con las dos manos para que el cuello no se mueva, se vigila que respire y se llama al 112.'},
+  {s:'STI',t:'Montando un rack, tu compañera se corta la mano con el borde de una chapa y sangra mucho.',ok:'Presión directa y firme con gasas, con guantes, y 112',no:['Levantarle el brazo y esperar a que deje de sangrar','Echarle alcohol y taparlo con cinta americana','Dejar que sangre un poco para que se limpie'],e:'Hemorragia: presión directa, firme y continua con gasas o un apósito, con guantes, y 112.'},
+  {s:'STI',t:'En la sala de descanso, tu compañero come algo con frutos secos: se le hincha la cara y le cuesta respirar.',ok:'112 y ayudarle con su autoinyector, si lo lleva',no:['Darle agua fría para que le baje la hinchazón','Que salga a caminar al aire libre para que respire mejor','Esperar a ver si se le pasa al dejar de comer'],e:'Reacción alérgica grave (anafilaxia): 112, que siga sentado o tumbado y, si lleva autoinyector de adrenalina, se pone cuanto antes en la cara externa del muslo (ERC 2025).'},
+  {s:'STI',t:'Una compañera con diabetes está sudorosa, temblorosa y confusa en su puesto, pero puede tragar.',ok:'Darle azúcar: glucosa o un zumo',no:['Ponerle su insulina, que la lleva en la mochila','Tumbarla y no darle nada por si se atraganta','Mandarla a casa en el coche a descansar'],e:'Posible bajada de azúcar: si está despierta y puede tragar, glucosa o, si no hay, azúcar (un zumo, caramelos). Si a los 15 minutos no mejora, otra vez y 112 (ERC 2025).'},
+  {s:'STI',t:'Configurando un servidor, tu compañero nota un dolor opresivo en el pecho que le baja al brazo.',ok:'Sentarlo tranquilo, llamar al 112 y no dejarlo solo',no:['Que vaya en su coche a urgencias','Darle agua con azúcar y esperar a que se le pase','Que termine la configuración y luego vaya al médico'],e:'Dolor en el pecho: tranquilízalo, que se siente o se tumbe como esté más cómodo, 112 y quédate con él hasta que llegue la ayuda (ERC 2025).'},
+  {s:'STI',t:'Con la climatización del CPD averiada en agosto, tu compañera lleva horas dentro: está confusa y muy caliente.',ok:'Sacarla del calor, enfriarla con agua y llamar al 112',no:['Abrigarla para que no tenga escalofríos','Darle una bebida muy fría aunque esté confusa','Que siga trabajando más despacio y bebiendo mucha agua'],e:'Golpe de calor: apartarla del calor, quitarle ropa y enfriarla con agua fría cuanto antes; 112 (ERC 2025).'}
  ],
  val: [
-  {s:'',t:'No responde, pero respira con normalidad. No ha sufrido golpes ni caídas.',ok:'Posición lateral de seguridad y vigilar su respiración',no:['Empezar la RCP','Sentarla para que se despierte','Darle agua'],e:'Inconsciente que respira con normalidad: PLS y vigilar la respiración hasta que llegue la ayuda.'},
-  {s:'',t:'No responde y hace respiraciones lentas y trabajosas, como «boqueadas».',ok:'Es una parada: 112 y RCP',no:['Respira: posición lateral de seguridad','Esperar a ver si mejora','Abanicarla'],e:'Las boqueadas no son una respiración normal: hay que empezar la RCP.'},
-  {s:'',t:'¿Cuánto tiempo compruebas si respira con normalidad?',ok:'No más de 10 segundos',no:['Un minuto','Hasta que llegue la ambulancia','Medio minuto'],e:'Se mira, se escucha y se siente durante no más de 10 segundos.'},
-  {s:'',t:'¿Dónde se ponen las manos para las compresiones?',ok:'En el centro del pecho',no:['En el lado izquierdo, sobre el corazón','Sobre el estómago','En la parte alta del pecho, junto al cuello'],e:'El talón de una mano en el centro del pecho y la otra encima, con los brazos rectos.'},
-  {s:'',t:'¿A qué ritmo se hacen las compresiones?',ok:'De 100 a 120 por minuto',no:['De 60 a 80 por minuto','De 150 a 180 por minuto','30 por minuto'],e:'Entre 100 y 120 por minuto: unas dos compresiones por segundo.'},
-  {s:'',t:'¿Qué profundidad tienen las compresiones en una persona adulta?',ok:'Al menos 5 cm, pero no más de 6',no:['1 o 2 cm, con cuidado','10 cm','Lo que salga sin esfuerzo'],e:'Al menos 5 cm y no más de 6, dejando que el pecho vuelva a su sitio.'},
+  {s:'',t:'No responde, pero respira con normalidad. No ha sufrido golpes ni caídas.',ok:'Posición lateral de seguridad y vigilarla',no:['Dejarla boca arriba con las piernas en alto','Sentarla en una silla para que se despierte','Empezar la RCP por si acaso'],e:'Inconsciente que respira con normalidad: PLS y vigilar la respiración hasta que llegue la ayuda.'},
+  {s:'',t:'No responde y hace respiraciones lentas y trabajosas, como «boqueadas».',ok:'Es una parada: 112 y RCP',no:['Está respirando: posición lateral de seguridad','Esperar un minuto a ver si mejora','Echarle agua en la cara para que reaccione'],e:'Las boqueadas no son una respiración normal: hay que empezar la RCP.'},
+  {s:'',t:'¿Cuánto tiempo compruebas si respira con normalidad?',ok:'No más de 10 segundos',no:['Un minuto entero, para asegurarte','Hasta que llegue la ambulancia','Medio minuto, mirando su pecho'],e:'Se mira, se escucha y se siente durante no más de 10 segundos.'},
+  {s:'',t:'¿Dónde se ponen las manos para las compresiones?',ok:'En el centro del pecho',no:['En el lado izquierdo, sobre el corazón','Sobre la boca del estómago','En la parte alta del pecho, junto al cuello'],e:'El talón de una mano en el centro del pecho y la otra encima, con los brazos rectos.'},
+  {s:'',t:'¿A qué ritmo se hacen las compresiones?',ok:'De 100 a 120 por minuto',no:['De 60 a 80 por minuto','De 140 a 160 por minuto','Lo más rápido que puedas'],e:'Entre 100 y 120 por minuto: unas dos compresiones por segundo.'},
+  {s:'',t:'¿Qué profundidad tienen las compresiones en una persona adulta?',ok:'Al menos 5 cm, pero no más de 6',no:['1 o 2 cm, para no romper costillas','Unos 10 cm, con todo tu peso','Lo justo para notar que se hunde un poco'],e:'Al menos 5 cm y no más de 6, dejando que el pecho vuelva a su sitio.'},
   {s:'',t:'¿Cuál es la proporción de la RCP?',ok:'30 compresiones y 2 ventilaciones',no:['15 compresiones y 2 ventilaciones','5 compresiones y 1 ventilación','100 compresiones y 10 ventilaciones'],e:'RCP 30:2: 30 compresiones y 2 ventilaciones.'},
-  {s:'',t:'No sabes dar ventilaciones. ¿Qué haces?',ok:'Compresiones sin parar',no:['Nada: esperar a la ambulancia','Solo ventilaciones','Darle palmadas en la cara'],e:'Sin ventilaciones si no sabes: compresiones sin parar.'},
-  {s:'',t:'¿Hasta cuándo sigues con la RCP?',ok:'Hasta que llegue la ayuda, respire con normalidad o te agotes',no:['Cinco minutos y paras','Hasta que se ponga colorada','Hasta que te canses un poco'],e:'Hasta que llegue la ayuda sanitaria, la persona respire con normalidad o te agotes (con más personas, relevaos cada 2 minutos).'},
-  {s:'',t:'Llega el desfibrilador (DEA). ¿Qué haces?',ok:'Encenderlo en cuanto llegue y seguir sus instrucciones de voz',no:['Esperar a que llegue alguien que sepa','Guardarlo para la ambulancia','Usarlo solo si la persona responde'],e:'El DEA es muy fácil de usar: da instrucciones de voz. Se usa en cuanto llega.'},
-  {s:'',t:'Se atraganta, no puede toser ni hablar.',ok:'Hasta 5 golpes en la espalda, entre los omóplatos',no:['Barrerle la boca con los dedos','Darle agua','Tumbarla boca arriba'],e:'Si la tos ya no sirve: inclínala hacia delante y hasta 5 golpes entre los omóplatos.'},
-  {s:'',t:'Los 5 golpes en la espalda no han resuelto el atragantamiento.',ok:'Hasta 5 compresiones abdominales (maniobra de Heimlich)',no:['Empezar la RCP aunque esté consciente','Darle más golpes en el pecho','Esperar a que se le pase'],e:'Si los golpes no bastan: hasta 5 compresiones abdominales, alternándolas con los golpes, y 112.'},
-  {s:'',t:'Una quemadura en la mano con el soldador.',ok:'Enfriar con agua corriente al menos 20 minutos',no:['Poner hielo directamente','Echar pasta de dientes','Pinchar la ampolla'],e:'Enfriar con agua corriente durante al menos 20 minutos, sin pomadas ni despegar la ropa.'},
-  {s:'',t:'Una herida sangra mucho en el antebrazo.',ok:'Presión directa y firme con gasas (y guantes) y llamar al 112',no:['Lavarla con alcohol y esperar','Dejar que sangre para que se limpie','Darle agua para que no se maree'],e:'Hemorragia: presión directa, firme y continua sobre la herida, con guantes, y 112.'},
-  {s:'',t:'Se ha torcido el tobillo y puede que esté roto.',ok:'Inmovilizar como está, sin intentar recolocarlo',no:['Recolocarlo de un tirón','Hacerle andar para ver si duele','Darle un masaje fuerte'],e:'Fractura o esguince: inmovilizar en la posición en que está, sin recolocar.'},
-  {s:'',t:'Está pálida, con sudor frío, pulso rápido y mucha sed después de un golpe.',ok:'Tumbarla, abrigarla, no darle de beber y avisar al 112',no:['Darle agua con azúcar','Hacerla caminar para que se active','Sentarla con la cabeza entre las piernas'],e:'Signos de shock: tumbarla, abrigarla, no darle de beber y 112.'},
-  {s:'',t:'Ha bebido un producto de limpieza por error.',ok:'Llamar al 112 o al Toxicológico con la etiqueta y no provocar el vómito',no:['Provocarle el vómito','Darle leche','Darle mucha agua'],e:'Intoxicación: 112 o Servicio de Información Toxicológica con la etiqueta; no provocar el vómito ni dar nada de beber.'},
-  {s:'',t:'Una mujer embarazada está inconsciente y respira con normalidad.',ok:'Posición lateral de seguridad sobre el costado izquierdo',no:['Boca arriba con las piernas en alto','Sobre el costado derecho','Sentada'],e:'A una mujer embarazada se la coloca sobre el costado izquierdo.'}
+  {s:'',t:'No sabes dar ventilaciones. ¿Qué haces?',ok:'Compresiones sin parar hasta que llegue la ayuda',no:['Nada: esperar a que llegue la ambulancia','Solo ventilaciones, sin compresiones','Darle palmadas en la cara hasta que reaccione'],e:'Sin ventilaciones si no sabes: compresiones sin parar.'},
+  {s:'',t:'¿Hasta cuándo sigues con la RCP?',ok:'Hasta que llegue la ayuda, respire con normalidad o te agotes',no:['Diez minutos y, si no reacciona, paras porque ya no sirve','Hasta que creas notarle el pulso, aunque no respire con normalidad','Hasta que pase un rato sin que reaccione'],e:'Hasta que llegue la ayuda sanitaria, la persona respire con normalidad o te agotes (con más personas, relevaos cada 2 minutos).'},
+  {s:'',t:'Llega el desfibrilador (DEA). ¿Qué haces?',ok:'Encenderlo ya y seguir lo que dice su voz',no:['Esperar a que llegue alguien que sepa usarlo','Guardarlo para que lo use la ambulancia','Usarlo solo si ves que la persona responde'],e:'El DEA es muy fácil de usar: da instrucciones de voz. Se usa en cuanto llega.'},
+  {s:'',t:'Se atraganta, no puede toser ni hablar.',ok:'Hasta 5 golpes en la espalda, entre los omóplatos',no:['Barrerle la boca con los dedos para sacar lo que sea','Darle agua para que le baje el trozo','Que levante los brazos para que entre aire'],e:'Si la tos ya no sirve: inclínala hacia delante y hasta 5 golpes entre los omóplatos.'},
+  {s:'',t:'Los 5 golpes en la espalda no han resuelto el atragantamiento.',ok:'Hasta 5 compresiones abdominales (maniobra de Heimlich)',no:['Empezar la RCP aunque siga consciente','Meterle los dedos hasta el fondo para que vomite el trozo','Seguir con golpes en la espalda hasta que se desmaye'],e:'Si los golpes no bastan: hasta 5 compresiones abdominales, alternándolas con los golpes, y 112.'},
+  {s:'',t:'Una quemadura en la mano con el soldador.',ok:'Enfriarla con agua corriente al menos 20 minutos',no:['Poner hielo directamente sobre la quemadura','Echar pasta de dientes o aceite para calmar','Pinchar la ampolla para que salga el líquido'],e:'Enfriar con agua corriente durante al menos 20 minutos, sin pomadas ni despegar la ropa.'},
+  {s:'',t:'Una herida sangra mucho en el antebrazo.',ok:'Presión directa y firme sobre la herida y 112',no:['Lavarla con alcohol y esperar a ver si para','Levantar el brazo y esperar a que deje de sangrar','Dejar que sangre un poco para que se limpie'],e:'Hemorragia: presión directa, firme y continua sobre la herida, con guantes, y 112.'},
+  /* fase 4, 17-11-2026: torniquete según ERC 2025 (hemorragia de una extremidad que amenaza la vida y no para con presión directa) */
+  {s:'',t:'Un corte profundo en el muslo sangra a chorro y, aunque aprietas fuerte con gasas, no para. Te traen un torniquete de fábrica.',ok:'Ponerlo por encima de la herida y anotar la hora',no:['Seguir solo apretando: el torniquete siempre es peligroso','Ponerlo y aflojarlo cada pocos minutos para que circule','Apretarlo un poco y quitarlo cuando deje de sangrar'],e:'Si una hemorragia que amenaza la vida en un brazo o una pierna no para con presión directa, torniquete cuanto antes: 5-7 cm por encima de la herida (no sobre una articulación), apretado hasta que pare, con la hora anotada y sin aflojarlo; solo lo quita el personal sanitario (ERC 2025).'},
+  {s:'',t:'Se ha torcido el tobillo y puede que esté roto.',ok:'Inmovilizarlo como está, sin intentar recolocarlo',no:['Recolocarlo de un tirón para que no se quede mal','Hacerle andar un poco para ver si está roto','Darle un masaje fuerte para bajar la hinchazón'],e:'Fractura o esguince: inmovilizar en la posición en que está, sin recolocar.'},
+  {s:'',t:'Está pálida, con sudor frío, pulso rápido y mucha sed después de un golpe.',ok:'Tumbarla, abrigarla, no darle de beber y avisar al 112',no:['Darle agua con azúcar a sorbos para que recupere fuerzas','Hacerla caminar un poco para que se active','Sentarla con la cabeza entre las rodillas'],e:'Signos de shock: tumbarla, abrigarla, no darle de beber y 112.'},
+  /* fase 4, 17-11-2026: teléfono del Servicio de Información Toxicológica comprobado en mjusticia.gob.es (24 horas) */
+  {s:'',t:'Ha bebido un producto de limpieza por error.',ok:'Llamar al 112 o al Toxicológico con el envase a mano',no:['Darle un vaso de leche para que neutralice el producto','Darle agua con sal para que vomite y lo eche todo','Provocarle el vómito metiéndole los dedos en la boca'],e:'Intoxicación: 112 o Servicio de Información Toxicológica (91 562 04 20, las 24 horas) con el envase o la etiqueta a mano; no provocar el vómito ni dar nada de beber.'},
+  {s:'',t:'Una mujer embarazada está inconsciente y respira con normalidad.',ok:'De lado sobre el costado izquierdo',no:['De lado sobre el costado derecho','Boca arriba con las piernas en alto','Sentada con la espalda apoyada en la pared'],e:'A una mujer embarazada se la coloca sobre el costado izquierdo.'}
  ]
 };
 
@@ -480,10 +521,12 @@ function empieza(n,oficial){
  const l=NIVELES[n-1];
  st={l,i:0,pts:0,racha:0,vidas:3,aciertos:0,fallos:[],oficial:oficial||null};
  if(l.modo==='test'){
-  const banco=BANCOS[l.banco], sec=banco.filter(x=>x.s===ciclo()), com=baraja(banco.filter(x=>!x.s));
-  const s3=baraja(sec).slice(0,3);
-  st.lista=baraja(s3.concat(com.slice(0,l.preg-s3.length)));
-  if(l.banco==='pas'){st.lista.pop();st.lista.splice(1+Math.floor(Math.random()*(st.lista.length-1)),0,LLAMADA)}
+  // fase 4, 17-11-2026: 3 escenas al azar de las de tu sector (10 u 11) (sin código o con TEST, de cualquier sector: antes repetía comunes);
+  // la llamada por tarjetas ocupa su hueco sin quitar ninguna de sector y sale después de las escenas del 112 (ll)
+  const banco=BANCOS[l.banco], mio=banco.filter(x=>x.s&&x.s===ciclo()), sec=mio.length?mio:banco.filter(x=>x.s), com=baraja(banco.filter(x=>!x.s));
+  const s3=baraja(sec).slice(0,3), ll=l.banco==='pas'?1:0;
+  st.lista=baraja(s3.concat(com.slice(0,l.preg-ll-s3.length)));
+  if(ll){const d=Math.max(1,...st.lista.map((x,i)=>x.ll?i+1:0));st.lista.splice(d+Math.floor(Math.random()*(st.lista.length-d+1)),0,LLAMADA)}
   return pregunta();
  }
  if(l.modo==='pls')return pls();
@@ -665,17 +708,23 @@ try{speechSynthesis.getVoices()}catch(e){}
 function svgPunto(svg,ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 
-/* ===== Nivel 3: posición lateral de seguridad (arrastrar en orden) ===== */
+/* ===== Nivel 3: posición lateral de seguridad (arrastrar en orden) =====
+   fase 4, 17-11-2026: pasos cotejados con ERC 2025 (pierna de arriba con cadera y rodilla en ángulo recto; mano bajo la mejilla)
+   y pistas progresivas: el 1.er fallo de un paso da una pista (pista) y el 2.º, la respuesta de ese paso (resp) */
 const PLS_PASOS=[
- {id:'mano_cerca',txt:'El brazo más cercano a ti, en ángulo recto con el cuerpo: codo doblado y palma hacia arriba.',de:{x:203,y:228},a:{x:241,y:58}},
- {id:'mano_lejos',txt:'El brazo más lejano, cruzado sobre el pecho: el dorso de su mano contra su mejilla más cercana a ti.',de:{x:98,y:225},a:{x:161,y:92}},
- {id:'rodilla',txt:'Dobla la pierna más lejana: la rodilla hacia arriba y el pie apoyado en el suelo.',de:{x:121,y:357},a:{x:128,y:319}},
- {id:'rodilla2',txt:'Tira de esa rodilla hacia ti para girarla de lado, sin soltar la mano de la mejilla.',de:{x:120,y:268},a:{x:192,y:259}},
- {id:'cabeza',txt:'Inclina la cabeza hacia atrás para que la vía aérea quede abierta. Y vigila que siga respirando.',de:{x:176,y:96},a:{x:205,y:62}}
+ {id:'mano_cerca',txt:'El brazo más cercano a ti, en ángulo recto con el cuerpo: codo doblado y palma hacia arriba.',de:{x:203,y:228},a:{x:241,y:58},
+  pista:'Ese no toca todavía. Pista: ¿qué parte de su cuerpo está más cerca de ti?',resp:'Ahora toca el brazo más cercano a ti: en ángulo recto con el cuerpo.'},
+ {id:'mano_lejos',txt:'El brazo más lejano, cruzado sobre el pecho: el dorso de su mano contra su mejilla más cercana a ti.',de:{x:98,y:225},a:{x:161,y:92},
+  pista:'Ese no toca todavía. Pista: antes de girarla, algo tiene que proteger su cara.',resp:'Ahora toca el brazo más lejano: cruzado, con el dorso de la mano contra su mejilla.'},
+ {id:'rodilla',txt:'Dobla la pierna más lejana: la rodilla hacia arriba y el pie apoyado en el suelo.',de:{x:121,y:357},a:{x:128,y:319},
+  pista:'Ese no toca todavía. Pista: para girarla te hace falta una palanca.',resp:'Ahora toca la pierna más lejana: dobla la rodilla con el pie en el suelo.'},
+ {id:'rodilla2',txt:'Tira de esa rodilla hacia ti para girarla de lado, sin soltar la mano de la mejilla. Deja la pierna de arriba con la cadera y la rodilla en ángulo recto.',de:{x:120,y:268},a:{x:192,y:259},
+  pista:'Ese no toca todavía. Pista: la palanca ya está lista; ¿cómo la usas?',resp:'Ahora toca tirar de la rodilla doblada hacia ti para girarla de lado.'},
+ {id:'cabeza',txt:'Inclina la cabeza hacia atrás para que la vía aérea quede abierta y deja su mano bajo la mejilla para que siga así. Vigila que siga respirando.',de:{x:176,y:96},a:{x:205,y:62}}
 ];
 function pls(){
  const t0=ahoraJ();
- Object.assign(st,{paso:0,errores:0,arrastre:null});
+ Object.assign(st,{paso:0,errores:0,arrastre:null,pista:0});
  app.innerHTML=`<div class="rcp pls" id="esc">
   <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span></div>
   <div class="msg" id="msg">No responde, pero respira con normalidad y no ha sufrido golpes. Arrastra con el dedo, en orden, para ponerla en posición lateral de seguridad. Estás a su lado, a la derecha de la pantalla.</div>
@@ -700,7 +749,7 @@ function pls(){
   const paso=PLS_PASOS[st.paso];
   if(c.dataset.id!==paso.id){   // parte equivocada o fuera de orden
    st.errores++;fallo();$('#esc').classList.add('sacude');setTimeout(()=>$('#esc')&&$('#esc').classList.remove('sacude'),400);
-   $('#msg').textContent='Ese no es el paso que toca. Piensa en el orden: brazo cercano, mano lejana, pierna lejana, girar y cabeza.';
+   st.pista++;$('#msg').textContent=st.pista<2?paso.pista:paso.resp;   // fase 4: antes, el primer fallo ya enseñaba el orden completo
    return;
   }
   st.arrastre={c,ini:p};
@@ -716,7 +765,7 @@ function pls(){
   const p=svgPunto(svg,ev), paso=PLS_PASOS[st.paso];
   const movido=dist(p,st.arrastre.ini);st.arrastre=null;meta.innerHTML='';
   if(dist(p,paso.a)<26&&movido>18){
-   st.paso++;vibra(40);clic(880);
+   st.paso++;st.pista=0;vibra(40);clic(880);
    cambiaImg(imgPaso(st.paso));
    if(st.paso>=5)$('#meta').innerHTML='<g filter="url(#brillo)"><path d="M196 72 q12 -6 20 3 M200 60 q16 -8 27 5" stroke="#7dffb5" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
    $('#msg').textContent='✔ '+paso.txt;$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
@@ -779,7 +828,7 @@ const crono=()=>st.t0?(ahoraJ()-st.t0)/1000:0;
 function tic(){
  if(!$('#cr'))return;
  const s=Math.floor(crono());$('#cr').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
- if(st.compa&&!st.relevo&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();aviso('Llevas más de 2 minutos: te estás agotando y las compresiones pierden profundidad. ¡Pide el relevo!');$('#rel').classList.add('alarma')}
+ if(st.compa&&!st.relevo&&st.fase==='comp'&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();aviso('Llevas más de 2 minutos: te estás agotando y las compresiones pierden profundidad. ¡Pide el relevo!');$('#rel').classList.add('alarma')}   // fase 4: solo mientras comprimes tú (con el DEA no hay botón de relevo)
  if(st.fase==='dea3'&&ahoraJ()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';aviso('El DEA no puede analizar si alguien toca a la persona. ¡Que nadie la toque!');pasoDea()}
 }
 function aviso(t){const m=$('#msg');if(m)m.innerHTML=t}
@@ -802,6 +851,7 @@ function toque(p,ev){
   }
   return pintaPts();
  }
+ if(st.fase==='pecho'){if(dist(p,SITIO)<70)descubre();return}   // fase 4: también con el gesto de tocar el pecho
  if(st.fase==='dea2')return poneParche(p);
  if(st.fase!=='comp')return;
  if(dist(p,SITIO)>60){st.errores++;fallo();marca(p,'#ff6b4a');aviso('¡Las manos en el centro del pecho!');return pintaPts()}
@@ -838,26 +888,31 @@ function ventilar(){
  setTimeout(()=>{
   if(st.fase!=='vent')return;
   st.cicloN++;st.cuenta=0;st.ultimo=0;st.inter=[];
-  if(st.cicloN===2&&!st.compa){st.compa=true;$('#rel').disabled=false}
+  // fase 4, 17-11-2026 (ERC 2025: el DEA se pone en cuanto llega y la otra persona sigue comprimiendo mientras se colocan los parches):
+  // la compañera vuelve con el DEA tras el primer ciclo; el relevo de los 2 minutos llega después de la descarga
+  if(st.cicloN===2&&!st.compa){st.compa=true;st.fase='dea1';ritmoCompa();$('#ci').textContent='DEA';
+   aviso('Tu compañera vuelve <b>con el DEA</b> y sigue ella con las compresiones, sin parar. <b>Pon el DEA ya.</b>');return pasoDea()}
   // salto de tiempo (José, 5-11-2026: «el RCP se me ha hecho eterno»): tras dos ciclos, el cronómetro salta a 1:40
   if(st.cicloN===3&&!st.saltado){st.saltado=true;st.t0=ahoraJ()-100000;combo('⏩ +1 minuto')}
   $('#ci').textContent='Ciclo '+st.cicloN;$('#cuenta').innerHTML='0<small>/30</small>';
   st.fase='comp';
-  aviso(st.cicloN===3&&!st.relevo?'⏩ Seguís comprimiendo… <b>han pasado casi 2 minutos</b>. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>':st.compa&&!st.relevo?'Tu compañera ya está aquí y el DEA viene de camino. Seguid: <b>relevaos cada 2 minutos</b>.':'Otra vez: 30 compresiones.');
+  aviso(st.cicloN===3&&!st.relevo?'⏩ Seguís comprimiendo… <b>han pasado casi 2 minutos</b>. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>':st.compa&&!st.relevo?'Otra vez: 30 compresiones. <b>Relevaos cada 2 minutos.</b>':'Otra vez: 30 compresiones.');
   metronomo(true);
  },2600);
 }
 function relevar(){
- if(!st.compa||st.relevo)return;
+ if(!st.compa||st.relevo||st.fase!=='comp')return;
  if(crono()<118){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
  st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
- st.fase='dea0';clearInterval(st.metro);
+ st.fase='fin';clearInterval(st.metro);ritmoCompa();
  combo('🔄 ¡Relevo!');if(st.relevo==='ok')acierto();
- aviso('Tu compañera sigue con las compresiones, sin parar. Acaba de llegar el <b>DEA</b>: te toca a ti.');
- st.compRitmo=setInterval(()=>{st.ecg.push(ahoraJ());const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.86)'},{transform:'scale(1)'}],{duration:200})},MET);
- setTimeout(()=>{st.fase='dea1';pasoDea()},1800);
+ aviso('Tu compañera sigue con las compresiones. Seguís así, con el DEA puesto y relevándoos cada 2 minutos, hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');
+ setTimeout(acabaRcp,2600);   // fase 4, 17-11-2026: antes el relevo traía el DEA; ahora cierra el nivel
  pintaPts();
 }
+/* fase 4, 17-11-2026: las compresiones de la compañera (animación y ECG) y los botones de RCP de vuelta tras el DEA */
+function ritmoCompa(){clearInterval(st.compRitmo);st.compRitmo=setInterval(()=>{st.ecg.push(ahoraJ());const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.86)'},{transform:'scale(1)'}],{duration:200})},MET)}
+function botonesRcp(){$('#bot').innerHTML='<button class="btn vent" id="vent" disabled>💨 2 ventilaciones</button><button class="btn rel" id="rel">🔄 ¡Relevo!</button>';$('#vent').onclick=ventilar;$('#rel').onclick=relevar}
 function opcionesDea(txt,ops,ok,sig){
  const orden=baraja(ops.map((o,k)=>k));      // la correcta no sale siempre en el mismo sitio
  $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${txt}</p>${orden.map(k=>`<button class="op" data-k="${k}">${ops[k]}</button>`).join('')}</div>`;
@@ -867,7 +922,7 @@ function opcionesDea(txt,ops,ok,sig){
 }
 function pasoDea(){
  pintaPts();
- if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='dea2';habla('Coloque los parches sobre el pecho desnudo del paciente.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». <b>Toca los dos sitios donde van.</b>');$('#bot').innerHTML='<div class="tarjeta-rcp" style="flex:1"><p>Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.</p></div>'});
+ if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='pecho';habla('Coloque los parches sobre el pecho desnudo del paciente.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». Pero lleva ropa…');$('#bot').innerHTML='<button class="btn alarma" id="desc" style="flex:1">👕 Descubrir el pecho</button>';$('#desc').onclick=descubre});
  if(st.fase==='dea4'||st.fase==='dea3'){
   if(st.fase==='dea3')return;
  }
@@ -876,7 +931,19 @@ function pasoDea(){
   habla('Descarga recomendada. Apártense del paciente. Pulse el botón de descarga.');
   return opcionesDea('«Descarga recomendada. Apártense del paciente».',['⚡ Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
  }
- if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{st.fase='fin';acierto();aviso('¡Muy bien! Seguís con la RCP y el DEA hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');setTimeout(acabaRcp,2200)});
+ if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{
+  // fase 4, 17-11-2026: tras la descarga sigues tú comprimiendo (tu compañera descansa) y el relevo llega a los 2 minutos
+  acierto();botonesRcp();clearInterval(st.compRitmo);
+  Object.assign(st,{fase:'comp',t0:0,ultimo:0,inter:[],cuenta:0});$('#cuenta').innerHTML='0<small>/30</small>';$('#ci').textContent='Ciclo '+st.cicloN;
+  aviso('¡Bien! Reanudáis de inmediato: <b>ahora comprimes tú</b> y tu compañera descansa. 30 compresiones; relevaos cada 2 minutos.');
+  metronomo(true);pintaPts()});
+}
+/* fase 4, 17-11-2026: los parches van sobre la piel: antes se descubre el pecho (botón o tocando el pecho). En la partida oficial no se dice dónde van */
+function descubre(){
+ if(st.fase!=='pecho')return;
+ st.fase='dea2';clic(880);
+ aviso('Le abres la ropa: pecho descubierto. Tu compañera sigue comprimiendo. <b>Toca los dos sitios donde van los parches.</b>');
+ $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${st.oficial?'Toca los dos sitios del pecho donde se pegan los parches.':'Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.'}</p></div>`;
 }
 function poneParche(p){
  const k=PARCHES.findIndex(q=>dist(p,q)<30&&!q.puesto);
