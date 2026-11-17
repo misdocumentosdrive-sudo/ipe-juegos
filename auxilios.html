@@ -213,6 +213,32 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .tuto .pad .pic{width:44px;height:44px}
 .tuto .fb{min-height:22px;font-weight:700}
 .tuto .saltar{background:transparent;border:2px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:9px 18px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+/* fase 6, 17-11-2026: entrenamiento «Compresión con profundidad» */
+.rcp .cm{font:800 30px Aleo,Georgia,serif;text-align:center;font-variant-numeric:tabular-nums;min-width:96px}
+.rcp .cm small{font-size:14px;opacity:.7;margin-left:3px}
+.rcp .cm.ok{color:#7dffb5}.rcp .cm.poco{color:#ffb27a}.rcp .cm.mucho{color:#ff8a7a}
+.tuto.tutop{border-radius:0;z-index:4;overflow:auto;justify-content:safe center;background:rgba(3,16,12,.95)}
+.tutop ol{margin:0;padding:0 0 0 22px;text-align:left;max-width:360px;color:#dff3ea;font-size:14.5px;line-height:1.4}
+.tutop ol li{margin-bottom:4px}
+.tutop .btn{width:100%;max-width:360px}
+.tutop .nota-p{font-size:12.5px;opacity:.78}
+.modos{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:360px}
+.modo{border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;border-radius:14px;padding:10px 8px;min-height:44px;font:700 15px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+.modo small{display:block;font-weight:400;font-size:12.5px;opacity:.8;margin-top:3px}
+.modo[aria-pressed="true"]{border-color:#7dffb5;background:rgba(125,255,181,.16)}
+.demo-p{width:84px;height:118px;flex:none}
+.demo-dedo{animation:dedo 1.1s ease-in-out infinite}
+@keyframes dedo{0%,100%{transform:translateY(0)}45%{transform:translateY(54px)}}
+@media (prefers-reduced-motion:reduce){.demo-dedo{animation:none}}
+.moneda{border-radius:50%;border:3px dashed #fcd100;background:rgba(252,209,0,.12);flex:none}
+.tutop input[type=range]{width:100%;max-width:320px}
+.pad-prof{width:100%;min-height:88px;border:0;border-radius:18px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;touch-action:none;color:#062a1f;background:#7dffb5;font:800 18px "Helvetica Neue",Arial,sans-serif;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -5px 0 rgba(0,0,0,.2),0 6px 16px rgba(0,0,0,.35)}
+.pad-prof .pic{width:30px;height:30px}
+.pad-prof.pulsado{background:#2fd47a;transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,0,0,.2)}
+.evalp{margin-top:12px;display:grid;gap:8px;text-align:left}
+.evalp p{margin:0;background:#fff;border-radius:14px;padding:10px 12px;font-size:14.5px;line-height:1.45;box-shadow:0 2px 10px rgba(0,66,48,.08)}
+.evalp b{color:var(--verde)}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -337,6 +363,7 @@ const ICO={
  hecho:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
  pantalla:'<path d="M4 9V4h5"/><path d="M15 4h5v5"/><path d="M20 15v5h-5"/><path d="M9 20H4v-5"/>',
  salir:'<path d="M10 4H5.5a1.5 1.5 0 0 0-1.5 1.5v13A1.5 1.5 0 0 0 5.5 20H10"/><path d="M15 8l4 4-4 4"/><path d="M19 12H9"/>',
+ profundidad:'<path d="M12 3v9"/><path d="M8.5 8.5L12 12l3.5-3.5"/><path d="M4 16h16"/><path d="M4 20h16"/><path d="M7 16v4M12 16v4M17 16v4"/>',   // fase 6, 17-11-2026: compresión con profundidad
  reloj:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9.5 2.5h5"/>'
 };
 const ico=(n,c='')=>`<svg class="pic ${c}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[n]||''}</svg>`;
@@ -563,6 +590,7 @@ addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
 
 /* ===== Portada ===== */
 function portada(){
+ clearTimeout(st.descT);clearTimeout(st.profT);
  clearInterval(st.reloj);clearInterval(st.metro);clearInterval(st.compRitmo);clearInterval(st.salto);clearTimeout(st.tutoT);cancelAnimationFrame(st.raf||0);calla();
  app.innerHTML=`<div class="portada">
   <div class="heroe">
@@ -581,6 +609,7 @@ function portada(){
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span><span class="ico">${ico(['escudo','fonendo','lateral','corazon'][l.n-1])}</span></button>`).join('')}
+  <button class="nivel" data-n="${PROF.n}"><span class="n" style="background:${PROF.col}">+</span><span style="flex:1"><b>${PROF.titulo}</b><span>${PROF.sub}</span><br><span class="record">Tu récord: ${rec(PROF.n)} puntos</span></span><span class="ico">${ico('profundidad')}</span></button>
  </div><div class="pie">CPIFP Los Viveros · Recomendaciones del Consejo Europeo de Reanimación (2025) · La profundidad de las compresiones se practica con el maniquí</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
@@ -594,7 +623,7 @@ function portada(){
 }
 
 function empieza(n,oficial){
- const l=NIVELES[n-1];
+ const l=n===PROF.n?PROF:NIVELES[n-1];   // fase 6: el entrenamiento de profundidad va aparte (la oficial sigue con 4 niveles)
  st={l,i:0,pts:0,racha:0,vidas:3,aciertos:0,fallos:[],oficial:oficial||null};
  if(l.modo==='test'){
   // fase 4, 17-11-2026: 3 escenas al azar de las de tu sector (10 u 11) (sin código o con TEST, de cualquier sector: antes repetía comunes);
@@ -606,6 +635,7 @@ function empieza(n,oficial){
   return pregunta();
  }
  if(l.modo==='pls')return pls();
+ if(l.modo==='prof')return prof();
  return rcp();
 }
 
@@ -1188,6 +1218,255 @@ function graficaRitmo(serie){
   <p class="ley"><span style="color:#1a8a4a">● buen ritmo (100-120)</span> <span style="color:#e07a1f">● lento</span> <span style="color:#d33a1f">● rápido</span><br>Las líneas de puntos separan los ciclos de 30 compresiones.</p></div>`;
 }
 
+/* ===== Entrenamiento: compresión con profundidad (fase 6, 17-11-2026) =====
+   Solo entrenamiento: no está en NIVELES, así que la partida oficial (4 niveles), su RCP y su puntuación no cambian.
+   Cada compresión es un deslizamiento del dedo hacia abajo sobre el pecho; la distancia se pasa a centímetros (pxPorCm).
+   ERC 2025: 100-120 por minuto, 5-6 cm, descompresión completa (soltar o volver arriba) y mínimas interrupciones.
+   Alternativa sin deslizar: mantener pulsado (la profundidad crece con el tiempo pulsado; también con espacio o Intro). */
+const PROF={n:5,titulo:'Compresión con profundidad',sub:'Solo entrenamiento. Desliza el dedo hacia abajo: 5-6 cm, 100-120 por minuto y deja subir el pecho del todo.',col:'#a0461f',modo:'prof'};
+const PROF_N=30, P_MIN=5, P_MAX=6, CM_BAJA=1, CM_ARRIBA=.5, PAUSA_MS=1500, HOLD_MS_CM=50, SUBIDA_MS=150, EURO=2.325;
+const CLAVE_PXCM=PREF+'_pxcm', CLAVE_TUTO_P=PREF+'_tuto_prof', CLAVE_MODO_P=PREF+'_modo_prof';
+const fmtCm=v=>(Math.round(v*10)/10).toFixed(1).replace('.',',');
+const tardeEv=ev=>ev&&ev.timeStamp?Math.min(150,Math.max(0,performance.now()-ev.timeStamp)):0;   // como en toque()
+/* Calibración. El píxel CSS no mide lo mismo en todas las pantallas, y el navegador no dice cuántos hay por centímetro.
+   Referencias: un móvil tiene unos 160 px CSS por pulgada (Android define 1 dp = 1/160 de pulgada; los iPhone, unos 163)
+   → 63 px/cm; una tableta, unos 132 → 52 px/cm; con ratón (ordenador), el estándar CSS de 96 por pulgada → 38 px/cm.
+   Si la pantalla es baja (móvil apaisado) se reduce a escala para que quepan 6,5 cm. Quien quiera exactitud la ajusta
+   con una moneda de 1 euro (23,25 mm de diámetro) y queda guardada en el dispositivo. */
+function pxPorCm(){
+ const g=+ls.get(CLAVE_PXCM,0),auto=!(g>15&&g<200);
+ let base=g;
+ if(auto){let grueso=false;try{grueso=matchMedia('(pointer: coarse)').matches}catch(e){}
+  const lado=Math.min(screen.width||innerWidth,screen.height||innerHeight);base=!grueso?37.8:lado<600?63:52}
+ const cabe=(innerHeight||700)*.62/6.5, v=Math.min(base,cabe);
+ return {v,base,auto,escala:v<base*.9};
+}
+const RY0=78, RCM=30;   // regla de la escena: 0 cm en y=78 y 30 unidades por cm (8 cm en y=318)
+function regla(){
+ const y=v=>RY0+v*RCM;
+ return `<g id="regla" aria-hidden="true"><rect x="236" y="${RY0-26}" width="58" height="${8*RCM+40}" rx="12" fill="rgba(3,16,12,.74)"/>
+  <rect x="268" y="${RY0}" width="12" height="${8*RCM}" rx="4" fill="rgba(255,255,255,.14)"/>
+  <rect x="263" y="${y(P_MIN)}" width="22" height="${(P_MAX-P_MIN)*RCM}" rx="3" fill="#2fd47a" opacity=".9"/>
+  <text x="274" y="${RY0-10}" text-anchor="middle" font-size="11" font-weight="700" fill="#bfeedd">cm</text>
+  ${[0,2,4,5,6,8].map(v=>`<text x="258" y="${y(v)+4}" text-anchor="end" font-size="11" font-weight="${v===5||v===6?700:400}" fill="${v===5||v===6?'#7dffb5':'#bfeedd'}">${v}</text>`).join('')}
+  <line id="pico" x1="262" x2="286" y1="${RY0}" y2="${RY0}" stroke="#fcd100" stroke-width="2" stroke-dasharray="3 2" opacity="0"/>
+  <g id="mk"><path d="M261 ${RY0} h26" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M289 ${RY0} l6 -5 v10z" fill="#fff"/></g></g>`;
+}
+function prof(){
+ const c=pxPorCm(), primera=ls.get(CLAVE_TUTO_P,'')!=='1';
+ Object.assign(st,{fase:'prep',serie:[],cuenta:0,ultimo:0,ptsP:0,combo:0,tr:null,pc:null,hold:null,
+  pxcm:c.v,modoP:ls.get(CLAVE_MODO_P,'')==='pulsar'?'pulsar':'deslizar'});
+ app.innerHTML=`<div class="rcp" id="esc">
+  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="pill">Entrenamiento</span></div>
+  <div class="msg" id="msg">30 compresiones con profundidad.</div>
+  <div class="cuerpo" id="cu"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}
+   <g id="flecha" opacity="0"><path d="M150 200 v42" stroke="#fcd100" stroke-width="4" stroke-dasharray="6 5" stroke-linecap="round"/><path d="M140 238 l10 12 l10 -12" fill="none" stroke="#fcd100" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+   <g id="manosg">${manosSocorrista}</g>${regla()}</svg><div class="combo" id="combo"></div></div>
+  <div class="abajo"><div class="marcador"><div class="cuenta" id="cuenta">0<small>/${PROF_N}</small></div><div class="cm" id="cm">—<small>cm</small></div><div class="bpm" id="bpm">—<small>por minuto</small></div></div>
+   <div id="bot"></div></div></div>`;
+ $('#salir').onclick=sal;
+ const cu=$('#cu');
+ cu.onpointerdown=ev=>{
+  if(st.fase!=='prof'||st.modoP!=='deslizar'||st.tr||st.parado)return;
+  ev.preventDefault();try{cu.setPointerCapture(ev.pointerId)}catch(e){}
+  st.tr={id:ev.pointerId,y0:ev.clientY,e:'arriba',pico:0,min:0};
+ };
+ cu.onpointermove=ev=>{const t=st.tr;if(!t||ev.pointerId!==t.id)return;profMueve((ev.clientY-t.y0)/st.pxcm,ahoraJ()-tardeEv(ev))};
+ cu.onpointerup=cu.onpointercancel=ev=>{const t=st.tr;if(!t||ev.pointerId!==t.id)return;profSuelta();st.tr=null};
+ profPanel(primera,c);
+}
+/* Panel de inicio: la primera vez, el pequeño tutorial (tres pasos y una demostración); después, solo elegir cómo comprimir */
+function profPanel(primera,c){
+ const esc=$('#esc');if(!esc)return;
+ const d=document.createElement('div');d.className='tuto tutop';d.id='tp';
+ const demo=`<svg class="demo-p" viewBox="0 0 84 118" aria-hidden="true"><rect x="52" y="6" width="10" height="106" rx="4" fill="rgba(255,255,255,.14)"/><rect x="48" y="70" width="18" height="14" rx="3" fill="#2fd47a"/>
+   <g class="demo-dedo"><circle cx="24" cy="18" r="11" fill="rgba(125,255,181,.25)" stroke="#7dffb5" stroke-width="3"/><path d="M44 18h22" stroke="#fff" stroke-width="3"/></g><path d="M24 40v24m-6 -6l6 7l6 -7" stroke="#fcd100" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+ d.innerHTML=`<h3>Compresión con profundidad</h3>
+  ${primera?`<div style="display:flex;gap:12px;align-items:center">${demo}<ol>
+   <li>Pon el dedo en el círculo del pecho y <b>deslízalo hacia abajo</b> hasta la franja verde: <b>5-6 cm</b>.</li>
+   <li><b>Suelta</b> o vuelve arriba del todo antes de la siguiente: el pecho tiene que subir.</li>
+   <li>Al ritmo del pitido: <b>100-120 por minuto</b>. A las 10, el pitido se calla y sigues sin él.</li></ol></div>`
+  :`<p>${PROF_N} compresiones: <b>5-6 cm</b>, <b>100-120 por minuto</b> y deja que el pecho suba del todo.</p>`}
+  <p><b>¿Cómo quieres comprimir?</b></p>
+  <div class="modos"><button class="modo" type="button" data-m="deslizar">Deslizar el dedo<small>hacia abajo sobre el pecho</small></button><button class="modo" type="button" data-m="pulsar">Mantener pulsado<small>más tiempo, más profundidad (o la barra espaciadora)</small></button></div>
+  <button class="btn p" id="tpgo" type="button">Empezar</button>
+  <button class="saltar" id="tpcal" type="button">Ajustar la medida con una moneda de 1 euro</button>
+  <p class="nota-p">${c.auto?'Medida automática para tu pantalla':'Medida ajustada con la moneda'}${c.escala?' (pantalla baja: a escala)':''}. En la pantalla es una aproximación: la profundidad real se entrena con el maniquí.</p>`;
+ esc.appendChild(d);
+ const pulsados=()=>d.querySelectorAll('.modo').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.m===st.modoP)));
+ d.querySelectorAll('.modo').forEach(b=>b.onclick=()=>{st.modoP=b.dataset.m;ls.set(CLAVE_MODO_P,st.modoP);pulsados();sfx('toque')});pulsados();
+ $('#tpgo').onclick=()=>{ls.set(CLAVE_TUTO_P,'1');d.remove();profEmpieza()};
+ $('#tpcal').onclick=()=>profCalibra(d,c);
+}
+/* Ajuste con la moneda: el diámetro del círculo (px CSS) entre 2,325 cm da los píxeles por centímetro de esta pantalla */
+function profCalibra(d,c){
+ let px=Math.round(c.base*EURO);
+ d.innerHTML=`<h3>Ajustar la medida</h3><p>Pon una moneda de 1 euro sobre el círculo y mueve la barra hasta que tengan el mismo tamaño.</p>
+  <div class="moneda" id="mon" style="width:${px}px;height:${px}px"></div>
+  <input type="range" id="monr" min="30" max="170" step="1" value="${px}" aria-label="Tamaño del círculo">
+  <button class="btn p" id="mong" type="button">Guardar</button><button class="saltar" id="mona" type="button">Volver a la medida automática</button>`;
+ $('#monr').oninput=e=>{px=+e.target.value;const m=$('#mon');m.style.width=m.style.height=px+'px'};
+ $('#mong').onclick=()=>{ls.set(CLAVE_PXCM,String(px/EURO));empieza(PROF.n)};
+ $('#mona').onclick=()=>{ls.set(CLAVE_PXCM,'0');empieza(PROF.n)};
+}
+function profEmpieza(){
+ st.fase='prof';st.ultimo=0;
+ if(st.modoP==='pulsar'){
+  $('#bot').innerHTML=`<button class="pad-prof" id="padp" type="button" aria-label="Mantén pulsado para comprimir y suelta para que el pecho suba">${ico('mano')}Mantén pulsado</button>`;
+  const pad=$('#padp');
+  pad.onpointerdown=ev=>{ev.preventDefault();if(st.hold)return;try{pad.setPointerCapture(ev.pointerId)}catch(e){}profPulsa(ahoraJ()-tardeEv(ev))};
+  pad.onpointerup=pad.onpointercancel=ev=>profSueltaPulsado(ahoraJ()-tardeEv(ev));
+  pad.onkeydown=ev=>{if((ev.key===' '||ev.key==='Enter')&&!ev.repeat){ev.preventDefault();profPulsa(ahoraJ())}};
+  pad.onkeyup=ev=>{if(ev.key===' '||ev.key==='Enter'){ev.preventDefault();profSueltaPulsado(ahoraJ())}};
+  pad.onclick=ev=>ev.preventDefault();
+  try{pad.focus({preventScroll:true})}catch(e){}
+  aviso('Mantén pulsado hasta que la marca llegue a la franja verde (5-6 cm) y suelta. <b>Al ritmo del pitido.</b>');
+ }else{
+  $('#flecha').setAttribute('opacity','1');
+  aviso('Desliza hacia abajo desde el círculo hasta la franja verde (5-6 cm) y suelta. <b>Al ritmo del pitido.</b>');
+ }
+ clearInterval(st.metro);
+ st.metro=setInterval(()=>{if(st.fase!=='prof'||st.cuenta>=10)return clearInterval(st.metro);if(st.parado)return;clic();const c=$('#cuenta');if(c&&c.animate&&!MOV_REDUCIDO)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})},MET);
+}
+/* Deslizar: máquina de estados de cada trazo (profundidad en cm desde donde se apoyó el dedo).
+   arriba → (pasa de 1 cm) baja → (sube 1 cm desde el máximo) sube → (vuelve a menos de 0,5 cm) arriba.
+   Si en «sube» vuelve a bajar 1 cm sin haber llegado arriba, la anterior queda sin descompresión completa. */
+function profMueve(cm,ahora){
+ const t=st.tr;cm=Math.max(0,cm);profPinta(cm);
+ if(st.fase!=='prof')return;
+ if(t.e==='arriba'){if(cm>=CM_BAJA){t.e='baja';t.pico=cm;profNueva(ahora)}}
+ else if(t.e==='baja'){if(cm>t.pico)t.pico=cm;else if(cm<t.pico-CM_BAJA){t.e='sube';t.min=cm;profPico(t.pico)}}
+ else if(t.e==='sube'){
+  if(cm<t.min)t.min=cm;
+  if(cm<=CM_ARRIBA){t.e='arriba';profDesc(true)}
+  else if(cm>=t.min+CM_BAJA){profDesc(false);t.e='baja';t.pico=cm;profNueva(ahora)}
+ }
+}
+function profSuelta(){
+ const t=st.tr;profPinta(0,true);
+ if(st.fase!=='prof')return;
+ if(t.e==='baja')profPico(t.pico);
+ if(t.e!=='arriba')profDesc(true);   // soltar el dedo = el pecho sube del todo
+}
+/* Mantener pulsado: la profundidad crece 1 cm cada 50 ms (5-6 cm = 250-300 ms). Volver a pulsar antes de 150 ms
+   de soltar cuenta como descompresión incompleta: no ha dado tiempo a que el pecho suba. */
+const profHold=ms=>Math.min(8,Math.max(0,ms/HOLD_MS_CM));
+function profPulsa(ahora){
+ if(st.fase!=='prof'||st.hold||st.parado)return;
+ if(st.descT){clearTimeout(st.descT);st.descT=0;profDesc(false)}
+ if(!profNueva(ahora))return;
+ st.hold={t0:ahora};const p=$('#padp');if(p)p.classList.add('pulsado');
+ const anima=()=>{if(!st.hold||!$('#padp'))return;profPinta(profHold(ahoraJ()-st.hold.t0));st.raf=requestAnimationFrame(anima)};
+ st.raf=requestAnimationFrame(anima);
+}
+function profSueltaPulsado(ahora){
+ if(!st.hold)return;
+ const cm=profHold(ahora-st.hold.t0);st.hold=null;cancelAnimationFrame(st.raf||0);
+ const p=$('#padp');if(p)p.classList.remove('pulsado');
+ profPinta(0,true);profPico(cm);
+ st.descT=setTimeout(()=>{st.descT=0;profDesc(true)},SUBIDA_MS);
+}
+/* hundimiento proporcional a la profundidad: la ilustración baja 2,6 unidades por cm, las manos 3,4 y la marca de la regla, 30 */
+function profPinta(cm,suelta){
+ const d=Math.min(8,Math.max(0,cm)),tr=suelta&&!MOV_REDUCIDO?'transform .14s ease-out':'none';
+ const pon=(el,v)=>{if(el){el.style.transition=tr;el.style.transform=v}};
+ pon($('#fig'),`translateY(${(d*2.6).toFixed(1)}px) scale(${(1-d*.003).toFixed(4)})`);
+ pon($('#manos'),`translateY(${(d*3.4).toFixed(1)}px) scale(${(1-d*.025).toFixed(3)})`);
+ pon($('#sombraM'),`scale(${(1-d*.03).toFixed(3)})`);
+ pon($('#mk'),`translateY(${(d*RCM).toFixed(1)}px)`);
+ if(!suelta){const e=$('#cm');if(e){e.className='cm '+(d<P_MIN?'poco':d>P_MAX?'mucho':'ok');e.innerHTML=fmtCm(d)+'<small>cm</small>'}}
+}
+function profNueva(ahora){
+ if(st.cuenta>=PROF_N)return null;
+ const iv=st.ultimo?ahora-st.ultimo:0;
+ const c={r:iv?60000/iv:null,p:0,d:null,pausa:iv>PAUSA_MS};
+ st.serie.push(c);st.pc=c;st.cuenta++;st.ultimo=ahora;
+ vibra(20);golpeSordo(.8);
+ if(st.cuenta===3)$('#flecha')&&$('#flecha').setAttribute('opacity','0');
+ $('#cuenta').innerHTML=st.cuenta+'<small>/'+PROF_N+'</small>';
+ if(c.r!=null&&!c.pausa)$('#bpm').innerHTML=Math.round(c.r)+'<small>por minuto</small>';
+ if(st.cuenta===11)combo('Sin pitido: sigue tú',1400,'rotulo');
+ return c;
+}
+const okRitmo=c=>c.r==null||(!c.pausa&&c.r>=100&&c.r<=120);
+const okProf=c=>c.p>=P_MIN&&c.p<=P_MAX;
+function profPico(cm){
+ const c=st.pc;if(!c||c.p)return;
+ c.p=Math.round(cm*10)/10;
+ const e=$('#cm');if(e){e.className='cm '+(c.p<P_MIN?'poco':c.p>P_MAX?'mucho':'ok');e.innerHTML=fmtCm(c.p)+'<small>cm</small>'}
+ const pi=$('#pico');if(pi){pi.setAttribute('y1',RY0+Math.min(8,c.p)*RCM);pi.setAttribute('y2',RY0+Math.min(8,c.p)*RCM);pi.setAttribute('opacity','1')}
+ if(okProf(c))st.ptsP+=10;
+ if(c.r!=null&&okRitmo(c))st.ptsP+=10;
+ aviso(c.pausa?'Has parado: <b>las interrupciones, mínimas</b>.':!okProf(c)?(c.p<P_MIN?`¡Más profundo! ${fmtCm(c.p)} cm: al menos 5.`:`Demasiado: ${fmtCm(c.p)} cm. No pases de 6.`)
+  :!okRitmo(c)?(c.r<100?'¡Más rápido!':'¡Más despacio!'):`<b>Bien:</b> ${fmtCm(c.p)} cm.`);
+ const p=$('#pts');if(p)p.textContent=st.ptsP+' pts';
+}
+function profDesc(ok){
+ const c=st.pc;if(!c||c.d!=null)return;
+ c.d=ok;
+ if(ok)st.ptsP+=10;else aviso('¡Deja que el pecho <b>suba del todo</b>! Suelta o vuelve arriba antes de la siguiente.');
+ const bien=ok&&okProf(c)&&okRitmo(c);
+ if(!MOV_REDUCIDO)marca(SITIO,bien?'#2fd47a':'#ff9a3d');
+ if(bien){st.combo++;if(st.combo>=5)combo('¡Compresión completa! x'+st.combo);if(st.combo%5===0)sfx('acierto',st.combo/5-1)}else st.combo=0;
+ const p=$('#pts');if(p)p.textContent=st.ptsP+' pts';
+ if(st.cuenta>=PROF_N){st.fase='finP';st.tr=null;clearInterval(st.metro);st.profT=setTimeout(acabaProf,800)}
+}
+function acabaProf(){
+ if(st.salido)return;
+ clearInterval(st.metro);clearTimeout(st.descT);cancelAnimationFrame(st.raf||0);
+ const ev=evaluaProf(st.serie), n=st.serie.length;
+ st.estrellas=ev.frac>=.7?3:ev.frac>=.5?2:ev.frac>=.3?1:0;
+ st.pts=st.ptsP;st.aciertos=ev.validas;st.lista={length:n};
+ st.grafica=graficaProf(st.serie)+`<div class="evalp"><p>${ev.ritmo}</p><p>${ev.prof}</p><p>${ev.desc}</p></div>
+  <p class="libro" style="margin-top:8px">En la pantalla, la profundidad es una aproximación: la de verdad se entrena con el maniquí.</p>`;
+ st.resumen=`Compresiones completas (ritmo, profundidad y descompresión): <b>${Math.round(ev.frac*100)} %</b> (${ev.validas} de ${n}).`;
+ final();
+}
+/* una frase por aspecto (ritmo, profundidad y descompresión), con los criterios del ERC 2025 */
+function evaluaProf(s){
+ const n=s.length, pct=(a,b)=>b?Math.round(a/b*100):0;
+ const rs=s.filter(c=>c.r!=null&&!c.pausa), okR=rs.filter(c=>c.r>=100&&c.r<=120).length, pausas=s.filter(c=>c.pausa).length;
+ const media=rs.length?Math.round(60000/(rs.reduce((a,c)=>a+60000/c.r,0)/rs.length)):0;   // media de los intervalos, no de las frecuencias
+ const okP=s.filter(okProf).length, mp=n?s.reduce((a,c)=>a+c.p,0)/n:0, cortas=s.filter(c=>c.p<P_MIN).length, hondas=s.filter(c=>c.p>P_MAX).length;
+ const okD=s.filter(c=>c.d!==false).length, validas=s.filter(c=>okRitmo(c)&&okProf(c)&&c.d!==false).length;
+ let ritmo;
+ if(rs.length<2)ritmo='<b>Ritmo:</b> no hay compresiones seguidas suficientes para medirlo.';
+ else if(pct(okR,rs.length)>=70)ritmo=`<b>Ritmo:</b> muy bien. El ${pct(okR,rs.length)} % de tus compresiones, entre 100 y 120 por minuto (media: ${media}).`;
+ else if(media<100)ritmo=`<b>Ritmo:</b> vas lento (media: ${media} por minuto). Acelera hasta 100-120: el pitido del principio marca 110.`;
+ else if(media>120)ritmo=`<b>Ritmo:</b> vas demasiado rápido (media: ${media} por minuto). Por encima de 120 cuesta llegar a la profundidad y dejar que el pecho suba.`;
+ else ritmo=`<b>Ritmo:</b> la media está bien (${media} por minuto), pero es irregular: solo el ${pct(okR,rs.length)} % entre 100 y 120. Busca un compás constante.`;
+ if(pausas)ritmo+=` Además, ${pausas===1?'paraste una vez':'paraste '+pausas+' veces'}: las interrupciones tienen que ser mínimas.`;
+ const prof=pct(okP,n)>=70?`<b>Profundidad:</b> muy bien. El ${pct(okP,n)} % entre 5 y 6 cm (media: ${fmtCm(mp)} cm).`
+  :cortas&&hondas?`<b>Profundidad:</b> irregular (media: ${fmtCm(mp)} cm). ${cortas} de ${n} compresiones no llegan a 5 cm y ${hondas} pasan de 6. Busca siempre la franja verde: al menos 5 cm y no más de 6.`
+  :cortas>=hondas?`<b>Profundidad:</b> falta profundidad en ${cortas} de ${n} compresiones (media: ${fmtCm(mp)} cm). En una persona adulta, al menos 5 cm.`
+  :`<b>Profundidad:</b> ${hondas} de ${n} compresiones pasan de 6 cm (media: ${fmtCm(mp)} cm). Más hondo no es mejor: no pases de 6 cm.`;
+ const desc=okD===n?'<b>Descompresión:</b> perfecta. Dejaste que el pecho subiera del todo en todas.'
+  :pct(okD,n)>=70?`<b>Descompresión:</b> bien (${pct(okD,n)} %), aunque en ${n-okD} no dejaste que el pecho subiera del todo. Suelta o vuelve arriba siempre.`
+  :`<b>Descompresión:</b> en ${n-okD} de ${n} no dejaste que el pecho subiera del todo. Suelta (o vuelve arriba) después de cada compresión, sin apoyarte: así el corazón se vuelve a llenar de sangre.`;
+ return {ritmo,prof,desc,validas,frac:n?validas/n:0,media,okR,okP,okD,pausas};
+}
+/* gráfica doble: arriba el ritmo (franja 100-120) y abajo la profundidad (franja 5-6 cm), compresión a compresión */
+function graficaProf(s){
+ if(!s||s.length<3)return '';
+ const W=320,X0=30,x=i=>X0+i*(W-X0-8)/Math.max(1,s.length-1);
+ const yR=v=>10+(150-Math.min(150,Math.max(70,v)))/80*96, yP=v=>140+Math.min(8,Math.max(0,v))/8*96;   // ritmo 70-150 en 10-106; profundidad 0-8 cm en 140-236 (hacia abajo, como el pecho)
+ const colR=c=>c.pausa||c.r<100?'#e07a1f':c.r>120?'#d33a1f':'#1a8a4a', colP=v=>v<P_MIN?'#e07a1f':v>P_MAX?'#d33a1f':'#1a8a4a';
+ const et=(t,y,fuerte)=>`<text x="${X0-4}" y="${y+3}" text-anchor="end" font-size="9" fill="${fuerte?'#1a8a4a':'#8a9a95'}" font-weight="${fuerte?700:400}">${t}</text>`;
+ const rs=s.map((c,i)=>c.r==null?null:[x(i),yR(c.r),c]).filter(Boolean);
+ return `<div class="grafica"><h2 class="serif">Tu ritmo y tu profundidad, compresión a compresión</h2><svg viewBox="0 0 ${W} 250">
+  <text x="${X0}" y="7" font-size="9" font-weight="700" fill="#5d6f69">Ritmo (por minuto)</text>
+  <rect x="${X0}" y="${yR(120)}" width="${W-X0-2}" height="${yR(100)-yR(120)}" fill="#dff3e7" rx="3"/>
+  ${[80,100,120,140].map(v=>et(v,yR(v),v===100||v===120)).join('')}
+  <polyline fill="none" stroke="#9fb3ab" stroke-width="1.4" points="${rs.map(p=>p[0]+','+p[1].toFixed(1)).join(' ')}"/>
+  ${rs.map(p=>`<circle cx="${p[0]}" cy="${p[1].toFixed(1)}" r="2.6" fill="${colR(p[2])}"/>`).join('')}
+  <text x="${X0}" y="128" font-size="9" font-weight="700" fill="#5d6f69">Profundidad (cm)</text>
+  <rect x="${X0}" y="${yP(P_MIN)}" width="${W-X0-2}" height="${yP(P_MAX)-yP(P_MIN)}" fill="#dff3e7" rx="3"/>
+  ${[0,2,4,5,6,8].map(v=>et(v,yP(v),v===5||v===6)).join('')}
+  <polyline fill="none" stroke="#9fb3ab" stroke-width="1.4" points="${s.map((c,i)=>x(i)+','+yP(c.p).toFixed(1)).join(' ')}"/>
+  ${s.map((c,i)=>`<circle cx="${x(i)}" cy="${yP(c.p).toFixed(1)}" r="${c.d===false?3.4:2.6}" fill="${c.d===false?'#fff':colP(c.p)}" stroke="${c.d===false?'#d33a1f':'none'}" stroke-width="1.8"/>`).join('')}</svg>
+  <p class="ley"><span style="color:#1a8a4a">● bien</span> <span style="color:#e07a1f">● lento o poco profundo</span> <span style="color:#d33a1f">● rápido o demasiado hondo</span> <span style="color:#d33a1f">○ sin dejar subir el pecho</span></p></div>`;
+}
+
 /* ===== Final de cada nivel y partida oficial ===== */
 function final(){
  clearInterval(st.reloj);clearInterval(st.metro);calla();
@@ -1203,7 +1482,7 @@ function final(){
   <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
   <div class="gran">${st.pts}</div><div>puntos · ${st.resumen}</div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
-  ${l.modo==='rcp'?(st.grafica||''):''}
+  ${l.modo==='rcp'||l.modo==='prof'?(st.grafica||''):''}
   ${l.modo!=='test'?`<p class="libro" style="margin-top:10px">${l.modo==='pls'?libro(3,'PLS','3.6.1'):libro(3,'3.6.1')}</p>`:''}
   ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa</h2><p class="libro">${l.n===1?libro(3,'3.6'):libro(3,'3.6.1')}</p>${unicos.map(s=>`<div class="fallo"><div><b>${s.ok}</b><small>${s.e}</small></div></div>`).join('')}</div>`:''}
   ${st.oficial?bloqueOficial(est):''}
