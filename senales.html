@@ -4,8 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Detective de señales · IPE I</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@600;800&display=swap" rel="stylesheet">
+<style>@font-face{font-family:"Aleo";src:url(aleo.ttf) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
 <style>
 :root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#1a8a4a;--mal:#d33a1f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -47,8 +46,8 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 @keyframes sacude{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
 /* portada */
 .portada{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px}
-.portada h1{font-size:32px;color:var(--verde);margin:0;line-height:1.1}
-.portada p{color:var(--gris);margin:0}
+.portada>h1{font-size:32px;color:var(--verde);margin:0;line-height:1.1}
+.portada>p{color:var(--gris);margin:0}
 .fila-sen{display:flex;justify-content:center;gap:8px;margin:6px 0}
 .fila-sen img{width:52px;height:52px}
 .nivel{border:0;border-radius:18px;padding:16px;text-align:left;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.07);cursor:pointer;display:flex;gap:14px;align-items:center}
@@ -110,35 +109,11 @@ const SEN=RAW.map((r,i)=>({id:i,cod:r[0],tipo:r[1],sig:r[2],exp:r[3],svg:r[4]}))
 const MUESTRA={prohibicion:'P002',advertencia:'W012',obligacion:'M014',salvamento:'E003',incendios:'F001'};
 const SIT={"comun": [["El pasillo hacia la salida gira a la derecha: ¿qué señal pones en la esquina?", "E002", []], ["Tras evacuar, todo el personal debe reunirse en el patio para hacer el recuento.", "E007", []], ["Quieres indicar dónde está el desfibrilador del centro.", "E010", ["E009", "E003"]], ["Quieres indicar dónde está el botiquín.", "E003", ["E009", "E010"]], ["En caso de incendio, nadie debe bajar en el ascensor.", "P020", []], ["Marcas el lugar exacto donde cuelga el extintor.", "F001", ["F004"]], ["Señalas el botón que hay que pulsar para dar la alarma de incendio.", "F005", ["F006"]], ["El suelo del pasillo acaba de fregarse.", "W011", ["W007", "W001"]], ["Hay un hueco sin barandilla que da a la planta de abajo.", "W008", ["W001", "M018"]], ["El agua del grifo del almacén no se puede beber.", "P005", []]], "sector": {"HIG": [["Avisas del peligro en la sala donde se hacen las radiografías dentales.", "W003", ["W001"]], ["Contenedor de residuos con material manchado de sangre.", "W009", ["W001", "W016"]], ["Al limpiar el instrumental puede salpicar: obligas a usar gafas.", "M004", ["M013"]], ["En el gabinete es obligatorio llevar mascarilla.", "M016", ["M017"]], ["Recuerdas que hay que lavarse las manos antes de atender al siguiente paciente.", "M011", ["M009"]], ["El autoclave quema al sacar el material recién esterilizado.", "W017", ["W001", "P010"]], ["Indicas el equipo para lavarse los ojos tras una salpicadura de desinfectante.", "E011", ["E012", "E003"]], ["Armario con desinfectantes que dañan la piel.", "W023", ["W016", "W021", "W001", "M009"]], ["Avisas del peligro para los ojos del láser dental.", "W004", ["W001", "M004"]], ["En la sala de esterilización no se puede comer ni beber.", "P022", []]], "ITE": [["Puerta del cuarto con el cuadro eléctrico del edificio.", "W012", ["W001", "P010"]], ["En la caseta de la antena hay un equipo con partes peligrosas que no se debe tocar.", "P010", ["W012", "W001"]], ["Vas a instalar la antena en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008", "M014"]], ["Zona bajo la grúa que sube las antenas a la azotea.", "W015", ["W001", "M014", "P004"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En la obra es obligatorio llevar casco.", "M014", []], ["Vas a taladrar paredes de ladrillo: obligas a proteger los ojos.", "M004", ["M013"]], ["Junto al cuadro eléctrico: si hay fuego, el agua es peligrosa.", "P011", ["F001"]], ["Trabajas en una arqueta junto al tráfico: obligas a llevar...", "M015", []], ["Al descargar bobinas de cable, obligas a proteger los pies.", "M008", []]], "STI": [["Puerta del cuarto con el cuadro eléctrico del CPD.", "W012", ["W001", "P010"]], ["Un equipo del CPD tiene partes peligrosas que nadie debe tocar.", "P010", ["W012", "W001"]], ["Sala del SAI, llena de baterías.", "W026", ["W012", "W001", "W023", "P002", "P003"]], ["Avisas del peligro para los ojos del láser de la fibra óptica.", "W004", ["W001", "M004"]], ["En el CPD: si hay fuego en los equipos, el agua es peligrosa.", "P011", ["F001"]], ["Vas a instalar un radioenlace en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008", "M014"]], ["En el falso suelo del CPD hay placas levantadas y cables.", "W007", ["W001", "W008"]], ["Vas a taladrar el techo para pasar canaletas: obligas a proteger los ojos.", "M004", ["M013"]], ["Al descargar los armarios rack, obligas a proteger los pies.", "M008", []], ["En el almacén circulan carretillas elevadoras.", "W014", ["W001", "P004"]]], "IFC": [["Puerta de la cámara frigorífica a −20 °C.", "W010", ["W001"]], ["Almacén con botellas de gas refrigerante inflamable.", "W021", ["P003", "P002", "W001"]], ["Vas a trabajar en la cubierta, sin barandilla: obligas a usar...", "M018", ["W008", "M014"]], ["Sala de compresores muy ruidosa: obligas a proteger el oído.", "M003", []], ["Al soldar tuberías con soplete, obligas a protegerte toda la cara.", "M013", ["M004"]], ["Junto al depósito de amoniaco de la instalación.", "W016", ["W023", "W001", "M016", "M017"]], ["Al cargar refrigerante puedes quemarte las manos por el frío: obligas a usar...", "M009", ["M010", "W010"]], ["Tuberías de descarga del compresor muy calientes.", "W017", ["W001", "P010"]], ["Cuadro eléctrico de la enfriadora.", "W012", ["W001", "P010"]], ["En la sala de máquinas con refrigerante inflamable no se puede encender fuego.", "P003", ["P002", "W021"]]]}};
 const RESTA=50, TRAMPAS=3;
-/* ranking en directo: tabla pública SOLO con grupo y puntos (sin códigos ni nombres) */
-const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
-const PODIO=['1','0,75','0,50'];
-const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
 /* Fin de plazo de cada grupo (hora del móvil): después se puede entrenar, pero la partida oficial ya no cuenta. */
 const CIERRES={};  /* José, 13-11-2026: sin fecha hasta que se abra en Classroom */
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
-function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
-function textoPlazo(c){const f=plazo(c);if(!f)return '';
- const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
- return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
 const $cod0=()=>(ls.get('ipe_codigo',ls.get('senales_codigo',''))||'').toUpperCase();
-async function puesto(codigo,pts,nuevo){
- try{
-  const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>r.text());
-  const g=grupoDe(codigo);
-  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(!f[2]||f[2].trim()===JUEGO)).map(f=>+f[1]||0);
-  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
-  return {pos,total};
- }catch(e){return null}
-}
-/* la tabla publicada tarda unos minutos: hasta 10 min después del primer envío, el móvil se cuenta a sí mismo */
-const recien=()=>Date.now()-(+ls.get('senales_primer_envio',0))<10*60*1000;
-function textoPuesto(r,pts){
- if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
- const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
-}
 /* señal trampa: mismo dibujo y forma, color cambiado (no existe en el RD 485/1997) */
 /* Trampa: todas acaban en morado, un color que ninguna señal real usa (revisión 6-11-2026: la azul pasaba a roja y
    parecía de prohibición; la verde y la roja pasaban a azul y parecían de obligación o informativas). */
@@ -157,27 +132,40 @@ const NIVELES=[
  {n:2,titulo:'¿Qué significa?',sub:'Las cuatro respuestas son del mismo tipo: fíjate bien en el dibujo.',col:'#0d6b4f',modo:'sig',preg:10,t:15},
  {n:3,titulo:'¿Qué señal pondrías?',sub:'Situaciones de tu sector, contrarreloj: elige la señal adecuada.',col:'#ff5900',modo:'sit',preg:10,t:12}
 ];
-/* ===== Envío de resultados (Google Form del profesor). Rellenar al crear el formulario ===== */
-const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
 const INTENTOS=3;
 const JUEGO='UD2 Señales';
-const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
+/* ===== Partida oficial: común a todos los juegos (fase 2, 17-11-2026) =====
+   Antes estaba copiado en cada plantilla; cada arreglo había que hacerlo siete veces. Los montar_*.py lo meten donde la
+   plantilla tiene la marca de oficial (comun_montar.py). Cada juego define antes, o después, sus propios datos:
+   JUEGO, INTENTOS, CLAVE_OF, CLAVE_MEJOR, CIERRES, DIAS, MESES y arrancaOficial(código, intento); y si quiere,
+   OFI_ABAJO (por defecto «los niveles de abajo») y OFI_AVISO() (una frase más antes de «¿Empezamos?»). */
+
 const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-const usados=()=>+ls.get('senales_oficiales',0);
-const CLAVE_OF='senales_oficiales';
-/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») =====
-   Desde el 9-11-2026 (noche) los cuenta el servicio de abajo; la pestaña «Intentos» ya no está publicada. */
+const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
+const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const PODIO=['1','0,75','0,50'];
 /* Servicio «Juegos IPE · intentos» (Apps Script de José, juegos/servicio_intentos): cuenta AL MOMENTO y apunta cada inicio. */
 const SERVICIO='https://script.google.com/macros/s/AKfycbw56Jq-wbMnwqNgdTatBKiyfdN3TP8fM0IarXeM2YD1d79qJKXgrPpOLip2Bb0BFRhqrQ/exec';
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
 const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m&&RX_COD.test(m[1]+'-'+m[2])?m[1]+'-'+m[2]:''};
+/* el código tal como se guarda y se envía: siempre con dos cifras (17-11-2026: 1HIG-7 y 1HIG-07 salían como dos códigos) */
+const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'').trim().toUpperCase().replace(/\s+/g,'');
+
+/* Plazo de cada grupo (CIERRES lo pone cada juego) */
+function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
+function textoPlazo(c){const f=plazo(c);if(!f)return '';
+ const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+
 /* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
    dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
-const CLAVE_MEJOR='senales_mejor';
 function mejorDe(c){c=normCod(c);if(!c)return 0;const v=ls.get(CLAVE_MEJOR+'_'+c,null);if(v!==null)return +v||0;const viejo=+ls.get(CLAVE_MEJOR,0);if(!viejo)return 0;
  let mio=false,otro=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf(CLAVE_OF+'_')!==0||!(+localStorage.getItem(k)>0))continue;if(k===CLAVE_OF+'_'+c)mio=true;else otro=true}}catch(e){}
  return mio&&!otro?viejo:0}
 const ponMejor=(c,v)=>{if(normCod(c))ls.set(CLAVE_MEJOR+'_'+normCod(c),v)};
 
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») ===== */
 function locales(c){
  const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
  if(v!==null)return +v||0;
@@ -215,46 +203,86 @@ function revisaOfi(){
  },400);
 }
 async function empiezaOficial(c){
+ const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
+ const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
  const r=await intentosDe(c);pintaOfi(r.n,r.sin?'sinred':'');
- if(r.sin){alert('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en los niveles de abajo.');return}
- if(r.n>=INTENTOS){alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
- if(!confirm('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.'+'\n\n¿Empezamos?'))return;
+ if(r.sin){dialogo('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en '+abajo+'.');return}
+ if(r.n>=INTENTOS){dialogo(yaJugadas);return}
+ if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
  /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
  const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
  const ini=await pideServicio('inicio',c);
- if(!ini){pintaOfi(r.n,'sinred');alert('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
- if(!ini.ok){pintaOfi(ini.n);alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
+ if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);
- empieza(1,{codigo:c,intento:ini.n,est:[],pts:0});
+ arrancaOficial(c,ini.n);
 }
 
+/* ===== Subida de nota ===== */
 const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
 /* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
 const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
 
-/* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
-   al volver la conexión (o la próxima vez que se abra el juego). */
-const COLA='cola_envios_'+JUEGO;
+/* ===== Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
+   al volver la conexión (o la próxima vez que se abra el juego). ===== */
+const COLA=()=>'cola_envios_'+JUEGO;
 function manda(txt){const f=new URLSearchParams();f.append(FORM.campo,txt);return fetch(FORM.url,{method:'POST',mode:'no-cors',body:f}).then(()=>true).catch(()=>false)}
-function enCola(){try{return JSON.parse(localStorage.getItem(COLA)||'[]')}catch(e){return[]}}
-function guardaCola(c){try{localStorage.setItem(COLA,JSON.stringify(c))}catch(e){}}
+function enCola(){try{return JSON.parse(localStorage.getItem(COLA())||'[]')}catch(e){return[]}}
+function guardaCola(c){try{localStorage.setItem(COLA(),JSON.stringify(c))}catch(e){}}
+let vaciando=false;
 async function vaciaCola(){
- const c=enCola();if(!c.length||!FORM.url)return;
- const quedan=[];for(const t of c){if(!(await manda(t)))quedan.push(t)}
- guardaCola(quedan);
+ if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
+ try{const c=enCola();if(!c.length||!FORM.url)return;
+  const quedan=[];for(const t of c){if(!(await manda(t)))quedan.push(t)}
+  guardaCola(quedan)}finally{vaciando=false}
 }
 addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
 function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
- const l=[...new Set((d.fallos||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
+ const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
  return l.length?' | fallos: '+l.join('; '):'';
 }
 const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
 function envia(d){
  if(!FORM.url)return Promise.resolve(false);
- const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | N1 ${d.n1} | N2 ${d.n2} | N3 ${d.n3}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ const est=d.est||[d.n1,d.n2,d.n3];
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
  return manda(txt).then(ok=>{if(!ok){const c=enCola();c.push(txt);guardaCola(c)}return ok});
 }
+
+/* ===== Puesto en el ranking del grupo (tabla pública con grupo, puntos y juego; sin códigos ni nombres) ===== */
+async function puesto(codigo,pts,nuevo){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
+  const txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);
+  const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>+f[1]||0);
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  return {pos,total};
+ }catch(e){return null}
+}
+const recien=()=>Date.now()-(+ls.get(CLAVE_OF.replace(/_oficiales$/,'')+'_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+}
+
+function arrancaOficial(c,n){empieza(1,{codigo:c,intento:n,est:[],pts:0})}   // lo llama empiezaOficial (oficial.js)
+
+const usados=()=>+ls.get('senales_oficiales',0);
+const CLAVE_OF='senales_oficiales';
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») =====
+   Desde el 9-11-2026 (noche) los cuenta el servicio de abajo; la pestaña «Intentos» ya no está publicada. */
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+const CLAVE_MEJOR='senales_mejor';
+
+
+
+/* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
+   al volver la conexión (o la próxima vez que se abra el juego). */
+addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
 let st={};
 const $=s=>document.querySelector(s), app=$('#app');
 const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -267,10 +295,13 @@ function portada(){
  clearInterval(st.reloj);
  const muestra=['prohibicion','advertencia','obligacion','salvamento','incendios'].map(icono).join('');
  app.innerHTML=`<div class="portada">
-  <div class="marca">IPE I · Unidad 2 · Señalización de seguridad</div>
-  <h1>Detective<br>de señales</h1>
-  <div class="fila-sen">${muestra}</div>
-  <p>¿Reconoces las señales de seguridad de tu puesto de trabajo? Acierta rápido, encadena rachas y consigue las tres estrellas.</p>
+  <div class="heroe">
+   <div class="hm">IPE I · Unidad 2 · Señalización de seguridad</div>
+   <h1>Detective<br><span>de señales</span></h1>
+   <div class="fila-sen" style="justify-content:flex-start">${muestra}</div>
+   <p>¿Reconoces las señales de seguridad de tu puesto de trabajo? Acierta rápido, encadena rachas y consigue las tres estrellas.</p>
+   <div class="chips">${NIVELES.map(l=>`<span>${l.titulo}</span>`).join('')}</div>
+  </div>
   <div class="oficial">
    <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo',ls.get('senales_codigo',''))}">
@@ -286,9 +317,9 @@ function portada(){
  $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
-  const c0=$('#cod').value.trim().toUpperCase().replace(/\s+/g,''), c=normCod(c0)?normCod(c0).replace(/-(\d)$/,'-0$1'):c0;   // 17-11-2026: siempre 1HIG-07 (antes, 1HIG-7 y 1HIG-07 salían como dos códigos)
-  if(!RX_COD.test(c)){alert('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
-  {const f=plazo(c);if(f&&new Date()>f){alert('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
+  const c=codOficial($('#cod').value);   // siempre 1HIG-07
+  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
+  {const f=plazo(c);if(f&&new Date()>f){dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
   empiezaOficial(c);
  };
  revisaOfi();
@@ -478,6 +509,40 @@ function libro(ud, ap, txt) {
   return `📖 En el libro: UD ${ud}, apartado ${txt || ap}${p ? `, página ${p}` : ''}`;
 }
 
+/* Diálogo propio (fase 2, 17-11-2026): sustituye a alert y confirm del navegador, que en el móvil parecen un error y no
+   llevan los colores del centro. dialogo(texto) avisa; dialogo(texto, {si, no}) pregunta y devuelve true o false. */
+function dialogo(txt, op) {
+  return new Promise(res => {
+    const antes = document.activeElement;
+    const fondo = document.createElement('div'); fondo.className = 'dlg-fondo';
+    const caja = document.createElement('div'); caja.className = 'dlg';
+    caja.setAttribute('role', op ? 'alertdialog' : 'dialog'); caja.setAttribute('aria-modal', 'true');
+    const p = document.createElement('p'); p.id = 'dlg-txt'; p.textContent = txt; caja.setAttribute('aria-describedby', 'dlg-txt');
+    const bs = document.createElement('div'); bs.className = 'dlg-btns';
+    const boton = (texto, clase, v) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = e => { e.stopPropagation(); fin(v) }; bs.appendChild(b); return b };
+    const tecla = e => {
+      e.stopPropagation();                                   // el juego no se entera de las teclas mientras está abierto
+      if (e.key === 'Escape') { e.preventDefault(); fin(!op) }
+      else if (e.key === 'Tab') { const l = [...bs.children], i = l.indexOf(document.activeElement); e.preventDefault(); l[(i + (e.shiftKey ? l.length - 1 : 1)) % l.length].focus() }
+    };
+    const fin = v => { document.removeEventListener('keydown', tecla, true); fondo.remove(); try { antes && antes.focus && antes.focus({ preventScroll: true }) } catch (e) {} res(v) };
+    if (op) boton(op.no || 'No', 'no', false);
+    const si = boton(op ? (op.si || 'Sí') : 'Entendido', 'si', true);
+    caja.append(p, bs); fondo.appendChild(caja);
+    ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach(ev => fondo.addEventListener(ev, e => e.stopPropagation()));
+    document.addEventListener('keydown', tecla, true);
+    document.body.appendChild(fondo); si.focus({ preventScroll: true });
+  });
+}
+
+/* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
+try {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+    const anima = Element.prototype.animate;
+    Element.prototype.animate = function (k, o) { o = typeof o === 'number' ? 1 : Object.assign({}, o || {}, { duration: 1, iterations: 1 }); return anima.call(this, k, o) };
+  }
+} catch (e) {}
+
 (function () {
   const L = {
     get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v } catch (e) { return d } },
@@ -494,7 +559,23 @@ p.libro{margin:0 0 8px}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
 .op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
 .op.mal::after{content:"✗";margin-left:auto;font-size:20px;font-weight:900}
-@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}}`;
+@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+button,a,input,.op,.resp{touch-action:manipulation}
+.dlg-fondo{position:fixed;inset:0;z-index:1000;background:rgba(0,30,22,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{background:#fff;color:#1d2a30;border-radius:18px;max-width:420px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.35);font:16px/1.5 "Helvetica Neue",Arial,sans-serif;text-align:left}
+.dlg p{white-space:pre-line;margin:0 0 18px}
+.dlg-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.dlg button{border:0;border-radius:12px;padding:12px 18px;min-height:44px;font:700 16px Aleo,Georgia,serif;cursor:pointer;background:#004230;color:#fff}
+.dlg button.no{background:#e3efe9;color:#004230}
+/* portada común de la colección (fase 2): la tarjeta oscura de Serpiente, Auxilios y Aventura, para todos */
+:where(.heroe){position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;background:radial-gradient(circle at 85% 10%,var(--brillo,rgba(252,209,0,.28)),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
+:where(.heroe) .hm{font:700 12px "Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+:where(.heroe) h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}
+:where(.heroe h1) span{color:#fcd100}
+:where(.heroe) p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
+:where(.heroe) .chips{display:flex;flex-wrap:wrap;gap:6px}
+:where(.heroe .chips) span{font:700 12px "Helvetica Neue",Arial,sans-serif;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;color:#fff}`;
   document.head.appendChild(css);
 
   /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */

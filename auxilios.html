@@ -2,10 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cada minuto cuenta · IPE I</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Aleo:wght@600;800&display=swap" rel="stylesheet">
+<style>@font-face{font-family:"Aleo";src:url(aleo.ttf) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
 <style>
 
 :root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#1a8a4a;--mal:#d33a1f}
@@ -147,7 +146,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .rcp .botones .btn{flex:1;font-size:16px;padding:13px 8px}
 .rcp .btn.vent{background:#2e7fd6;color:#fff}
 .rcp .btn.rel{background:#fcd100;color:#3a2f00}
-.rcp .btn.alarma{background:#ff5900;color:#fff;animation:late .6s infinite}
+.rcp .btn.alarma{background:#c24400;color:#fff;animation:late .6s infinite}
 .rcp .btn[disabled]{opacity:.28}
 @keyframes late{50%{transform:scale(1.04);filter:brightness(1.25)}}
 .rcp .combo{position:absolute;left:0;right:0;top:6%;text-align:center;font:800 26px Aleo,Georgia,serif;color:#7dffb5;text-shadow:0 0 14px rgba(125,255,181,.6);pointer-events:none;opacity:0;transition:opacity .2s}
@@ -232,12 +231,7 @@ const BANCOS = {
 };
 
 
-/* ===== Configuración ===== */
-const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
-const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
 const JUEGO='UD3 Auxilios', PREF='auxilios', INTENTOS=3, RESTA=50;
-const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
-const PODIO=['1','0,75','0,50'];
 const NIVELES=[
  {n:1,titulo:'Proteger, avisar y socorrer',sub:'Escenas de tu sector: ¿qué haces primero? Cuidado con las trampas.',col:'#2f8a5b',modo:'test',banco:'pas',preg:8,t:20},
  {n:2,titulo:'¿Qué le pasa y qué hago?',sub:'Valora a la persona y elige la actuación correcta.',col:'#0d6b4f',modo:'test',banco:'val',preg:8,t:20},
@@ -246,24 +240,38 @@ const NIVELES=[
 ];
 const ULT=NIVELES.length;
 
-/* ===== Utilidades ===== */
+/* ===== Partida oficial: común a todos los juegos (fase 2, 17-11-2026) =====
+   Antes estaba copiado en cada plantilla; cada arreglo había que hacerlo siete veces. Los montar_*.py lo meten donde la
+   plantilla tiene la marca de oficial (comun_montar.py). Cada juego define antes, o después, sus propios datos:
+   JUEGO, INTENTOS, CLAVE_OF, CLAVE_MEJOR, CIERRES, DIAS, MESES y arrancaOficial(código, intento); y si quiere,
+   OFI_ABAJO (por defecto «los niveles de abajo») y OFI_AVISO() (una frase más antes de «¿Empezamos?»). */
+
 const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
-const usados=()=>+ls.get(PREF+'_oficiales',0);
-const CLAVE_OF=PREF+'_oficiales';
-const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
-/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») =====
-   Desde el 9-11-2026 (noche) los cuenta el servicio de abajo; la pestaña «Intentos» ya no está publicada. */
+const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
+const FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSezWznmuvn5-Z4R6GFpXC74XyqMVcLrk1klwhda880-3LQiJw/formResponse',campo:'entry.606284828'};
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const PODIO=['1','0,75','0,50'];
 /* Servicio «Juegos IPE · intentos» (Apps Script de José, juegos/servicio_intentos): cuenta AL MOMENTO y apunta cada inicio. */
 const SERVICIO='https://script.google.com/macros/s/AKfycbw56Jq-wbMnwqNgdTatBKiyfdN3TP8fM0IarXeM2YD1d79qJKXgrPpOLip2Bb0BFRhqrQ/exec';
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
 const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m&&RX_COD.test(m[1]+'-'+m[2])?m[1]+'-'+m[2]:''};
+/* el código tal como se guarda y se envía: siempre con dos cifras (17-11-2026: 1HIG-7 y 1HIG-07 salían como dos códigos) */
+const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'').trim().toUpperCase().replace(/\s+/g,'');
+
+/* Plazo de cada grupo (CIERRES lo pone cada juego) */
+function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
+function textoPlazo(c){const f=plazo(c);if(!f)return '';
+ const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+
 /* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
    dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
-const CLAVE_MEJOR=PREF+'_mejor';
 function mejorDe(c){c=normCod(c);if(!c)return 0;const v=ls.get(CLAVE_MEJOR+'_'+c,null);if(v!==null)return +v||0;const viejo=+ls.get(CLAVE_MEJOR,0);if(!viejo)return 0;
  let mio=false,otro=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf(CLAVE_OF+'_')!==0||!(+localStorage.getItem(k)>0))continue;if(k===CLAVE_OF+'_'+c)mio=true;else otro=true}}catch(e){}
  return mio&&!otro?viejo:0}
 const ponMejor=(c,v)=>{if(normCod(c))ls.set(CLAVE_MEJOR+'_'+normCod(c),v)};
 
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») ===== */
 function locales(c){
  const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
  if(v!==null)return +v||0;
@@ -301,29 +309,88 @@ function revisaOfi(){
  },400);
 }
 async function empiezaOficial(c){
+ const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
+ const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
  const r=await intentosDe(c);pintaOfi(r.n,r.sin?'sinred':'');
- if(r.sin){alert('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en los niveles de abajo.');return}
- if(r.n>=INTENTOS){alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
- if(!confirm('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.'+'\n\n¿Empezamos?'))return;
+ if(r.sin){dialogo('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en '+abajo+'.');return}
+ if(r.n>=INTENTOS){dialogo(yaJugadas);return}
+ if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
  /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
  const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
  const ini=await pideServicio('inicio',c);
- if(!ini){pintaOfi(r.n,'sinred');alert('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
- if(!ini.ok){pintaOfi(ini.n);alert('Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en los niveles de abajo.');return}
+ if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);
- empieza(1,{codigo:c,intento:ini.n,est:[],pts:0});
+ arrancaOficial(c,ini.n);
 }
 
+/* ===== Subida de nota ===== */
 const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
 /* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
 const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
+
+/* ===== Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
+   al volver la conexión (o la próxima vez que se abra el juego). ===== */
+const COLA=()=>'cola_envios_'+JUEGO;
+function manda(txt){const f=new URLSearchParams();f.append(FORM.campo,txt);return fetch(FORM.url,{method:'POST',mode:'no-cors',body:f}).then(()=>true).catch(()=>false)}
+function enCola(){try{return JSON.parse(localStorage.getItem(COLA())||'[]')}catch(e){return[]}}
+function guardaCola(c){try{localStorage.setItem(COLA(),JSON.stringify(c))}catch(e){}}
+let vaciando=false;
+async function vaciaCola(){
+ if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
+ try{const c=enCola();if(!c.length||!FORM.url)return;
+  const quedan=[];for(const t of c){if(!(await manda(t)))quedan.push(t)}
+  guardaCola(quedan)}finally{vaciando=false}
+}
+addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
+function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
+ const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
+ return l.length?' | fallos: '+l.join('; '):'';
+}
+const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
+function envia(d){
+ if(!FORM.url)return Promise.resolve(false);
+ const est=d.est||[d.n1,d.n2,d.n3];
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ return manda(txt).then(ok=>{if(!ok){const c=enCola();c.push(txt);guardaCola(c)}return ok});
+}
+
+/* ===== Puesto en el ranking del grupo (tabla pública con grupo, puntos y juego; sin códigos ni nombres) ===== */
+async function puesto(codigo,pts,nuevo){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
+  const txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);
+  const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>+f[1]||0);
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  return {pos,total};
+ }catch(e){return null}
+}
+const recien=()=>Date.now()-(+ls.get(CLAVE_OF.replace(/_oficiales$/,'')+'_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+}
+
+function arrancaOficial(c,n){empieza(1,{codigo:c,intento:n,est:[],pts:0})}   // lo llama empiezaOficial (oficial.js)
+
+const usados=()=>+ls.get(PREF+'_oficiales',0);
+const CLAVE_OF=PREF+'_oficiales';
+const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») =====
+   Desde el 9-11-2026 (noche) los cuenta el servicio de abajo; la pestaña «Intentos» ya no está publicada. */
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+const CLAVE_MEJOR=PREF+'_mejor';
+
+
 const $=s=>document.querySelector(s), app=$('#app');
 const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const rec=n=>+ls.get(PREF+'_record_'+n,0);
 const guarda=(n,p)=>{if(p>rec(n))ls.set(PREF+'_record_'+n,p)};
 const ciclo=()=>{const m=/^[12]([A-Z]{2,5})-/.exec(ls.get('ipe_codigo',''));return m?m[1]:''};
-const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
 const vibra=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 let st={};
 
@@ -359,40 +426,7 @@ function habla(txt){try{const s=window.speechSynthesis;if(!s||window.SILENCIO||s
 
 /* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
    al volver la conexión (o la próxima vez que se abra el juego). */
-const COLA='cola_envios_'+JUEGO;
-function manda(txt){const f=new URLSearchParams();f.append(FORM.campo,txt);return fetch(FORM.url,{method:'POST',mode:'no-cors',body:f}).then(()=>true).catch(()=>false)}
-function enCola(){try{return JSON.parse(localStorage.getItem(COLA)||'[]')}catch(e){return[]}}
-function guardaCola(c){try{localStorage.setItem(COLA,JSON.stringify(c))}catch(e){}}
-async function vaciaCola(){
- const c=enCola();if(!c.length||!FORM.url)return;
- const quedan=[];for(const t of c){if(!(await manda(t)))quedan.push(t)}
- guardaCola(quedan);
-}
 addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
-function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
- const l=[...new Set((d.fallos||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
- return l.length?' | fallos: '+l.join('; '):'';
-}
-const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
-function envia(d){
- const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${d.est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
- return manda(txt).then(ok=>{if(!ok){const c=enCola();c.push(txt);guardaCola(c)}return ok});
-}
-async function puesto(codigo,pts,nuevo){
- try{
-  const txt=await fetch(RANKING+'&t='+Date.now()).then(r=>r.text());
-  const g=grupoDe(codigo);
-  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(f[2]||'').trim()===JUEGO).map(f=>+f[1]||0);
-  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
-  return {pos,total};
- }catch(e){return null}
-}
-const recien=()=>Date.now()-(+ls.get(PREF+'_primer_envio',0))<10*60*1000;
-function textoPuesto(r,pts){
- if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
- const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
-}
 
 /* ===== Portada ===== */
 function portada(){
@@ -418,8 +452,8 @@ function portada(){
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
-  const c0=$('#cod').value.trim().toUpperCase().replace(/\s+/g,''), c=normCod(c0)?normCod(c0).replace(/-(\d)$/,'-0$1'):c0;   // 17-11-2026: siempre 1HIG-07 (antes, 1HIG-7 y 1HIG-07 salían como dos códigos)
-  if(!RX_COD.test(c)){alert('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
+  const c=codOficial($('#cod').value);   // siempre 1HIG-07
+  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
   empiezaOficial(c);
  };
  $('#cod').oninput=revisaOfi;
@@ -983,6 +1017,40 @@ function libro(ud, ap, txt) {
   return `📖 En el libro: UD ${ud}, apartado ${txt || ap}${p ? `, página ${p}` : ''}`;
 }
 
+/* Diálogo propio (fase 2, 17-11-2026): sustituye a alert y confirm del navegador, que en el móvil parecen un error y no
+   llevan los colores del centro. dialogo(texto) avisa; dialogo(texto, {si, no}) pregunta y devuelve true o false. */
+function dialogo(txt, op) {
+  return new Promise(res => {
+    const antes = document.activeElement;
+    const fondo = document.createElement('div'); fondo.className = 'dlg-fondo';
+    const caja = document.createElement('div'); caja.className = 'dlg';
+    caja.setAttribute('role', op ? 'alertdialog' : 'dialog'); caja.setAttribute('aria-modal', 'true');
+    const p = document.createElement('p'); p.id = 'dlg-txt'; p.textContent = txt; caja.setAttribute('aria-describedby', 'dlg-txt');
+    const bs = document.createElement('div'); bs.className = 'dlg-btns';
+    const boton = (texto, clase, v) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = e => { e.stopPropagation(); fin(v) }; bs.appendChild(b); return b };
+    const tecla = e => {
+      e.stopPropagation();                                   // el juego no se entera de las teclas mientras está abierto
+      if (e.key === 'Escape') { e.preventDefault(); fin(!op) }
+      else if (e.key === 'Tab') { const l = [...bs.children], i = l.indexOf(document.activeElement); e.preventDefault(); l[(i + (e.shiftKey ? l.length - 1 : 1)) % l.length].focus() }
+    };
+    const fin = v => { document.removeEventListener('keydown', tecla, true); fondo.remove(); try { antes && antes.focus && antes.focus({ preventScroll: true }) } catch (e) {} res(v) };
+    if (op) boton(op.no || 'No', 'no', false);
+    const si = boton(op ? (op.si || 'Sí') : 'Entendido', 'si', true);
+    caja.append(p, bs); fondo.appendChild(caja);
+    ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach(ev => fondo.addEventListener(ev, e => e.stopPropagation()));
+    document.addEventListener('keydown', tecla, true);
+    document.body.appendChild(fondo); si.focus({ preventScroll: true });
+  });
+}
+
+/* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
+try {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+    const anima = Element.prototype.animate;
+    Element.prototype.animate = function (k, o) { o = typeof o === 'number' ? 1 : Object.assign({}, o || {}, { duration: 1, iterations: 1 }); return anima.call(this, k, o) };
+  }
+} catch (e) {}
+
 (function () {
   const L = {
     get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v } catch (e) { return d } },
@@ -999,7 +1067,23 @@ p.libro{margin:0 0 8px}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
 .op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
 .op.mal::after{content:"✗";margin-left:auto;font-size:20px;font-weight:900}
-@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}}`;
+@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+button,a,input,.op,.resp{touch-action:manipulation}
+.dlg-fondo{position:fixed;inset:0;z-index:1000;background:rgba(0,30,22,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{background:#fff;color:#1d2a30;border-radius:18px;max-width:420px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.35);font:16px/1.5 "Helvetica Neue",Arial,sans-serif;text-align:left}
+.dlg p{white-space:pre-line;margin:0 0 18px}
+.dlg-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.dlg button{border:0;border-radius:12px;padding:12px 18px;min-height:44px;font:700 16px Aleo,Georgia,serif;cursor:pointer;background:#004230;color:#fff}
+.dlg button.no{background:#e3efe9;color:#004230}
+/* portada común de la colección (fase 2): la tarjeta oscura de Serpiente, Auxilios y Aventura, para todos */
+:where(.heroe){position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;background:radial-gradient(circle at 85% 10%,var(--brillo,rgba(252,209,0,.28)),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
+:where(.heroe) .hm{font:700 12px "Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+:where(.heroe) h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}
+:where(.heroe h1) span{color:#fcd100}
+:where(.heroe) p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
+:where(.heroe) .chips{display:flex;flex-wrap:wrap;gap:6px}
+:where(.heroe .chips) span{font:700 12px "Helvetica Neue",Arial,sans-serif;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;color:#fff}`;
   document.head.appendChild(css);
 
   /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
