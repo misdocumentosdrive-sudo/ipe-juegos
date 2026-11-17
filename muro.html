@@ -1,0 +1,1531 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muro de daños · IPE I</title>
+<style>@font-face{font-family:"Aleo";src:url(aleo.ttf) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<style>
+:root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#1a8a4a;--mal:#d33a1f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--fondo);color:var(--texto);font:16px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:520px;min-height:100%;display:flex;flex-direction:column;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+h1,h2,.serif{font-family:Aleo,Georgia,serif}
+.marca{font:800 13px Aleo,Georgia,serif;color:var(--verde);letter-spacing:.3px}
+.pill{background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);white-space:nowrap}
+.confeti{position:fixed;top:-12px;width:9px;height:14px;border-radius:2px;pointer-events:none;animation:cae linear forwards;z-index:9}
+@keyframes cae{to{transform:translateY(105vh) rotate(720deg)}}
+.portada{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px}
+.portada>h1{font-size:34px;color:var(--verde);margin:0;line-height:1.1}
+.portada>p{color:var(--gris);margin:0}
+.muestra{display:flex;justify-content:center;gap:5px;margin:4px 0}
+.muestra i{display:block;width:44px;height:20px;border-radius:5px;background:linear-gradient(#3d8a70,#2f6c5a);box-shadow:inset 0 3px 0 rgba(255,255,255,.18)}
+.muestra i.x{background:linear-gradient(#ff7a33,#e04e00);display:flex;align-items:center;justify-content:center;color:#fff}
+.muestra i.x .ico{width:14px;height:14px}
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block}
+.nivel{border:0;border-radius:18px;padding:16px;text-align:left;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.07);cursor:pointer;display:flex;gap:14px;align-items:center}
+.nivel .n{flex:none;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 20px Aleo,Georgia,serif;color:#fff}
+.nivel b{display:block;font:800 17px Aleo,Georgia,serif;color:var(--verde)}
+.nivel span{font-size:14px;color:var(--gris)}
+.record{font-size:13px;color:var(--gris)}
+.final{text-align:center}
+.final .gran{font:800 56px Aleo,Georgia,serif;color:var(--verde);margin:4px 0}
+.estrellas{font-size:34px;letter-spacing:4px;color:var(--amarillo);text-shadow:0 1px 0 #c9a400}
+.fallos{text-align:left;margin-top:16px}
+.fallo{background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:14px}
+.fallo b{display:block;color:var(--verde);margin-top:4px}
+.fallo small{color:var(--gris)}
+.btns{display:grid;gap:10px;margin-top:16px}
+.btn{border:0;border-radius:14px;padding:14px;font:800 17px Aleo,Georgia,serif;cursor:pointer}
+.btn.p{background:var(--verde);color:#fff}
+.btn.s{background:#e3ece8;color:var(--verde)}
+.pie{text-align:center;font-size:12px;color:var(--gris);margin-top:auto;padding-top:14px}
+.oficial{background:#fff;border:2px solid var(--verde);border-radius:16px;padding:14px;margin:14px 0;text-align:left;display:grid;gap:8px}
+.oficial label span,.oficial small{font-size:13px;opacity:.75}
+.oficial input{font:700 20px/1.2 inherit;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;border:2px solid #cfd8d3;border-radius:10px;width:100%;box-sizing:border-box}
+.oficial input.error{border-color:#c0392b;background:#fdecea}
+.oficial .btn[disabled]{opacity:.5}
+.entreno{color:var(--verde);font-size:18px;margin:6px 0 4px;text-align:left}
+.aviso-of{background:#fff8d6;border:2px solid #fcd100;border-radius:14px;padding:12px;margin:14px 0;line-height:1.5}
+#envio{margin-top:8px;font-weight:700;color:var(--verde)}
+.libro{font-size:14px;color:var(--verde2)}
+/* presentación del nivel */
+.intro{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.intro .drama{background:var(--verde);color:#fff;border-radius:18px;padding:16px 18px;font-size:16px;line-height:1.5}
+.intro .drama b{color:var(--amarillo)}
+.intro h1{color:var(--verde);margin:0;font-size:27px;line-height:1.15}
+.reglas{background:#fff;border-radius:16px;padding:12px 16px;font-size:15px;line-height:1.45;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.reglas ul{margin:6px 0 0;padding-left:20px}
+.cats{display:grid;gap:6px;margin-top:8px}
+.cat{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.cat i{font-style:normal;flex:none;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
+.cat i .ico{width:18px;height:18px}
+/* pantalla de juego */
+#app.jugando{max-width:none;padding:8px 8px calc(8px + env(safe-area-inset-bottom));height:100%;min-height:0;background:#00281d}
+.juego{flex:1;display:flex;flex-direction:column;min-height:0}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.hud .pill{background:rgba(255,255,255,.12);color:#fff;box-shadow:none;font-size:13px;padding:5px 10px}
+.hud .pill.exp{background:rgba(255,89,0,.85)}
+.hud button.pill{border:0;cursor:pointer;font:inherit;font-weight:700;min-width:44px;min-height:44px;font-size:18px;display:inline-flex;align-items:center;justify-content:center}
+.marco{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.saltar{position:absolute;top:6px;right:6px;z-index:4;min-height:44px;border:0;border-radius:999px;padding:8px 14px;background:rgba(0,0,0,.45);color:#fff;font:700 13px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+.tuto-msg{background:#fff8d6;border-radius:10px;padding:8px 10px;margin:8px 0 0;font-size:14px;line-height:1.4;color:#1d2a30}
+.tuto-msg .ico{color:#c24400}
+.reglas .cortas{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.reglas .cortas li{display:flex;gap:8px;align-items:flex-start}
+.reglas .cortas .ico{color:#c24400;margin-top:2px}
+.reglas details{margin-top:8px;font-size:14px}
+.reglas summary{cursor:pointer;font-weight:700;color:var(--verde);min-height:32px;display:flex;align-items:center}
+#lienzo{display:block;touch-action:none;border-radius:14px;box-shadow:0 0 0 2px rgba(252,209,0,.25),0 10px 30px rgba(0,0,0,.45);cursor:none}
+.tarjeta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,20,14,.55);backdrop-filter:blur(2px);z-index:5}
+.ficha{width:100%;max-width:460px;background:#fbf6ea;border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.45);border-top:8px solid var(--naranja);animation:entra .25s ease-out}
+@keyframes entra{from{transform:scale(.85);opacity:0}}
+.ficha .eti{font:800 12px Aleo,Georgia,serif;letter-spacing:1.5px;color:var(--naranja);text-transform:uppercase}
+.ficha .caso{font:600 18px/1.4 Aleo,Georgia,serif;color:var(--texto);margin:6px 0 10px}
+.reloj{height:6px;background:#eadfcf;border-radius:99px;overflow:hidden;margin-bottom:12px}
+.reloj i{display:block;height:100%;background:var(--naranja);width:100%}
+.resps{display:grid;gap:8px}
+.resps.c4{grid-template-columns:1fr 1fr}
+.resp{border:0;border-radius:12px;padding:12px 10px;font:700 15px "Helvetica Neue",Arial,sans-serif;color:#fff;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left;line-height:1.2}
+.resp .ico{width:22px;height:22px}
+.resp:disabled{cursor:default;opacity:.35}
+.resp.bien{opacity:1;outline:3px solid #1a8a4a;outline-offset:2px}
+.resp.elegida{opacity:1}
+.resp.elegida:not(.bien){outline:3px solid var(--mal);outline-offset:2px}
+.resp.elegida:not(.bien)::after{content:'✗';margin-left:auto;font-size:20px;font-weight:900}
+.resp.bien::after{content:'✓';margin-left:auto;font-size:20px;font-weight:900}
+.veredicto{margin-top:12px;border-radius:12px;padding:10px 12px;font-size:15px;display:none}
+.veredicto.ok{display:block;background:#e3f4ea;color:#0b5a2f}
+.veredicto.mal{display:block;background:#fde8e3;color:#8c2512}
+.veredicto b{display:block;font:800 16px Aleo,Georgia,serif;margin-bottom:2px}
+.seguir{margin-top:10px;width:100%;border:0;border-radius:12px;padding:12px;font:800 16px Aleo,Georgia,serif;background:var(--verde);color:#fff;cursor:pointer;display:none}
+.aviso-c{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);color:#fff;font:800 24px Aleo,Georgia,serif;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.6);pointer-events:none;z-index:4;white-space:nowrap}
+.aviso-c small{display:block;font:600 14px "Helvetica Neue",Arial,sans-serif;opacity:.9;margin-top:4px}
+html,body{overscroll-behavior:none}
+.pausa-j{position:fixed;inset:0;z-index:50;border:0;width:100%;background:#0b1f19;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:700 18px/1.4 "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+.pausa-j b{font:800 30px Aleo,Georgia,serif;color:#fcd100}
+/* fase 6, 17-11-2026: factores de riesgo («el ladrillo es la causa») */
+.fac{flex:none;width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal}
+.fac .ico{width:15px;height:15px}
+.fac.claro{color:#004230}
+.facs{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:8px;font-size:13px}
+.facs span{display:flex;gap:6px;align-items:center;line-height:1.2}
+.ficha .riesgo{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--gris);margin-top:6px}
+.ficha .riesgo b{color:var(--texto)}
+.riesgos{text-align:left;margin-top:16px;background:#fff;border-radius:14px;padding:12px}
+.riesgos h2{color:var(--verde);font-size:19px;margin:0 0 8px}
+.riesgos .rg{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin-bottom:8px;line-height:1.35}
+.riesgos small,.fallos h3 small{color:var(--gris)}
+.fallos h3{display:flex;gap:8px;align-items:center;font:800 15px Aleo,Georgia,serif;color:var(--verde);margin:12px 0 6px}
+</style>
+<link rel="manifest" href="muro.webmanifest">
+<meta name="theme-color" content="#004230">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Muro de daños">
+<link rel="apple-touch-icon" href="icono-muro-192.png">
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* «Muro de daños» (CE b del RA2) · expedientes de cada nivel.
+   Fuente: juegos/fuente/muro/«GUION - Muro de daños (CE b RA2).md» (aprobado por José el 13-11-2026).
+   Reglas de la UD1 del libro (1.3) y del BOE: LGSS arts. 156, 157 y 158; RD 1299/2006 (cuadro).
+   Cada caso: [texto, respuesta, explicación, apartado del libro, factor de riesgo]. Respuestas: at, ep, in (inespecífica), nl (no laboral).
+   Fase 4, 17-11-2026: al menos 20 comunes y 5 por ciclo en cada nivel (a la tercera partida ya se memorizaban); criterios
+   cotejados en el BOE consolidado (LGSS arts. 156-158 y cuadro del RD 1299/2006, con su código).
+   Fase 6, 17-11-2026 («el ladrillo es la causa»): 5.º campo = factor de riesgo del que nace el daño (FACTORES). Cada factor
+   tiene casos de al menos dos tipos en la bolsa común de cada nivel: el mismo riesgo da accidente (de golpe), enfermedad
+   profesional (poco a poco y en el cuadro) o daño no laboral (sin relación con el trabajo). */
+const RESP={
+ at:{n:'Accidente de trabajo',p:'Accidentes de trabajo',i:'🦺',c:'#c24400'},
+ ep:{n:'Enfermedad profesional',p:'Enfermedades profesionales',i:'🧪',c:'#237a4f'},
+ in:{n:'Patología inespecífica',p:'Patologías inespecíficas',i:'🧠',c:'#7a5cc2'},
+ nl:{n:'Daño no laboral',p:'Daños no laborales',i:'🏠',c:'#56676d'}
+};
+/* fase 6, 17-11-2026: factores de riesgo de los ladrillos (pictograma de iconos.js, color y degradado del ladrillo) */
+const FACTORES={
+ cai:{n:'Caídas y golpes',ic:'escalera',c:'#2f7a60',t:['#56a387','#2f6c5a']},
+ maq:{n:'Máquinas y herramientas',ic:'engranaje',c:'#2f6ea8',t:['#5b8fc4','#2f5f8f']},
+ ene:{n:'Electricidad y calor',ic:'rayo',c:'#a88400',t:['#f2d45c','#d9b400'],claro:true},
+ rui:{n:'Ruido y vibraciones',ic:'altavoz',c:'#1b7f8f',t:['#3fa3b2','#1d6a77']},
+ esf:{n:'Esfuerzos y posturas',ic:'pesa',c:'#8a5a2e',t:['#b5834f','#7d5530']},
+ qui:{n:'Químicos y polvo',ic:'bidon',c:'#66751c',t:['#9aab45','#6b7a22']},
+ bio:{n:'Agentes biológicos',ic:'virus',c:'#a63d3d',t:['#c96060','#9a3a3a']},
+ psi:{n:'Psicosociales',ic:'agobio',c:'#9c3f72',t:['#c26a98','#8e3a68']},
+ tra:{n:'Desplazamientos',ic:'coche',c:'#4b55a8',t:['#7179c4','#454e99']}
+};
+const CASOS={
+1:{
+ comun:[
+  ['Resbalas en el pasillo del trabajo, recién fregado, y te rompes la muñeca.','at','Lesión sufrida con ocasión del trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Te tuerces el tobillo jugando al pádel el sábado.','nl','No tiene relación con el trabajo: es un accidente no laboral (art. 158 LGSS).','1.3','cai'],
+  ['Vas en bici al trabajo por el camino de siempre, poco antes de entrar, y te caes.','at','Al ir al trabajo: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['Te contagias de la gripe que tenía tu hermano en casa.','nl','Es una enfermedad común: no viene del trabajo (art. 158 LGSS).','1.3','bio'],
+  ['Tu jefa te pide que ayudes a descargar un camión, aunque no es tu tarea, y te haces un corte.','at','Tareas distintas de las tuyas por orden de la empresa (art. 156.2.c LGSS).','1.3.1','maq'],
+  ['Te caes en la ducha de tu casa antes de salir hacia el trabajo.','nl','Lo que pasa dentro del propio domicilio no es in itinere.','1.3.1','cai'],
+  ['Un compañero se queda atrapado en una máquina; le ayudas a salir y te lesionas el hombro.','at','Acto de salvamento con conexión con el trabajo (art. 156.2.d LGSS).','1.3.1','maq'],
+  ['Al salir del trabajo vas al gimnasio y allí te haces un esguince.','nl','Fuera del trabajo y sin relación con él: accidente no laboral (art. 158 LGSS).','1.3','esf'],
+  ['Te cortas en casa preparando el bocadillo para el día siguiente.','nl','Accidente no laboral, aunque el bocadillo sea para el trabajo.','1.3','maq'],
+  ['Alguien de tu equipo, por despiste, empuja un carro contra tu pierna en el almacén y te hace una herida.','at','La culpa de un compañero no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','cai'],
+  ['Nada más salir del trabajo, vuelves andando a casa por el camino de siempre y tropiezas con un bordillo.','at','Al volver del trabajo por el trayecto habitual: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['Ves que unas cajas tapan la salida de emergencia y, sin que nadie te lo pida, las apartas; te haces daño en la espalda.','at','Tarea hecha por iniciativa propia en interés del buen funcionamiento de la empresa (art. 156.2.c LGSS).','1.3.1','esf'],
+  ['En tu día libre te salpica el aceite mientras haces la comida y te quemas.','nl','No tiene relación con el trabajo: accidente no laboral (art. 158 LGSS).','1.3','ene'],
+  ['Te muerde el perro de tu vecino cuando sales a pasear el domingo.','nl','Fuera del trabajo y sin relación con él: accidente no laboral (art. 158 LGSS).','1.3','bio'],
+  ['Al bajar la persiana metálica del local de la empresa, al final de la jornada, te pillas los dedos.','at','Lesión sufrida con ocasión del trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Te tuerces la muñeca al caerte del patinete un domingo por la tarde, de paseo.','nl','Accidente no laboral: no tiene relación con el trabajo (art. 158 LGSS).','1.3','tra'],
+  ['Tu responsable te manda a la tienda de al lado a por material para el taller y, al cruzar la calle, te atropella una bici.','at','El desplazamiento lo exige el trabajo: los tribunales lo consideran accidente de trabajo en misión.','1.3.1','tra'],
+  ['Te intoxicas con una comida en mal estado en una cena con tus amistades.','nl','Fuera del trabajo y sin relación con él: es un daño no laboral (art. 158 LGSS).','1.3','bio'],
+  ['Al ordenar el almacén del trabajo, se vuelca una estantería y te golpea el pie.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Te clavas un clavo arreglando la valla de la casa de tus abuelos un fin de semana.','nl','Accidente no laboral, aunque la tarea se parezca a un trabajo (art. 158 LGSS).','1.3','maq'],
+  ['Una persona a la que atiendes se enfada y te empuja contra la pared.','at','La agresión de un tercero que tiene que ver con el trabajo no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','psi'],
+  ['En una visita de trabajo a casa de una clienta, su perro te muerde en la pierna.','at','Lesión sufrida con ocasión del trabajo (art. 156.1 LGSS).','1.3.1','bio'],
+  ['En el taller, enchufas una máquina en un enchufe roto y recibes una descarga.','at','Lesión súbita durante el trabajo (art. 156.1 LGSS).','1.3.1','ene'],
+  ['Un domingo discutes con tu pareja, te alteras mucho y acabas en urgencias con una crisis de ansiedad.','nl','No tiene relación con el trabajo: es un daño no laboral (art. 158 LGSS).','1.3','psi'],
+  ['En la nave, revienta a tu lado una botella de gas a presión y te quedas con un pitido fuerte en los oídos.','at','Es de golpe y durante el trabajo: accidente de trabajo (art. 156.1 LGSS).','1.3.1','rui'],
+  ['Sales de un concierto con un pitido en los oídos que te dura dos días.','nl','Fuera del trabajo y sin relación con él: daño no laboral (art. 158 LGSS).','1.3','rui'],
+  ['En el trabajo, al rellenar un pulverizador de lejía, te salpica en los ojos.','at','Lesión súbita durante el trabajo (art. 156.1 LGSS).','1.3.1','qui'],
+  ['Limpiando el baño de tu casa, mezclas lejía y amoniaco y te mareas con los vapores.','nl','No tiene relación con el trabajo: accidente no laboral (art. 158 LGSS).','1.3','qui']
+ ],
+ HIG:[
+  ['Al recoger la bandeja del gabinete, te pinchas con una sonda periodontal.','at','Lesión súbita durante el trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Te quemas en casa con la plancha del pelo.','nl','No tiene relación con la clínica: accidente no laboral.','1.3','ene'],
+  ['Vas a la clínica en patinete por el camino de siempre y, diez minutos antes de entrar, un coche te golpea en un cruce.','at','Al ir al trabajo por el trayecto habitual: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['La gerente de la clínica te pide que subas unas cajas de guantes al almacén, aunque no es tu tarea, y te caes por la escalera.','at','Tareas distintas de las tuyas por orden de la empresa (art. 156.2.c LGSS).','1.3.1','cai'],
+  ['Un sábado tropiezas en la escalera del cine y te rompes un diente.','nl','No tiene relación con la clínica: accidente no laboral (art. 158 LGSS).','1.3','cai']
+ ],
+ IFC:[
+  ['Al apretar una tuerca de la enfriadora, se escapa la llave y te golpeas la mano.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Te lesionas la espalda moviendo muebles en tu casa un domingo.','nl','Accidente no laboral (art. 158 LGSS).','1.3','esf'],
+  ['Vas a la nave de la empresa en moto, por el trayecto de siempre, y resbalas en una rotonda.','at','Al ir al trabajo por el trayecto habitual: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['Cargando la furgoneta con las botellas de refrigerante del día, una se te cae en el pie.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Te quemas con las brasas de una barbacoa en el campo con tus amistades.','nl','No tiene relación con el trabajo: accidente no laboral (art. 158 LGSS).','1.3','ene']
+ ],
+ ITE:[
+  ['Te caes de la escalera mientras instalas una antena colectiva.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Te rompes un dedo jugando al baloncesto con tus amistades.','nl','Accidente no laboral (art. 158 LGSS).','1.3','cai'],
+  ['Al pasar un cable por una canaleta, el borde de la chapa te corta la mano.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Vas a la obra en el tren de cercanías de siempre y te caes en el andén al bajar con prisa para llegar a tu hora.','at','Al ir al trabajo por el trayecto habitual: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['Un domingo arreglas la antena de tu propia casa y te caes del tejado.','nl','Es la misma tarea que en tu trabajo, pero no la haces por cuenta de la empresa: accidente no laboral (art. 158 LGSS).','1.3','cai']
+ ],
+ STI:[
+  ['Te pillas los dedos con la puerta de un armario rack del centro de datos.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Te mareas por un virus estomacal que pillaste en una cena familiar.','nl','Enfermedad común: no viene del trabajo (art. 158 LGSS).','1.3','bio'],
+  ['En la oficina, al cambiar un monitor de puesto, te golpeas la rodilla con la mesa.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Vas a la oficina en metro, como cada día, y te caes en las escaleras mecánicas de la estación.','at','Al ir al trabajo por el trayecto habitual: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['Montas el ordenador nuevo de tu hermana en su casa, un fin de semana, y te cortas con la chapa de la caja.','nl','Es tu oficio, pero no lo haces por cuenta de la empresa: accidente no laboral (art. 158 LGSS).','1.3','maq']
+ ]
+},
+2:{
+ comun:[
+  ['Tras diez años en un taller con mucho ruido, oyes cada vez peor.','ep','Hipoacusia por ruido: grupo 2 del cuadro del RD 1299/2006 (art. 157 LGSS). Es lenta y progresiva.','1.3.2','rui'],
+  ['Un compresor explota a tu lado y te revienta el tímpano en el acto.','at','Es súbito: accidente, no enfermedad (art. 156.1 LGSS).','1.3.1','rui'],
+  ['Tras años de trabajo en una cantera, te diagnostican silicosis.','ep','Polvo de sílice: grupo 4 del cuadro del RD 1299/2006.','1.3.2','qui'],
+  ['Tras años tiñendo el pelo en una peluquería, te sale una dermatitis por los tintes.','ep','Enfermedad de la piel: grupo 5 del cuadro del RD 1299/2006.','1.3.2','qui'],
+  ['Al levantar de golpe una caja muy pesada en el almacén, notas un pinchazo en la espalda.','at','Lesión súbita por un esfuerzo en el trabajo (art. 156.1 LGSS).','1.3.1','esf'],
+  ['Pillas un catarro en el cine el fin de semana.','nl','Enfermedad común (art. 158 LGSS).','1.3','bio'],
+  ['Tras años trabajando con plomo, te diagnostican saturnismo.','ep','Agente químico: grupo 1 del cuadro del RD 1299/2006.','1.3.2','qui'],
+  ['En una mudanza de tu familia te haces una hernia.','nl','Fuera del trabajo: accidente no laboral (art. 158 LGSS).','1.3','esf'],
+  ['Tras años con el martillo neumático en obras de túneles, notas los dedos blancos y entumecidos.','ep','Vibraciones en mano y brazo por martillos neumáticos: grupo 2 del cuadro del RD 1299/2006 (2B).','1.3.2','rui'],
+  ['Al cortar con la radial, te salta una esquirla y te hiere un ojo.','at','Es súbito: accidente de trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Tras años en una panadería, empiezas a tener asma por el polvo de harina.','ep','Asma por sustancias de alto peso molecular en panadería: grupo 4 del cuadro del RD 1299/2006 (4H).','1.3.2','qui'],
+  ['Tras años en una carpintería respirando el polvo de la madera, desarrollas asma.','ep','Asma por polvo de madera: grupo 4 del cuadro del RD 1299/2006 (4I).','1.3.2','qui'],
+  ['Tras muchos años fabricando placas de fibrocemento con amianto, te diagnostican cáncer de pulmón.','ep','Cáncer por amianto: grupo 6 del cuadro del RD 1299/2006 (6A).','1.3.2','qui'],
+  ['Al bajar de un salto del camión, en la zona de carga, te rompes el tobillo.','at','Es súbito y en el trabajo: accidente de trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Tras años en una carnicería, cortando y deshuesando a diario, te diagnostican una epicondilitis (codo de tenista).','ep','Movimientos repetidos del brazo contra resistencia: grupo 2 del cuadro del RD 1299/2006, que cita a los carniceros (2D).','1.3.2','esf'],
+  ['En el almacén se rompe un bidón y, de golpe, respiras sus vapores y te intoxicas.','at','Una exposición de golpe, en un instante, es accidente aunque el agente sea químico: lo lento es la enfermedad (art. 156.1 LGSS).','1.3.1','qui'],
+  ['Coges una gastroenteritis en un viaje de vacaciones.','nl','Enfermedad común (art. 158 LGSS).','1.3','bio'],
+  ['Te rompes la clavícula montando en bici de montaña un domingo.','nl','Fuera del trabajo: accidente no laboral (art. 158 LGSS).','1.3','cai'],
+  ['Tras años en una fábrica de muebles lijando y barnizando, te sale un eccema en las manos por los barnices.','ep','Enfermedad de la piel por barnices: grupo 5 del cuadro del RD 1299/2006 (5A).','1.3.2','qui'],
+  ['Resbalas con una mancha de aceite en el suelo del taller y te tuerces la muñeca.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Te contagias de la varicela de tu sobrina.','nl','Enfermedad común: no viene del trabajo (art. 158 LGSS).','1.3','bio'],
+  ['Con los años oyes cada vez peor, igual que tu padre y tu abuela; en tu oficina nunca ha habido ruido.','nl','Aparece poco a poco, pero sin ruido en el puesto no viene del trabajo ni está en el cuadro: enfermedad común (art. 158 LGSS).','1.3','rui'],
+  ['Por afición, restauras muebles los fines de semana y, con los años, los barnices te dan un eccema en las manos.','nl','Es lento y el agente es el mismo que en una enfermedad profesional, pero no viene del trabajo: enfermedad común (art. 158 LGSS).','1.3','qui'],
+  ['En la clínica veterinaria donde trabajas, un gato te araña y se te infecta la herida.','at','El arañazo es súbito y durante el trabajo: accidente de trabajo, aunque luego venga la infección (art. 156.1 LGSS).','1.3.1','bio'],
+  ['Cortando el césped del jardín de tu casa, la desbrozadora te lanza una piedra a la pierna.','nl','Fuera del trabajo: accidente no laboral (art. 158 LGSS).','1.3','maq'],
+  ['Al abrir el horno industrial de la cocina donde trabajas, una bocanada de vapor te quema la cara.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','ene'],
+  ['Pasas la tarde en la playa sin crema solar y acabas con quemaduras en la espalda.','nl','Fuera del trabajo: daño no laboral (art. 158 LGSS).','1.3','ene'],
+  ['En la ventanilla de atención al público, una persona enfadada te lanza una grapadora y te hiere en la ceja.','at','La agresión de un tercero relacionada con el trabajo no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','psi'],
+  ['Tras una ruptura de pareja pasas semanas sin dormir bien y con ansiedad.','nl','No tiene relación con el trabajo: enfermedad común (art. 158 LGSS).','1.3','psi'],
+  ['Justo al salir del trabajo, vuelves a casa en coche por el camino de siempre y te dan un golpe por detrás.','at','Al volver del trabajo por el trayecto habitual: accidente in itinere (art. 156.2.a LGSS).','1.3.1','tra'],
+  ['Un domingo vas de excursión en coche con tus amistades y tenéis un accidente.','nl','Fuera del trabajo: accidente no laboral (art. 158 LGSS).','1.3','tra']
+ ],
+ HIG:[
+  ['Tras años de trabajo en la clínica, en contacto con sangre y saliva, te diagnostican hepatitis B.','ep','Agente biológico en personal sanitario: grupo 3 del cuadro del RD 1299/2006.','1.3.2','bio'],
+  ['Tras años de raspados y pulidos con la muñeca doblada, te diagnostican el síndrome del túnel carpiano.','ep','Movimientos repetidos de muñeca: grupo 2 del cuadro del RD 1299/2006.','1.3.2','esf'],
+  ['Se te resbala el espejo de mano, cae al suelo y te cortas con el cristal al recogerlo.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','maq'],
+  ['Tras años en la clínica usando guantes y material de látex, empiezas a tener asma.','ep','Asma por sustancias de alto peso molecular: grupo 4 del cuadro del RD 1299/2006, que cita a higienistas dentales (4H).','1.3.2','qui'],
+  ['Al mover el sillón dental, te pillas el pie con la base.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','maq']
+ ],
+ IFC:[
+  ['Tras años usando el taladro percutor, notas hormigueo y pérdida de fuerza en las manos.','ep','Vibraciones mecánicas: grupo 2 del cuadro del RD 1299/2006.','1.3.2','rui'],
+  ['Tras años en salas de calderas muy ruidosas, te diagnostican sordera.','ep','Hipoacusia por ruido: grupo 2 del cuadro del RD 1299/2006.','1.3.2','rui'],
+  ['Una tubería de agua caliente revienta y te quema el brazo.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','ene'],
+  ['Llevas años limpiando y manteniendo torres de refrigeración y contraes legionelosis por el agua contaminada.','ep','Legionela en el mantenimiento de esas instalaciones: grupo 3 del cuadro del RD 1299/2006 (3D).','1.3.2','bio'],
+  ['Al soldar una tubería de cobre, se te va el soplete y te quemas el antebrazo.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','ene']
+ ],
+ ITE:[
+  ['Tras años de rodillas tirando cable por el suelo, te diagnostican una bursitis de rodilla.','ep','Posturas forzadas de rodillas: grupo 2 del cuadro del RD 1299/2006.','1.3.2','esf'],
+  ['Tras años trabajando con los brazos por encima de la cabeza, te diagnostican una tendinitis de hombro.','ep','Posturas forzadas: grupo 2 del cuadro del RD 1299/2006.','1.3.2','esf'],
+  ['Pisas mal en el tejado y te tuerces la rodilla.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Tras años trabajando en cuclillas en arquetas y cuadros bajos, te diagnostican una lesión de menisco.','ep','Rodilla flexionada en cuclillas de forma mantenida: grupo 2 del cuadro del RD 1299/2006, que cita a electricistas (2G).','1.3.2','esf'],
+  ['Al taladrar una pared, la broca se engancha, el taladro gira de golpe y te tuerce la muñeca.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','maq']
+ ],
+ STI:[
+  ['Tras años de teclado y ratón con la muñeca doblada hacia arriba, te diagnostican el síndrome del túnel carpiano.','ep','Movimientos repetidos de muñeca: grupo 2 del cuadro del RD 1299/2006.','1.3.2','esf'],
+  ['Al sacar un servidor del armario, se te cae en el pie.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Tocas un cable mal aislado del cuadro eléctrico y recibes una descarga.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','ene'],
+  ['Llevas años en el servicio de soporte telefónico, hablando toda la jornada, y te salen nódulos en las cuerdas vocales.','ep','Uso mantenido de la voz: grupo 2 del cuadro del RD 1299/2006, que cita a teleoperadores (2L).','1.3.2','esf'],
+  ['Al conectar un SAI, salta un chispazo y te quema la mano.','at','Súbito, durante el trabajo (art. 156.1 LGSS).','1.3.1','ene']
+ ]
+},
+3:{
+ comun:[
+  ['Al volver del trabajo te desvías una hora para ir de compras y te caes en el centro comercial.','nl','El desvío por motivos personales rompe el in itinere.','1.3.1','tra'],
+  ['La empresa te manda a visitar a un cliente y, por el camino, tienes un accidente de coche.','at','Accidente en misión: el desplazamiento lo exige el trabajo.','1.3.1','tra'],
+  ['Haces la tarea de siempre, por costumbre sin mirar, y te cortas.','at','Imprudencia profesional: sí es accidente de trabajo (art. 156.5.a LGSS).','1.3.1','maq'],
+  ['Quitas a propósito una protección de la máquina, contra la orden expresa y sabiendo el peligro, y te lesionas.','nl','Imprudencia temeraria: no es accidente de trabajo (art. 156.4.b LGSS).','1.3.1','maq'],
+  ['Llevas meses con ansiedad e insomnio por la presión del trabajo, sin que se haya probado que el trabajo sea la única causa.','in','Estrés: influye el trabajo, pero también otros factores.','1.3.3','psi'],
+  ['Sufres una insolación trabajando en una azotea en agosto.','at','La insolación nunca es «fuerza mayor extraña al trabajo» (art. 156.4.a LGSS).','1.3.1','ene'],
+  ['Te desmayas en tu puesto, en horario de trabajo, y te golpeas al caer.','at','Presunción: en tiempo y lugar de trabajo es accidente de trabajo, salvo prueba en contrario (art. 156.3 LGSS).','1.3.1','cai'],
+  ['Tras meses de ansiedad, la mutua prueba que el trabajo fue la única causa.','at','Enfermedad del trabajo con causa exclusiva: cuenta como accidente de trabajo (art. 156.2.e LGSS).','1.3.3','psi'],
+  ['Ya tenías una lesión de rodilla; te caes en el trabajo y empeora.','at','Enfermedad previa agravada por el accidente (art. 156.2.f LGSS).','1.3.1','cai'],
+  ['Teletrabajas y, en tu horario y en el sitio donde teletrabajas, te caes de la silla.','at','Mismos derechos (Ley 10/2021) y presunción del art. 156.3 LGSS.','1.3.1','cai'],
+  ['Tienes un cargo sindical electo y, al ir a una reunión del sindicato, te caes en la escalera.','at','Cargo electivo sindical (art. 156.2.b LGSS).','1.3.1','cai'],
+  ['Un compañero te humilla y te aísla durante meses y acabas con ansiedad.','in','Acoso laboral: patología inespecífica.','1.3.3','psi'],
+  ['Tras años con un trabajo físico muy duro, notas un desgaste que no corresponde a tu edad.','in','Envejecimiento prematuro: patología inespecífica.','1.3.3','esf'],
+  ['Trabajas al aire libre durante una tormenta, cae un rayo cerca y sufres quemaduras.','at','El rayo nunca es «fuerza mayor extraña al trabajo» (art. 156.4.a LGSS).','1.3.1','ene'],
+  ['Te operan de una fractura que sufriste en el trabajo y, en el hospital, se te infecta la herida.','at','Complicación surgida durante la curación del accidente: también es accidente de trabajo (art. 156.2.g LGSS).','1.3.1','bio'],
+  ['Por una apuesta con gente de tu equipo, saltas desde lo alto de unas cajas apiladas y te rompes un tobillo.','nl','Asumir sin ninguna necesidad un peligro claro es imprudencia temeraria: no es accidente de trabajo (art. 156.4.b LGSS).','1.3.1','cai'],
+  ['Encadenas meses de turnos dobles sin descansar lo suficiente y acabas con un agotamiento físico y mental constante, sin que se haya probado que el trabajo sea la única causa.','in','Fatiga profesional: patología inespecífica.','1.3.3','psi'],
+  ['Sientes que tu trabajo no se valora y que el sueldo no compensa el esfuerzo; llevas meses de malestar y desánimo, sin que se haya probado que el trabajo sea la única causa.','in','Insatisfacción laboral: patología inespecífica.','1.3.3','psi'],
+  ['Tras años en una explotación ganadera, te contagias de brucelosis por los animales.','ep','Enfermedad transmitida por los animales a ganaderos: grupo 3 del cuadro del RD 1299/2006 (3B).','1.3.2','bio'],
+  ['Tras años en la pista de un aeropuerto, junto a los aviones, oyes cada vez peor.','ep','Hipoacusia por ruido: grupo 2 del cuadro del RD 1299/2006, que cita al personal de tierra del tráfico aéreo (2A).','1.3.2','rui'],
+  ['Te diagnostican una escoliosis que tienes desde la infancia; tu trabajo no la ha causado ni la ha empeorado.','nl','Enfermedad común: no viene del trabajo (art. 158 LGSS).','1.3','esf'],
+  ['Teletrabajas por la mañana y, por la tarde, ya fuera de tu horario, te caes en la cocina preparando la cena.','nl','Fuera del horario de trabajo no se aplica la presunción del art. 156.3 LGSS: accidente no laboral.','1.3.1','cai'],
+  ['Vas al trabajo por el camino de siempre, pero a más del doble de la velocidad permitida y adelantando sin visibilidad, y tienes un accidente.','nl','Conducir así es imprudencia temeraria: aunque vayas al trabajo, no es accidente de trabajo (art. 156.4.b LGSS).','1.3.1','tra'],
+  ['La empresa te escribe a todas horas, también de noche y en vacaciones, y llevas meses con ansiedad, sin que se haya probado que el trabajo sea la única causa.','in','Estrés: influye el trabajo, pero también otros factores. Patología inespecífica.','1.3.3','psi'],
+  ['Tras muchos cursos dando clase con la voz forzada, te salen nódulos en las cuerdas vocales.','ep','Uso mantenido de la voz: grupo 2 del cuadro del RD 1299/2006, que cita al profesorado (2L).','1.3.2','esf'],
+  ['Llevas meses con ansiedad por unas oposiciones que preparas por tu cuenta, sin relación con tu trabajo.','nl','La patología inespecífica tiene que ver con el trabajo; esta ansiedad no: enfermedad común (art. 158 LGSS).','1.3','psi'],
+  ['Te duermes en la playa a mediodía, al sol, y sufres un golpe de calor.','nl','Fuera del trabajo: daño no laboral (art. 158 LGSS).','1.3','ene'],
+  ['Pruebas la sirena de incendios de la nave sin protección auditiva, a un palmo de ella, y notas al instante un dolor fuerte en el oído.','at','Es de golpe, no con los años: accidente de trabajo (art. 156.1 LGSS).','1.3.1','rui'],
+  ['Llevas años yendo cada fin de semana a discotecas con la música muy alta y oyes cada vez peor; en tu trabajo no hay ruido.','nl','Es lento, pero no viene del trabajo: enfermedad común (art. 158 LGSS).','1.3','rui'],
+  ['En el almacén del trabajo mezclas dos productos de limpieza sin leer la etiqueta y te intoxicas con los vapores.','at','Súbito y en el trabajo; un descuido así es imprudencia profesional, que no impide el accidente de trabajo (art. 156.5.a LGSS).','1.3.1','qui'],
+  ['Fumas desde hace años y te diagnostican una bronquitis crónica; en tu trabajo no hay polvo ni humos.','nl','Aparece poco a poco, pero no viene del trabajo: enfermedad común (art. 158 LGSS).','1.3','qui'],
+  ['Con las prisas de fin de mes, cargas sin ayuda un mueble que deberían mover dos personas y te lesionas la espalda.','at','Súbito y en el trabajo. Las prisas son imprudencia profesional, no temeraria: sí es accidente de trabajo (art. 156.5.a LGSS).','1.3.1','esf']
+ ],
+ HIG:[
+  ['Tras años atendiendo pacientes con miedo y una agenda imposible, acabas sin energía y distante, sin que se haya probado que el trabajo sea la única causa.','in','Burnout, frecuente en la sanidad: patología inespecífica.','1.3.3','psi'],
+  ['Con la clínica llena, recoges el instrumental como siempre, sin mirar, y te pinchas.','at','Imprudencia profesional: sí es accidente de trabajo (art. 156.5.a LGSS).','1.3.1','maq'],
+  ['Tras años en la clínica en contacto con resinas y adhesivos dentales, te sale un eccema en las manos.','ep','Piel por acrilatos y resinas: grupo 5 del cuadro del RD 1299/2006, que cita a los dentistas (5A).','1.3.2','qui'],
+  ['Una persona a la que atiendes, con mucho miedo, da un manotazo y la sonda se te clava en la mano.','at','La culpa de un tercero relacionada con el trabajo no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','psi'],
+  ['En la clínica, en plena jornada, notas un fuerte dolor en el pecho: es un infarto.','at','En tiempo y lugar de trabajo se presume accidente de trabajo, salvo prueba en contrario (art. 156.3 LGSS); los tribunales lo aplican también a los infartos.','1.3.1','psi']
+ ],
+ IFC:[
+  ['Vas en la furgoneta de una avería a otra por orden de la empresa y te dan un golpe.','at','Accidente en misión: el desplazamiento lo exige el trabajo.','1.3.1','tra'],
+  ['Tras años en salas de máquinas, te diagnostican hipoacusia por ruido.','ep','Grupo 2 del cuadro del RD 1299/2006 (art. 157 LGSS).','1.3.2','rui'],
+  ['Tras años desmontando aislamientos de tuberías antiguas que tenían amianto, te diagnostican asbestosis.','ep','Desmontaje de instalaciones con amianto: grupo 4 del cuadro del RD 1299/2006 (4C).','1.3.2','qui'],
+  ['Alguien del edificio cierra de golpe la puerta de la sala de máquinas sin verte y te pilla la mano.','at','La culpa de un tercero relacionada con el trabajo no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','cai'],
+  ['Montando un equipo en la azotea de un cliente, en tu jornada, sufres un infarto.','at','En tiempo y lugar de trabajo se presume accidente de trabajo, salvo prueba en contrario (art. 156.3 LGSS); los tribunales lo aplican también a los infartos.','1.3.1','psi']
+ ],
+ ITE:[
+  ['Trabajando en un tejado en julio, sufres un golpe de calor.','at','Un fenómeno natural así no es fuerza mayor extraña al trabajo (art. 156.4.a LGSS).','1.3.1','ene'],
+  ['Bajas del tejado por la escalera de mano, falla un peldaño y te caes.','at','Lesión durante el trabajo (art. 156.1 LGSS).','1.3.1','cai'],
+  ['Tras años en obra usando martillos perforadores y pistolas de fijación muy ruidosas, te diagnostican sordera.','ep','Hipoacusia por ruido: grupo 2 del cuadro del RD 1299/2006 (2A).','1.3.2','rui'],
+  ['Alguien de otra empresa de la obra mueve sin avisar la escalera en la que trabajas y te caes.','at','La culpa de un tercero relacionada con el trabajo no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','cai'],
+  ['En plena instalación, en tu jornada, sufres un ictus en la azotea.','at','En tiempo y lugar de trabajo se presume accidente de trabajo, salvo prueba en contrario (art. 156.3 LGSS); los tribunales lo aplican también a los ictus.','1.3.1','psi']
+ ],
+ STI:[
+  ['Tras meses de guardias continuas, acabas sin fuerzas y sin ganas, sin que se haya probado que el trabajo sea la única causa.','in','Fatiga o burnout: patología inespecífica.','1.3.3','psi'],
+  ['Teletrabajando en tu horario, tropiezas con el cable del portátil y te haces un esguince.','at','Presunción del art. 156.3 LGSS: tiempo y lugar de trabajo.','1.3.1','cai'],
+  ['Tras años montando y cableando equipos electrónicos a diario, con la muñeca doblada y movimientos repetidos, te diagnostican el síndrome del túnel carpiano.','ep','Montaje de electrónica con movimientos repetidos de muñeca: grupo 2 del cuadro del RD 1299/2006 (2F).','1.3.2','esf'],
+  ['Alguien de otro departamento abre de golpe la puerta del centro de datos y te golpea en la cara.','at','La culpa de un tercero relacionada con el trabajo no impide que sea accidente de trabajo (art. 156.5.b LGSS).','1.3.1','cai'],
+  ['En la oficina, en tu horario, sufres un infarto delante del ordenador.','at','En tiempo y lugar de trabajo se presume accidente de trabajo, salvo prueba en contrario (art. 156.3 LGSS); los tribunales lo aplican también a los infartos.','1.3.1','psi']
+ ]
+}
+};
+
+/* «Muro de daños» · pictogramas propios (fase 5, 17-11-2026). Dibujados a mano para este juego: trazos simples,
+   viewBox 24×24, trazo 2 redondeado; sin emojis (cada móvil los pinta distinto) ni dibujos copiados ni marcas.
+   Colores del centro: #004230, #c24400, #FCD100 y blanco. {c} = color del trazo (para los rellenos).
+   ico(nombre)          → <svg> en línea para el HTML (toma el color del texto: currentColor)
+   icoImg(nombre,color) → imagen ya rasterizada para el lienzo (se carga una vez y se reutiliza) */
+const ICONOS={
+ carpeta:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 11h18"/>',
+ regalo:'<rect x="3" y="9" width="18" height="5" rx="1"/><path d="M5 14v6h14v-6M12 9v11"/><path d="M12 9C10 5 6.5 4.5 6.5 7S9.5 9 12 9s5.5 0 5.5-2S14 5 12 9z"/>',
+ equipo:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.1c2.6.3 4.5 2.4 4.5 5.9"/>',
+ iman:'<path d="M4 3h5v9a3 3 0 0 0 6 0V3h5v9a8 8 0 0 1-16 0z"/><path d="M4 7h5M15 7h5"/>',
+ llave:'<path d="M14.7 3.3a5.2 5.2 0 0 0-4.5 6.9L3.8 16.6a2 2 0 0 0 2.8 2.8l6.4-6.4a5.2 5.2 0 0 0 6.9-4.5L17 9.5 14.5 7z"/>',
+ tortuga:'<path d="M3 16a8 7 0 0 1 16 0z"/><path d="M7.5 16l3.5-6 3.5 6"/><circle cx="21" cy="13" r="1.6"/><path d="M6 16v3M16 16v3"/>',
+ chaleco:'<path d="M8 3l4 4 4-4 4 2-2 5v11H6V10L4 5z"/><path d="M12 7v14M6 15h12"/>',
+ matraz:'<path d="M9 3h6M10 3v6L4.5 18.5A1.8 1.8 0 0 0 6 21h12a1.8 1.8 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/>',
+ mente:'<path d="M6 21v-4.2A7.5 7.5 0 1 1 18.6 11l1.6 3.3a.6.6 0 0 1-.5.8H18v2.4a2 2 0 0 1-2 2h-2.5V21"/><path d="M9 9.5a2.5 2.5 0 0 1 5 0c0 1.4-1.1 2.5-2.5 2.5"/>',
+ casa:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+ salud:'<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M12 10.5v5M9.5 13h5"/>',
+ corazon:'<path fill="{c}" d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+ rayo:'<path d="M13 2L5 13h6l-1 9 8-11h-6z"/>',
+ altavoz:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>',
+ pesa:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
+ ladrillo:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 12h18M9 5v7M15 12v7"/>',
+ llama:'<path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-4-10-2 2-3 4-3 6-1-1-1.5-2-1.5-3C7 9.5 6 12 6 15a6 6 0 0 0 6 6z"/>',
+ /* fase 6, 17-11-2026: factores de riesgo de los ladrillos (rayo, altavoz y pesa ya estaban) */
+ escalera:'<path d="M7 3v18M17 3v18M7 7.5h10M7 12h10M7 16.5h10"/>',
+ engranaje:'<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2.5v3.5M12 18v3.5M2.5 12H6M18 12h3.5M5.3 5.3l2.4 2.4M16.3 16.3l2.4 2.4M5.3 18.7l2.4-2.4M16.3 7.7l2.4-2.4"/>',
+ bidon:'<path d="M6 5h12v14.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 6 19.5z"/><path d="M6 9.5h12M6 15.5h12M9 2.5h3"/>',
+ virus:'<circle cx="12" cy="12" r="5"/><path d="M12 7V4.5M12 17v2.5M7 12H4.5M17 12h2.5"/><circle cx="12" cy="3" r="1.4"/><circle cx="12" cy="21" r="1.4"/><circle cx="3" cy="12" r="1.4"/><circle cx="21" cy="12" r="1.4"/><circle cx="10.4" cy="11" r=".5"/><circle cx="13.6" cy="13.4" r=".5"/>',
+ agobio:'<circle cx="12" cy="14" r="6.5"/><path d="M9.5 13h.01M14.5 13h.01M9.5 17.5c1.6-1.1 3.4-1.1 5 0"/><path d="M6.5 4.5l1.8 2M12 2.5v2.8M17.5 4.5l-1.8 2"/>',
+ coche:'<path d="M3 16.5v-3.5l2.2-5h13.6l2.2 5v3.5z"/><path d="M3 13h18"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/>',
+ mano:'<path d="M9 13V4.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V12m0 0a1.5 1.5 0 0 1 3 0v3a6 6 0 0 1-6 6h-1.5a6 6 0 0 1-5-2.7L5 14.6a1.6 1.6 0 0 1 2.6-1.9L9 14.5"/>'
+};
+const icoSVG=(n,col='#fff')=>`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="96" height="96" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n].split('{c}').join(col)}</svg>`;
+const ico=(n,cls='')=>`<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONOS[n].split('{c}').join('currentColor')}</svg>`;
+const ICO_IMG={};
+function icoImg(n,col='#fff'){
+ const k=n+col;if(ICO_IMG[k])return ICO_IMG[k];
+ const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(icoSVG(n,col));
+ return ICO_IMG[k]=im;
+}
+const icoListo=im=>!!(im&&im.complete&&im.naturalWidth>0);
+/* tipo de daño → pictograma (sustituye a los emojis de RESP en casos.js) */
+const RESP_ICO={at:'chaleco',ep:'matraz',in:'mente',nl:'casa'};
+
+/* Fin de plazo de cada grupo (hora del móvil). José, 13-11-2026: sin fecha hasta que se abra en Classroom. */
+const CIERRES={};
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+/* ===== Partida oficial: común a todos los juegos (fase 2, 17-11-2026) =====
+   Antes estaba copiado en cada plantilla; cada arreglo había que hacerlo siete veces. Los montar_*.py lo meten donde la
+   plantilla tiene la marca de oficial (comun_montar.py). Cada juego define antes, o después, sus propios datos:
+   JUEGO, INTENTOS, CLAVE_OF, CLAVE_MEJOR, CIERRES, DIAS, MESES y arrancaOficial(código, intento); y si quiere,
+   OFI_ABAJO (por defecto «los niveles de abajo») y OFI_AVISO() (una frase más antes de «¿Empezamos?»). */
+
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const PODIO=['1','0,75','0,50'];
+/* Servicio «Juegos IPE · intentos» (Apps Script de José, juegos/servicio_intentos): cuenta AL MOMENTO y apunta cada inicio. */
+const SERVICIO='https://script.google.com/macros/s/AKfycbw56Jq-wbMnwqNgdTatBKiyfdN3TP8fM0IarXeM2YD1d79qJKXgrPpOLip2Bb0BFRhqrQ/exec';
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
+const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m&&RX_COD.test(m[1]+'-'+m[2])?m[1]+'-'+m[2]:''};
+/* el código tal como se guarda y se envía: siempre con dos cifras (17-11-2026: 1HIG-7 y 1HIG-07 salían como dos códigos) */
+const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'').trim().toUpperCase().replace(/\s+/g,'');
+
+/* Plazo de cada grupo (CIERRES lo pone cada juego) */
+function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
+function textoPlazo(c){const f=plazo(c);if(!f)return '';
+ const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+function mejorDe(c){c=normCod(c);if(!c)return 0;const v=ls.get(CLAVE_MEJOR+'_'+c,null);if(v!==null)return +v||0;const viejo=+ls.get(CLAVE_MEJOR,0);if(!viejo)return 0;
+ let mio=false,otro=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf(CLAVE_OF+'_')!==0||!(+localStorage.getItem(k)>0))continue;if(k===CLAVE_OF+'_'+c)mio=true;else otro=true}}catch(e){}
+ return mio&&!otro?viejo:0}
+const ponMejor=(c,v)=>{if(normCod(c))ls.set(CLAVE_MEJOR+'_'+normCod(c),v)};
+
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») ===== */
+function locales(c){
+ const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
+ if(v!==null)return +v||0;
+ return normCod(ls.get('ipe_codigo',''))===normCod(c)?+ls.get(CLAVE_OF,0):0;   // contador antiguo (por dispositivo)
+}
+function ponLocales(c,n){ls.set(CLAVE_OF+'_'+normCod(c),n)}
+const pendientes=c=>enCola().filter(t=>normCod(t.cod||(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(t)||[])[1])===normCod(c)).length;
+async function pideServicio(a,c){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),12000);
+  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  clearTimeout(tt);
+  return typeof r.n==='number'?r:null;
+ }catch(e){return null}
+}
+async function remotos(c){const r=await pideServicio('consulta',c);return r?r.n:null}
+async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:Math.max(l,r),sin:r===null}}
+function pintaOfi(n,estado){
+ const b=document.getElementById('ofi');if(!b)return;
+ if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
+ if(estado==='sinred'){b.disabled=true;b.textContent='Sin conexión: la partida oficial necesita internet';return}
+ if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
+ b.disabled=n>=INTENTOS;
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+}
+let tOfi=0;
+function revisaOfi(){
+ clearTimeout(tOfi);
+ {const i=document.getElementById('cod');if(i&&normCod(i.value))pintaOfi(0,'mirando')}
+ tOfi=setTimeout(async()=>{
+  const i=document.getElementById('cod');if(!i)return;
+  const c=i.value;if(!normCod(c)){pintaOfi(0,'libre');return}
+  pintaOfi(0,'mirando');
+  const r=await intentosDe(c);if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n,r.sin?'sinred':'');
+ },400);
+}
+async function empiezaOficial(c){
+ const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
+ const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
+ const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
+ const r=await intentosDe(c);pintaOfi(r.n,r.sin?'sinred':'');
+ if(r.sin){dialogo('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en '+abajo+'.');return}
+ if(r.n>=INTENTOS){dialogo(yaJugadas);return}
+ if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
+ /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
+ const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
+ const ini=await pideServicio('inicio',c);
+ if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini.ok&&ini.cerrado){pintaOfi(ini.n);dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en '+abajo+'.');return}
+ if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
+ ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
+ arrancaOficial(c,ini.n);
+}
+
+/* ===== Subida de nota ===== */
+const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
+/* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
+const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
+
+/* ===== Envío del resultado (fase 3, 17-11-2026): al servicio, no al formulario. Va con el «ref» que dio el servicio al
+   empezar; el servicio comprueba puntos y duración y lo apunta en la hoja. Si no hay red, se guarda en el dispositivo y se
+   envía solo al volver la conexión (o la próxima vez que se abra el juego). ===== */
+const COLA=()=>'cola_envios_'+JUEGO;
+const claveRef=(c,n)=>'ofi_ref_'+JUEGO+'_'+normCod(c)+'_'+n;
+/* true = apuntado; 'rechazado' = el servicio no lo acepta (no se reintenta); false = sin conexión (se reintenta) */
+async function manda(e){
+ if(typeof e==='string')e={txt:e,cod:(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(e)||[])[1]||'',ref:''};   // envíos guardados antes de la fase 3
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),15000);
+  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  clearTimeout(tt);
+  return r.ok?true:r.error?'rechazado':false;
+ }catch(x){return false}
+}
+function enCola(){try{return JSON.parse(localStorage.getItem(COLA())||'[]')}catch(e){return[]}}
+function guardaCola(c){try{localStorage.setItem(COLA(),JSON.stringify(c))}catch(e){}}
+let vaciando=false;
+async function vaciaCola(){
+ if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
+ try{const c=enCola();if(!c.length)return;
+  const quedan=[];for(const t of c){if((await manda(t))===false)quedan.push(t)}
+  guardaCola(quedan)}finally{vaciando=false}
+}
+addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
+function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
+ const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
+ return l.length?' | fallos: '+l.join('; '):'';
+}
+const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
+function envia(d){
+ const est=d.est||[d.n1,d.n2,d.n3];
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ const e={txt,cod:d.codigo,ref:ls.get(claveRef(d.codigo,d.intento),'')};
+ return manda(e).then(ok=>{if(ok===false){const c=enCola();c.push(e);guardaCola(c)}return ok});
+}
+/* lo que ve el alumno al terminar */
+function textoEnvio(ok){
+ return ok===true?'✔ Resultado enviado a tu profesor.':ok==='rechazado'?'⚠ Este resultado no se ha podido aceptar. Tu profesor lo revisará.':
+  '⚠ Se ha cortado la conexión y tu resultado no ha llegado todavía. Se queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet: vuelve a abrir el juego con conexión.';
+}
+
+/* ===== Puesto en el ranking del grupo (tabla pública con grupo, puntos y juego; sin códigos ni nombres) ===== */
+async function puesto(codigo,pts,nuevo){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
+  const txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);
+  const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>+f[1]||0);
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  return {pos,total};
+ }catch(e){return null}
+}
+const recien=()=>Date.now()-(+ls.get(CLAVE_OF.replace(/_oficiales$/,'')+'_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+}
+
+function arrancaOficial(c,n){presenta(1,{codigo:c,intento:n,est:[],pts:0})}   // lo llama empiezaOficial (oficial.js)
+
+const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
+const INTENTOS=3;
+const JUEGO='UD2 Muro de daños';
+const CLAVE_OF='muro_oficiales';
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+const CLAVE_MEJOR='muro_mejor';
+
+addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
+
+/* ===== El juego ===== */
+const $=s=>document.querySelector(s), app=$('#app');
+const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const rec=n=>+ls.get('muro_record_'+n,0)||0;
+const guarda=(n,p)=>{if(p>rec(n))ls.set('muro_record_'+n,p)};
+const ciclo=()=>grupoDe(ls.get('ipe_codigo',''));
+/* fase 4, 17-11-2026: los expedientes pendientes (caídos o sin salir) se preguntan al acabar el nivel, a mitad de puntos y sin racha */
+const PUNTOS={ladrillo:10,expediente:20,acierto:100,fallo:-50,muro:200,vida:100,pendiente:50,falloPendiente:-25};
+const EXPEDIENTES=8, SEGUNDOS=12;
+const NIVELES=[
+ {n:1,titulo:'¿Es del trabajo?',sub:'Decide si cada daño tiene relación con el trabajo: accidente de trabajo o daño no laboral.',col:'#2f8a5b',resp:['at','nl'],v:250,filas:3,duros:0,pala:78,
+  drama:'Primer día en el taller. Un <b>muro de riesgos</b> tapa la salida y alguien tiene que derribarlo. Dentro de algunos ladrillos hay <b>expedientes</b> de compañeros que se han hecho daño. La mutua necesita saber, ya, si cada caso es del trabajo… o no.'},
+ {n:2,titulo:'¿De golpe o poco a poco?',sub:'Distingue el daño súbito del que aparece con los años: se añade la enfermedad profesional.',col:'#0d6b4f',resp:['at','ep','nl'],v:280,filas:4,duros:0,pala:72,
+  drama:'El muro ha crecido. Los expedientes ya no son solo golpes y cortes: hay daños que <b>llegan con los años</b>. Recuerda: el accidente es súbito; la enfermedad profesional es lenta y tiene que estar en el <b>cuadro del RD 1299/2006</b>.'},
+ {n:3,titulo:'Expediente completo',sub:'Clasifica cada caso: accidente de trabajo, enfermedad profesional, patología inespecífica o daño no laboral. Algunos supuestos tienen trampa.',col:'#ff5900',resp:['at','ep','in','nl'],v:315,filas:5,duros:1,forma:'rombo',pala:66,
+  drama:'Último muro, y el más duro: un <b>rombo con el núcleo blindado</b>. Hay que abrirse paso desde fuera: <b>los ladrillos grises aguantan dos golpes</b> y <b>los gris oscuro del centro, tres</b>. Los expedientes vienen con <b>trampa</b>: desvíos en el camino a casa, imprudencias, insolaciones, teletrabajo… Lee bien cada caso antes de decidir.'}
+];
+const DEF={
+ at:'Lesión súbita con ocasión o por consecuencia del trabajo, también al ir o volver (in itinere).',
+ ep:'Deterioro lento por un agente del trabajo, recogido en el cuadro del RD 1299/2006.',
+ in:'Daño relacionado con el trabajo en el que influyen también otros factores: estrés, burnout, acoso, fatiga…',
+ nl:'Sin relación con el trabajo: accidente no laboral o enfermedad común.'
+};
+let st={}, raf=0;
+
+function casosDe(n){
+ const b=CASOS[n], c=ciclo();
+ const sec=c&&b[c]?b[c]:baraja([].concat(...['HIG','IFC','ITE','STI'].map(k=>b[k]))).slice(0,3);
+ /* fase 6, 17-11-2026: dos factores salen con dos expedientes cada uno (al azar, sin mirar el tipo de daño, para no dar pistas),
+    así suele verse que el mismo riesgo da daños distintos y las manchas de ladrillos son más grandes */
+ const com=baraja(b.comun), eleg=baraja(sec).slice(0,3);let parejas=0;
+ for(const fa of baraja(Object.keys(FACTORES))){if(parejas>=2)break;const de=com.filter(x=>x[4]===fa);if(de.length>=2){eleg.push(de[0],de[1]);parejas++}}
+ for(const x of com){if(eleg.length>=EXPEDIENTES)break;if(!eleg.includes(x))eleg.push(x)}
+ return baraja(eleg).slice(0,EXPEDIENTES).map(([texto,r,ex,ap,fa])=>({texto,r,ex,ap,fa}));
+}
+
+/* fase 6, 17-11-2026: chapa de un factor de riesgo (pictograma sobre su color) */
+const chapa=F=>`<i class="fac${F.claro?' claro':''}" style="background:${F.claro?F.t[0]:F.c}">${ico(F.ic)}</i>`;
+const fac=F=>`<span>${chapa(F)}${F.n}</span>`;
+
+function portada(){
+ parar();app.classList.remove('jugando');
+ app.innerHTML=`<div class="portada">
+  <div class="heroe" style="--brillo:rgba(255,89,0,.3)">
+   <div class="hm">IPE I · Unidad 2 · Daños profesionales</div>
+   <h1>Muro<br><span>de daños</span></h1>
+   <div class="muestra" style="justify-content:flex-start"><i></i><i class="x">${ico('carpeta')}</i><i></i><i></i><i class="x">${ico('carpeta')}</i></div>
+   <p>Cada ladrillo es un riesgo del trabajo. Rómpelos y, cuando caiga un ${ico('carpeta')} expediente, cógelo con la pala: tendrás ${SEGUNDOS} segundos para decir qué tipo de daño es. Los que se te escapen te los preguntamos al acabar el nivel. Y atento a los ${ico('regalo')} ladrillos sorpresa…</p>
+   <div class="chips">${NIVELES.map(l=>`<span>${l.titulo}</span>`).join('')}</div>
+  </div>
+  <div class="oficial">
+   <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
+   <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
+   <button class="btn p" id="ofi" ${normCod($cod0())?'disabled':''}>${normCod($cod0())?'Comprobando tus intentos…':'Partida oficial'}</button>
+   <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
+   <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
+  </div>
+  ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
+  <h2 class="serif entreno">Entrena cuando quieras</h2>
+  ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
+ </div><div class="pie">CPIFP Los Viveros · LGSS (arts. 156, 157 y 158) y RD 1299/2006</div>`;
+ app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>presenta(+b.dataset.n));
+ $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
+ if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
+ $('#ofi').onclick=()=>{
+  const c=codOficial($('#cod').value);   // siempre 1HIG-07
+  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
+  {const f=plazo(c);if(f&&new Date()>f){dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
+  empiezaOficial(c);
+ };
+ revisaOfi();
+}
+
+/* presentación de cada nivel: un poco de teatro, las reglas y un botón para empezar */
+function presenta(n,oficial){
+ parar();app.classList.remove('jugando');
+ const l=NIVELES[n-1];
+ app.innerHTML=`<div class="intro">
+  <div class="marca">${oficial?'Partida oficial · ':''}Nivel ${n} de 3</div>
+  <h1>${l.titulo}</h1>
+  <div class="drama">${l.drama}</div>
+  <div class="reglas"><b>Cómo se juega</b>
+  ${!oficial&&tutoPendiente()?`<p class="tuto-msg">${ico('mano')} Es tu primera partida: el juego te enseña sobre la marcha (si ya sabes, puedes saltarte la explicación).</p>`:''}
+  <ul class="cortas">
+   <li>${ico('mano')}<span>Desliza el dedo por la mitad de abajo para mover la pala (en el ordenador, ratón o ← →). Toca para lanzar.</span></li>
+   <li>${ico('carpeta')}<span>Coge los expedientes que caen: tienes ${SEGUNDOS} s para decir qué tipo de daño es.</span></li>
+   <li>${ico('regalo')}<span>Las cápsulas sorpresa ayudan: cógelas también.</span></li>
+   <li>${ico('escalera')}<span>Cada ladrillo es un riesgo y su expediente es un daño que nace de ese riesgo. Si lo clasificas bien, los ladrillos vecinos del mismo riesgo quedan <b>controlados</b>: la bola los atraviesa.</span></li>
+  </ul>
+  <details><summary>Puntos y reglas completas</summary><ul>
+   <li>Aciertas: <b>+100</b> y ${ico('chaleco')} pala ancha (EPI); si encadenas aciertos, cada uno vale más (hasta el doble). Fallas: <b>−50</b> y se corta la racha. Tres aciertos seguidos: ${ico('salud')} una vida más.</li>
+   <li>${ico('carpeta')} <b>Expedientes pendientes:</b> si un expediente se te cae o su ladrillo sigue en pie al acabar, no se pierde: al final del nivel te lo preguntamos igual, uno tras otro. Valen la mitad (<b>+50</b> si aciertas, <b>−25</b> si fallas), no cuentan para la racha y sí para las estrellas.</li>
+   <li>${ico('regalo')} <b>Ladrillos sorpresa:</b> ${Object.values(SORPRESAS).map(S=>`${ico(S.ic)} <b>${S.n}</b>: ${S.d.charAt(0).toLowerCase()+S.d.slice(1)}`).join('. ')}. No dan puntos: solo ayudan.</li>
+   <li><b>Prevención en cadena:</b> si aciertas un expediente mientras juegas, los ladrillos del mismo riesgo que estaban junto al suyo quedan controlados (claros, con ✓): se rompen de un golpe, aunque fueran grises, y la bola los atraviesa sin rebotar.</li>
+   <li>Ladrillo: +${PUNTOS.ladrillo}; ladrillo con expediente: +${PUNTOS.expediente}. En el nivel 3, ${ico('ladrillo')} los grises aguantan 2 golpes y los gris oscuro, 3.</li>
+   <li>Tienes 3 vidas: solo pierdes una cuando se caen todas las bolas. Al final siempre clasificas los ${EXPEDIENTES} expedientes: ★★★ con 7 u 8 aciertos, ★★ con 5 o 6 y ★ con 3 o 4. Derribar el muro y las vidas que te queden suben tus puntos.</li>
+  </ul></details>
+  <div class="cats">${l.resp.map(k=>`<div class="cat"><i style="background:${RESP[k].c}">${ico(RESP_ICO[k])}</i><span><b>${RESP[k].n}:</b> ${DEF[k]}</span></div>`).join('')}</div></div>
+  <div class="reglas"><b>Los riesgos del muro</b> <span class="libro">(arriba del muro tienes la leyenda)</span><div class="facs">${Object.values(FACTORES).map(fac).join('')}</div></div>
+  <div class="btns"><button class="btn p" id="vamos">▶ ¡Vamos allá! Empezar</button><button class="btn s" id="menu">${oficial?'Abandonar la partida oficial':'Volver al menú'}</button></div>
+ </div>`;
+ $('#vamos').onclick=()=>empieza(n,oficial);
+ $('#menu').onclick=async()=>{if(oficial&&!(await dialogo('¿Seguro? El intento '+oficial.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:"Sí, salir",no:"Seguir jugando"})))return;portada()};
+}
+
+/* ===== Motor ===== */
+/* Fase 5, 17-11-2026 (sensación de juego):
+   · CAMPO LÓGICO FIJO de 360×640 para todos los dispositivos (antes el ancho, el alto y las columnas dependían de la pantalla:
+     el ranking dependía del móvil). Se escala a la pantalla y sobran bandas a los lados o arriba y abajo.
+   · FÍSICA DE PASO FIJO a 120 Hz con acumulador: la misma partida a 30, 60 o 120 fotogramas por segundo.
+   · CONTROL RELATIVO: la pala sigue el desplazamiento del dedo desde cualquier punto de la mitad inferior (no se coloca bajo
+     el dedo, que tapaba la bola). El ratón y las flechas siguen igual. Un toque corto lanza la bola. */
+const CW=360, CH=640, PASO=1/120, COLS=8, BW=(CW-2*12-(COLS-1)*5)/COLS, BH=30, TOP=84;
+const SENS=1.25;                                  /* el dedo recorre menos que la pala: 1 cm de dedo ≈ 1,25 cm de pala */
+const AYUDA=15*Math.PI/180, AMIN=Math.asin(.3);   /* ayuda de puntería ≤15° · la bola nunca sale a menos de ~17° de la horizontal */
+/* tutorial jugable (la primera vez, solo en entrenamiento) y sorpresas ya explicadas */
+const TUTO='muro_tutorial', VISTAS='muro_vistas';
+const vistas=()=>{try{return JSON.parse(ls.get(VISTAS,'{}'))||{}}catch(e){return {}}};
+const marcaVista=k=>{const v=vistas();if(v[k])return false;v[k]=1;ls.set(VISTAS,JSON.stringify(v));return true};
+const tutoPendiente=()=>!ls.get(TUTO,'');
+function finTuto(){
+ if(!st.tuto)return;st.tuto=null;ls.set(TUTO,'1');
+ const b=document.getElementById('saltar');if(b)b.remove();
+}
+
+function parar(){cancelAnimationFrame(raf);raf=0;clearInterval(st.reloj);if(st.obs)st.obs.disconnect();removeEventListener('keydown',tecla);removeEventListener('keyup',teclaUp);if(st.pm){removeEventListener('pointermove',st.pm);removeEventListener('pointerdown',st.pd);removeEventListener('pointerup',st.pu);removeEventListener('pointercancel',st.pu)}document.removeEventListener('visibilitychange',oculta)}
+
+/* El muro: igual en todos los dispositivos (8 columnas, ladrillos de 30 de alto con su pictograma) */
+function montaMuro(l,n,casos){
+ const filas=l.filas, ladr=[];   /* filas completas (José, 13-11-2026) */
+ /* nivel 3 en forma de rombo con «núcleo duro» (José, 13-11-2026): borde de 1 golpe, interior gris (2), corazón gris oscuro (3) */
+ const anchos=l.forma==='rombo'?[2,4,6,8,6,4,2]:Array(filas).fill(COLS);
+ const medio=(anchos.length-1)/2;
+ anchos.forEach((w,f)=>{const c0=(COLS-w)/2;for(let c=c0;c<c0+w;c++){
+  const L={x:12+c*(BW+5),y:TOP+f*(BH+5),w:BW,h:BH,f,c,vida:1,fa:'',exp:false,vivo:true};
+  if(l.forma==='rombo'){const borde=c===c0||c===c0+w-1||f===0||f===anchos.length-1;
+   if(!borde){L.duro=true;L.vida=(Math.abs(f-medio)<=1&&Math.abs(c+.5-COLS/2)<=1)?3:2}}
+  ladr.push(L)}});
+ /* nivel 3 sin rombo (por si vuelve): ladrillos de varios golpes según el color: gris = 2 golpes, gris oscuro = 3 */
+ if(l.duros&&l.forma!=='rombo'){
+  ladr.filter(b=>b.f<=1).forEach(b=>{b.vida=2;b.duro=true});
+  baraja(ladr.filter(b=>b.f<=1)).slice(0,Math.round(COLS*.6)).forEach(b=>{b.vida=3});
+  baraja(ladr.filter(b=>b.f===2)).slice(0,Math.round(COLS*.3)).forEach(b=>{b.vida=2;b.duro=true});
+ }
+ /* expedientes: repartidos por el muro, nunca en un ladrillo duro */
+ const cand=baraja(ladr.filter(b=>!b.duro));
+ const elegidos=[];for(const b of cand){if(elegidos.length>=EXPEDIENTES)break;if(elegidos.every(e=>Math.abs(e.x-b.x)+Math.abs(e.y-b.y)>BW*1.2))elegidos.push(b)}
+ for(const b of cand){if(elegidos.length>=EXPEDIENTES)break;if(!elegidos.includes(b))elegidos.push(b)}
+ /* fase 6, 17-11-2026 («el ladrillo es la causa»): cada expediente va en un ladrillo de su factor de riesgo y los demás
+    ladrillos toman el factor del expediente más cercano, así que cada riesgo forma una mancha de ladrillos vecinos */
+ const fas=casos&&casos.length?casos.map(x=>x.fa):baraja(Object.keys(FACTORES)).slice(0,EXPEDIENTES);
+ elegidos.forEach((b,i)=>{b.exp=true;b.fa=fas[i%fas.length];if(casos&&casos[i])b.caso=casos[i]});
+ const orden=baraja(elegidos);
+ for(const b of ladr)if(!b.exp){let m=orden[0],dm=1e9;
+  for(const e of orden){const df=Math.abs(e.f-b.f),dc=Math.abs(e.c-b.c),d=Math.max(df,dc)+(df+dc)*.01;if(d<dm){dm=d;m=e}}
+  b.fa=m.fa}
+ /* sorpresas escondidas (no se ven hasta romper el ladrillo): 3 en el nivel 1 y 4 en los demás, de tipos distintos */
+ const tipos=baraja(Object.keys(SORPRESAS)).slice(0,n===1?3:4);
+ baraja(ladr.filter(b=>!b.exp&&b.vida===1)).slice(0,tipos.length).forEach((b,k)=>b.sorpresa=tipos[k]);
+ return ladr;
+}
+
+function empieza(n,oficial){
+ parar();
+ /* sin el zoom de la portada antes de medir (lección de la Serpiente, 12-11-2026) */
+ app.style.zoom='';app.style.maxWidth='';app.style.minHeight='';
+ app.classList.add('jugando');
+ const l=NIVELES[n-1];
+ app.innerHTML=`<div class="juego">
+  <div class="hud"><span class="pill" id="hp">0 pts</span><span class="pill exp">${ico('carpeta')} <span id="he">0/${EXPEDIENTES}</span></span><span class="pill" id="hv" aria-label="Vidas"></span><span style="display:flex;gap:6px"><button class="pill" id="pausa" aria-label="Pausa">⏸</button><button class="pill" id="salir" aria-label="Salir de la partida">✕</button></span></div>
+  <div class="marco" id="marco"><canvas id="lienzo"></canvas></div>
+ </div>`;
+ const marco=$('#marco'), cv=$('#lienzo');
+ const W=CW, H=CH;
+ const casos=casosDe(n);
+ st={l,W,H,cv,ctx:cv.getContext('2d',{alpha:false}),cols:COLS,pts:0,vidas:3,casos,res:[],porNeut:[],k:0,aciertos:0,racha:0,vidaExtra:false,fallos:[],
+  oficial:oficial||null,pala:{x:W/2,w:l.pala,y:H-48,h:14,obj:W/2,hund:0},bola:null,pegada:true,caps:[],part:[],ladr:montaMuro(l,n,casos),
+  efecto:{tipo:'',hasta:0},vel:l.v*1.05,pausa:false,tarjeta:false,aviso:'',avisoHasta:0,teclas:{},t:performance.now(),muroEntero:false,fin:false,
+  tj:0,acc:0,congela:0,ultCongela:-1,golpes:0,ultimoGolpe:0,ultPared:-1,
+  tuto:!oficial&&tutoPendiente()?{paso:'lanza'}:null};
+ st.fondo=pintaFondo(W,H);
+ nuevaBola();
+ ajustaLienzo();
+ st.obs=new ResizeObserver(ajustaLienzo);st.obs.observe(marco);
+ /* mando */
+ const aLogico=e=>{const b=st.rect||(st.rect=cv.getBoundingClientRect());return (e.clientX-b.left)/b.width*W};
+ const abajo=e=>{const r=st.mrect||(st.mrect=marco.getBoundingClientRect());return e.clientY>=r.top+r.height/2};
+ /* fluidez (José, 13-11-2026): se escucha en toda la ventana, con la posición del lienzo guardada.
+    Dedo: arrastre relativo desde la mitad inferior; toque corto = lanzar. Ratón: la pala va bajo el cursor (no tapa nada). */
+ st.pd=e=>{if(st.tarjeta||st.pausa||st.fin)return;if(e.target!==cv&&e.target!==marco)return;
+  const raton=e.pointerType==='mouse';
+  st.arr={id:e.pointerId,x:e.clientX,x0:e.clientX,y0:e.clientY,mueve:!raton&&abajo(e)};
+  if(raton){st.puntero=true;st.pala.obj=aLogico(e)}};
+ st.pm=e=>{if(st.tarjeta||st.pausa||st.fin)return;
+  if(e.pointerType==='mouse'){st.puntero=true;st.pala.obj=aLogico(e);return}
+  const a=st.arr;if(!a||a.id!==e.pointerId||!a.mueve)return;
+  st.puntero=true;st.pala.obj+=(e.clientX-a.x)/(st.esc||1)*SENS;a.x=e.clientX;
+  st.pala.obj=Math.max(st.pala.w/2,Math.min(W-st.pala.w/2,st.pala.obj))};
+ st.pu=e=>{const a=st.arr;if(!a||a.id!==e.pointerId)return;st.arr=null;
+  if(e.type==='pointerup'&&!st.tarjeta&&!st.pausa&&!st.fin&&st.pegada&&Math.abs(e.clientX-a.x0)<14&&Math.abs(e.clientY-a.y0)<14)lanza()};
+ addEventListener('pointerdown',st.pd);addEventListener('pointermove',st.pm,{passive:true});
+ addEventListener('pointerup',st.pu);addEventListener('pointercancel',st.pu);
+ addEventListener('keydown',tecla);addEventListener('keyup',teclaUp);
+ document.addEventListener('visibilitychange',oculta);
+ $('#pausa').onclick=()=>pausa(!st.pausa);
+ $('#salir').onclick=()=>pausa(true);
+ hud();
+ if(st.tuto){
+  const b=document.createElement('button');b.type='button';b.id='saltar';b.className='saltar';b.textContent='Saltar la explicación';
+  b.onclick=()=>{const v=vistas();Object.keys(SORPRESAS).concat('duro').forEach(k=>v['s_'+k]=1);ls.set(VISTAS,JSON.stringify(v));
+   for(const c of st.caps)if(c.mano){c.mano=false;c.vy=c.vy0}finTuto();aviso('','',1)};
+  marco.appendChild(b);
+  aviso('Mueve la pala','Desliza el dedo por la mitad de abajo · toca para lanzar',6000);
+ }else aviso('¡Toca para lanzar!','o espera: sale sola',2500);
+ st.t=performance.now();raf=requestAnimationFrame(bucle);
+}
+function ajustaLienzo(){
+ const m=$('#marco');if(!m||!st.cv)return;
+ const r=m.getBoundingClientRect();if(r.width<10||r.height<10)return;
+ const k=Math.min(r.width/st.W,r.height/st.H), cw=Math.floor(st.W*k), ch=Math.floor(st.H*k);
+ /* rendimiento (José, 13-11-2026: «va muy lento, se queda pillado»): como mucho ~2 megapíxeles */
+ let dpr=Math.min(devicePixelRatio||1,2);if(cw*ch*dpr*dpr>2.2e6)dpr=Math.max(1,Math.sqrt(2.2e6/(cw*ch)));
+ st.cv.style.width=cw+'px';st.cv.style.height=ch+'px';
+ st.cv.width=Math.round(cw*dpr);st.cv.height=Math.round(ch*dpr);
+ st.ctx.setTransform(k*dpr,0,0,k*dpr,0,0);st.esc=k;st.k2=k*dpr;
+ st.capa=document.createElement('canvas');st.capa.width=st.cv.width;st.capa.height=st.cv.height;
+ st.capaCtx=st.capa.getContext('2d');st.capaCtx.setTransform(k*dpr,0,0,k*dpr,0,0);st.sucio=true;st.rect=null;st.mrect=null;
+}
+function tecla(e){
+ if(st.tarjeta){const i=+e.key-1;const bs=[...document.querySelectorAll('.resp')];if(bs[i]&&!bs[i].disabled){bs[i].click();e.preventDefault()}
+  if((e.key==='Enter'||e.key===' ')&&$('.seguir')&&$('.seguir').style.display==='block'){$('.seguir').click();e.preventDefault()}return}
+ if(e.key==='ArrowLeft'||e.key==='ArrowRight'){st.teclas[e.key]=1;e.preventDefault()}
+ if(e.key===' '){e.preventDefault();if(st.pausa)pausa(false);else if(st.pegada)lanza()}
+ if(e.key==='p'||e.key==='P'||e.key==='Escape')pausa(!st.pausa);
+}
+function teclaUp(e){delete st.teclas[e.key]}
+function oculta(){if(!document.hidden)return;if(st.tarjeta){if(st.paraFicha)st.paraFicha()}else if(!st.fin)pausa(true)}   // también con los pendientes (fase 4)
+function pausa(si){
+ if(st.tarjeta||st.fin)return;
+ st.pausa=si;st.arr=null;const m=$('#marco');
+ const v=document.getElementById('velo');if(v)v.remove();
+ if(si){
+  /* salir en cualquier momento (José, 13-11-2026): desde la pausa o con ✕ */
+  const of=st.oficial;
+  const d=document.createElement('div');d.id='velo';d.className='tarjeta';
+  d.innerHTML=`<div class="ficha" style="text-align:center"><div class="eti">Pausa</div><div class="caso">El muro te espera.</div>
+   <div class="btns" style="margin-top:6px"><button class="btn p" id="reanuda">▶ Seguir jugando</button>
+   <button class="btn s" id="dejar">${of?'Abandonar la partida oficial':'Salir al menú'}</button></div>
+   ${of?`<p class="libro" style="margin:10px 0 0">Si abandonas, el intento ${of.intento} de ${INTENTOS} ya está gastado y no cuenta para nota.</p>`:''}</div>`;
+  m.appendChild(d);$('#reanuda').onclick=()=>pausa(false);
+  $('#dejar').onclick=async()=>{if(of&&!(await dialogo('¿Seguro? El intento '+of.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:"Sí, salir",no:"Seguir jugando"})))return;st.fin=true;portada()};
+ }
+ else{st.t=performance.now();if(st.pegada)st.pegadaDesde=st.tj}
+}
+function aviso(t,sub,ms){st.aviso=t;st.avisoSub=sub||'';st.avisoHasta=performance.now()+(ms||1500);pintaAviso()}
+function pintaAviso(){
+ const m=$('#marco');if(!m)return;let a=document.getElementById('avisoC');
+ if(!st.aviso||performance.now()>st.avisoHasta){if(a)a.remove();return}
+ if(!a){a=document.createElement('div');a.id='avisoC';a.className='aviso-c';m.appendChild(a)}
+ const h=st.aviso+(st.avisoSub?`<small>${st.avisoSub}</small>`:'');if(a.innerHTML!==h)a.innerHTML=h;
+}
+function hud(){
+ const e=(id,t)=>{const x=document.getElementById(id);if(x&&x.textContent!==t)x.textContent=t};
+ e('hp',st.pts+' pts');e('he',st.k+'/'+EXPEDIENTES);e('hv','♥'.repeat(Math.max(0,st.vidas)));
+}
+/* ===== Bolas (desde el 13-11-2026 puede haber varias: sorpresa «Trabajo en equipo») ===== */
+function nuevaBola(){st.bolas=[{x:st.pala.x,y:st.pala.y-8,r:7,vx:0,vy:0,estela:[],peg:true,off:0,ne:0}];st.pegada=true;st.pegadaDesde=st.tj||0}
+function lanza(){
+ if(!st.pegada)return;st.pegada=false;st.aviso='';st.ultimoGolpe=st.tj;
+ if(st.tuto&&st.tuto.paso==='lanza'){st.tuto.paso='rompe';aviso('¡Rompe el muro!',`Los ladrillos naranjas guardan ${ico('carpeta')} expedientes`,3000)}
+ for(const b of st.bolas){if(!b.peg)continue;b.peg=false;
+  let a=(-Math.PI/2)+(b.off/(st.pala.w/2))*.9+(Math.random()*.3-.15);a=Math.max(-Math.PI+AMIN,Math.min(-AMIN,a));
+  const v=st.vel;b.vx=Math.cos(a)*v;b.vy=Math.sin(a)*v}
+ nota(520,.05,'triangle',.12);
+}
+function anchoPala(){const e=st.efecto, t=st.tj||0;return e.tipo==='epi'&&t<e.hasta?st.l.pala*1.5:st.l.pala}   // fase 4: fallar ya no encoge la pala
+function suma(p,x,y,col,peq){
+ st.pts=Math.max(0,st.pts+p);hud();
+ if(x!==undefined)st.part.push({txt:(p>0?'+':'−')+Math.abs(p),x,y,vy:peq?-55:-40,vida:peq?.8:1,col:col||'#fcd100',tipo:'txt',tam:peq?13:18});
+}
+/* ===== Ladrillos sorpresa (José, 13-11-2026: «como en los juegos de romper ladrillos de siempre») =====
+   Escondidos: no se ven hasta romperlos. Sueltan una cápsula; si la coges, ayuda. No dan ni quitan puntos. */
+const SORPRESAS={
+ equipo:{ic:'equipo',n:'Trabajo en equipo',d:'¡Tres bolas mejor que una!',c:'#1d5fa0'},
+ iman:{ic:'iman',n:'Imán',d:'La bola se pega a la pala: toca para lanzarla',c:'#7a3db8'},
+ herramienta:{ic:'llave',n:'Herramienta',d:'Tu pala dispara durante 8 s',c:'#d33a1f'},
+ calma:{ic:'tortuga',n:'Calma',d:'La bola va más despacio durante 10 s',c:'#2f8a5b'}
+};
+const poder=k=>(st.poder&&st.poder[k]||0)>(st.tj||0);
+function activa(tipo){
+ const S=SORPRESAS[tipo];st.poder=st.poder||{};
+ if(tipo==='equipo'){
+  if(st.pegada)lanza();                     /* si la bola estaba pegada (imán), sale primero */
+  const nuevas=[];
+  for(const b of st.bolas){if(b.peg||st.bolas.length+nuevas.length>=7)continue;const v=Math.hypot(b.vx,b.vy)||st.vel,a=Math.atan2(b.vy,b.vx);
+   for(const g of [-.4,.4])nuevas.push({x:b.x,y:b.y,r:b.r,vx:Math.cos(a+g)*v,vy:-Math.abs(Math.sin(a+g)*v),estela:[],peg:false,off:0,ne:0})}
+  st.bolas.push(...nuevas);
+ }else st.poder[tipo]=(st.tj||0)+(tipo==='herramienta'?8:10);
+ aviso(ico(S.ic)+' '+S.n,S.d,1800);sfx('premio');vibrar(20);
+}
+/* 17-11-2026: un solo contexto de sonido, el que vigila el botón «Sin sonido» de comun.js (fase 5: sonidos de la API común) */
+let actx=null;
+const son={
+ pala:()=>sfx('golpe'),
+ pared:()=>{if(st.tj-st.ultPared>.05){st.ultPared=st.tj;nota(640,.035,'triangle',.07)}},
+ duro:()=>{nota(1250,.05,'square',.06);ruido(.05,.12,3200,0,3)},
+ perdida:()=>{nota(392,.42,'sawtooth',.09,0,98);sfx('barrido')},
+ coge:()=>{nota(660,.07,'triangle',.16);nota(990,.1,'triangle',.14,.06)},
+ tiro:()=>nota(1200,.03,'square',.035)
+};
+/* Bucle: dibuja en cada fotograma; la física avanza a pasos fijos de 1/120 s */
+function bucle(t){
+ raf=requestAnimationFrame(bucle);
+ const dt=Math.min(.1,Math.max(0,(t-st.t)/1000));st.t=t;
+ if(st.pausa||st.tarjeta||st.fin){st.acc=0;dibuja();return}
+ if(st.congela>0){st.congela-=dt;pintaAviso();dibuja();return}   /* pausa de impacto: el tiempo de juego se para 40 ms */
+ st.acc+=dt;let n=0;
+ while(st.acc>=PASO&&n<16){paso(PASO);st.acc-=PASO;n++;if(st.tarjeta||st.fin||st.congela>0)break}
+ if(n>=16)st.acc=0;
+ pintaAviso();
+ if(!st.tarjeta)compruebaFin();
+ dibuja();
+}
+function paso(dt){
+ st.tj+=dt;                                 /* tiempo de juego: no corre en pausa ni con un expediente abierto */
+ const pala=st.pala, tj=st.tj;pala.w+=(anchoPala()-pala.w)*Math.min(1,dt*10);
+ if(st.teclas.ArrowLeft||st.teclas.ArrowRight)st.puntero=false;if(st.teclas.ArrowLeft)pala.obj-=480*dt;if(st.teclas.ArrowRight)pala.obj+=480*dt;
+ pala.obj=Math.max(pala.w/2,Math.min(st.W-pala.w/2,pala.obj));
+ pala.x+=(pala.obj-pala.x)*Math.min(1,dt*(st.puntero?40:22));
+ if(pala.hund>0)pala.hund=Math.max(0,pala.hund-dt*20);
+ /* tutorial: mientras cae un expediente o una sorpresa que se explica, la bola va más despacio */
+ const dtb=dt*(poder('calma')?.6:1)*(st.caps.some(c=>c.mano)?.55:1);
+ for(const b of st.bolas){
+  if(b.peg){b.x=pala.x+b.off;b.y=pala.y-b.r-1;continue}
+  mueve(b,dtb);
+  if(++b.ne%2===0){b.estela.push([b.x,b.y]);if(b.estela.length>8)b.estela.shift()}
+  if(tj-st.ultimoGolpe>6&&b.vy<0){const v=Math.hypot(b.vx,b.vy);let a=Math.atan2(b.vy,b.vx)+(Math.random()<.5?-.35:.35);a=Math.max(-Math.PI+AMIN,Math.min(-AMIN,a));b.vx=Math.cos(a)*v;b.vy=Math.sin(a)*v;st.ultimoGolpe=tj}
+ }
+ st.bolas=st.bolas.filter(b=>!b.fuera);
+ const espera=poder('iman')?4:(st.tuto&&st.tuto.paso==='lanza')?12:(st.k||st.ladr.some(L=>!L.vivo)?2:3.5);
+ if(st.pegada&&tj-st.pegadaDesde>espera)lanza();
+ if(!st.bolas.length&&!st.fin&&st.vidas>0){  /* se han caído todas las bolas */
+  st.vidas--;st.racha=0;st.golpes=0;hud();son.perdida();vibrar(70);
+  if(st.cv&&!MOV_REDUCIDO)sacudir(st.cv,5);
+  if(st.vidas>0){aviso('¡Bola perdida!',`Te quedan ${st.vidas} ${st.vidas===1?'vida':'vidas'} · sale sola en 2 s`,1800);nuevaBola()}
+ }
+ /* herramienta: la pala dispara */
+ st.tiros=st.tiros||[];
+ if(poder('herramienta')&&(tj-(st.ultTiro||0))>.32){st.ultTiro=tj;st.tiros.push({x:pala.x-pala.w/2+6,y:pala.y-2},{x:pala.x+pala.w/2-6,y:pala.y-2});son.tiro()}
+ for(const s2 of st.tiros){s2.y-=520*dt;
+  for(const L of st.ladr){if(L.vivo&&s2.x>=L.x&&s2.x<=L.x+L.w&&s2.y<=L.y+L.h&&s2.y>=L.y){s2.fuera=true;st.ultimoGolpe=tj;golpea(L);break}}
+  if(s2.y<0)s2.fuera=true}
+ st.tiros=st.tiros.filter(x=>!x.fuera);
+ /* expedientes y sorpresas que caen */
+ for(const c of st.caps){
+  c.y+=c.vy*dt;c.t+=dt;
+  if(!c.fuera&&c.y+c.h/2>=pala.y&&c.y-c.h/2<=pala.y+pala.h&&Math.abs(c.x-pala.x)<pala.w/2+c.w/2){c.fuera=true;
+   if(c.sorpresa){activa(c.sorpresa);continue}son.coge();vibrar(15);abreCaso(c);break}
+  if(c.y-c.h/2>st.H){c.fuera=true;if(!c.sorpresa){(st.pendientes=st.pendientes||[]).push(c.caso);aviso(ico('carpeta')+' Expediente al suelo','Te lo preguntamos al acabar el nivel',1600)}}
+ }
+ st.caps=st.caps.filter(c=>!c.fuera);
+ /* prevención en cadena (fase 6): los ladrillos del mismo riesgo se van controlando uno tras otro */
+ if(st.porNeut.length){for(const b of st.porNeut)if(tj>=b.neutEn)neutraliza(b);st.porNeut=st.porNeut.filter(b=>b.vivo&&!b.neut)}
+ for(const q of st.part){q.vida-=dt*(q.tipo==='txt'?1:1.6);q.x+=(q.vx||0)*dt;q.y+=q.vy*dt;if(q.tipo!=='txt')q.vy+=420*dt}
+ st.part=st.part.filter(q=>q.vida>0);
+}
+function mueve(b,dt){
+ const pala=st.pala;
+ b.x+=b.vx*dt;b.y+=b.vy*dt;
+ if(b.x<b.r){b.x=b.r;b.vx=Math.abs(b.vx);son.pared()}
+ if(b.x>st.W-b.r){b.x=st.W-b.r;b.vx=-Math.abs(b.vx);son.pared()}
+ if(b.y<b.r){b.y=b.r;b.vy=Math.abs(b.vy);son.pared()}
+ /* pala: el ángulo depende de dónde golpea */
+ if(b.vy>0&&b.y+b.r>=pala.y&&b.y+b.r<=pala.y+pala.h+8&&Math.abs(b.x-pala.x)<=pala.w/2+b.r){
+  st.golpes=0;pala.hund=MOV_REDUCIDO?0:2;son.pala();
+  if(poder('iman')){b.peg=true;b.off=Math.max(-pala.w/2+4,Math.min(pala.w/2-4,b.x-pala.x));b.vx=b.vy=0;b.y=pala.y-b.r-1;if(!st.pegada){st.pegada=true;st.pegadaDesde=st.tj}return true}
+  const off=Math.max(-1,Math.min(1,(b.x-pala.x)/(pala.w/2))), lado=off===0?(Math.random()<.5?-1:1):Math.sign(off), v=Math.min(st.vel*1.25,Math.hypot(b.vx,b.vy)*1.01);
+  let a=-Math.PI/2+off*1.05+lado*(.06+Math.random()*.06);
+  /* ayuda de puntería (fase 5): con 4 ladrillos o menos, la pala corrige como mucho 15° hacia el ladrillo más a mano */
+  const quedan=st.ladr.filter(L=>L.vivo);
+  if(quedan.length&&quedan.length<=4){let mejor=a,dmin=9;
+   for(const L of quedan){const ta=Math.atan2(L.y+L.h/2-b.y,L.x+L.w/2-b.x),d=Math.abs(ta-a);if(d<dmin){dmin=d;mejor=ta}}
+   a+=Math.max(-AYUDA,Math.min(AYUDA,mejor-a))}
+  a=Math.max(-Math.PI+AMIN,Math.min(-AMIN,a));   /* nunca un rebote casi horizontal */
+  b.vx=Math.cos(a)*v;b.vy=Math.sin(a)*v;b.y=pala.y-b.r;
+ }
+ for(const L of st.ladr){
+  if(!L.vivo)continue;
+  const cx=Math.max(L.x,Math.min(b.x,L.x+L.w)), cy=Math.max(L.y,Math.min(b.y,L.y+L.h));
+  const dx=b.x-cx, dy=b.y-cy;
+  if(dx*dx+dy*dy<=b.r*b.r){
+   if(L.neut){st.ultimoGolpe=st.tj;golpea(L);continue}   /* fase 6: riesgo controlado: se rompe y la bola lo atraviesa */
+   const solx=Math.min(Math.abs(b.x-L.x),Math.abs(b.x-(L.x+L.w))), soly=Math.min(Math.abs(b.y-L.y),Math.abs(b.y-(L.y+L.h)));
+   if(cx!==b.x&&(cy===b.y||solx<soly)){b.vx=-b.vx;b.x=b.vx>0?L.x+L.w+b.r+.1:L.x-b.r-.1}else{b.vy=-b.vy;b.y=b.vy>0?L.y+L.h+b.r+.1:L.y-b.r-.1}
+   const v=Math.hypot(b.vx,b.vy);if(Math.abs(b.vy)<v*.3){b.vy=Math.sign(b.vy||1)*v*.3;b.vx=Math.sign(b.vx)*Math.sqrt(v*v-b.vy*b.vy)}
+   st.ultimoGolpe=st.tj;golpea(L);return true;
+  }
+ }
+ if(b.y-b.r>st.H){b.fuera=true;return true}
+ return false;
+}
+function golpea(L){
+ L.vida--;(st.sucios=st.sucios||[]).push(L);
+ const x=L.x+L.w/2, y=L.y+L.h/2;
+ if(L.vida>0){
+  L.roto=true;cascotes(L,4);son.duro();vibrar(6);
+  if(!st.oficial&&L.duro&&marcaVista('s_duro'))aviso(ico('ladrillo')+' Ladrillo duro','Los grises aguantan 2 golpes; los gris oscuro, 3',2600);
+  return;
+ }
+ L.vivo=false;
+ /* racha de golpes sin tocar la pala: cada ladrillo suena una nota más alta (escala pentatónica) */
+ sfx('rompe',st.golpes);st.golpes++;vibrar(8);
+ cascotes(L,MOV_REDUCIDO?4:12);
+ if(!MOV_REDUCIDO&&st.tj-st.ultCongela>.15){st.congela=.04;st.ultCongela=st.tj}   /* pausa de impacto */
+ if(L.duro&&st.cv)sacudir(st.cv,3);                                               /* sacudida leve (sacudir respeta MOV_REDUCIDO) */
+ suma(L.exp?PUNTOS.expediente:PUNTOS.ladrillo,x,y,L.exp?'#ffd27a':'#ffffff',true);
+ const vy=(85+st.l.n*12)*1.03;   /* más despacio (José, 13-11-2026) */
+ if(L.exp){
+  const caso=L.caso;   /* fase 6: el expediente es el de este ladrillo (nace de su riesgo) */
+  if(caso){caso.lanzado=true;const c={x,y,w:46,h:28,vy,vy0:vy,t:0,caso,L};
+   /* tutorial: el primer expediente cae despacio y una mano dice «cógelo» */
+   if(st.tuto&&st.tuto.paso!=='hecho'){c.mano='¡Cógelo!';c.vy=vy*.45;st.tuto.paso='coge';aviso('¡Coge el expediente!','Ponle la pala debajo: luego lo clasificas',3500)}
+   st.caps.push(c)}
+ }
+ if(L.sorpresa){
+  const S=SORPRESAS[L.sorpresa],c={x,y,w:40,h:24,vy:vy*.9,vy0:vy*.9,t:0,sorpresa:L.sorpresa};
+  /* cada sorpresa se explica la primera vez que sale (fuera de la partida oficial) */
+  if(!st.oficial&&marcaVista('s_'+L.sorpresa)){c.mano='¡Cógela!';c.vy=c.vy0*.5;aviso(ico(S.ic)+' Sorpresa: '+S.n,S.d,3200)}
+  else aviso(ico('regalo')+' ¡Sorpresa!','Coge la cápsula con la pala',1200);
+  st.caps.push(c);
+ }
+}
+/* fase 6, 17-11-2026: prevención en cadena. Desde el ladrillo del expediente acertado, los ladrillos vecinos (también en
+   diagonal) del mismo riesgo, y los vecinos de esos, quedan controlados: un golpe y la bola los atraviesa */
+function cadena(L0){
+ const todos=st.ladr.filter(b=>b.fa===L0.fa&&b!==L0), vistos=new Set([L0]), cola=[L0], res=[];
+ while(cola.length){const a=cola.shift();
+  for(const b of todos){if(vistos.has(b)||Math.abs(a.f-b.f)>1||Math.abs(a.c-b.c)>1)continue;vistos.add(b);cola.push(b);if(b.vivo&&!b.exp&&!b.neut)res.push(b)}}
+ return res;
+}
+function neutraliza(b){
+ if(!b.vivo||b.neut)return;b.neut=true;b.vida=1;b.roto=false;(st.sucios=st.sucios||[]).push(b);
+ st.nNeut=(st.nNeut||0)+1;nota(660+Math.min(st.nNeut,12)*55,.07,'triangle',.07);
+ for(let i=0;i<(MOV_REDUCIDO?2:6);i++)st.part.push({x:b.x+Math.random()*b.w,y:b.y+Math.random()*b.h,vx:(Math.random()-.5)*60,vy:-30-Math.random()*40,vida:.7,col:i%2?'#fcd100':'#ffffff',tipo:'p',s:2})
+}
+function tonoDe(L){return L.neut?['#eef5f1','#c6d8cf']:L.exp?['#ff8a45','#e04e00']:L.duro?{3:['#6e7f89','#46555e'],2:['#c3ccd0','#8d9aa0'],1:['#9aa6ab','#6c787d']}[Math.max(1,L.vida)]:(FACTORES[L.fa]||FACTORES.cai).t}
+function cascotes(L,n){                          /* trozos del color del ladrillo, con gravedad */
+ const T=tonoDe(L);if(st.part.length>220)n=Math.min(n,3);
+ for(let i=0;i<n;i++)st.part.push({x:L.x+Math.random()*L.w,y:L.y+Math.random()*L.h,vx:(Math.random()-.5)*200,vy:-Math.random()*150-20,vida:1,col:T[i%2],tipo:'p',s:2+Math.random()*3})
+}
+function compruebaFin(){
+ if(st.fin)return;
+ const quedan=st.ladr.some(L=>L.vivo);
+ if(!quedan&&!st.caps.length){st.muroEntero=true;terminaNivel();return}
+ if(st.vidas<=0&&!st.caps.length)terminaNivel();
+}
+/* ===== El expediente ===== */
+/* fase 4, 17-11-2026: pend={i,n,sigue} para los expedientes pendientes del final (mitad de puntos, sin racha ni ventajas) */
+function abreCaso(c,pend){
+ st.tarjeta=true;st.racha=st.racha||0;st.arr=null;
+ const caso=c.caso, l=st.l, m=$('#marco'), tuto=!pend&&st.tuto;
+ const d=document.createElement('div');d.className='tarjeta';d.id='tarjeta';
+ d.innerHTML=`<div class="ficha" role="dialog" aria-label="Expediente">
+  <div class="eti">${ico('carpeta')} ${pend?`Expediente pendiente ${pend.i+1} de ${pend.n}`:`Expediente ${st.k+1} de ${EXPEDIENTES}`} · ¿Qué tipo de daño es?</div>
+  ${tuto?`<p class="tuto-msg">${ico('mano')} Lee el caso y elige el tipo de daño antes de que se acabe la barra. Si aciertas: +100 y la pala se ensancha.</p>`:''}
+  ${FACTORES[caso.fa]?`<div class="riesgo">${chapa(FACTORES[caso.fa])}<span>Nace del riesgo: <b>${FACTORES[caso.fa].n}</b></span></div>`:''}
+  <div class="caso">${caso.texto}</div>
+  <div class="reloj"><i id="rl"></i></div>
+  <div class="resps ${l.resp.length===4?'c4':''}">${l.resp.map((k,i)=>`<button class="resp" data-k="${k}" style="background:${RESP[k].c}">${ico(RESP_ICO[k])}${RESP[k].n}</button>`).join('')}</div>
+  <div class="veredicto" id="ver" role="status" aria-live="polite"></div>
+  <button class="seguir" id="seguir">${!pend?'Seguir rompiendo ▶':pend.i+1<pend.n?'Siguiente expediente ▶':'Ver el resultado ▶'}</button>
+ </div>`;
+ m.appendChild(d);
+ /* en el tutorial, el primer expediente tiene el doble de tiempo */
+ const T=SEGUNDOS*1000*(tuto?2:1);st.ft0=Date.now();st.fparado=0;st.ultTic=0;
+ st.reloj=setInterval(()=>{if(st.fparado)return;const q=1-(Date.now()-st.ft0)/T, r=$('#rl');if(r)r.style.width=Math.max(0,q*100)+'%';
+  const s=Math.ceil(q*T/1000);if(s>0&&s<=3&&s!==st.ultTic){st.ultTic=s;sfx('tic')}
+  if(q<=0)responde(null)},50);
+ let hecho=false, ok=false, cad=[];const F=FACTORES[caso.fa];
+ /* 17-11-2026: si la página se oculta con el expediente abierto, se tapa y el reloj se para */
+ st.paraFicha=()=>{if(hecho||st.fparado)return;st.fparado=Date.now();
+  const p=document.createElement('button');p.type='button';p.className='pausa-j';p.innerHTML='<b>Pausa</b>El tiempo está parado.<span>Toca para seguir</span>';
+  p.onclick=()=>{st.ft0+=Date.now()-st.fparado;st.fparado=0;p.remove()};document.body.appendChild(p)};
+ const responde=k=>{
+  if(hecho)return;hecho=true;clearInterval(st.reloj);
+  ok=k===caso.r;st.res.push({caso,ok});
+  cad=ok&&!pend&&c.L?cadena(c.L):[];   /* fase 6: prevención en cadena */
+  d.querySelectorAll('.resp').forEach(b=>{b.disabled=true;if(b.dataset.k===caso.r)b.classList.add('bien');if(b.dataset.k===k)b.classList.add('elegida')});
+  const v=$('#ver'), cx=st.pala.x, cy=st.pala.y-20, R=`${ico(RESP_ICO[caso.r])} ${RESP[caso.r].n}`;
+  if(!pend)st.k++;
+  if(ok&&pend){
+   st.aciertos++;suma(PUNTOS.pendiente,cx,cy,'#7dffb0');sfx('acierto',0);vibrar(20);
+   v.className='veredicto ok';v.innerHTML=`<b>¡Correcto! ${R}</b>${caso.ex}<br><small>+${PUNTOS.pendiente} (expediente pendiente: la mitad)</small>`;
+  }else if(ok){
+   /* racha (como en Señales y como dice la página del libro): cada acierto seguido vale un 25 % más, hasta ×2 */
+   st.aciertos++;st.racha++;const mult=1+Math.min(st.racha-1,4)*.25;suma(Math.round(PUNTOS.acierto*mult),cx,cy,'#7dffb0');
+   sfx('acierto',st.racha-1);vibrar(20);
+   let extra='';
+   if(st.racha>=3&&!st.vidaExtra){st.vidaExtra=true;st.vidas++;extra=` · ${ico('salud')} Vigilancia de la salud: ¡una vida más!`}
+   v.className='veredicto ok';v.innerHTML=`<b>¡Correcto! ${R}</b>${caso.ex}<br><small>+${Math.round(PUNTOS.acierto*mult)}${st.racha>1?` · ${ico('llama')} racha ×`+String(mult).replace('.',','):''} · ${ico('chaleco')} EPI: pala ancha durante 10 s${extra}${cad.length?`<br>${ico(F.ic)} Prevención en cadena: ${cad.length===1?'1 ladrillo':cad.length+' ladrillos'} de «${F.n}» ${cad.length===1?'queda controlado':'quedan controlados'}`:''}</small>`;
+  }else{
+   /* fase 4: el fallo cuesta puntos y racha, nada más (la pala no se encoge) */
+   if(!pend)st.racha=0;suma(pend?PUNTOS.falloPendiente:PUNTOS.fallo,cx,cy,'#ff8a70');sfx('fallo');vibrar([30,40,30]);
+   st.fallos.push(caso);
+   v.className='veredicto mal';v.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}: es ${RESP[caso.r].n.toLowerCase()}</b>${caso.ex}<br><small>${libro(1,caso.ap)}</small>`;
+   d.querySelector('.ficha').animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300});
+  }
+  hud();
+  const s=$('#seguir');s.style.display='block';s.focus({preventScroll:true});
+  /* fase 4: solo en el nivel 1 se cierra sola la explicación del acierto; en el 2 y el 3 se lee con calma */
+  let auto=ok&&l.n===1&&!tuto?setTimeout(()=>s.click(),4500):0;
+  s.onclick=()=>{clearTimeout(auto);cierra()};
+ };
+ const cierra=()=>{
+  d.remove();st.tarjeta=false;st.t=performance.now();
+  if(pend)return pend.sigue();
+  /* el EPI cuenta desde que se vuelve a jugar (17-11-2026: en tiempo de juego); solo tras un acierto */
+  if(ok)st.efecto={tipo:'epi',hasta:(st.tj||0)+10};
+  if(cad.length)cad.forEach((b,i)=>{b.neutEn=(st.tj||0)+.25+i*.09;st.porNeut.push(b)});
+  if(tuto){finTuto();aviso('¡Ya sabes jugar!','Las sorpresas te las explicamos cuando salgan',2600)}
+  else if(cad.length)aviso(ico(F.ic)+' Prevención en cadena',`${cad.length===1?'1 ladrillo':cad.length+' ladrillos'} de «${F.n}» bajo control`,1800);
+  else aviso('¡Sigue!','',700);
+ };
+ d.querySelectorAll('.resp').forEach(b=>b.onclick=()=>responde(b.dataset.k));
+}
+/* ===== Dibujo ===== */
+function pintaFondo(W,H){
+ const o=document.createElement('canvas');o.width=W*2;o.height=H*2;const g=o.getContext('2d');g.scale(2,2);
+ const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#003424');gr.addColorStop(1,'#00140e');g.fillStyle=gr;g.fillRect(0,0,W,H);
+ g.strokeStyle='rgba(255,255,255,.04)';g.lineWidth=1;for(let x=0;x<W;x+=24){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}for(let y=0;y<H;y+=24){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}
+ g.save();g.globalAlpha=.13;g.strokeStyle='#bfe8d6';g.fillStyle='#bfe8d6';g.lineWidth=2.2;g.lineCap='round';g.lineJoin='round';
+ const c=ciclo()||'', b=H*.58;   /* silueta del sector, abajo y muy suave */
+ if(c==='HIG'){            /* gabinete dental: sillón, lámpara y bandeja */
+  g.beginPath();g.moveTo(W*.18,b+150);g.lineTo(W*.5,b+150);g.moveTo(W*.3,b+150);g.lineTo(W*.3,b+110);g.lineTo(W*.62,b+95);g.lineTo(W*.78,b+55);g.moveTo(W*.3,b+110);g.lineTo(W*.22,b+70);g.stroke();
+  g.beginPath();g.moveTo(W*.42,b-10);g.lineTo(W*.42,b+30);g.lineTo(W*.6,b+40);g.stroke();g.beginPath();g.ellipse(W*.62,b+44,16,9,0,0,7);g.stroke();
+  g.strokeRect(W*.7,b+100,W*.16,8);g.beginPath();g.moveTo(W*.78,b+108);g.lineTo(W*.78,b+150);g.stroke();
+ }else if(c==='IFC'){      /* sala de máquinas: tuberías, ventilador y manómetro */
+  for(let i=0;i<3;i++){g.beginPath();g.moveTo(0,b+20+i*22);g.lineTo(W*.55,b+20+i*22);g.lineTo(W*.55,H);g.stroke()}
+  g.beginPath();g.arc(W*.78,b+70,38,0,7);g.stroke();for(let a=0;a<4;a++){g.beginPath();g.ellipse(W*.78+Math.cos(a*1.57)*18,b+70+Math.sin(a*1.57)*18,16,6,a*1.57,0,7);g.stroke()}
+  g.beginPath();g.arc(W*.25,b+120,14,0,7);g.moveTo(W*.25,b+120);g.lineTo(W*.25+9,b+112);g.stroke();
+ }else if(c==='ITE'){      /* tejados con antenas y cables */
+  g.beginPath();g.moveTo(0,b+120);g.lineTo(W*.25,b+70);g.lineTo(W*.5,b+120);g.lineTo(W*.72,b+80);g.lineTo(W,b+125);g.stroke();
+  g.beginPath();g.moveTo(W*.25,b+70);g.lineTo(W*.25,b);g.moveTo(W*.15,b+12);g.lineTo(W*.35,b+12);g.moveTo(W*.18,b+28);g.lineTo(W*.32,b+28);g.stroke();
+  g.beginPath();g.arc(W*.72,b+50,18,Math.PI*.8,Math.PI*1.9);g.moveTo(W*.72,b+62);g.lineTo(W*.72,b+80);g.stroke();
+  g.beginPath();g.moveTo(W*.25,b+40);g.quadraticCurveTo(W*.5,b+80,W*.72,b+58);g.stroke();
+ }else if(c==='STI'){      /* centro de datos: armarios con luces */
+  for(let i=0;i<3;i++){const x=W*(.1+i*.3);g.strokeRect(x,b+10,W*.22,150);for(let j=0;j<7;j++){g.strokeRect(x+6,b+20+j*19,W*.22-12,13);g.fillRect(x+W*.22-16,b+24+j*19,4,4)}}
+ }else{                    /* sin código: casco de obra */
+  g.beginPath();g.arc(W*.5,b+110,48,Math.PI,0);g.lineTo(W*.5+62,b+112);g.lineTo(W*.5-62,b+112);g.closePath();g.stroke();
+ }
+ g.restore();
+ return o;
+}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+/* El fondo y el muro se pintan en una capa aparte y solo cuando cambia algo; cada fotograma es una sola imagen
+   más la bola, la pala y lo que cae. Fase 5: pictogramas propios (iconos.js) ya rasterizados, en vez de emojis. */
+function spriteLadrillo(L){
+ /* fase 6: el pictograma es el del factor de riesgo, también en los expedientes y en los grises; controlado = claro con ✓ */
+ const F=FACTORES[L.fa]||FACTORES.cai, T=tonoDe(L), ic=F.ic, claro=T[0]==='#f2d45c'||T[0]==='#c3ccd0';
+ const im=icoImg(ic,L.neut?F.c:claro?'#004230':'#ffffff'), clave=['L',L.w.toFixed(1),L.h,T[0],ic,L.exp?1:0,L.roto?1:0,L.neut?1:0].join('|');
+ return sprite(clave,L.w,L.h,g=>{
+  const gr=g.createLinearGradient(0,0,0,L.h);gr.addColorStop(0,T[0]);gr.addColorStop(1,T[1]);
+  g.fillStyle=gr;rr(g,0,0,L.w,L.h,5);g.fill();
+  g.fillStyle='rgba(255,255,255,.22)';rr(g,3,2,L.w-6,4,2);g.fill();
+  g.fillStyle='rgba(0,0,0,.12)';rr(g,3,L.h-4,L.w-6,2.5,1.2);g.fill();
+  if(L.exp){g.strokeStyle='#fcd100';g.lineWidth=1.6;rr(g,.8,.8,L.w-1.6,L.h-1.6,5);g.stroke()}
+  if(L.roto){g.strokeStyle='rgba(0,0,0,.45)';g.lineWidth=1.2;g.beginPath();g.moveTo(L.w*.3,0);g.lineTo(L.w*.45,L.h*.55);g.lineTo(L.w*.38,L.h);g.moveTo(L.w*.45,L.h*.55);g.lineTo(L.w*.7,L.h*.4);g.stroke()}
+  if(L.neut){g.strokeStyle=F.c;g.lineWidth=1.4;g.setLineDash([3,2]);rr(g,1,1,L.w-2,L.h-2,5);g.stroke();g.setLineDash([]);
+   g.strokeStyle='#1a8a4a';g.lineWidth=2;g.lineCap='round';g.beginPath();g.moveTo(L.w-11,L.h-8);g.lineTo(L.w-8,L.h-5);g.lineTo(L.w-3.5,L.h-11);g.stroke()}
+  const s=Math.round(L.h*.66);g.globalAlpha=L.exp||L.neut?1:.9;if(icoListo(im))g.drawImage(im,(L.w-s)/2,(L.h-s)/2,s,s);g.globalAlpha=1;
+ },[im]);
+}
+function pintaCapa(){
+ const g=st.capaCtx;if(!g)return;
+ g.clearRect(0,0,st.W,st.H);g.drawImage(st.fondo,0,0,st.W,st.H);
+ SPR_FALTA=false;
+ g.drawImage(spriteLeyenda(),0,0,st.W,TOP-4);
+ for(const L of st.ladr)if(L.vivo)g.drawImage(spriteLadrillo(L),L.x,L.y,L.w,L.h);
+ st.sucio=SPR_FALTA;st.sucios=[];                 /* si algún pictograma aún no estaba cargado, se repinta en el siguiente fotograma */
+}
+/* fase 6, 17-11-2026: leyenda de los riesgos del muro, en la franja de arriba (solo los factores de este muro) */
+function spriteLeyenda(){
+ const ks=Object.keys(FACTORES).filter(k=>st.ladr.some(L=>L.fa===k)), H=TOP-4, filas=Math.ceil(ks.length/2), alto=Math.min(19,(H-16)/Math.max(1,filas));
+ const ims=ks.map(k=>icoImg(FACTORES[k].ic,FACTORES[k].claro?'#004230':'#ffffff'));
+ return sprite('ley|'+ks.join(','),st.W,H,g=>{
+  g.fillStyle='rgba(0,0,0,.28)';rr(g,6,3,st.W-12,H-6,9);g.fill();
+  g.textBaseline='middle';g.textAlign='left';g.font='800 9.5px Aleo,Georgia,serif';g.fillStyle='rgba(252,209,0,.9)';g.fillText('RIESGOS DEL MURO',14,11);
+  ks.forEach((k,i)=>{const F=FACTORES[k],x=14+(i%2)*170,y=17+Math.floor(i/2)*alto;
+   g.fillStyle=F.claro?F.t[0]:F.c;rr(g,x,y,15,15,4);g.fill();if(icoListo(ims[i]))g.drawImage(ims[i],x+2,y+2,11,11);
+   g.fillStyle='#ffffff';g.font='700 11px "Helvetica Neue",Arial,sans-serif';g.fillText(F.n,x+20,y+8)});
+ },ims);
+}
+function repintaHuecos(){                       /* solo los ladrillos que han cambiado */
+ const g=st.capaCtx;if(!g)return;
+ for(const L of st.sucios){
+  g.save();g.beginPath();g.rect(L.x-1,L.y-1,L.w+2,L.h+2);g.clip();
+  g.drawImage(st.fondo,0,0,st.W,st.H);if(L.vivo)g.drawImage(spriteLadrillo(L),L.x,L.y,L.w,L.h);
+  g.restore();
+ }
+ st.sucios=[];
+}
+const SPR={};let SPR_FALTA=false;
+function sprite(nombre,w,h,pinta,imgs){            /* dibujos pequeños que se repiten: una vez y se copian */
+ if(SPR[nombre])return SPR[nombre];
+ const o=document.createElement('canvas'),e=3;o.width=w*e;o.height=h*e;const g=o.getContext('2d');g.scale(e,e);pinta(g);
+ if(imgs&&!imgs.every(icoListo)){SPR_FALTA=true;return o}   /* sin guardar hasta que carguen los pictogramas */
+ return SPR[nombre]=o;
+}
+function dibuja(){
+ const g=st.ctx, W=st.W, H=st.H, t=performance.now();if(!g)return;
+ if(st.sucio)pintaCapa();else if(st.sucios&&st.sucios.length)repintaHuecos();
+ g.setTransform(1,0,0,1,0,0);g.drawImage(st.capa,0,0);g.setTransform(st.k2,0,0,st.k2,0,0);
+ /* brillo de los expedientes (solo un trazo por ladrillo) */
+ g.strokeStyle=`rgba(252,209,0,${.45+Math.sin(t/220)*.35})`;g.lineWidth=2;
+ for(const L of st.ladr)if(L.vivo&&L.exp){rr(g,L.x-1,L.y-1,L.w+2,L.h+2,6);g.stroke()}
+ /* expedientes cayendo */
+ const ic=icoImg('carpeta','#c24400');
+ const exp=sprite('exp',60,40,q=>{q.fillStyle='rgba(255,140,0,.35)';rr(q,1,1,58,38,10);q.fill();q.fillStyle='#ff7a1a';rr(q,7,6,46,28,6);q.fill();q.fillStyle='#fff3c4';rr(q,11,10,38,20,3);q.fill();
+  if(icoListo(ic))q.drawImage(ic,21,11,18,18)},[ic]);
+ for(const c of st.caps){
+  const y=c.y+Math.sin(c.t*6)*2;
+  if(c.sorpresa){const S=SORPRESAS[c.sorpresa],im=icoImg(S.ic,'#ffffff'),sp=sprite('s_'+c.sorpresa,52,32,q=>{q.fillStyle='rgba(255,255,255,.35)';rr(q,1,1,50,30,15);q.fill();q.fillStyle=S.c;rr(q,5,4,42,24,12);q.fill();
+    q.fillStyle='rgba(255,255,255,.3)';rr(q,9,6,34,6,3);q.fill();if(icoListo(im))q.drawImage(im,17,7,18,18)},[im]);
+   g.save();g.translate(c.x,y);g.rotate(Math.sin(c.t*5)*.15);g.drawImage(sp,-26,-16,52,32);g.restore()}
+  else{g.save();g.translate(c.x,y);g.rotate(Math.sin(c.t*3)*.12);g.drawImage(exp,-30,-20,60,40);g.restore()}
+  if(c.mano)manoQueSenala(g,c.x+30,y+12,c.mano,t);
+ }
+ /* disparos de la herramienta */
+ g.fillStyle='#fcd100';for(const s2 of (st.tiros||[])){g.fillRect(s2.x-1.5,s2.y-8,3,10)}
+ /* pala (se hunde 2 px al recibir la bola) */
+ const p=st.pala, e=st.efecto, act=e.tipo&&(st.tj||0)<e.hasta, py=p.y+(p.hund||0);
+ if(act&&e.tipo==='epi'){g.fillStyle='rgba(255,138,0,.35)';rr(g,p.x-p.w/2-4,py-4,p.w+8,p.h+8,9);g.fill()}
+ g.fillStyle='#f2c400';rr(g,p.x-p.w/2,py,p.w,p.h,7);g.fill();
+ g.fillStyle='rgba(255,255,255,.35)';rr(g,p.x-p.w/2+4,py+2,p.w-8,3,2);g.fill();
+ if(poder('herramienta')){g.fillStyle='#d33a1f';g.fillRect(p.x-p.w/2+3,py-5,6,6);g.fillRect(p.x+p.w/2-9,py-5,6,6)}
+ const marcas=(act&&e.tipo==='epi'?['chaleco']:[]).concat(['iman','herramienta','calma'].filter(poder).map(k=>SORPRESAS[k].ic));
+ marcas.forEach((m,i)=>{const im=icoImg(m,'#004230'),x=p.x-(marcas.length*12)/2+i*12;if(icoListo(im))g.drawImage(im,x+1,py+2,10,10)});
+ /* bola */
+ const bo=sprite('bola',24,24,q=>{const gr=q.createRadialGradient(12,12,2,12,12,12);gr.addColorStop(0,'#fff');gr.addColorStop(.5,'#fff');gr.addColorStop(.6,'rgba(255,255,255,.35)');gr.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=gr;q.fillRect(0,0,24,24)});
+ for(const b of (st.bolas||[])){
+  if(b.y>H+20)continue;
+  g.fillStyle='rgba(252,209,0,.22)';b.estela.forEach(([x,y],i)=>{const r=b.r*(i+1)/b.estela.length;g.fillRect(x-r/2,y-r/2,r,r)});
+  g.drawImage(bo,b.x-14,b.y-14,28,28);
+ }
+ /* tutorial: una mano que enseña a deslizar el dedo por la mitad de abajo */
+ if(st.tuto&&st.tuto.paso==='lanza'&&!st.pausa)manoQueSenala(g,W/2+Math.sin(t/450)*70,p.y-70,'Desliza ← →',t);
+ /* cascotes y puntos */
+ for(const q of st.part){
+  g.globalAlpha=Math.max(0,Math.min(1,q.vida));
+  if(q.tipo==='txt'){g.textAlign='center';g.textBaseline='middle';g.fillStyle=q.col;g.font=`800 ${q.tam||18}px Aleo,Georgia,serif`;g.fillText(q.txt,q.x,q.y)}
+  else{g.fillStyle=q.col;const s=q.s||3;g.fillRect(q.x,q.y,s,s)}
+ }
+ g.globalAlpha=1;
+}
+function manoQueSenala(g,x,y,txt,t){
+ const im=icoImg('mano','#fcd100'),d=MOV_REDUCIDO?0:Math.sin(t/180)*4,izq=x>st.W-110;   /* cerca del borde derecho, el texto a la izquierda */
+ x=Math.max(14,Math.min(st.W-14,x));
+ if(icoListo(im))g.drawImage(im,x-13,y+d,26,26);
+ g.textAlign=izq?'right':'left';g.textBaseline='middle';g.font='800 15px Aleo,Georgia,serif';
+ const tx=izq?x-16:x+15;g.lineWidth=4;g.strokeStyle='rgba(0,40,29,.85)';g.strokeText(txt,tx,y+13+d);g.fillStyle='#fcd100';g.fillText(txt,tx,y+13+d);
+}
+/* ===== Final del nivel ===== */
+/* fase 4, 17-11-2026 (equidad): la pala ya no decide la nota de conocimiento. Al acabar el nivel se preguntan, uno tras otro,
+   los expedientes que se cayeron y los que no llegaron a salir; las estrellas son solo por aciertos de los 8 (siempre se preguntan los 8) */
+const estrellas=a=>a>=7?3:a>=5?2:a>=3?1:0;
+function terminaNivel(){
+ if(st.fin)return;st.fin=true;
+ const vidas=Math.max(0,st.vidas);
+ if(st.muroEntero){suma(PUNTOS.muro);suma(PUNTOS.vida*vidas);sfx('fanfarria');vibrar([30,50,30,50,60])}
+ finTuto();
+ const pend=(st.pendientes||[]).concat(st.casos.filter(c=>!c.lanzado));st.nPend=pend.length;
+ const sigue=i=>{if(i>=pend.length)return final(estrellas(st.aciertos));abreCaso({caso:pend[i]},{i,n:pend.length,sigue:()=>sigue(i+1)})};
+ setTimeout(()=>sigue(0),pend.length?1500:(st.muroEntero?600:900));
+ aviso(st.muroEntero?'¡Muro derribado!':'Sin vidas',pend.length?`Ahora, ${pend.length===1?'el expediente pendiente':'los '+pend.length+' expedientes pendientes'}`:st.muroEntero?`+${PUNTOS.muro} y +${PUNTOS.vida} por vida`:'',1500);
+}
+function final(est){
+ parar();app.classList.remove('jugando');
+ const antes=rec(st.l.n);guarda(st.l.n,st.pts);
+ if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
+ app.innerHTML=`<div class="final">
+  <div class="marca">Nivel ${st.l.n} · ${st.l.titulo}</div>
+  <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
+  <div class="gran">${st.pts}</div><div>puntos · ${st.aciertos} de ${EXPEDIENTES} expedientes bien clasificados${st.muroEntero?' · muro derribado':' · el muro ha aguantado'}</div>
+  ${st.nPend?`<p class="libro">${st.nPend===1?'Uno de ellos lo clasificaste':'De ellos, '+st.nPend+' los clasificaste'} al acabar el nivel, como ${st.nPend===1?'expediente pendiente':'expedientes pendientes'}.</p>`:''}
+  ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
+  ${repasoRiesgos()}
+  ${st.fallos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estos expedientes</h2>${porFactor(st.fallos).map(([F,v])=>`<h3>${chapa(F)}${F.n}</h3>`+v.map(c=>`<div class="fallo">${c.texto}<b>${ico(RESP_ICO[c.r])} ${RESP[c.r].n}</b><small>${c.ex} ${libro(1,c.ap)}</small></div>`).join('')).join('')}</div>`:(st.aciertos?'<p style="margin-top:14px">¡Ni un fallo! Ese expediente lo firma una persona experta en prevención.</p>':'')}
+  ${st.oficial?bloqueOficial(est):''}
+  <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.l.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
+ </div>`;
+ if(st.oficial)return finOficial();
+ $('#otra').onclick=()=>presenta(st.l.n);
+ $('#menu').onclick=portada;
+ if($('#sigui'))$('#sigui').onclick=()=>presenta(st.l.n+1);
+}
+/* fase 6, 17-11-2026: repaso final agrupado por factor de riesgo («Ruido y vibraciones: 2 accidentes de trabajo y 1 enfermedad profesional») */
+function porFactor(casos){return Object.keys(FACTORES).map(k=>[FACTORES[k],casos.filter(c=>c.fa===k)]).filter(x=>x[1].length)}
+const yLista=a=>a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:(a[0]||'');
+function repasoRiesgos(){
+ if(!st.res.length)return '';
+ const grupos=porFactor(st.res.map(x=>x.caso));
+ const cuenta=v=>yLista(Object.keys(RESP).map(r=>[r,v.filter(c=>c.r===r).length]).filter(x=>x[1]).map(([r,n])=>n+' '+(n===1?RESP[r].n:RESP[r].p).toLowerCase()));
+ const idea={1:'El mismo riesgo puede causar un accidente de trabajo o un daño no laboral: depende de si tiene relación con el trabajo.',
+  2:'El mismo riesgo puede causar un accidente (de golpe), una enfermedad profesional (poco a poco y recogida en el cuadro) o un daño no laboral (sin relación con el trabajo).',
+  3:'El mismo riesgo puede causar un accidente (de golpe), una enfermedad profesional (poco a poco y en el cuadro), una patología inespecífica (el trabajo influye junto con otros factores) o un daño no laboral.'}[st.l.n];
+ return `<div class="riesgos"><h2 class="serif">Lo que ha salido de cada riesgo</h2>${grupos.map(([F,v])=>{const bien=st.res.filter(x=>x.ok&&v.includes(x.caso)).length;
+  return `<div class="rg">${chapa(F)}<span><b>${F.n}:</b> ${cuenta(v)} <small>· ${bien} de ${v.length} bien</small></span></div>`}).join('')}<p class="libro" style="margin:6px 0 0">${idea}</p></div>`;
+}
+function bloqueOficial(est){
+ const o=st.oficial;o.est[st.l.n-1]=est;o.fallos=(o.fallos||[]).concat(st.fallos.map(c=>`N${st.l.n} «${c.texto.slice(0,40)}» → ${c.r}`));o.pts+=st.pts;
+ if(st.l.n<3)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
+ const m=mediaEst(o.est);
+ return `<div class="aviso-of"><b>Partida oficial terminada · ${o.pts} puntos</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota (media de tus estrellas): <b>+${extraDe(m)}</b> en el criterio de daños profesionales (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+}
+function finOficial(){
+ const o=st.oficial;
+ if(st.l.n<3){$('#ofsig').onclick=()=>presenta(st.l.n+1,o);return}
+ $('#ofmenu').onclick=portada;
+ const m=mediaEst(o.est);
+ const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts);ponMejor(o.codigo,mejor);
+ if(!antes)ls.set('muro_primer_envio',Date.now());
+ puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
+ envia({codigo:o.codigo,intento:o.intento,fallos:o.fallos,n1:o.est[0],n2:o.est[1],n3:o.est[2],puntos:o.pts,extra:extraDe(m)}).then(ok=>{
+  $('#envio').textContent=textoEnvio(ok);
+ });
+}
+portada();
+</script>
+<style>
+#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+</style>
+<button id="pcomp" type="button">⛶ Pantalla completa</button>
+<script>
+/* Tablets y ordenadores: igual que en los otros juegos. Mientras se juega (.juego) no se escala: el lienzo ya llena la pantalla. */
+(function(){
+ const app=document.getElementById('app'),btn=document.getElementById('pcomp');
+ let midiendo=false;
+ function ajusta(){
+  if(midiendo)return;midiendo=true;
+  const fija=app.querySelector('.juego');
+  btn.style.visibility=fija?'hidden':'';
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
+  const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
+  const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
+  let z=H/alto();
+  if(z>=zw){z=zw}
+  else if(z<1){z=zMin;app.style.maxWidth=Math.floor(innerWidth/z)+'px'}
+  else{
+   for(let k=0;k<3;k++){app.style.maxWidth=Math.floor(innerWidth/z)+'px';z=Math.min(2.4,H/alto())}
+   z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
+  }
+  app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
+  midiendo=false;
+ }
+ new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});
+ addEventListener('resize',ajusta);ajusta();
+ const fs=document.documentElement;
+ function boton(){
+  const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+ }
+ const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ btn.onclick=()=>{salio=false;pide()};
+ let salio=false;
+ function auto(e){
+  if(e&&e.target&&e.target.closest&&e.target.closest('#pcomp'))return;
+  if(salio||innerWidth<700||!(document.fullscreenEnabled||document.webkitFullscreenEnabled))return;
+  if(document.fullscreenElement||document.webkitFullscreenElement)return;
+  pide();
+ }
+ document.addEventListener('click',auto,true);document.addEventListener('touchend',auto,true);
+ const sale=()=>{if(!(document.fullscreenElement||document.webkitFullscreenElement))salio=true};
+ document.addEventListener('fullscreenchange',sale);document.addEventListener('webkitfullscreenchange',sale);
+ document.addEventListener('fullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ document.addEventListener('webkitfullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ addEventListener('resize',boton);boton();
+})();
+</script>
+<script>
+/* Generado por herramientas/juegos_paginas.py: no tocar a mano. */
+const PAGINAS={"UD1": {"HIG": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "IFC": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "ITE": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "STI": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}}, "UD2": {"HIG": {"2.2.3": 9}, "IFC": {"2.2.3": 9}, "ITE": {"2.2.3": 9}, "STI": {"2.2.3": 9}}, "UD3": {"HIG": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "IFC": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "ITE": {"3.6": 17, "3.6.1": 17, "PLS": 19}, "STI": {"3.6": 17, "3.6.1": 18, "PLS": 20}}};
+/* ===== Común a los tres juegos (José, 9-11-2026): libro, sonido sí/no, accesibilidad e instalable =====
+   Lo meten los montar_*.py antes de </body>, junto con PAGINAS (paginas_libro.js). */
+
+/* «Repasa» con la página del libro de tu ciclo (sale del código de lista; sin código, solo el apartado). */
+function libro(ud, ap, txt) {
+  let c = '';
+  try { c = (/^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase()) || [])[1] || '' } catch (e) {}
+  const p = (((typeof PAGINAS !== 'undefined' && PAGINAS['UD' + ud]) || {})[c] || {})[ap];
+  return `📖 En el libro: UD ${ud}, apartado ${txt || ap}${p ? `, página ${p}` : ''}`;
+}
+
+/* Diálogo propio (fase 2, 17-11-2026): sustituye a alert y confirm del navegador, que en el móvil parecen un error y no
+   llevan los colores del centro. dialogo(texto) avisa; dialogo(texto, {si, no}) pregunta y devuelve true o false. */
+function dialogo(txt, op) {
+  return new Promise(res => {
+    const antes = document.activeElement;
+    const fondo = document.createElement('div'); fondo.className = 'dlg-fondo';
+    const caja = document.createElement('div'); caja.className = 'dlg';
+    caja.setAttribute('role', op ? 'alertdialog' : 'dialog'); caja.setAttribute('aria-modal', 'true');
+    const p = document.createElement('p'); p.id = 'dlg-txt'; p.textContent = txt; caja.setAttribute('aria-describedby', 'dlg-txt');
+    const bs = document.createElement('div'); bs.className = 'dlg-btns';
+    const boton = (texto, clase, v) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = e => { e.stopPropagation(); fin(v) }; bs.appendChild(b); return b };
+    const tecla = e => {
+      e.stopPropagation();                                   // el juego no se entera de las teclas mientras está abierto
+      if (e.key === 'Escape') { e.preventDefault(); fin(!op) }
+      else if (e.key === 'Tab') { const l = [...bs.children], i = l.indexOf(document.activeElement); e.preventDefault(); l[(i + (e.shiftKey ? l.length - 1 : 1)) % l.length].focus() }
+    };
+    const fin = v => { document.removeEventListener('keydown', tecla, true); fondo.remove(); try { antes && antes.focus && antes.focus({ preventScroll: true }) } catch (e) {} res(v) };
+    if (op) boton(op.no || 'No', 'no', false);
+    const si = boton(op ? (op.si || 'Sí') : 'Entendido', 'si', true);
+    caja.append(p, bs); fondo.appendChild(caja);
+    ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach(ev => fondo.addEventListener(ev, e => e.stopPropagation()));
+    document.addEventListener('keydown', tecla, true);
+    document.body.appendChild(fondo); si.focus({ preventScroll: true });
+  });
+}
+
+/* ===== Sonido y respuesta física comunes (fase 5, 17-11-2026) =====
+   Todo sintetizado con WebAudio (sin archivos). Un solo contexto: el «actx» del juego si lo declara (let actx=null) y,
+   si no, uno propio. Pasa por un volumen general y un compresor para que nada sature. Respeta «Sin sonido» (SILENCIO),
+   que también quita la vibración. Se desbloquea con el primer toque (iOS).
+   sfx('toque'|'acierto'|'fallo'|'tic'|'golpe'|'rompe'|'premio'|'fanfarria'|'alarma'|'barrido'|'paso', n) · vibrar(ms o patrón)
+   sacudir(elemento, px) · parada(ms) → promesa (pausa de impacto; el juego decide qué congela) */
+const AUDIO = { ctx: null, maestro: null, ruido: null };
+function audio() {
+  try {
+    let c = typeof actx !== 'undefined' ? actx : AUDIO.ctx;
+    if (!c) { c = new (window.AudioContext || window.webkitAudioContext)(); if (typeof actx !== 'undefined') actx = c; }
+    AUDIO.ctx = c;
+    if (!AUDIO.maestro || AUDIO.maestro.context !== c) {
+      const comp = c.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      AUDIO.maestro = c.createGain(); AUDIO.maestro.gain.value = .8; AUDIO.maestro.connect(comp).connect(c.destination);
+      const b = c.createBuffer(1, c.sampleRate * .5, c.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      AUDIO.ruido = b;
+    }
+    if (c.state === 'suspended' && !window.SILENCIO) c.resume();
+    return c;
+  } catch (e) { return null }
+}
+function nota(f, dur, tipo = 'sine', vol = .2, d = 0, hasta = 0) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, o = c.createOscillator(), g = c.createGain();
+  o.type = tipo; o.frequency.setValueAtTime(f, t0); if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+  g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + .012); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g).connect(AUDIO.maestro); o.start(t0); o.stop(t0 + dur + .03);
+}
+function ruido(dur, vol = .2, filtro = 1200, d = 0, q = 1) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = AUDIO.ruido; f.type = 'bandpass'; f.frequency.value = filtro; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  s.connect(f).connect(g).connect(AUDIO.maestro); s.start(t0); s.stop(t0 + dur + .02);
+}
+const PENTA = [0, 2, 4, 7, 9];
+const escala = n => 523.25 * Math.pow(2, (PENTA[n % 5] + 12 * Math.floor(n / 5)) / 12);   // do pentatónico que sube con n
+function sfx(nombre, n = 0) {
+  switch (nombre) {
+    case 'toque': nota(1400, .035, 'triangle', .12); break;
+    case 'paso': nota(320 + n * 6, .03, 'sine', .05); break;
+    case 'tic': nota(1000, .03, 'square', .07); break;
+    case 'acierto': { const b = escala(Math.min(n, 9)); nota(b, .12, 'triangle', .22); nota(b * 1.5, .16, 'triangle', .2, .07); break }
+    case 'fallo': nota(220, .16, 'square', .14); nota(155, .2, 'square', .14, .12); break;
+    case 'golpe': nota(160, .09, 'sine', .3, 0, 60); ruido(.05, .12, 900); break;
+    case 'rompe': ruido(.09, .22, 1800 + Math.min(n, 12) * 180, 0, 2); nota(escala(Math.min(n, 12)), .07, 'triangle', .1); break;
+    case 'premio': [0, 2, 4].forEach((k, i) => nota(escala(k + 5), .14, 'sine', .18, i * .07)); break;
+    case 'fanfarria': [523, 659, 784, 1047].forEach((f, i) => nota(f, .22, 'triangle', .2, i * .11)); break;
+    case 'alarma': nota(880, .12, 'square', .1); nota(880, .12, 'square', .1, .2); break;
+    case 'barrido': ruido(.25, .08, 600, 0, .7); break;
+  }
+}
+function vibrar(p) { try { if (!window.SILENCIO && navigator.vibrate) navigator.vibrate(p) } catch (e) {} }
+const MOV_REDUCIDO = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } })();
+function sacudir(el, px = 6) {
+  if (!el || MOV_REDUCIDO || !el.animate) return;
+  el.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: 'translate(0,0)' }], { duration: 220, easing: 'ease-out' });
+}
+const parada = ms => new Promise(r => setTimeout(r, MOV_REDUCIDO ? 0 : ms));
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (!window.SILENCIO) audio() }, { capture: true, passive: true }));
+
+/* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
+try {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+    const anima = Element.prototype.animate;
+    Element.prototype.animate = function (k, o) { o = typeof o === 'number' ? 1 : Object.assign({}, o || {}, { duration: 1, iterations: 1 }); return anima.call(this, k, o) };
+  }
+} catch (e) {}
+
+(function () {
+  const L = {
+    get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v } catch (e) { return d } },
+    set: (k, v) => { try { localStorage.setItem(k, v) } catch (e) {} }
+  };
+  const app = document.getElementById('app');
+  const css = document.createElement('style');
+  css.textContent = `
+.libro{display:block;margin-top:5px;color:#004230;font-weight:700;font-size:13px}
+p.libro{margin:0 0 8px}
+.opcs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 4px}
+.opc{border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
+.opc[aria-pressed="false"]{background:#5b6b70}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
+.op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
+.op.mal::after{content:"✗";margin-left:auto;font-size:20px;font-weight:900}
+@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+button,a,input,.op,.resp{touch-action:manipulation}
+.dlg-fondo{position:fixed;inset:0;z-index:1000;background:rgba(0,30,22,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{background:#fff;color:#1d2a30;border-radius:18px;max-width:420px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.35);font:16px/1.5 "Helvetica Neue",Arial,sans-serif;text-align:left}
+.dlg p{white-space:pre-line;margin:0 0 18px}
+.dlg-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.dlg button{border:0;border-radius:12px;padding:12px 18px;min-height:44px;font:700 16px Aleo,Georgia,serif;cursor:pointer;background:#004230;color:#fff}
+.dlg button.no{background:#e3efe9;color:#004230}
+/* portada común de la colección (fase 2): la tarjeta oscura de Serpiente, Auxilios y Aventura, para todos */
+:where(.heroe){position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;background:radial-gradient(circle at 85% 10%,var(--brillo,rgba(252,209,0,.28)),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
+:where(.heroe) .hm{font:700 12px "Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+:where(.heroe) h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}
+:where(.heroe h1) span{color:#fcd100}
+:where(.heroe) p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
+:where(.heroe) .chips{display:flex;flex-wrap:wrap;gap:6px}
+:where(.heroe .chips) span{font:700 12px "Helvetica Neue",Arial,sans-serif;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;color:#fff}`;
+  document.head.appendChild(css);
+
+  /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
+  const caja = document.createElement('div');
+  caja.className = 'opcs';
+  function boton(texto, activo, alCambiar) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opc';
+    const pinta = v => { b.setAttribute('aria-pressed', v ? 'true' : 'false'); b.textContent = texto(v) };
+    let v = activo; pinta(v);
+    b.onclick = e => { e.stopPropagation(); v = !v; pinta(v); alCambiar(v) };
+    caja.appendChild(b);
+    return b;
+  }
+  const muestra = () => { const p = app && app.querySelector('.portada'); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
+  if (app) new MutationObserver(muestra).observe(app, { childList: true });
+
+  /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
+  {
+    const aplica = () => {
+      try {
+        const c = typeof actx !== 'undefined' && actx ? actx : AUDIO.ctx;
+        if (window.SILENCIO) { if (c) c.suspend(); try { window.speechSynthesis && speechSynthesis.cancel() } catch (e) {} }
+        else if (c && c.state === 'suspended') c.resume();
+      } catch (e) {}
+    };
+    window.SILENCIO = L.get('ipe_silencio', '0') === '1';
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
+    aplica();
+    /* si el juego crea el sonido después, se vuelve a silenciar */
+    document.addEventListener('click', () => setTimeout(aplica, 0), true);
+    document.addEventListener('touchend', () => setTimeout(aplica, 0), true);
+  }
+
+  /* Ayuda de colores para daltonismo (solo señales: escribe el color de la señal en el nivel 1). */
+  if (typeof GIRO !== 'undefined') {
+    window.AYUDA_COLOR = L.get('ipe_ayuda_color', '0') === '1';
+    boton(v => v ? '👁 Ayuda de colores: sí' : '👁 Ayuda de colores: no', window.AYUDA_COLOR,
+      v => { window.AYUDA_COLOR = v; L.set('ipe_ayuda_color', v ? '1' : '0') });
+  }
+  muestra();
+
+  /* Instalable (solo en línea desde el 9-11-2026: sw.js no guarda copias, siempre carga de internet). */
+  if ('serviceWorker' in navigator && location.protocol === 'https:')
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
