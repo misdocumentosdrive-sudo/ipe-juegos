@@ -167,6 +167,8 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
  .rcp .cuerpo{max-width:640px}
  .rcp .cuenta{font-size:42px}.rcp .bpm{font-size:30px}
 }
+.pausa-j{position:fixed;inset:0;z-index:50;border:0;width:100%;background:#0b1f19;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:700 18px/1.4 "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+.pausa-j b{font:800 30px Aleo,Georgia,serif;color:#fcd100}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -212,7 +214,7 @@ const BANCOS = {
   {s:'',t:'No responde y hace respiraciones lentas y trabajosas, como «boqueadas».',ok:'Es una parada: 112 y RCP',no:['Respira: posición lateral de seguridad','Esperar a ver si mejora','Abanicarla'],e:'Las boqueadas no son una respiración normal: hay que empezar la RCP.'},
   {s:'',t:'¿Cuánto tiempo compruebas si respira con normalidad?',ok:'No más de 10 segundos',no:['Un minuto','Hasta que llegue la ambulancia','Medio minuto'],e:'Se mira, se escucha y se siente durante no más de 10 segundos.'},
   {s:'',t:'¿Dónde se ponen las manos para las compresiones?',ok:'En el centro del pecho',no:['En el lado izquierdo, sobre el corazón','Sobre el estómago','En la parte alta del pecho, junto al cuello'],e:'El talón de una mano en el centro del pecho y la otra encima, con los brazos rectos.'},
-  {s:'',t:'¿A qué ritmo se hacen las compresiones?',ok:'De 100 a 120 por minuto',no:['De 60 a 80 por minuto','De 150 a 180 por minuto','30 por minuto'],e:'Entre 100 y 120 por minuto: el ritmo de Stayin’ Alive.'},
+  {s:'',t:'¿A qué ritmo se hacen las compresiones?',ok:'De 100 a 120 por minuto',no:['De 60 a 80 por minuto','De 150 a 180 por minuto','30 por minuto'],e:'Entre 100 y 120 por minuto: unas dos compresiones por segundo.'},
   {s:'',t:'¿Qué profundidad tienen las compresiones en una persona adulta?',ok:'Al menos 5 cm, pero no más de 6',no:['1 o 2 cm, con cuidado','10 cm','Lo que salga sin esfuerzo'],e:'Al menos 5 cm y no más de 6, dejando que el pecho vuelva a su sitio.'},
   {s:'',t:'¿Cuál es la proporción de la RCP?',ok:'30 compresiones y 2 ventilaciones',no:['15 compresiones y 2 ventilaciones','5 compresiones y 1 ventilación','100 compresiones y 10 ventilaciones'],e:'RCP 30:2: 30 compresiones y 2 ventilaciones.'},
   {s:'',t:'No sabes dar ventilaciones. ¿Qué haces?',ok:'Compresiones sin parar',no:['Nada: esperar a la ambulancia','Solo ventilaciones','Darle palmadas en la cara'],e:'Sin ventilaciones si no sabes: compresiones sin parar.'},
@@ -314,6 +316,8 @@ async function empiezaOficial(c){
 }
 
 const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
+/* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
+const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
 const $=s=>document.querySelector(s), app=$('#app');
 const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const rec=n=>+ls.get(PREF+'_record_'+n,0);
@@ -323,6 +327,17 @@ const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
 const vibra=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
 let st={};
 
+/* 17-11-2026: reloj del juego. Si la página se oculta (llamada, bloqueo, otra aplicación) se para, y al volver se sigue
+   tocando la pantalla de pausa: ninguna pregunta ni prueba pierde tiempo por eso. */
+const ahoraJ=()=>(st.parado||Date.now())-(st.pausadoT||0);
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden||st.parado||!st.l||st.fin||!(document.getElementById('tj')||document.getElementById('svg')))return;
+ st.parado=Date.now();try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
+ const p=document.createElement('button');p.type='button';p.className='pausa-j';
+ p.innerHTML='<b>Pausa</b>El tiempo está parado.<span>Toca para seguir</span>';
+ p.onclick=()=>{st.pausadoT=(st.pausadoT||0)+(Date.now()-st.parado);st.parado=0;st.ultimo=0;st.inter=[];p.remove()};
+ document.body.appendChild(p);
+});
 /* sonido: un «clic» corto para el pulso de ayuda (WebAudio, sin archivos) */
 let actx=null;
 function clic(f=1100){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.07);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+.08)}catch(e){}}
@@ -339,7 +354,7 @@ function acierto(){try{actx=actx||new (window.AudioContext||window.webkitAudioCo
   g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.25,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.22);
   o.connect(g).connect(actx.destination);o.start(t0+d);o.stop(t0+d+.24)})}catch(e){}vibra([40,40,40])}
 /* voz del DEA (José, 5-11-2026): la del propio móvil, en español; si no hay voz, no pasa nada */
-function habla(txt){try{const s=window.speechSynthesis;if(!s)return;s.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=.95;
+function habla(txt){try{const s=window.speechSynthesis;if(!s||window.SILENCIO||st.parado)return;s.cancel();const u=new SpeechSynthesisUtterance(txt);u.lang='es-ES';u.rate=.95;
  const v=s.getVoices().find(x=>/^es(-|_)ES/i.test(x.lang))||s.getVoices().find(x=>/^es/i.test(x.lang));if(v)u.voice=v;s.speak(u)}catch(e){}}
 
 /* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
@@ -403,7 +418,7 @@ function portada(){
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
-  const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
+  const c0=$('#cod').value.trim().toUpperCase().replace(/\s+/g,''), c=normCod(c0)?normCod(c0).replace(/-(\d)$/,'-0$1'):c0;   // 17-11-2026: siempre 1HIG-07 (antes, 1HIG-7 y 1HIG-07 salían como dos códigos)
   if(!RX_COD.test(c)){alert('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
   empiezaOficial(c);
  };
@@ -443,11 +458,11 @@ function pregunta(){
    <div class="explica" id="ex" role="status" aria-live="polite"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
- const T=st.l.t*1000,t0=Date.now(),barra=$('#t');
- st.reloj=setInterval(()=>{const q=1-(Date.now()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
+ const T=st.l.t*1000,t0=ahoraJ(),barra=$('#t');
+ st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
  const responde=k=>{
   clearInterval(st.reloj);
-  const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=(Date.now()-t0)/1000;
+  const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=(ahoraJ()-t0)/1000;
   app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(ops[b.dataset.k]===s.ok)b.classList.add('ok');else if(+b.dataset.k===k)b.classList.add('mal')});
   const ex=$('#ex');
   if(ok){
@@ -484,16 +499,16 @@ function llamada(s){
    <div class="llamada" id="ll"><small>Tu llamada:</small></div>
    <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div>`;
- const T=(st.l.t+15)*1000,t0=Date.now(),barra=$('#t');
+ const T=(st.l.t+15)*1000,t0=ahoraJ(),barra=$('#t');
  const acaba=ok=>{
   if(hecho)return;hecho=true;clearInterval(st.reloj);app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
-  const ex=$('#ex'),seg=(Date.now()-t0)/1000;
+  const ex=$('#ex'),seg=(ahoraJ()-t0)/1000;
   if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.max(0,T/1000-seg)*6)*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}
   else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();ex.className='explica mal';ex.innerHTML=`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así'}</b>${s.e}`}
   const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';b.onclick=()=>{st.i++;pregunta()};
  };
- st.reloj=setInterval(()=>{const q=1-(Date.now()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)acaba(false)},50);
+ st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)acaba(false)},50);
  app.querySelectorAll('.chip112').forEach(b=>b.onclick=()=>{
   const k=+b.dataset.k;
   if(k!==paso)return acaba(false);
@@ -609,7 +624,7 @@ const PLS_PASOS=[
  {id:'cabeza',txt:'Inclina la cabeza hacia atrás para que la vía aérea quede abierta. Y vigila que siga respirando.',de:{x:176,y:96},a:{x:205,y:62}}
 ];
 function pls(){
- const t0=Date.now();
+ const t0=ahoraJ();
  Object.assign(st,{paso:0,errores:0,arrastre:null});
  app.innerHTML=`<div class="rcp pls" id="esc">
   <div class="arriba"><span class="pill" id="pts">0 pts</span><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span></div>
@@ -626,7 +641,7 @@ function pls(){
   asas.innerHTML=lista.map(a=>`<circle class="asa" data-id="${a.id}" cx="${a.x}" cy="${a.y}" r="17" fill="rgba(252,209,0,.28)" stroke="#fcd100" stroke-width="3" stroke-dasharray="5 4"/>`).join('');
  };
  asasDe();
- st.reloj=setInterval(()=>{const q=60-Math.floor((Date.now()-t0)/1000);$('#cr').textContent=Math.max(0,q);if(q<=0){clearInterval(st.reloj);acabaPls(false)}},250);
+ st.reloj=setInterval(()=>{const q=60-Math.floor((ahoraJ()-t0)/1000);$('#cr').textContent=Math.max(0,q);if(q<=0){clearInterval(st.reloj);acabaPls(false)}},250);
  svg.onpointerdown=ev=>{
   if(st.paso>=5)return;
   const p=svgPunto(svg,ev);
@@ -665,7 +680,7 @@ function pls(){
 }
 function acabaPls(completa,t0){
  clearInterval(st.reloj);
- const seg=t0?(Date.now()-t0)/1000:60;
+ const seg=t0?(ahoraJ()-t0)/1000:60;
  st.aciertos=completa?5:Math.min(st.paso,5);st.lista={length:5};
  st.pts=Math.max(0,(completa?500:st.paso*80)+(completa?Math.round(Math.max(0,60-seg)*8):0)-st.errores*RESTA);
  st.estrellas=!completa?(st.paso>=3?1:0):st.errores===0?3:st.errores<=2?2:1;
@@ -704,18 +719,18 @@ function rcp(){
  $('#rel').onclick=relevar;
  st.reloj=setInterval(tic,200);
  const dibuja=()=>{   // línea de ECG que avanza
-  const ahora=Date.now();st.ecg=st.ecg.filter(t=>ahora-t<4000);
+  const ahora=ahoraJ();st.ecg=st.ecg.filter(t=>ahora-t<4000);
   const pts=[];for(let x=0;x<=300;x+=3){const t=ahora-(300-x)/300*4000;let y=34;for(const k of st.ecg){const d=t-k;if(d>=0&&d<120)y-=Math.sin(d/120*Math.PI)*(d<60?26:-8)}pts.push(x+','+y.toFixed(1))}
   const l=$('#lin');if(l){l.setAttribute('points',pts.join(' '));st.raf=requestAnimationFrame(dibuja)}
  };
  st.raf=requestAnimationFrame(dibuja);
 }
-const crono=()=>st.t0?(Date.now()-st.t0)/1000:0;
+const crono=()=>st.t0?(ahoraJ()-st.t0)/1000:0;
 function tic(){
  if(!$('#cr'))return;
  const s=Math.floor(crono());$('#cr').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
  if(st.compa&&!st.relevo&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();aviso('Llevas más de 2 minutos: te estás agotando y las compresiones pierden profundidad. ¡Pide el relevo!');$('#rel').classList.add('alarma')}
- if(st.fase==='dea3'&&Date.now()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';aviso('El DEA no puede analizar si alguien toca a la persona. ¡Que nadie la toque!');pasoDea()}
+ if(st.fase==='dea3'&&ahoraJ()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';aviso('El DEA no puede analizar si alguien toca a la persona. ¡Que nadie la toque!');pasoDea()}
 }
 function aviso(t){const m=$('#msg');if(m)m.innerHTML=t}
 function pintaPts(){const p=$('#pts');if(p)p.textContent=Math.max(0,puntosRcp())+' pts'}
@@ -725,7 +740,7 @@ function marca(p,color){
  const o=document.createElement('div');o.className='onda';o.style.borderColor=color;
  o.style.left=(p.x*m.a+m.e-r.left)+'px';o.style.top=(p.y*m.d+m.f-r.top)+'px';cu.appendChild(o);setTimeout(()=>o.remove(),600);
 }
-function toque(p){
+function toque(p,ev){
  if(st.fase==='sitio'){
   if(dist(p,SITIO)<26){
    st.fase='comp';$('#manosg').innerHTML=manosSocorrista;
@@ -741,7 +756,8 @@ function toque(p){
  if(st.fase!=='comp')return;
  if(dist(p,SITIO)>60){st.errores++;fallo();marca(p,'#ff6b4a');aviso('¡Las manos en el centro del pecho!');return pintaPts()}
  if(st.cuenta>=30){st.errores++;fallo();aviso('Ya van 30: ahora, <b>2 ventilaciones</b>.');return pintaPts()}
- const ahora=Date.now();if(!st.t0)st.t0=ahora;
+ const tarde=ev&&ev.timeStamp?Math.min(150,Math.max(0,performance.now()-ev.timeStamp)):0;   // 17-11-2026: la hora del toque, no la de cuando se atiende
+ const ahora=ahoraJ()-tarde;if(!st.t0)st.t0=ahora;
  st.cuenta++;st.ecg.push(ahora);vibra(25);marca(p,'#7dffb5');
  const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.7)'},{transform:'scale(1)'}],{duration:200});const fg=$('#fig');if(fg)fg.animate([{transform:'scale(1)'},{transform:'scale(.985)'},{transform:'scale(1)'}],{duration:200});const co=$('#cor');if(co){co.classList.remove('latido');void co.offsetWidth;co.classList.add('latido')}
  if(st.ultimo&&st.cuenta>1){
@@ -774,7 +790,7 @@ function ventilar(){
   st.cicloN++;st.cuenta=0;st.ultimo=0;st.inter=[];
   if(st.cicloN===2&&!st.compa){st.compa=true;$('#rel').disabled=false}
   // salto de tiempo (José, 5-11-2026: «el RCP se me ha hecho eterno»): tras dos ciclos, el cronómetro salta a 1:40
-  if(st.cicloN===3&&!st.saltado){st.saltado=true;st.t0=Date.now()-100000;combo('⏩ +1 minuto')}
+  if(st.cicloN===3&&!st.saltado){st.saltado=true;st.t0=ahoraJ()-100000;combo('⏩ +1 minuto')}
   $('#ci').textContent='Ciclo '+st.cicloN;$('#cuenta').innerHTML='0<small>/30</small>';
   st.fase='comp';
   aviso(st.cicloN===3&&!st.relevo?'⏩ Seguís comprimiendo… <b>han pasado casi 2 minutos</b>. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>':st.compa&&!st.relevo?'Tu compañera ya está aquí y el DEA viene de camino. Seguid: <b>relevaos cada 2 minutos</b>.':'Otra vez: 30 compresiones.');
@@ -788,7 +804,7 @@ function relevar(){
  st.fase='dea0';clearInterval(st.metro);
  combo('🔄 ¡Relevo!');if(st.relevo==='ok')acierto();
  aviso('Tu compañera sigue con las compresiones, sin parar. Acaba de llegar el <b>DEA</b>: te toca a ti.');
- st.compRitmo=setInterval(()=>{st.ecg.push(Date.now());const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.86)'},{transform:'scale(1)'}],{duration:200})},MET);
+ st.compRitmo=setInterval(()=>{st.ecg.push(ahoraJ());const ma=$('#manos');if(ma)ma.animate([{transform:'scale(1)'},{transform:'scale(.86)'},{transform:'scale(1)'}],{duration:200})},MET);
  setTimeout(()=>{st.fase='dea1';pasoDea()},1800);
  pintaPts();
 }
@@ -818,7 +834,7 @@ function poneParche(p){
  PARCHES[k].puesto=true;st.parches++;clic(880);
  $('#marcas').innerHTML+=`<rect x="${PARCHES[k].x-16}" y="${PARCHES[k].y-12}" width="32" height="24" rx="5" fill="#fff" stroke="#2fd47a" stroke-width="3"/>`;
  if(st.parches===2){
-  st.deaPaso++;st.fase='dea3';st.deaT=Date.now();
+  st.deaPaso++;st.fase='dea3';st.deaT=ahoraJ();
   aviso('«Analizando el ritmo cardiaco»… Tu compañera sigue comprimiendo.');habla('Analizando el ritmo cardiaco. No toque al paciente.');
   $('#bot').innerHTML='<button class="btn alarma" id="apart" style="flex:1">✋ ¡Que nadie la toque!</button>';
   $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';aviso('Bien: nadie la toca mientras el DEA analiza.');pasoDea()};
@@ -881,14 +897,14 @@ function final(){
 function bloqueOficial(est){
  const o=st.oficial;o.est[st.l.n-1]=est;o.fallos=(o.fallos||[]).concat(st.fallos.map(x=>`N${st.l.n} ${x.t||''}`));o.pts+=st.pts;
  if(st.l.n<ULT)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
- const m=Math.min(...o.est);
- return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de primeros auxilios (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+ const m=mediaEst(o.est);
+ return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota (media de tus estrellas): <b>+${extraDe(m)}</b> en el criterio de primeros auxilios (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
 }
 function finOficial(){
  const o=st.oficial;
  if(st.l.n<ULT){$('#ofsig').onclick=()=>empieza(st.l.n+1,o);return}
  $('#ofmenu').onclick=portada;
- const m=Math.min(...o.est);
+ const m=mediaEst(o.est);
  const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts);ponMejor(o.codigo,mejor);
  if(!antes)ls.set(PREF+'_primer_envio',Date.now());
  puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});

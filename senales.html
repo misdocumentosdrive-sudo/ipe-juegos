@@ -21,7 +21,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .barra i{display:block;height:100%;background:linear-gradient(90deg,var(--verde2),var(--verde));width:0;transition:width .3s}
 .tiempo{height:5px;background:#eadfcf;border-radius:99px;overflow:hidden;margin:-8px 0 12px}
 .tiempo i{display:block;height:100%;background:var(--naranja);width:100%}
-.tarjeta{background:#fff;border-radius:22px;box-shadow:0 6px 20px rgba(0,66,48,.10);padding:18px;display:flex;flex-direction:column;align-items:center}
+.tarjeta{position:relative;background:#fff;border-radius:22px;box-shadow:0 6px 20px rgba(0,66,48,.10);padding:18px;display:flex;flex-direction:column;align-items:center}
 .senal{width:min(62vw,230px);height:min(62vw,230px);margin:6px 0 10px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 4px rgba(0,0,0,.15))}
 .senal img{max-width:100%;max-height:100%}
 .op .mini img,.fila-sen img,.fallo img{width:100%;height:100%;object-fit:contain}
@@ -65,6 +65,8 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .fallo img{width:54px;height:54px;flex:none}
 .fallo b{display:block;color:var(--verde)}
 .fallo small{color:var(--gris)}
+.pausa{position:absolute;inset:0;z-index:5;background:#fff;border-radius:22px;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font:700 17px/1.4 "Helvetica Neue",Arial,sans-serif;color:var(--texto);cursor:pointer;width:100%}
+.pausa b{font:800 26px Aleo,Georgia,serif;color:var(--verde)}
 .btns{display:grid;gap:10px;margin-top:16px}
 .btn{border:0;border-radius:14px;padding:14px;font:800 17px Aleo,Georgia,serif;cursor:pointer}
 .btn.p{background:var(--verde);color:#fff}
@@ -228,6 +230,8 @@ async function empiezaOficial(c){
 }
 
 const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
+/* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
+const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
 
 /* Resultados sin conexión (José, 9-11-2026): si no hay red, el resultado se guarda en el dispositivo y se envía solo
    al volver la conexión (o la próxima vez que se abra el juego). */
@@ -282,7 +286,7 @@ function portada(){
  $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
-  const c=$('#cod').value.trim().toUpperCase().replace(/\s+/g,'');
+  const c0=$('#cod').value.trim().toUpperCase().replace(/\s+/g,''), c=normCod(c0)?normCod(c0).replace(/-(\d)$/,'-0$1'):c0;   // 17-11-2026: siempre 1HIG-07 (antes, 1HIG-7 y 1HIG-07 salían como dos códigos)
   if(!RX_COD.test(c)){alert('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
   {const f=plazo(c);if(f&&new Date()>f){alert('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
   empiezaOficial(c);
@@ -302,7 +306,7 @@ function empieza(n,oficial){
 }
 
 function pregunta(){
- clearInterval(st.reloj);
+ clearInterval(st.reloj);st.activa=false;st.parado=0;window.scrollTo(0,0);
  if(st.i>=st.lista.length||st.vidas<=0)return final();
  const s=st.lista[st.i], modo=st.l.modo;
  let ops;
@@ -330,11 +334,11 @@ function pregunta(){
    <div class="explica" id="ex" role="status" aria-live="polite"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
- const T=st.l.t*1000, t0=Date.now(), barra=$('#t');
- st.reloj=setInterval(()=>{const q=1-(Date.now()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
+ const T=st.l.t*1000, barra=$('#t'), pintada=Date.now();st.t0=Date.now();st.activa=true;
+ st.reloj=setInterval(()=>{if(st.parado)return;const q=1-(Date.now()-st.t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
  const responde=k=>{
-  clearInterval(st.reloj);
-  const ok=k===correcta, seg=(Date.now()-t0)/1000;
+  clearInterval(st.reloj);st.activa=false;
+  const ok=k===correcta, seg=(Date.now()-st.t0)/1000;
   app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(b.dataset.k===correcta)b.classList.add('ok');else if(b.dataset.k===k)b.classList.add('mal')});
   const ex=$('#ex');
   if(ok){
@@ -352,15 +356,22 @@ function pregunta(){
    ex.className='explica mal';ex.innerHTML=s.trampa?`<b>${cab}: era una trampa</b>${trampaTxt(s)}`:`<b>${cab}</b>${modo==='sit'?'La señal adecuada es':'Es una señal de <b style="display:inline;font-size:15px">'+TIPOS[s.tipo].n.toLowerCase()+'</b>:'} «${s.sig}». ${s.exp} ${TIPOS[s.tipo].d}`;
   }
   const pp=document.querySelector('.cab .pill');if(pp)pp.textContent=st.pts+' pts';
-  const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';
+  const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'nearest'}),150);b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';
   b.onclick=()=>{st.i++;pregunta()};
  };
- app.querySelectorAll('.op').forEach(b=>b.onclick=()=>responde(b.dataset.k));
+ app.querySelectorAll('.op').forEach(b=>b.onclick=()=>{if(Date.now()-pintada<350||st.parado)return;responde(b.dataset.k)});   // 17-11-2026: el segundo toque de «Siguiente» ya no responde la pregunta nueva
 }
+/* 17-11-2026: si la página se oculta (llamada, bloqueo, otra aplicación) se tapa la pregunta y el reloj se para */
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden||!st.activa||st.parado)return;
+ st.parado=Date.now();const tj=$('#tj');if(!tj)return;
+ const p=document.createElement('button');p.className='pausa';p.type='button';p.innerHTML='<b>Pausa</b>El tiempo está parado.<span>Toca para seguir</span>';
+ p.onclick=()=>{st.t0+=Date.now()-st.parado;st.parado=0;p.remove()};tj.appendChild(p);
+});
 
 function final(){
  clearInterval(st.reloj);
- const total=st.lista.length, r=st.aciertos/total, est=st.vidas<=0?0:r>=.95?3:r>=.75?2:r>=.5?1:0;
+ const total=st.lista.length, est=Math.max(0,st.vidas);   // 17-11-2026: estrellas = vidas que te quedan (0 fallos 3★, 1 fallo 2★, 2 fallos 1★)
  const antes=rec(st.l.n); guarda(st.l.n,st.pts);
  const unicos=[...new Map(st.fallos.map(s=>[s.id+(s.trampa?'t':''),s])).values()];
  if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
@@ -369,7 +380,7 @@ function final(){
   <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
   <div class="gran">${st.pts}</div><div>puntos · ${st.aciertos} de ${total} aciertos${st.vidas<=0?' · sin vidas':''}</div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
-  ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estas señales</h2><p class="libro">${libro(2,'2.2.3')}</p>${unicos.map(s=>s.trampa?`<div class="fallo"><span style="filter:hue-rotate(${GIRO[s.tipo]}deg);display:contents">${s.svg}</span><div><b>Señal trampa</b><small>${trampaTxt(s)}</small></div></div>`:`<div class="fallo">${s.svg}<div><b>${s.sig}</b><small>${TIPOS[s.tipo].n}. ${s.exp}</small></div></div>`).join('')}</div>`:'<p style="margin-top:14px">¡Ni un fallo! Ya eres detective de señales.</p>'}
+  ${unicos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estas señales</h2><p class="libro">${libro(2,'2.2.3')}</p>${unicos.map(s=>s.trampa?`<div class="fallo"><span style="filter:hue-rotate(${GIRO[s.tipo]}deg);display:block;width:54px;height:54px;flex:none">${s.svg}</span><div><b>Señal trampa</b><small>${trampaTxt(s)}</small></div></div>`:`<div class="fallo">${s.svg}<div><b>${s.sig}</b><small>${TIPOS[s.tipo].n}. ${s.exp}</small></div></div>`).join('')}</div>`:'<p style="margin-top:14px">¡Ni un fallo! Ya eres detective de señales.</p>'}
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.l.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
  </div>`;
@@ -381,14 +392,14 @@ function final(){
 function bloqueOficial(est){
  const o=st.oficial; o.est[st.l.n-1]=est;o.fallos=(o.fallos||[]).concat(st.fallos.map(x=>`N${st.l.n} ${x.trampa?'trampa '+x.cod:(x.texto?'situación «'+x.texto.slice(0,40)+'» → '+x.cod:x.cod+' '+x.sig)}`)); o.pts+=st.pts;
  if(st.l.n<3)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
- const m=Math.min(...o.est);
- return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota: <b>+${extraDe(m)}</b> en el criterio de señalización (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+ const m=mediaEst(o.est);
+ return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota (media de tus estrellas): <b>+${extraDe(m)}</b> en el criterio de señalización (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
 }
 function finOficial(){
  const o=st.oficial;
  if(st.l.n<3){$('#ofsig').onclick=()=>empieza(st.l.n+1,o);return}
  $('#ofmenu').onclick=portada;
- const m=Math.min(...o.est);
+ const m=mediaEst(o.est);
  const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts); ponMejor(o.codigo,mejor);
  if(!antes)ls.set('senales_primer_envio',Date.now());
  puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
