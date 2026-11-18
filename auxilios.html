@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cada minuto cuenta · IPE I</title>
-<style>@font-face{font-family:"Aleo";src:url(aleo.ttf) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<style>@font-face{font-family:"Aleo";src:url(aleo.woff2?v=d7c8feba) format("woff2"),url(aleo.ttf?v=fed0d713) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
 <style>
 
-:root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#1a8a4a;--mal:#d33a1f}
+:root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#178045;--mal:#d33a1f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--fondo);color:var(--texto);font:16px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;display:flex;justify-content:center}
@@ -173,8 +173,12 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
  .rcp .cuerpo{max-width:640px}
  .rcp .cuenta{font-size:42px}.rcp .bpm{font-size:30px}
 }
-.pausa-j{position:fixed;inset:0;z-index:50;border:0;width:100%;background:#0b1f19;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:700 18px/1.4 "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+/* pausa (18-11-2026, como en «Serpiente PRL»): menú «Seguir / Salir al menú» que tapa la pregunta y el cuerpo con el reloj parado */
+.pausa-j{position:fixed;inset:0;z-index:50;background:#0b1f19;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;font:700 18px/1.4 "Helvetica Neue",Arial,sans-serif}
 .pausa-j b{font:800 30px Aleo,Georgia,serif;color:#fcd100}
+.pausa-j .pausa-btns{display:grid;gap:10px;width:100%;max-width:300px;margin-top:10px}
+.pausa-j .btn{min-height:48px}.pausa-j .btn.p{background:#fcd100;color:#004230}
+.pausa-j small{max-width:300px;font:600 14px/1.4 "Helvetica Neue",Arial,sans-serif;color:#cfe9de}
 /* ===== fase 5 (17-11-2026): pictogramas propios y relieve suave de plastilina, coherente con las ilustraciones ===== */
 .pic{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex:none}
 .icoesc{color:#fff;font-size:0}.icoesc .pic{width:28px;height:28px}
@@ -239,6 +243,66 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .evalp{margin-top:12px;display:grid;gap:8px;text-align:left}
 .evalp p{margin:0;background:#fff;border-radius:14px;padding:10px 12px;font-size:14.5px;line-height:1.45;box-shadow:0 2px 10px rgba(0,66,48,.08)}
 .evalp b{color:var(--verde)}
+/* ===== Universo plastilina (arte, 17-11-2026): el reparto de la colección (elenco.js) entra en el juego =====
+   Portada con el puesto de la persona protagonista de fondo; escenas narradas sobre el puesto desenfocado; la persona
+   compañera de ciclo en la llamada al 112 y en la RCP; y la protagonista resume al final. */
+.pres-globo .pres-txt b{display:inline;font:inherit;font-weight:800;color:#004230;margin:0}
+/* portada: el puesto de fondo (con un acercamiento muy lento) y un velo verde para que el texto se lea */
+.heroe .fondo{position:absolute;inset:0;z-index:0;background-image:var(--fondo,none);background-size:cover;background-position:center 30%;background-repeat:no-repeat;transform:scale(1.03)}
+.heroe .fondo:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 8%,rgba(255,89,0,.3),transparent 45%),linear-gradient(180deg,rgba(6,42,31,.5) 0%,rgba(6,42,31,.74) 42%,rgba(6,42,31,.93) 100%)}
+.heroe>:not(.fondo){position:relative;z-index:1}
+.heroe .hpres{margin:4px 0 12px}
+.heroe .hpres .pres-globo{background:rgba(255,250,240,.96)}
+@media (prefers-reduced-motion:no-preference){.heroe .fondo{animation:acerca 26s ease-in-out infinite alternate}}
+@keyframes acerca{to{transform:scale(1.12) translate(-2%,-1.5%)}}
+/* niveles 1 y 2: cabecera de la escena (el puesto desenfocado y oscurecido) con la persona que narra */
+.tarjeta.con-escena{overflow:hidden}
+.escena-cab{position:relative;align-self:stretch;margin:-18px -18px 10px;padding:16px 12px 12px;min-height:92px;display:flex;align-items:flex-end;overflow:hidden;background:#123a2d}
+.escena-cab .fondo{position:absolute;inset:-14px;background-image:var(--fondo,none);background-size:cover;background-position:center 40%;filter:blur(3px) brightness(.5) saturate(.85);transition:filter .5s}
+.escena-cab.bien .fondo{filter:blur(3px) brightness(.55) saturate(1.1)}
+.escena-cab.mal .fondo{filter:blur(3px) brightness(.4) saturate(.6)}
+.escena-cab .slot{position:relative;z-index:1;width:100%}
+.escena-cab .pres-globo{font-size:14.5px;line-height:1.42}
+.tarjeta.con-escena .preg{font-size:17px;margin:0 0 2px}
+.tarjeta.con-escena .escena{font-size:14.5px;margin:2px 4px 0;color:var(--gris)}
+/* RCP: la persona compañera habla en la franja de mensajes, sin tapar el cuerpo ni los botones */
+.rcp .msg.habla{background:none;border:0;padding:0;text-align:left;font:400 14px/1.35 "Helvetica Neue",Arial,sans-serif}
+.rcp .msg.habla .pres{gap:8px}
+.rcp .msg.habla .pres-cara{width:42px;height:42px;border-width:2px}
+.rcp .msg.habla .pres-globo{padding:6px 10px;font-size:14px;line-height:1.35}
+.rcp .msg.habla .pres-globo b{color:#004230;font-size:13px;margin:0}
+.rcp .msg.habla .pres-txt b{color:#c24400;font-size:inherit}
+@media (min-width:760px){.rcp .msg.habla .pres-globo{font-size:17px}.rcp .msg.habla .pres-cara{width:56px;height:56px}}
+/* final: la protagonista resume */
+.final .pres{margin:14px 0 4px}
+/* ===== 18-11-2026: pausa y sonido en el marcador, móvil girado, tableta en horizontal y accesibilidad (como en «Serpiente PRL») ===== */
+/* foco visible también sobre fondo claro (doble anillo); gana a las sombras de relieve de los botones */
+button:focus-visible,input:focus-visible{outline:3px solid #fcd100;outline-offset:2px;box-shadow:0 0 0 6px #004230!important}
+.ctl{display:flex;gap:6px;flex:none}
+.ctl button{width:44px;height:44px;border:0;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;color:var(--verde);background:#fff;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,66,48,.08),0 2px 4px rgba(0,66,48,.08)}
+.ctl .pic{width:20px;height:20px}
+.rcp .ctl button{color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.25)}
+.cab{gap:6px}.cab .pill{padding:6px 10px}
+.rcp .salir{width:44px;height:44px}
+.rcp .arriba{gap:6px}.rcp .arriba .pill{white-space:nowrap}
+@media (max-width:380px){.rcp .arriba{padding:10px 10px 0;gap:4px}.rcp .izq{gap:4px}.rcp .arriba .pill{padding:6px 8px;font-size:13px}.rcp .arriba .crono{font-size:20px;letter-spacing:0}.ctl{gap:4px}}
+.rcp .btn.vent{background:#2a74c6}   /* contraste AA con el texto blanco (antes 4,1:1) */
+/* RCP en un móvil de 360 px: el marcador se salía por la derecha y arrastraba el botón «¡Relevo!» fuera de la pantalla */
+.rcp .abajo{grid-template-columns:minmax(0,1fr)}
+@media (max-width:380px){.rcp .gauge{width:124px;height:70px}.rcp .cuenta{min-width:78px;font-size:30px}.rcp .bpm{min-width:72px;font-size:21px}}
+/* móvil girado (apaisado y bajo): el cuerpo quedaba diminuto; se pide girarlo y la partida se pausa */
+.giro{display:none}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){body.en-juego .giro{display:flex;position:fixed;inset:0;z-index:60;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#0d2a20;color:#fff;font:800 20px Aleo,Georgia,serif;text-align:center;padding:20px}.giro span{font-size:46px}}
+/* tableta (o portátil) en horizontal y baja: el cuerpo a la izquierda, a toda la altura; marcador, mensajes y botones a la derecha.
+   En 1024 × 600 la figura pasaba de ≈ 160 px (RCP) y 260 px (PLS) a casi toda la altura: tocar y arrastrar, con precisión */
+@media (orientation:landscape) and (min-width:800px) and (max-height:700px){
+ .rcp{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,42%);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:"c a" "c m" "c s" "c b";align-items:start;justify-items:center}
+ .rcp .arriba{grid-area:a;max-width:none}
+ .rcp .monitor{grid-area:m;max-width:none}
+ .rcp .msg{grid-area:s;max-width:none}
+ .rcp .cuerpo{grid-area:c;max-width:none;align-self:stretch;justify-self:stretch;padding:12px 0 12px max(12px,env(safe-area-inset-left))}
+ .rcp .abajo{grid-area:b;max-width:none}
+}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -416,26 +480,32 @@ function locales(c){
 }
 function ponLocales(c,n){ls.set(CLAVE_OF+'_'+normCod(c),n)}
 const pendientes=c=>enCola().filter(t=>normCod(t.cod||(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(t)||[])[1])===normCod(c)).length;
-async function pideServicio(a,c){
+/* 18-11-2026: 28 s de espera (el servicio puede tardar 15 s en apuntar si hay cola) y, para «inicio», un id del clic: si se
+   reintenta, el servicio devuelve el mismo intento en vez de gastar otro */
+async function pideServicio(a,c,rid){
  try{
-  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),12000);
-  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),28000);
+  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+(rid?'&rid='+rid:'')+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
   clearTimeout(tt);
   return typeof r.n==='number'?r:null;
  }catch(e){return null}
 }
 async function remotos(c){const r=await pideServicio('consulta',c);return r?r.n:null}
-async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:Math.max(l,r),sin:r===null}}
+/* 18-11-2026: con conexión manda el servidor (si José devuelve un intento borrando su fila, el móvil ya no lo bloquea) */
+async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:r,sin:r===null}}
 function pintaOfi(n,estado){
  const b=document.getElementById('ofi');if(!b)return;
  if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
- if(estado==='sinred'){b.disabled=true;b.textContent='Sin conexión: la partida oficial necesita internet';return}
+ if(estado==='sinred'){b.disabled=false;b.textContent='Sin conexión · pulsa para reintentar';return}   // 18-11-2026: antes se quedaba desactivado
  if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
  b.disabled=n>=INTENTOS;
- b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+ const ic=document.getElementById('cod'),f=ic&&plazo(ic.value);   // 18-11-2026: aviso con la hora del móvil; quien decide es el servidor
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
 }
 let tOfi=0;
+let ofiEnMarcha=false;   // 18-11-2026: mientras se comprueba y se apunta un intento, nada vuelve a activar el botón (dos oficiales a la vez)
 function revisaOfi(){
+ if(ofiEnMarcha)return;
  clearTimeout(tOfi);
  {const i=document.getElementById('cod');if(i&&normCod(i.value))pintaOfi(0,'mirando')}
  tOfi=setTimeout(async()=>{
@@ -446,6 +516,10 @@ function revisaOfi(){
  },400);
 }
 async function empiezaOficial(c){
+ if(ofiEnMarcha)return;ofiEnMarcha=true;
+ try{return await empiezaOficial_(c)}finally{ofiEnMarcha=false}
+}
+async function empiezaOficial_(c){
  const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
  const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
@@ -455,12 +529,15 @@ async function empiezaOficial(c){
  if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
  /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
  const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
- const ini=await pideServicio('inicio',c);
+ const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ let ini=await pideServicio('inicio',c,rid);
+ if(!ini){if(b2)b2.textContent='Reintentando…';ini=await pideServicio('inicio',c,rid)}   // mismo clic: no gasta otro intento
  if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
  if(!ini.ok&&ini.cerrado){pintaOfi(ini.n);dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en '+abajo+'.');return}
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
- arrancaOficial(c,ini.n);
+ OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
+ arrancaOficial(c,ini.n,ini.ref||'');   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
 }
 
 /* ===== Subida de nota ===== */
@@ -478,7 +555,7 @@ async function manda(e){
  if(typeof e==='string')e={txt:e,cod:(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(e)||[])[1]||'',ref:''};   // envíos guardados antes de la fase 3
  try{
   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),15000);
-  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt)+(e.nv?'&nv='+encodeURIComponent(e.nv):''),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
   clearTimeout(tt);
   return r.ok?true:r.error?'rechazado':false;
  }catch(x){return false}
@@ -489,10 +566,11 @@ let vaciando=false;
 async function vaciaCola(){
  if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
  try{const c=enCola();if(!c.length)return;
-  const quedan=[];for(const t of c){if((await manda(t))===false)quedan.push(t)}
-  guardaCola(quedan)}finally{vaciando=false}
+  /* 18-11-2026: al terminar se vuelve a leer la cola y se quita solo lo enviado (antes se perdía lo que entraba mientras tanto) */
+  const hechos=new Set();for(const t of c){if((await manda(t))!==false)hechos.add(JSON.stringify(t))}
+  guardaCola(enCola().filter(t=>!hechos.has(JSON.stringify(t))))}finally{vaciando=false}
 }
-addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
+addEventListener('online',vaciaCola);addEventListener('online',()=>revisaOfi());setTimeout(vaciaCola,1500);
 function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
  const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
  return l.length?' | fallos: '+l.join('; '):'';
@@ -501,8 +579,10 @@ const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.g
 function envia(d){
  const est=d.est||[d.n1,d.n2,d.n3];
  const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
- const e={txt,cod:d.codigo,ref:ls.get(claveRef(d.codigo,d.intento),'')};
- return manda(e).then(ok=>{if(ok===false){const c=enCola();c.push(e);guardaCola(c)}return ok});
+ const nv=Array.isArray(d.niveles)&&d.niveles.length?d.niveles.map(x=>[x.p,x.s,x.a].map(v=>Math.round(+v||0)).join(',')).join(';'):'';   // puntos, segundos y aciertos de cada nivel (18-11-2026)
+ const mem=OFI_REF&&OFI_REF.cod===normCod(d.codigo)&&OFI_REF.n==d.intento?OFI_REF.ref:'';   // el justificante también en memoria, en todos los juegos
+ const e={txt,cod:d.codigo,ref:d.ref||mem||ls.get(claveRef(d.codigo,d.intento),''),nv};
+ return manda(e).then(ok=>{OFI_VIVA=false;if(ok===false){const c=enCola();c.push(e);guardaCola(c)}return ok});
 }
 /* lo que ve el alumno al terminar */
 function textoEnvio(ok){
@@ -516,7 +596,7 @@ async function puesto(codigo,pts,nuevo){
   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
   const txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);
   const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
-  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>+f[1]||0);
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>parseInt(String(f[1]||'').replace(/\D/g,''),10)||0);   // 18-11-2026: «12.345» (con punto de miles) también se lee bien
   const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
   return {pos,total};
  }catch(e){return null}
@@ -528,7 +608,14 @@ function textoPuesto(r,pts){
  return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 
-function arrancaOficial(c,n){empieza(1,{codigo:c,intento:n,est:[],pts:0})}   // lo llama empiezaOficial (oficial.js)
+/* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
+   Desde «Sí, empezar» hasta el envío del resultado: aviso al recargar o cerrar, y el «atrás» de Android o del navegador no
+   sale de la página (si el juego define PAUSA_JUEGO(), además la pausa). Tirar hacia abajo ya no recarga (comun.js). */
+var OFI_VIVA=false,OFI_REF=null;
+addEventListener('beforeunload',e=>{if(OFI_VIVA){e.preventDefault();e.returnValue=''}});
+addEventListener('popstate',()=>{if(!OFI_VIVA)return;try{history.pushState({ofi:1},'')}catch(e){}if(typeof PAUSA_JUEGO==='function')PAUSA_JUEGO()});
+
+function arrancaOficial(c,n,ref){empieza(1,{codigo:c,intento:n,ref:ref||'',est:[],pts:0})}   // lo llama empiezaOficial (oficial.js); el ref viaja también en memoria (18-11-2026)
 
 const usados=()=>+ls.get(PREF+'_oficiales',0);
 const CLAVE_OF=PREF+'_oficiales';
@@ -548,17 +635,115 @@ const ciclo=()=>{const m=/^[12]([A-Z]{2,5})-/.exec(ls.get('ipe_codigo',''));retu
 const vibra=ms=>vibrar(ms);   // fase 5: la de comun.js (respeta «Sin sonido ni vibración»)
 let st={};
 
+/* ===== Arte opcional (17-11-2026): huecos para las imágenes nuevas de José =====
+   Mientras una ruta esté vacía ('') o el archivo no exista, el juego usa la ilustración actual (aux1 … aux6 y el puesto
+   del elenco). Cada archivo nuevo se deja en fuente/img/ con el nombre que se ponga aquí; montar_auxilios.py lo copia junto
+   al juego y avisa si falta alguno.
+   · portada, escena y llamada: 16:9, como elenco_puesto_XXX.jpg (en la cabecera de las escenas se ve desenfocada).
+   · pls (6 posturas) y rcp/dea: 3:4 cenital con el MISMO encuadre que aux1 … aux6: el juego toca en coordenadas fijas del
+     lienzo 300 × 402 (centro del pecho en x 150, y 152; parches en x 127, y 125 y en x 184, y 161; asas de la PLS igual). */
+const ARTE={
+ portada:{HIG:'',IFC:'',ITE:'',STI:''},   // la protagonista en su puesto, con sitio a la derecha para el título
+ escena:{HIG:'',IFC:'',ITE:'',STI:''},    // niveles 1 y 2: el puesto, sin personas en primer plano (va de fondo)
+ llamada:{HIG:'',IFC:'',ITE:'',STI:''},   // llamada al 112: la persona compañera junto a la víctima, en el suelo del puesto
+ pls:['','','','','',''],                  // víctima mujer: las 6 posturas de aux1 … aux6, en el mismo orden
+ rcp:'',                                   // víctima mujer boca arriba y vestida (como aux1)
+ dea:''                                    // la misma, con el pecho descubierto de forma respetuosa y los dos sitios de los parches a la vista
+};
+const ARTE_OK={};
+[].concat(...Object.values(ARTE).map(v=>typeof v==='string'?[v]:Object.values(v))).filter(Boolean)
+ .forEach(r=>{try{const i=new Image();i.onload=()=>{ARTE_OK[r]=1};i.onerror=()=>{ARTE_OK[r]=0};i.src=r}catch(e){}});
+const arte=(r,actual)=>r&&ARTE_OK[r]===1?r:actual;                       // <image> e <img>: la nueva solo si ya ha cargado
+const capas=(r,actual)=>(r&&ARTE_OK[r]!==0?`url('${r}'),`:'')+`url('${actual}')`;   // fondos CSS: la nueva encima; si falta, se ve la actual
+
+/* ===== El reparto (elenco.js, común a la colección): quién narra y quién acompaña =====
+   La protagonista del ciclo presenta, narra las escenas y resume; la persona compañera de ciclo está con la víctima mientras
+   llamas al 112 y es quien trae el DEA y te releva en la RCP. elenco.js se carga después de este guion: aquí solo se usa al jugar. */
+const hayElenco=()=>typeof presenta==='function'&&typeof personaje==='function';
+const cc=()=>st.cc||(st.cc=hayElenco()?cicloJugador():'HIG');
+const vetJ=()=>personaje(cc(),'vet');
+const compi=(may)=>{if(!hayElenco())return may?'Tu compañera':'tu compañera';const v=vetJ();return (may?(v.ella?'Tu compañera ':'Tu compañero '):(v.ella?'tu compañera ':'tu compañero '))+v.nombre};
+/* dónde trabaja la protagonista (ficha del libro), en frases que valen en cualquier persona gramatical:
+   [0] su empleo («higienista en…»), [1] el sitio físico («Estás trabajando en…», «Llamo desde…») */
+const LUGAR_PROTA={HIG:['la clínica dental de Triana','la clínica dental de Triana'],IFC:['una cadena de hoteles de Sevilla','un hotel de Sevilla'],
+ ITE:['hoteles y edificios de oficinas','un edificio de oficinas de Sevilla'],STI:['el aeropuerto de Sevilla','el aeropuerto de Sevilla']};
+const enEmpresa=(c,fisico)=>(LUGAR_PROTA[c]||LUGAR_PROTA.HIG)[fisico?1:0];
+const fondoDe=(nueva,c)=>capas(nueva,fondoPuesto(c));
+/* presentador con texto enriquecido (negritas): presenta() de elenco.js pone el texto plano */
+function narra(cont,op,html){if(!hayElenco()||!cont)return null;const el=presenta(cont,op);if(el&&html!=null)el.querySelector('.pres-txt').innerHTML=html;return el}
+function reaccionaHtml(cont,animo,html){if(!hayElenco()||!cont)return;reacciona(cont,animo,null);const t=cont.querySelector('.pres-txt');if(t&&html!=null)t.innerHTML=html}
+/* la persona compañera habla en la franja de mensajes de la RCP (aviso() vuelve al texto normal) */
+function dice(html,animo){const m=$('#msg');if(!m)return;if(!hayElenco())return aviso(html);m.classList.add('habla');narra(m,{ciclo:cc(),quien:'vet',animo:animo||'neutro',compacto:true},html)}
+
 /* 17-11-2026: reloj del juego. Si la página se oculta (llamada, bloqueo, otra aplicación) se para, y al volver se sigue
    tocando la pantalla de pausa: ninguna pregunta ni prueba pierde tiempo por eso. */
-const ahoraJ=()=>(st.parado||Date.now())-(st.pausadoT||0);
-document.addEventListener('visibilitychange',()=>{
- if(!document.hidden||st.parado||!st.l||st.fin||!(document.getElementById('tj')||document.getElementById('svg')))return;
- st.parado=Date.now();try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
- const p=document.createElement('button');p.type='button';p.className='pausa-j';
- p.innerHTML='<b>Pausa</b>El tiempo está parado.<span>Toca para seguir</span>';
- p.onclick=()=>{st.pausadoT=(st.pausadoT||0)+(Date.now()-st.parado);st.parado=0;st.ultimo=0;st.inter=[];p.remove()};
- document.body.appendChild(p);
+const ahoraJ=()=>(st.parado||performance.now())-(st.pausadoT||0);   // 18-11-2026: reloj del navegador (cambiar la hora del móvil no da tiempo)
+/* ===== Pausa (18-11-2026, como en «Serpiente PRL») =====
+   Botón de pausa en el marcador, Esc o P, el «atrás» y perder el foco (otra pestaña, otra aplicación, bloqueo, girar el móvil).
+   Menú «Seguir / Salir al menú» que tapa la pregunta y el cuerpo: con el reloj parado no se puede ir leyendo.
+   Al seguir, la compresión siguiente no mide el hueco de la pausa (st.ultimo=0): la pausa no cuenta ni como ritmo ni como interrupción. */
+const PIC_CTL={pausa:'<path d="M9 5.5v13M15 5.5v13" stroke-width="3"/>',son:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path d="M18 6.5a7.8 7.8 0 0 1 0 11"/>',
+ mudo:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>'};
+const picCtl=n=>`<svg class="pic" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PIC_CTL[n]}</svg>`;
+const sonTxt=()=>window.SILENCIO?'Poner el sonido':'Quitar el sonido';
+const ctlHtml=()=>`<span class="ctl"><button type="button" data-ctl="pausa" aria-label="Pausa" title="Pausa">${picCtl('pausa')}</button><button type="button" data-ctl="son" aria-label="${sonTxt()}" title="${sonTxt()}">${picCtl(window.SILENCIO?'mudo':'son')}</button></span>`;
+function pintaSon(){document.querySelectorAll('[data-ctl="son"]').forEach(b=>{b.innerHTML=picCtl(window.SILENCIO?'mudo':'son');b.setAttribute('aria-label',sonTxt());b.title=sonTxt()})}
+/* se puede pausar mientras hay pantalla de juego y el nivel no está cerrándose (PLS hecha, relevo hecho, serie terminada) */
+function jugando(){
+ if(!st.l||st.salido||!app.querySelector('#tj,.rcp'))return false;
+ if(st.l.modo==='pls')return st.paso<5;
+ return !['fin','finP','fuera'].includes(st.fase);
+}
+function pausa(){
+ if(st.parado||!jugando())return false;
+ st.parado=performance.now();st.focoAntes=document.activeElement;
+ if(st.cancelaGesto)st.cancelaGesto();   // un arrastre a medias (PLS) o una compresión a medias (profundidad) se suelta aquí
+ try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
+ const v=document.createElement('div');v.className='pausa-j';v.id='pausaJ';
+ v.setAttribute('role','dialog');v.setAttribute('aria-modal','true');v.setAttribute('aria-labelledby','pausaT');
+ v.innerHTML=`<b id="pausaT">Pausa</b><span>El tiempo está parado.</span><div class="pausa-btns"><button type="button" class="btn p" data-pausa="sigue">Seguir</button><button type="button" class="btn s" data-pausa="sal">Salir al menú</button></div>${st.oficial?'<small>Si sales, este intento oficial cuenta como jugado.</small>':''}`;
+ document.body.appendChild(v);app.inert=true;
+ try{v.querySelector('.btn.p').focus({preventScroll:true})}catch(e){}
+ return true;
+}
+function sigue(){
+ if(!st.parado)return false;
+ st.pausadoT=(st.pausadoT||0)+(performance.now()-st.parado);st.parado=0;st.ultimo=0;st.inter=[];
+ quitaPausa();return true;
+}
+function quitaPausa(){
+ const v=$('#pausaJ');if(!v)return;
+ v.remove();app.inert=false;
+ const f=st.focoAntes;st.focoAntes=null;if(f&&f.isConnected&&f.focus)try{f.focus({preventScroll:true})}catch(e){}   // vuelve el foco donde estaba (p. ej., el botón de «Mantener pulsado»)
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest&&e.target.closest('[data-ctl],[data-pausa]');if(!b)return;
+ if(b.dataset.ctl==='pausa')pausa();
+ else if(b.dataset.ctl==='son'){window.SILENCIO=!window.SILENCIO;ls.set('ipe_silencio',window.SILENCIO?'1':'0');pintaSon()}   // comun.js apaga o enciende el audio con este mismo clic
+ else if(b.dataset.pausa==='sigue')sigue();
+ else if(b.dataset.pausa==='sal')sal();
 });
+document.addEventListener('keydown',e=>{
+ if(e.key!=='Escape'&&e.key!=='p'&&e.key!=='P')return;
+ if(e.target&&e.target.closest&&e.target.closest('input,textarea'))return;
+ if($('#pausaJ')){e.preventDefault();sigue()}else if(pausa())e.preventDefault();
+});
+function paraOculto(e){if(document.hidden||e&&(e.type==='blur'||e.type==='pagehide'))pausa()}
+document.addEventListener('visibilitychange',paraOculto);addEventListener('blur',paraOculto);addEventListener('pagehide',paraOculto);
+const PAUSA_JUEGO=()=>pausa();   // la usa oficial.js con el «atrás» en la partida oficial
+/* el «atrás» en el entrenamiento pausa en vez de salir de la página (en la oficial lo hace oficial.js) */
+function guardaAtras(){try{if(!history.state||!history.state.aux)history.pushState({aux:1},'')}catch(e){}}
+addEventListener('popstate',()=>{if(!OFI_VIVA&&jugando()){guardaAtras();pausa()}});
+/* móvil girado: aviso «Gira el móvil» encima de todo y la partida en pausa (también si el nivel empieza ya girado) */
+const MQ_GIRO=matchMedia('(orientation:landscape) and (max-height:500px) and (pointer:coarse)');
+{const g=document.createElement('div');g.className='giro';g.setAttribute('aria-live','assertive');g.innerHTML='<span aria-hidden="true">↻</span>Gira el móvil: se juega en vertical';document.body.appendChild(g);
+ const f=()=>{if(MQ_GIRO.matches)pausa()};MQ_GIRO.addEventListener?MQ_GIRO.addEventListener('change',f):MQ_GIRO.addListener(f)}
+new MutationObserver(()=>{
+ const j=!!app.querySelector('#tj,.rcp');document.body.classList.toggle('en-juego',j);
+ if(!j){quitaPausa();return}
+ if(!OFI_VIVA)guardaAtras();
+ if(MQ_GIRO.matches)pausa();
+}).observe(app,{childList:true});
 /* Sonido (fase 5, 17-11-2026): con la API común de comun.js (nota, sfx, vibrar), que respeta «Sin sonido» y usa este actx.
    Se mantiene el carácter de antes: clic seco del metrónomo, dos tonos graves que bajan al fallar (José, 5-11-2026)
    y tonos que suben al acertar (el relevo bien hecho también suena). */
@@ -594,10 +779,11 @@ function portada(){
  clearInterval(st.reloj);clearInterval(st.metro);clearInterval(st.compRitmo);clearInterval(st.salto);clearTimeout(st.tutoT);cancelAnimationFrame(st.raf||0);calla();
  app.innerHTML=`<div class="portada">
   <div class="heroe">
+   <div class="fondo" aria-hidden="true"></div>
    <div class="hm">IPE I · Unidad 3 · Primeros auxilios</div>
    <h1>Cada minuto<br><span>cuenta</span></h1>
    <svg class="hecg" viewBox="0 0 320 60" preserveAspectRatio="none" aria-hidden="true"><path class="base" d="M0 34 H70 l8 -6 l6 6 H110 l6 -26 l8 44 l7 -30 l5 12 H190 l8 -6 l6 6 H230 l6 -26 l8 44 l7 -30 l5 12 H320"/><path class="trazo" d="M0 34 H70 l8 -6 l6 6 H110 l6 -26 l8 44 l7 -30 l5 12 H190 l8 -6 l6 6 H230 l6 -26 l8 44 l7 -30 l5 12 H320"/></svg>
-   <p>Proteger, avisar y socorrer. Valorar, colocar en posición lateral de seguridad y hacer una RCP de calidad, con relevo y desfibrilador.</p>
+   <div class="hpres" id="hpres"><p>Proteger, avisar y socorrer. Valorar, colocar en posición lateral de seguridad y hacer una RCP de calidad, con relevo y desfibrilador.</p></div>
    <div class="chips"><span>PAS · 112</span><span>PLS</span><span>RCP 30:2</span><span>DEA</span></div>
   </div>
   <div class="oficial">
@@ -618,9 +804,19 @@ function portada(){
   if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
   empiezaOficial(c);
  };
- $('#cod').oninput=revisaOfi;
+ $('#cod').oninput=()=>{revisaOfi();const m=/^[12]([A-Z]{2,5})-/.exec(normCod($('#cod').value)||'');if(m&&typeof ELENCO!=='undefined'&&ELENCO[m[1]])pintaHeroe(m[1])};   // al escribir el código, el presentador de su ciclo
  revisaOfi();
+ pintaHeroe();
 }
+/* portada (arte, 17-11-2026): la protagonista del ciclo da la bienvenida, con su puesto de trabajo de fondo */
+function pintaHeroe(c){
+ const h=$('.heroe');if(!h||!hayElenco())return;   // en la primera carga, elenco.js aún no está: se pinta al terminar de cargar
+ c=c||cicloJugador();if(h.dataset.c===c)return;h.dataset.c=c;
+ h.querySelector('.fondo').style.setProperty('--fondo',fondoDe(ARTE.portada[c],c));
+ const p=personaje(c,'prota');
+ narra($('#hpres'),{ciclo:c,quien:'prota'},`Soy ${p.nombre}, ${p.puesto} en ${enEmpresa(c)}. ${(v=>v.visita?`Hoy ${v.nombre}, ${v.ella?'mi compañera':'mi compañero'} de ciclo, ha venido a ${enEmpresa(c,true)} ${v.visita}. `:'')(vetJ())}Si a alguien le pasa algo en el trabajo, lo que hagas en los primeros minutos importa. <b>Vamos a entrenarlo.</b>`);   // opción B (José, 17-11-2026): por qué está aquí
+}
+document.addEventListener('DOMContentLoaded',()=>pintaHeroe());
 
 function empieza(n,oficial){
  const l=n===PROF.n?PROF:NIVELES[n-1];   // fase 6: el entrenamiento de profundidad va aparte (la oficial sigue con 4 niveles)
@@ -646,17 +842,17 @@ function pregunta(){
  const s=st.lista[st.i];
  if(s.tipo==='llamada')return llamada(s);
  const ops=baraja([s.ok,...s.no]);
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
+ app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas" role="img" aria-label="Vidas: ${st.vidas} de 3">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span>${ctlHtml()}</div>
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
   <div class="tiempo"><i id="t"></i></div>
   <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">
-   <div class="icoesc" style="background:${st.l.col}">${ico(st.l.banco==='pas'?'escudo':'fonendo')}</div>
+   ${cabEscena(s)}
    <div class="preg">${st.l.banco==='pas'?'¿Qué haces?':'¿Qué le pasa y qué haces?'}</div>
-   <div class="escena">${s.t}</div>
    <div class="opciones textos">${ops.map((o,k)=>`<button class="op" data-k="${k}">${o}</button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
+ narraEscena(s);
  const T=st.l.t*1000,t0=ahoraJ(),barra=$('#t');
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
  latido(()=>1-(ahoraJ()-t0)/T);
@@ -669,20 +865,59 @@ function pregunta(){
    st.racha++;st.aciertos++;
    const g=Math.round((100+Math.min(30,Math.max(0,st.l.t-seg)*6))*(1+Math.min(st.racha-1,4)*.25));   // fase 3: la rapidez suma como mucho 30 (antes hasta 120): manda saber, no leer deprisa
    st.pts+=g;flota('+'+g,'var(--ok)');sfx('acierto',st.racha-1);   // fase 5: el tono sube con la racha
-   ex.className='explica ok';ex.innerHTML=`<b>¡Correcto!</b>${s.e}`;
+   if(!explicaEscena(true,`<b>¡Correcto!</b> ${s.e}`)){ex.className='explica ok';ex.innerHTML=`<b>¡Correcto!</b>${s.e}`}
   }else{
    st.racha=0;st.vidas--;st.fallos.push(s);
    const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');
    $('#tj').classList.add('sacude');fallo();
-   ex.className='explica mal';ex.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}</b>Lo correcto: «${s.ok}». ${s.e}`;
+   if(!explicaEscena(false,`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto.'}</b> Lo correcto: «${s.ok}». ${s.e}`)){ex.className='explica mal';ex.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}</b>Lo correcto: «${s.ok}». ${s.e}`}
   }
-  const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);
+  const b=$('#sig');b.style.display='block';setTimeout(()=>muestraRespuesta(b),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';
   b.onclick=()=>{st.i++;pregunta()};
  };
  app.querySelectorAll('.op').forEach(b=>b.onclick=()=>responde(+b.dataset.k));
 }
-/* La llamada al 112 (José, 5-11-2026): se construye tocando las tarjetas en orden; una es trampa */
+/* ===== Escenas narradas (arte, 17-11-2026) =====
+   Cabecera con el puesto desenfocado y oscurecido; la protagonista cuenta la escena y, al responder, reacciona con la
+   explicación en su bocadillo. Va encima de las opciones (no las tapa nunca). Sin elenco.js, la tarjeta de siempre. */
+function cabEscena(s,fondo){
+ if(!hayElenco())return `<div class="icoesc" style="background:${st.l.col}">${ico(s.tipo==='llamada'?'telefono':st.l.banco==='pas'?'escudo':'fonendo')}</div>${s.tipo==='llamada'?'':`<div class="escena">${s.t}</div>`}`;
+ const c=s.s&&s.s!==cc()&&typeof ELENCO!=='undefined'&&ELENCO[s.s]?s.s:cc();   // escena de un sector: su puesto; común: el tuyo
+ return `<div class="escena-cab" id="ecab"><div class="fondo" aria-hidden="true" style="--fondo:${fondoDe(fondo!==undefined?fondo:ARTE.escena[c],c)}"></div><div class="slot" id="epres" aria-live="polite"></div></div>`;
+}
+function entradaEscena(s){
+ if(s.s&&typeof ELENCO!=='undefined'&&ELENCO[s.s])return `<b>Estás trabajando en ${enEmpresa(s.s,true)}.</b> `;
+ if(/^¿/.test(s.t))return '<b>Esto hay que saberlo sin dudar.</b> ';
+ return st.l.banco==='val'?'<b>Fíjate bien antes de actuar.</b> ':'<b>Esto puede pasar en cualquier trabajo.</b> ';
+}
+function narraEscena(s,quien,html){
+ const slot=$('#epres');if(!slot)return;
+ $('#tj').classList.add('con-escena');
+ narra(slot,{ciclo:cc(),quien:quien||'prota',animo:'neutro'},html!=null?html:entradaEscena(s)+s.t);
+}
+function explicaEscena(ok,html){
+ const cab=$('#ecab'),slot=$('#epres');if(!cab||!slot||!slot.querySelector('.pres'))return false;
+ cab.classList.add(ok?'bien':'mal');reaccionaHtml(slot,ok?'bien':'mal',html);return true;
+}
+function muestraRespuesta(b){
+ const tj=$('#tj'),cab=$('#ecab');if(!tj||!b)return;
+ if(!cab)return b.scrollIntoView({behavior:'smooth',block:'end'});
+ if(tj.getBoundingClientRect().height<=innerHeight-12)tj.scrollIntoView({behavior:'smooth',block:'end'});   // cabe: explicación, opciones y «Siguiente» a la vista
+ else cab.scrollIntoView({behavior:'smooth',block:'start'});                                                  // no cabe: primero la explicación
+}
+/* La llamada al 112 (José, 5-11-2026): se construye tocando las tarjetas en orden; una es trampa.
+   Arte, 17-11-2026: la persona compañera de ciclo se queda con la víctima y empieza la RCP mientras tú llamas (dos personas: una
+   llama con el altavoz y la otra no deja de socorrer); «quién eres» y «dónde estás» son los de tu empresa. */
+const DONDE={HIG:'«Calle Pureza, 12, Triana, Sevilla; en la clínica, planta baja, gabinete 2»',
+ IFC:'«Hotel de la calle Luis Montoto, 40, Sevilla; sótano 1, sala de máquinas»',
+ ITE:'«Calle Betis, 30, Sevilla; edificio de oficinas, en la azotea: se sube por la escalera principal»',
+ STI:'«Aeropuerto de Sevilla, edificio terminal; planta 1, centro de datos, pasillo B»'};
+function ordenLlamada(s){
+ if(!hayElenco())return s.orden;
+ const c=cc();
+ return s.orden.map((x,k)=>k===0?[x[0],`«Llamo desde ${enEmpresa(c,true)}: trabajo con la persona herida»`]:k===1&&DONDE[c]?[x[0],DONDE[c]]:x);
+}
 const LLAMADA={tipo:'llamada',t:'Llamas al 112 con el altavoz puesto. Toca las tarjetas en el orden en que lo cuentas.',
  ok:'Quién eres, dónde estás exactamente, qué ha pasado, cuántas personas heridas y cómo están',
  e:'Avisar: quién eres, dónde estás exactamente, qué ha pasado, cuántas personas heridas hay y cómo están. Y no cuelgues hasta que te lo indiquen.',
@@ -690,22 +925,26 @@ const LLAMADA={tipo:'llamada',t:'Llamas al 112 con el altavoz puesto. Toca las t
   ['Qué ha pasado','«Un compañero se ha desplomado de repente»'],['Cuántas personas heridas','«Hay una persona herida»'],['Cómo están','«No responde y no respira con normalidad»']],
  trampa:['Cuelgo ya','«Cuelgo para no ocupar la línea»']};
 function llamada(s){
- const fichas=baraja(s.orden.map((x,k)=>({k,x})).concat([{k:-1,x:s.trampa}]));
+ const orden=ordenLlamada(s);
+ const fichas=baraja(orden.map((x,k)=>({k,x})).concat([{k:-1,x:s.trampa}]));
  let paso=0,hecho=false;
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span></div>
+ app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas" role="img" aria-label="Vidas: ${st.vidas} de 3">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span>${ctlHtml()}</div>
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div><div class="tiempo"><i id="t"></i></div>
-  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}"><div class="icoesc" style="background:${st.l.col}">${ico('telefono')}</div>
-   <div class="preg">Llamada al 112</div><div class="escena">${s.t}</div>
-   <div class="llamada" id="ll"><small>Tu llamada:</small></div>
+  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">${cabEscena(s,ARTE.llamada[cc()])}
+   <div class="preg">Llamada al 112</div><div class="escena">${hayElenco()?'Toca las tarjetas en el orden en que lo cuentas.':s.t}</div>
+   <div class="llamada" id="ll" aria-live="polite"><small>Tu llamada:</small></div>
    <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div>`;
+ if(hayElenco())narraEscena(s,'vet','Un compañero se ha desplomado: no responde y no respira con normalidad. Me quedo con él y empiezo la RCP. <b>Llama tú al 112, con el altavoz puesto.</b>');
  const T=(st.l.t+15)*1000,t0=ahoraJ(),barra=$('#t');
  const acaba=ok=>{
   if(hecho)return;hecho=true;clearInterval(st.reloj);calla();app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
   const ex=$('#ex'),seg=(ahoraJ()-t0)/1000;
-  if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.min(45,Math.max(0,T/1000-seg)*6))*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');sfx('premio');ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}
-  else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();ex.className='explica mal';ex.innerHTML=`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así'}</b>${s.e}`}
-  const b=$('#sig');b.style.display='block';setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'end'}),150);
+  if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.min(45,Math.max(0,T/1000-seg)*6))*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');sfx('premio');
+   if(!explicaEscena(true,`<b>¡Llamada perfecta!</b> ${s.e}`)){ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}}
+  else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();
+   if(!explicaEscena(false,`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así.'}</b> ${s.e}`)){ex.className='explica mal';ex.innerHTML=`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así'}</b>${s.e}`}}
+  const b=$('#sig');b.style.display='block';setTimeout(()=>muestraRespuesta(b),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';b.onclick=()=>{st.i++;pregunta()};
  };
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)acaba(false)},50);
@@ -714,7 +953,7 @@ function llamada(s){
   const k=+b.dataset.k;
   if(k!==paso)return acaba(false);
   b.classList.add('usada');sfx('acierto',paso);paso++;   // fase 5: cada tarjeta bien puesta, un tono más alto
-  $('#ll').innerHTML+=`<div><b>${paso}.</b> ${s.orden[k][1]}</div>`;
+  $('#ll').innerHTML+=`<div><b>${paso}.</b> ${orden[k][1]}</div>`;
   if(paso===s.orden.length)acaba(true);
  });
 }
@@ -800,16 +1039,17 @@ const manosSocorrista=`<ellipse id="sombraM" cx="150" cy="160" rx="36" ry="15" f
  <circle cx="150" cy="152" r="9" fill="#7dffb5"/>
 </g>`;
 /* Ilustraciones de plastilina (José, 5-11-2026): aux1 boca arriba … aux5 PLS. Coordenadas en el viewBox 300 x 402 */
-const IMG=n=>`aux${n}.jpg`, ALTO=402;
+const IMG=n=>arte(ARTE.pls[n-1],`aux${n}.jpg`), ALTO=402;   // arte: víctima nueva si existe; si no, aux1 … aux6
 const imgPaso=p=>p+1;      // aux1 … aux6, una por paso (aux5: de lado con la cabeza sin inclinar; aux6: inclinada)
-function escena(n){return `<g id="fig" clip-path="url(#marco)" style="transform-origin:150px 152px;transform-box:view-box"><image id="im0" href="${IMG(n)}" x="0" y="0" width="300" height="${ALTO}"/><image id="im1" x="0" y="0" width="300" height="${ALTO}" style="opacity:0"/><rect width="300" height="${ALTO}" fill="url(#vin)" pointer-events="none"/></g>`}
-function cambiaImg(n){
+function escena(n,href){return `<g id="fig" clip-path="url(#marco)" style="transform-origin:150px 152px;transform-box:view-box"><image id="im0" href="${href||IMG(n)}" x="0" y="0" width="300" height="${ALTO}"/><image id="im1" x="0" y="0" width="300" height="${ALTO}" style="opacity:0"/><rect width="300" height="${ALTO}" fill="url(#vin)" pointer-events="none"/></g>`}
+function cambiaImg(n,href){
  // fundido de la postura anterior a la nueva; el cambio queda hecho aunque la animación no termine (pestaña en segundo plano)
  const a=$('#im0'),b=$('#im1');if(!a)return;
  clearTimeout(st.fundido);
- b.setAttribute('href',IMG(n));b.style.transition='none';b.style.opacity=0;void b.getBoundingClientRect();
+ const h=href||IMG(n);
+ b.setAttribute('href',h);b.style.transition='none';b.style.opacity=0;void b.getBoundingClientRect();
  b.style.transition='opacity .65s ease-out';b.style.opacity=1;
- st.fundido=setTimeout(()=>{a.setAttribute('href',IMG(n));b.style.transition='none';b.style.opacity=0},700);
+ st.fundido=setTimeout(()=>{a.setAttribute('href',h);b.style.transition='none';b.style.opacity=0},700);
 }
 [1,2,3,4,5,6].forEach(n=>{const i=new Image();i.src=IMG(n)});
 try{speechSynthesis.getVoices()}catch(e){}
@@ -834,13 +1074,14 @@ function pls(){
  const t0=ahoraJ();
  Object.assign(st,{paso:0,errores:0,arrastre:null,pista:0});
  app.innerHTML=`<div class="rcp pls" id="esc">
-  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span></div>
-  <div class="msg" id="msg">No responde, pero respira con normalidad y no ha sufrido golpes. Arrastra con el dedo, en orden, para ponerla en posición lateral de seguridad. Estás a su lado, a la derecha de la pantalla.</div>
+  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span>${ctlHtml()}</div>
+  <div class="msg" id="msg" aria-live="polite">No responde, pero respira con normalidad y no ha sufrido golpes. Arrastra con el dedo, en orden, para ponerla en posición lateral de seguridad. Estás a su lado, a la derecha de la pantalla.</div>
   <div class="cuerpo"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}<g id="asas"></g><g id="meta"></g></svg><div class="combo" id="combo"></div></div>
   <div class="abajo"><div class="tarjeta-rcp"><p id="ayuda">Toca y arrastra la parte del cuerpo que se mueve primero.</p></div></div>
  </div>`;
  const svg=$('#svg'), asas=$('#asas'), meta=$('#meta');
  $('#salir').onclick=sal;
+ st.cancelaGesto=()=>{if(!st.arrastre)return;st.arrastre=null;meta.innerHTML='';asasDe()};   // pausa con el dedo a medio arrastre: el asa vuelve a su sitio
  const asasDe=()=>{   // las cuatro «agarraderas» posibles: todas visibles, para que haya que saber el orden
   const p=st.paso;
   const lista=p>=5?[]:p>=4?[{id:'cabeza',x:176,y:96}]:[
@@ -906,10 +1147,10 @@ const MET=545;              // 110 por minuto
 function rcp(){
  Object.assign(st,{serie:[],fase:'intro',cuenta:0,cicloN:1,t0:0,ultimo:0,inter:[],enRitmo:0,total:0,errores:0,compa:false,relevo:false,agotado:false,deaPaso:0,parches:0,sitioOk:true,combo:0,ecg:[]});
  app.innerHTML=`<div class="rcp" id="esc">
-  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">0:00</span><span class="pill" id="ci">Ciclo 1</span></div>
+  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">0:00</span><span class="pill" id="ci">Ciclo 1</span>${ctlHtml()}</div>
   <div class="monitor"><span class="et">ECG · RCP</span><span class="corazon" id="cor">${ico('corazonLleno')}</span><canvas class="ecg" id="ecg" aria-hidden="true"></canvas></div>
-  <div class="msg" id="msg">Una persona se desploma. No responde y no respira con normalidad. Tu compañera llama al 112 (con el altavoz) y va a por el DEA. <b>Toca dónde pones las manos.</b></div>
-  <div class="cuerpo" id="cu"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}<g id="marcas"></g><g id="manosg"></g></svg><div class="combo" id="combo"></div></div>
+  <div class="msg" id="msg" aria-live="polite">Una persona se desploma. No responde y no respira con normalidad. Tu compañera llama al 112 (con el altavoz) y va a por el DEA. <b>Toca dónde pones las manos.</b></div>
+  <div class="cuerpo" id="cu"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1,arte(ARTE.rcp,IMG(1)))}<g id="marcas"></g><g id="manosg"></g></svg><div class="combo" id="combo"></div></div>
   <div class="abajo">
    <div class="marcador"><div class="cuenta" id="cuenta">0<small>/30</small></div>
     <svg class="gauge" viewBox="0 0 150 88"><defs><linearGradient id="gArco" x1="0" x2="1"><stop offset="0" stop-color="#ff4a4a"/><stop offset=".3" stop-color="#ff9a3d"/><stop offset=".45" stop-color="#2fd47a"/><stop offset=".55" stop-color="#2fd47a"/><stop offset=".7" stop-color="#ff9a3d"/><stop offset="1" stop-color="#ff4a4a"/></linearGradient><filter id="gb"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
@@ -938,7 +1179,7 @@ function rcp(){
  const dibuja=ts=>{
   if(!document.getElementById('ecg'))return;
   st.raf=requestAnimationFrame(dibuja);
-  if(ts-ultF<32)return;ultF=ts;
+  if(ts-ultF<32||st.parado)return;ultF=ts;   // en pausa, el trazo se queda quieto
   const W=Math.round((cv.clientWidth||300)*dpr),H=Math.round((cv.clientHeight||58)*dpr);
   if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}
   const ahora=ahoraJ();st.ecg=st.ecg.filter(k=>ahora-k<4000);
@@ -952,16 +1193,22 @@ function rcp(){
   g.fillStyle='#d9ffe9';g.beginPath();g.arc(W-2*dpr,y*sy,2.6*dpr,0,7);g.fill();   // el punto que escribe
  };
  if(g)st.raf=requestAnimationFrame(dibuja);
+ msgInicio();
  if(ls.get(CLAVE_TUTO,'')!=='1')tutorial();   // fase 5: la primera vez, práctica de ritmo
 }
 const crono=()=>st.t0?(ahoraJ()-st.t0)/1000:0;
+/* arte, 17-11-2026: la persona compañera de ciclo llama al 112, trae el DEA y te releva; habla en los momentos clave */
+function msgInicio(){
+ if(!hayElenco())return aviso('Una persona se desploma. No responde y no respira con normalidad. Tu compañera llama al 112 (con el altavoz) y va a por el DEA. <b>Toca dónde pones las manos.</b>');
+ dice('Se ha desplomado: no responde y no respira con normalidad. Llamo al 112 con el altavoz y voy a por el DEA. <b>Empieza tú: ¿dónde pones las manos?</b>');
+}
 function tic(){
  if(!$('#cr'))return;
  const s=Math.floor(crono());$('#cr').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
- if(st.compa&&!st.relevo&&st.fase==='comp'&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();aviso('Llevas más de 2 minutos: te estás agotando y las compresiones pierden profundidad. ¡Pide el relevo!');$('#rel').classList.add('alarma')}   // fase 4: solo mientras comprimes tú (con el DEA no hay botón de relevo)
- if(st.fase==='dea3'&&ahoraJ()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';aviso('El DEA no puede analizar si alguien toca a la persona. ¡Que nadie la toque!');pasoDea()}
+ if(st.compa&&!st.relevo&&st.fase==='comp'&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();dice('Llevas más de 2 minutos: el cansancio te quita profundidad. <b>¡Pídeme el relevo!</b>','mal');$('#rel').classList.add('alarma')}   // fase 4: solo mientras comprimes tú (con el DEA no hay botón de relevo)
+ if(st.fase==='dea3'&&ahoraJ()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';dice('Tenías que avisarme: el DEA no puede analizar si alguien la toca. Ya me aparto. <b>¡Que nadie la toque!</b>','mal');pasoDea()}
 }
-function aviso(t){const m=$('#msg');if(m)m.innerHTML=t}
+function aviso(t){const m=$('#msg');if(m){m.classList.remove('habla');if(m.innerHTML!==t)m.innerHTML=t}}
 function pintaPts(){const p=$('#pts');if(p)p.textContent=Math.max(0,puntosRcp())+' pts'}
 const puntosRcp=()=>st.enRitmo*10+(st.sitioOk?100:0)+(st.relevo==='ok'?150:0)+st.deaPaso*40-st.errores*RESTA;
 function marca(p,color){
@@ -1021,7 +1268,7 @@ function hunde(f=1,suena=true,ms=260){
 function metronomo(on){
  clearInterval(st.metro);
  if(!on)return;
- st.metro=setInterval(()=>{if(st.fase!=='comp'||(st.oficial&&st.cuenta>=10)||st.cuenta>=30)return clearInterval(st.metro);clic();const c=$('#cuenta');if(c&&c.animate)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})},MET);
+ st.metro=setInterval(()=>{if(st.fase!=='comp'||(st.oficial&&st.cuenta>=10)||st.cuenta>=30)return clearInterval(st.metro);if(st.parado)return;clic();const c=$('#cuenta');if(c&&c.animate)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})},MET);
 }
 function ventilar(){
  if(st.fase!=='comp')return;
@@ -1034,7 +1281,7 @@ function ventilar(){
   // fase 4, 17-11-2026 (ERC 2025: el DEA se pone en cuanto llega y la otra persona sigue comprimiendo mientras se colocan los parches):
   // la compañera vuelve con el DEA tras el primer ciclo; el relevo de los 2 minutos llega después de la descarga
   if(st.cicloN===2&&!st.compa){st.compa=true;st.fase='dea1';ritmoCompa();$('#ci').textContent='DEA';
-   aviso('Tu compañera vuelve <b>con el DEA</b> y sigue ella con las compresiones, sin parar. <b>Pon el DEA ya.</b>');return pasoDea()}
+   dice('¡Aquí está <b>el DEA</b>! Sigo yo con las compresiones, sin parar. <b>Ponlo tú ya.</b>','bien');return pasoDea()}
   // salto de tiempo (José, 5-11-2026: «el RCP se me ha hecho eterno»): tras dos ciclos, los ciclos 3 y 4 pasan en avance rápido
   if(st.cicloN===3&&!st.saltado){st.saltado=true;return avanceRapido()}
   $('#ci').textContent='Ciclo '+st.cicloN;$('#cuenta').innerHTML='0<small>/30</small>';
@@ -1049,12 +1296,13 @@ function relevar(){
  st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
  st.fase='fin';clearInterval(st.metro);ritmoCompa();
  combo(ico('relevo')+' ¡Relevo!',900);if(st.relevo==='ok')acierto();
- aviso('Tu compañera sigue con las compresiones. Seguís así, con el DEA puesto y relevándoos cada 2 minutos, hasta que llega la ambulancia. <b>Cada minuto cuenta.</b>');
+ if(st.relevo==='ok')dice('¡Cambio! Sigo yo. Así, con el DEA puesto y relevándonos cada 2 minutos, hasta que llegue la ambulancia. <b>Cada minuto cuenta.</b>','bien');
+ else dice('Sigo yo. La próxima vez, cambiamos a los 2 minutos: con el cansancio se comprime peor. Seguimos hasta que llegue la ambulancia.','neutro');
  setTimeout(acabaRcp,2600);   // fase 4, 17-11-2026: antes el relevo traía el DEA; ahora cierra el nivel
  pintaPts();
 }
 /* fase 4, 17-11-2026: las compresiones de la compañera (animación y ECG) y los botones de RCP de vuelta tras el DEA */
-function ritmoCompa(){clearInterval(st.compRitmo);st.compRitmo=setInterval(()=>{st.ecg.push(ahoraJ());hunde(.6,false)},MET)}
+function ritmoCompa(){clearInterval(st.compRitmo);st.compRitmo=setInterval(()=>{if(st.parado)return;st.ecg.push(ahoraJ());hunde(.6,false)},MET)}
 function botonesRcp(){$('#bot').innerHTML=`<button class="btn vent" id="vent" disabled>${ico('aire')}2 ventilaciones</button><button class="btn rel" id="rel">${ico('relevo')}¡Relevo!</button>`;$('#vent').onclick=ventilar;$('#rel').onclick=relevar}
 function opcionesDea(txt,ops,ok,sig){
  const orden=baraja(ops.map((o,k)=>k));      // la correcta no sale siempre en el mismo sitio
@@ -1078,14 +1326,15 @@ function pasoDea(){
   // fase 4, 17-11-2026: tras la descarga sigues tú comprimiendo (tu compañera descansa) y el relevo llega a los 2 minutos
   acierto();botonesRcp();clearInterval(st.compRitmo);
   Object.assign(st,{fase:'comp',t0:0,ultimo:0,inter:[],cuenta:0});$('#cuenta').innerHTML='0<small>/30</small>';$('#ci').textContent='Ciclo '+st.cicloN;
-  aviso('¡Bien! Reanudáis de inmediato: <b>ahora comprimes tú</b> y tu compañera descansa. 30 compresiones; relevaos cada 2 minutos.');
+  dice('¡Bien! Seguimos ya: <b>ahora comprimes tú</b> y yo descanso. 30 compresiones, y nos relevamos cada 2 minutos.','bien');
   metronomo(true);pintaPts()});
 }
 /* fase 4, 17-11-2026: los parches van sobre la piel: antes se descubre el pecho (botón o tocando el pecho). En la partida oficial no se dice dónde van */
 function descubre(){
  if(st.fase!=='pecho')return;
  st.fase='dea2';sfx('toque');
- aviso('Le abres la ropa: pecho descubierto. Tu compañera sigue comprimiendo. <b>Toca los dos sitios donde van los parches.</b>');
+ aviso(`Le abres la ropa: pecho descubierto. ${compi(true)} sigue comprimiendo. <b>Toca los dos sitios donde van los parches.</b>`);
+ if(arte(ARTE.dea,'')&&$('#im0'))cambiaImg(0,ARTE.dea);   // arte: el pecho descubierto, si José ha hecho la imagen
  $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${st.oficial?'Toca los dos sitios del pecho donde se pegan los parches.':'Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.'}</p></div>`;
 }
 function poneParche(p){
@@ -1095,9 +1344,9 @@ function poneParche(p){
  $('#marcas').innerHTML+=`<rect x="${PARCHES[k].x-16}" y="${PARCHES[k].y-12}" width="32" height="24" rx="5" fill="#fff" stroke="#2fd47a" stroke-width="3"/>`;
  if(st.parches===2){
   st.deaPaso++;st.fase='dea3';st.deaT=ahoraJ();
-  aviso('«Analizando el ritmo cardiaco»… Tu compañera sigue comprimiendo.');habla('Analizando el ritmo cardiaco. No toque al paciente.');
+  aviso(`«Analizando el ritmo cardiaco»… ${compi(true)} sigue comprimiendo.`);habla('Analizando el ritmo cardiaco. No toque al paciente.');
   $('#bot').innerHTML=`<button class="btn alarma" id="apart" style="flex:1">${ico('mano')}¡Que nadie la toque!</button>`;
-  $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';aviso('Bien: nadie la toca mientras el DEA analiza.');pasoDea()};
+  $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';dice('¡Me aparto! Manos fuera: nadie la toca mientras el DEA analiza.','bien');pasoDea()};
  }
  pintaPts();
 }
@@ -1127,7 +1376,7 @@ function avanceRapido(){
    $('#ci').textContent='Ciclo 5';$('#cuenta').innerHTML='0<small>/30</small>';
    combo('5 ciclos ≈ 2 minutos',2400,'rotulo');sfx('premio');
    st.fase='comp';
-   aviso('Han pasado <b>casi 2 minutos</b>. Ciclo 5: 30 compresiones más. Atento al cronómetro: a los 2:00, <b>¡relevo!</b>');
+   aviso('Han pasado <b>casi 2 minutos</b>. Ciclo 5: 30 compresiones más. Mira el cronómetro: a los 2:00, <b>¡relevo!</b>');
    metronomo(true);
   }
  },50);
@@ -1155,7 +1404,7 @@ function tutorial(){
   if(st.salido||st.fase!=='tuto')return;
   st.ecg=[];st.ultimo=0;st.inter=[];st.aguja(110);$('#bpm').innerHTML='—<small>por minuto</small>';
   st.fase='sitio';
-  aviso('Una persona se desploma. No responde y no respira con normalidad. Tu compañera llama al 112 (con el altavoz) y va a por el DEA. <b>Toca dónde pones las manos.</b>');
+  msgInicio();
  };
  pad.onpointerdown=ev=>{
   ev.preventDefault();ev.stopPropagation();
@@ -1179,12 +1428,16 @@ function tutorial(){
 /* Salir de los niveles 3 y 4 (antes solo se salía recargando la página). En la partida oficial se pregunta antes, con el tiempo
    parado mientras se decide: el intento se apunta al empezar, así que salir lo deja gastado y sin resultado. */
 async function sal(){
- if(st.oficial){
-  const yo=st;if(!yo.parado)yo.parado=Date.now();
+ const yo=st;
+ if(yo.oficial){
+  const yaParado=!!yo.parado;   // desde el menú de pausa ya está parado; desde el botón de salir, se para mientras se decide
+  if(!yaParado){yo.parado=performance.now();if(yo.cancelaGesto)yo.cancelaGesto()}
   const si=await dialogo('¿Salir de la partida oficial?\n\nSi sales ahora, la partida se termina sin resultado y el intento '+yo.oficial.intento+' de '+INTENTOS+' queda gastado.',{si:'Salir',no:'Seguir jugando'});
   if(st!==yo)return;
-  if(!si){if(!document.querySelector('.pausa-j')){yo.pausadoT=(yo.pausadoT||0)+(Date.now()-yo.parado);yo.parado=0;yo.ultimo=0;yo.inter=[]}return}
+  if(!si){if(!yaParado&&!$('#pausaJ'))sigue();return}
+  OFI_VIVA=false;   // 18-11-2026: la oficial queda cerrada: ya no se avisa al recargar ni se retiene el «atrás»
  }
+ quitaPausa();
  st.salido=true;st.fase='fuera';
  clearInterval(st.compRitmo);clearInterval(st.salto);clearTimeout(st.tutoT);
  PARCHES.forEach(q=>delete q.puesto);
@@ -1257,8 +1510,8 @@ function prof(){
  Object.assign(st,{fase:'prep',serie:[],cuenta:0,ultimo:0,ptsP:0,combo:0,tr:null,pc:null,hold:null,
   pxcm:c.v,modoP:ls.get(CLAVE_MODO_P,'')==='pulsar'?'pulsar':'deslizar'});
  app.innerHTML=`<div class="rcp" id="esc">
-  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="pill">Entrenamiento</span></div>
-  <div class="msg" id="msg">30 compresiones con profundidad.</div>
+  <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="pill">Entrenamiento</span>${ctlHtml()}</div>
+  <div class="msg" id="msg" aria-live="polite">30 compresiones con profundidad.</div>
   <div class="cuerpo" id="cu"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}
    <g id="flecha" opacity="0"><path d="M150 200 v42" stroke="#fcd100" stroke-width="4" stroke-dasharray="6 5" stroke-linecap="round"/><path d="M140 238 l10 12 l10 -12" fill="none" stroke="#fcd100" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
    <g id="manosg">${manosSocorrista}</g>${regla()}</svg><div class="combo" id="combo"></div></div>
@@ -1273,6 +1526,7 @@ function prof(){
  };
  cu.onpointermove=ev=>{const t=st.tr;if(!t||ev.pointerId!==t.id)return;profMueve((ev.clientY-t.y0)/st.pxcm,ahoraJ()-tardeEv(ev))};
  cu.onpointerup=cu.onpointercancel=ev=>{const t=st.tr;if(!t||ev.pointerId!==t.id)return;profSuelta();st.tr=null};
+ st.cancelaGesto=()=>{if(st.tr){profSuelta();st.tr=null}if(st.hold)profSueltaPulsado(ahoraJ())};   // pausa a media compresión: cuenta como soltar
  profPanel(primera,c);
 }
 /* Panel de inicio: la primera vez, el pequeño tutorial (tres pasos y una demostración); después, solo elegir cómo comprimir */
@@ -1468,6 +1722,35 @@ function graficaProf(s){
 }
 
 /* ===== Final de cada nivel y partida oficial ===== */
+/* arte, 17-11-2026: la protagonista resume con ánimo según las estrellas (tono profesional y cercano: sin bromas, sin dramatismo) */
+const FIN={
+ 1:['Tranquilidad: para esto se entrena. Repasa con calma el método PAS y la llamada al 112, y vuelve. La próxima sale mejor.',
+  'Vas por buen camino. El orden es la clave: proteger, avisar y socorrer. Repasa lo que se te escapó y vuelve a intentarlo.',
+  'Muy bien. Tienes claro el PAS; afina las escenas que fallaron y la tercera estrella es tuya.',
+  'Impecable. Primero te proteges, luego avisas y después socorres: con ese orden en la cabeza, cualquier equipo trabaja más tranquilo a tu lado.'],
+ 2:['No pasa nada: valorar bien se aprende repitiendo. Repasa los casos de abajo y vuelve a intentarlo.',
+  'Buen comienzo. Antes de actuar, valora siempre: ¿responde?, ¿respira con normalidad? Repasa los fallos y repite.',
+  'Muy bien. Valoras con criterio; pule los detalles que fallaron y lo tendrás.',
+  'Así se valora: primero miras, después actúas, y sin hacer más daño. Es justo lo que se espera en cualquier puesto de trabajo.'],
+ 3:['Tranquilidad: la posición lateral de seguridad tiene su orden y se aprende practicando. Repasa los pasos y vuelve a intentarlo.',
+  'Vas aprendiendo el orden: brazo cercano, mano a la mejilla, rodilla y giro. Un par de intentos más y saldrá solo.',
+  'Muy bien colocada. Con un poco más de soltura en el orden será perfecta.',
+  'De manual: la rodilla como palanca, la mano bajo la mejilla y la vía aérea abierta. Y, ahora, a vigilar que siga respirando.'],
+ 4:['Una RCP cansa y pone nervioso a cualquiera; por eso se entrena. Repite la práctica de ritmo y vuelve a intentarlo.',
+  'Has mantenido la RCP, y eso ya cuenta mucho. Trabaja el ritmo con el pitido y repasa los pasos del DEA.',
+  'Muy buena RCP. Cuida el ritmo, de 100 a 120 por minuto, y el relevo a los 2 minutos, y será de tres estrellas.',
+  'Una RCP de calidad: centro del pecho, buen ritmo, el DEA en cuanto llega y relevo a tiempo. Así se gana tiempo de verdad.'],
+ 5:['Esto se domina repitiendo. Haz otra serie con calma, mirando la regla de la derecha.',
+  'Buen comienzo. Busca los 5-6 cm sin pasarte y sin perder el ritmo.',
+  'Muy bien. Afina la profundidad, entre 5 y 6 cm, y deja subir el pecho del todo.',
+  'Profundidad y ritmo de libro, dejando subir el pecho. Ahora, a comprobarlo con el maniquí.']
+};
+function resumenFinal(l,est){
+ let txt=(FIN[l.n]||FIN[1])[Math.max(0,Math.min(3,est))];
+ if(l.modo==='rcp'&&est<3&&st.relevo!=='ok')txt+=' Y recuerda: <b>relevo cada 2 minutos</b>.';
+ if(st.oficial&&l.n===ULT)txt='Partida oficial terminada. '+txt;
+ return txt;
+}
 function final(){
  clearInterval(st.reloj);clearInterval(st.metro);calla();
  const l=st.l;
@@ -1479,8 +1762,9 @@ function final(){
  if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
  app.innerHTML=`<div class="final">
   <div class="marca">Nivel ${l.n} · ${l.titulo}</div>
-  <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
+  <div class="estrellas" role="img" aria-label="${est} de 3 estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
   <div class="gran">${st.pts}</div><div>puntos · ${st.resumen}</div>
+  <div id="presFin"></div>
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
   ${l.modo==='rcp'||l.modo==='prof'?(st.grafica||''):''}
   ${l.modo!=='test'?`<p class="libro" style="margin-top:10px">${l.modo==='pls'?libro(3,'PLS','3.6.1'):libro(3,'3.6.1')}</p>`:''}
@@ -1488,6 +1772,7 @@ function final(){
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${l.n<ULT?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
  </div>`;
+ narra($('#presFin'),{ciclo:cc(),quien:'prota',animo:est>=2?'bien':est===1?'neutro':'piensa'},resumenFinal(l,est));   // arte: la protagonista resume
  window.scrollTo(0,0);
  if(st.oficial)return finOficial();
  $('#otra').onclick=()=>empieza(l.n);
@@ -1508,14 +1793,14 @@ function finOficial(){
  const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts);ponMejor(o.codigo,mejor);
  if(!antes)ls.set(PREF+'_primer_envio',Date.now());
  puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
- envia({codigo:o.codigo,intento:o.intento,fallos:o.fallos,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
+ envia({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
   $('#envio').textContent=textoEnvio(ok);
  });
 }
 portada();
 </script>
 <style>
-#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
  background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:-4px;margin-right:6px"><path d="M4 9V4h5"/><path d="M15 4h5v5"/><path d="M20 15v5h-5"/><path d="M9 20H4v-5"/></svg>Pantalla completa</button>
@@ -1528,7 +1813,7 @@ portada();
  function ajusta(){
   if(midiendo)return;midiendo=true;
   const fija=app.querySelector('.rcp,.juego');           // pantallas de juego a pantalla completa: sin escalar
-  btn.style.visibility=fija?'hidden':'';                 // el botón no tapa el tablero mientras se juega
+  btn.style.visibility=fija||app.querySelector('#tj')?'hidden':'';   // el botón no tapa el juego (18-11-2026: en la tableta tapaba la última opción de las escenas)
   if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
   app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
   const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
@@ -1572,6 +1857,126 @@ portada();
 <script>
 /* Generado por herramientas/juegos_paginas.py: no tocar a mano. */
 const PAGINAS={"UD1": {"HIG": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "IFC": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "ITE": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "STI": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}}, "UD2": {"HIG": {"2.2.3": 9}, "IFC": {"2.2.3": 9}, "ITE": {"2.2.3": 9}, "STI": {"2.2.3": 9}}, "UD3": {"HIG": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "IFC": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "ITE": {"3.6": 17, "3.6.1": 17, "PLS": 19}, "STI": {"3.6": 17, "3.6.1": 18, "PLS": 20}}};
+const ELENCO_GESTOS=["elenco_prota_HIG_bien.jpg"];
+/* ===== Universo plastilina: el reparto común de los juegos (arte, 17-11-2026) =====
+   Los mismos personajes de «Mi primer día» en todos los juegos: por ciclo, una persona protagonista recién titulada y su
+   compañero o compañera de ciclo (ver la ficha del libro, más abajo). Sus imágenes (plastilina, José) van junto a cada juego: elenco_prota_XXX.jpg,
+   elenco_vet_XXX.jpg y elenco_puesto_XXX.jpg (su puesto de trabajo). comun_montar.py mete este archivo y copia las imágenes.
+
+   cicloJugador()                      ciclo del código de lista (o el elegido para entrenar, o uno fijo por dispositivo)
+   personaje(ciclo, 'prota'|'vet')     {nombre, ella, cara, puesto, sector, empresa, visita}
+   fondoPuesto(ciclo)                  url de la escena de su puesto de trabajo
+   presenta(contenedor, {quien, texto, animo, ciclo})   cara + nombre + bocadillo; animo: 'neutro' | 'bien' | 'mal' | 'piensa'
+   reacciona(contenedor, animo, texto)                    cambia gesto y texto del presentador que ya está pintado */
+
+/* FICHA DEL LIBRO (libro/ipe1/ud01_casos.py, PERSONAJES; José, 17-11-2026: «la Alba que elegimos definitivamente en los
+   libros»). Por ciclo, dos personas que ACABAN DE TERMINAR el mismo ciclo y empiezan su primer empleo, cada una en una
+   empresa distinta: la protagonista (19-20 años, primer empleo en la empresa de su formación en empresa) y su compañero o
+   compañera de ciclo (23 años, primer trabajo estable). No hay «veteranos»: se ayudan entre iguales. Las caras salen de las
+   portadas del libro (recursos/libro/img/portada_ud01_XXX.jpg). La clave «vet» se mantiene por compatibilidad: es la
+   persona compañera.
+   vetVisita (José, 17-11-2026, opción B): por qué la persona compañera está ese día en el trabajo de la protagonista
+   (Auxilios y Evacuación), con «para…» y sin posesivos, para que valga en primera y en tercera persona. */
+const ELENCO = {
+  HIG: { prota: 'Alba', ella: true, edad: 20, de: 'Triana', puesto: 'higienista', lugar: 'la clínica dental de Triana',
+         vet: 'Samuel', vetElla: false, vetEdad: 23, vetDe: 'Sevilla', vetPuesto: 'higienista', vetLugar: 'el centro de salud',
+         vetVisita: 'para preparar una campaña de salud bucodental con el centro de salud',
+         sector: 'la clínica dental' },
+  IFC: { prota: 'Rafa', ella: false, edad: 20, de: 'Dos Hermanas', puesto: 'técnico de climatización', lugar: 'los hoteles que mantiene',
+         vet: 'Curro', vetElla: false, vetEdad: 23, vetDe: 'el Cerro del Águila', vetPuesto: 'técnico de climatización', vetLugar: 'la empresa instaladora',
+         vetVisita: 'para cambiar una enfriadora de la sala de máquinas',
+         sector: 'la sala de máquinas' },
+  ITE: { prota: 'Claudia', ella: true, edad: 19, de: 'Alcalá de Guadaíra', puesto: 'instaladora de telecomunicaciones', lugar: 'los hoteles y oficinas donde instala',
+         vet: 'Marcos', vetElla: false, vetEdad: 23, vetDe: 'Bellavista', vetPuesto: 'instalador de telecomunicaciones', vetLugar: 'las azoteas donde instala antenas',
+         vetVisita: 'para instalar la nueva antena del edificio',
+         sector: 'la azotea' },
+  STI: { prota: 'Fran', ella: false, edad: 20, de: 'Mairena del Aljarafe', puesto: 'técnico de sistemas', lugar: 'el centro de datos del aeropuerto',
+         vet: 'Alma', vetElla: true, vetEdad: 23, vetDe: 'la Macarena', vetPuesto: 'técnica de sistemas', vetLugar: 'las empresas clientes',
+         vetVisita: 'para montar la red de una empresa cliente de la terminal',
+         sector: 'el centro de datos' }
+};
+
+function cicloJugador() {
+  try {
+    const m = /^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase());
+    if (m && ELENCO[m[1]]) return m[1];
+    const e = localStorage.getItem('ipe_ciclo_elegido');
+    if (e && ELENCO[e]) return e;
+    let f = localStorage.getItem('ipe_ciclo_dispositivo');
+    if (!f || !ELENCO[f]) { f = Object.keys(ELENCO)[Math.floor(Math.random() * 4)]; localStorage.setItem('ipe_ciclo_dispositivo', f) }
+    return f;
+  } catch (e) { return 'HIG' }
+}
+
+/* Caras con gesto (elenco_prota_HIG_bien.jpg, _mal, _piensa…): comun_montar.py escribe en ELENCO_GESTOS las que existen.
+   Sin el archivo, se usa la cara de siempre y el gesto lo pone el aro de color. */
+const gestoDe = (cara, animo) => { const g = cara.replace(/\.jpg$/, '_' + animo + '.jpg');
+  return typeof ELENCO_GESTOS !== 'undefined' && ELENCO_GESTOS.indexOf(g) >= 0 ? g : cara };
+
+function personaje(ciclo, quien) {
+  const c = ELENCO[ciclo] || ELENCO.HIG, k = ELENCO[ciclo] ? ciclo : 'HIG', vet = quien === 'vet';
+  return { nombre: vet ? c.vet : c.prota, ella: vet ? c.vetElla : c.ella, cara: `elenco_${vet ? 'vet' : 'prota'}_${k}.jpg`,
+    edad: vet ? c.vetEdad : c.edad, de: vet ? c.vetDe : c.de, puesto: vet ? c.vetPuesto : c.puesto,
+    lugar: vet ? c.vetLugar : c.lugar, empresa: vet ? c.vetLugar : c.lugar, sector: c.sector, visita: vet ? c.vetVisita : '' };
+}
+
+const fondoPuesto = ciclo => `elenco_puesto_${ELENCO[ciclo] ? ciclo : 'HIG'}.jpg`;
+
+function presenta(cont, op) {
+  if (!cont) return null;
+  op = op || {};
+  const p = personaje(op.ciclo || cicloJugador(), op.quien || 'prota');
+  const el = document.createElement('div');
+  el.className = 'pres pres-' + (op.animo || 'neutro') + (op.compacto ? ' pres-compacto' : '');
+  el.dataset.cara = p.cara;
+  el.innerHTML = `<div class="pres-cara"><img src="${gestoDe(p.cara, op.animo || 'neutro')}" alt="" draggable="false"></div>
+    <div class="pres-globo" role="status" aria-live="polite"><b>${p.nombre}</b><span class="pres-txt"></span></div>`;
+  el.querySelector('.pres-txt').textContent = op.texto || '';
+  cont.innerHTML = ''; cont.appendChild(el);
+  return el;
+}
+
+function reacciona(cont, animo, texto) {
+  const el = cont && (cont.classList && cont.classList.contains('pres') ? cont : cont.querySelector('.pres'));
+  if (!el) return;
+  el.classList.remove('pres-neutro', 'pres-bien', 'pres-mal', 'pres-piensa');
+  void el.offsetWidth;
+  el.classList.add('pres-' + (animo || 'neutro'));
+  const img = el.querySelector('.pres-cara img');
+  if (img && el.dataset.cara) img.src = gestoDe(el.dataset.cara, animo || 'neutro');
+  if (texto != null) el.querySelector('.pres-txt').textContent = texto;
+}
+
+(function () {
+  const css = document.createElement('style');
+  css.textContent = `
+.pres{display:flex;align-items:flex-end;gap:10px;text-align:left}
+.pres-cara{flex:none;width:64px;height:64px;border-radius:50%;overflow:hidden;background:#e9e2d6;
+ box-shadow:inset 0 -3px 6px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.25);border:3px solid #fff;transform-origin:50% 90%}
+.pres-cara img{width:100%;height:100%;object-fit:cover;display:block}
+.pres-globo{position:relative;flex:1;min-width:0;background:#fffaf0;color:#1d2a30;border-radius:16px;padding:9px 12px;
+ font:15px/1.4 "Helvetica Neue",Arial,sans-serif;box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.18)}
+.pres-globo:before{content:"";position:absolute;left:-7px;bottom:14px;border:8px solid transparent;border-right-color:#fffaf0;border-left:0}
+.pres-globo b{display:block;font:800 14px Aleo,Georgia,serif;color:#004230;margin-bottom:1px}
+.pres-compacto .pres-cara{width:48px;height:48px;border-width:2px}
+.pres-compacto .pres-globo{font-size:14px;padding:7px 10px}
+.pres-bien .pres-cara{box-shadow:0 0 0 3px #2fd47a,0 4px 10px rgba(0,0,0,.25)}
+.pres-mal .pres-cara{box-shadow:0 0 0 3px #c24400,0 4px 10px rgba(0,0,0,.25);filter:saturate(.85)}
+.pres-piensa .pres-cara{box-shadow:0 0 0 3px #fcd100,0 4px 10px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:no-preference){
+ .pres-cara{animation:presRespira 3.2s ease-in-out infinite}
+ .pres-bien .pres-cara{animation:presSalta .55s cubic-bezier(.3,1.6,.5,1) 1,presRespira 3.2s ease-in-out .55s infinite}
+ .pres-mal .pres-cara{animation:presNo .5s ease-in-out 1,presRespira 3.2s ease-in-out .5s infinite}
+ .pres-piensa .pres-cara{animation:presPiensa 1.6s ease-in-out infinite}
+ .pres-globo{animation:presGlobo .28s ease-out}
+}
+@keyframes presRespira{0%,100%{transform:scale(1)}50%{transform:scale(1.025) translateY(-1px)}}
+@keyframes presSalta{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-10px) scale(1.06,.95)}70%{transform:translateY(0) scale(.97,1.04)}100%{transform:none}}
+@keyframes presNo{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
+@keyframes presPiensa{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg) translateY(-1px)}}
+@keyframes presGlobo{from{transform:translateY(6px) scale(.97)}to{transform:none}}   /* sin opacidad: si el navegador congela la animación, el texto se sigue viendo */`;
+  document.head.appendChild(css);
+})();
 /* ===== Común a los tres juegos (José, 9-11-2026): libro, sonido sí/no, accesibilidad e instalable =====
    Lo meten los montar_*.py antes de </body>, junto con PAGINAS (paginas_libro.js). */
 
@@ -1691,7 +2096,8 @@ try {
 .libro{display:block;margin-top:5px;color:#004230;font-weight:700;font-size:13px}
 p.libro{margin:0 0 8px}
 .opcs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 4px}
-.opc{border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
+html,body{overscroll-behavior:none}   /* 18-11-2026: tirar hacia abajo no recarga la página (se perdía la partida) */
+.opc{min-height:44px;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
 .opc[aria-pressed="false"]{background:#5b6b70}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
 .op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
@@ -1718,16 +2124,19 @@ button,a,input,.op,.resp{touch-action:manipulation}
   /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
   const caja = document.createElement('div');
   caja.className = 'opcs';
-  function boton(texto, activo, alCambiar) {
+  /* lee (opcional): de dónde sale el estado real. 18-11-2026: el sonido también se cambia desde el marcador de los juegos; al
+     volver a la portada, el botón se repinta con el estado real (antes enseñaba el antiguo y el primer toque no hacía nada) */
+  function boton(texto, activo, alCambiar, lee) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'opc';
     const pinta = v => { b.setAttribute('aria-pressed', v ? 'true' : 'false'); b.textContent = texto(v) };
     let v = activo; pinta(v);
-    b.onclick = e => { e.stopPropagation(); v = !v; pinta(v); alCambiar(v) };
+    b.sync = () => { if (lee) { v = lee(); pinta(v) } };
+    b.onclick = e => { e.stopPropagation(); b.sync(); v = !v; pinta(v); alCambiar(v) };
     caja.appendChild(b);
     return b;
   }
-  const muestra = () => { const p = app && app.querySelector('.portada'); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
+  const muestra = () => { const p = app && app.querySelector('.portada'); [...caja.children].forEach(b => b.sync && b.sync()); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
   if (app) new MutationObserver(muestra).observe(app, { childList: true });
 
   /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
@@ -1740,7 +2149,7 @@ button,a,input,.op,.resp{touch-action:manipulation}
       } catch (e) {}
     };
     window.SILENCIO = L.get('ipe_silencio', '0') === '1';
-    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() }, () => !window.SILENCIO);
     aplica();
     /* si el juego crea el sonido después, se vuelve a silenciar */
     document.addEventListener('click', () => setTimeout(aplica, 0), true);

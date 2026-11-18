@@ -7,5 +7,7 @@ self.addEventListener('activate', e => e.waitUntil(
 self.addEventListener('fetch', e => {
   const r = e.request;
   if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return;
-  e.respondWith(fetch(r));
+  /* 18-11-2026: las páginas, siempre comprobadas con el servidor (al publicar una versión nueva nadie se queda con la vieja);
+     lo demás lleva «?v=» con su huella */
+  e.respondWith(r.mode === 'navigate' || r.destination === 'document' ? fetch(r, { cache: 'no-cache' }) : fetch(r));
 });

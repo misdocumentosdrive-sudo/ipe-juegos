@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Muro de daños · IPE I</title>
-<style>@font-face{font-family:"Aleo";src:url(aleo.ttf) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<style>@font-face{font-family:"Aleo";src:url(aleo.woff2?v=d7c8feba) format("woff2"),url(aleo.ttf?v=fed0d713) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
 <style>
 :root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#1a8a4a;--mal:#d33a1f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -66,7 +66,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .juego{flex:1;display:flex;flex-direction:column;min-height:0}
 .hud{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
 .hud .pill{background:rgba(255,255,255,.12);color:#fff;box-shadow:none;font-size:13px;padding:5px 10px}
-.hud .pill.exp{background:rgba(255,89,0,.85)}
+.hud .pill.exp{background:rgba(194,68,0,.95)}   /* contraste AA con el texto blanco (antes 4,1:1) */
 .hud button.pill{border:0;cursor:pointer;font:inherit;font-weight:700;min-width:44px;min-height:44px;font-size:18px;display:inline-flex;align-items:center;justify-content:center}
 .marco{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}
 .saltar{position:absolute;top:6px;right:6px;z-index:4;min-height:44px;border:0;border-radius:999px;padding:8px 14px;background:rgba(0,0,0,.45);color:#fff;font:700 13px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
@@ -76,12 +76,12 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .reglas .cortas li{display:flex;gap:8px;align-items:flex-start}
 .reglas .cortas .ico{color:#c24400;margin-top:2px}
 .reglas details{margin-top:8px;font-size:14px}
-.reglas summary{cursor:pointer;font-weight:700;color:var(--verde);min-height:32px;display:flex;align-items:center}
+.reglas summary{cursor:pointer;font-weight:700;color:var(--verde);min-height:44px;display:flex;align-items:center}
 #lienzo{display:block;touch-action:none;border-radius:14px;box-shadow:0 0 0 2px rgba(252,209,0,.25),0 10px 30px rgba(0,0,0,.45);cursor:none}
 .tarjeta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,20,14,.55);backdrop-filter:blur(2px);z-index:5}
 .ficha{width:100%;max-width:460px;background:#fbf6ea;border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.45);border-top:8px solid var(--naranja);animation:entra .25s ease-out}
 @keyframes entra{from{transform:scale(.85);opacity:0}}
-.ficha .eti{font:800 12px Aleo,Georgia,serif;letter-spacing:1.5px;color:var(--naranja);text-transform:uppercase}
+.ficha .eti{font:800 12px Aleo,Georgia,serif;letter-spacing:1.5px;color:#c24400;text-transform:uppercase}
 .ficha .caso{font:600 18px/1.4 Aleo,Georgia,serif;color:var(--texto);margin:6px 0 10px}
 .reloj{height:6px;background:#eadfcf;border-radius:99px;overflow:hidden;margin-bottom:12px}
 .reloj i{display:block;height:100%;background:var(--naranja);width:100%}
@@ -103,8 +103,18 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .aviso-c{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);color:#fff;font:800 24px Aleo,Georgia,serif;text-align:center;text-shadow:0 2px 8px rgba(0,0,0,.6);pointer-events:none;z-index:4;white-space:nowrap}
 .aviso-c small{display:block;font:600 14px "Helvetica Neue",Arial,sans-serif;opacity:.9;margin-top:4px}
 html,body{overscroll-behavior:none}
-.pausa-j{position:fixed;inset:0;z-index:50;border:0;width:100%;background:#0b1f19;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:700 18px/1.4 "Helvetica Neue",Arial,sans-serif;cursor:pointer}
-.pausa-j b{font:800 30px Aleo,Georgia,serif;color:#fcd100}
+/* 18-11-2026 (como en Serpiente): un solo menú de pausa; con un expediente abierto lo tapa entero (reloj parado = no se lee) */
+.tarjeta.velo{z-index:6}
+.tarjeta.tapa{background:#0b1f19;backdrop-filter:none}
+/* foco visible también sobre fondo claro (doble anillo) y botones táctiles de 44 px como mínimo */
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #fcd100;outline-offset:2px;box-shadow:0 0 0 6px #004230}
+.hud{width:100%;margin:0 auto 6px}
+.hud .ctl{display:flex;gap:6px}
+.hud .ctl .ico{width:22px;height:22px}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* móvil girado: el campo es vertical; se pide girarlo y la partida se pausa */
+.giro{display:none}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){.juego .giro{display:flex;position:fixed;inset:0;z-index:30;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#0d2a20;color:#fff;font:800 20px Aleo,Georgia,serif;text-align:center;padding:20px}.giro span{font-size:46px}}
 /* fase 6, 17-11-2026: factores de riesgo («el ladrillo es la causa») */
 .fac{flex:none;width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal}
 .fac .ico{width:15px;height:15px}
@@ -118,6 +128,24 @@ html,body{overscroll-behavior:none}
 .riesgos .rg{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin-bottom:8px;line-height:1.35}
 .riesgos small,.fallos h3 small{color:var(--gris)}
 .fallos h3{display:flex;gap:8px;align-items:center;font:800 15px Aleo,Georgia,serif;color:var(--verde);margin:12px 0 6px}
+/* arte, 17-11-2026: universo plastilina (escena del puesto detrás y la persona compañera del ciclo, que repasa contigo los expedientes) */
+.heroe.escena{background:linear-gradient(180deg,rgba(0,40,29,.7) 0%,rgba(0,34,25,.86) 48%,rgba(0,24,17,.96) 100%),var(--escena) center 35%/cover no-repeat,#062a1f}
+.heroe.escena h1,.heroe.escena .hm,.heroe.escena>p,.escena-n .drama{text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.heroe .narra{margin:12px 0 4px}
+.escena-n{position:relative;border-radius:20px;overflow:hidden;padding:56px 12px 12px;background:linear-gradient(180deg,rgba(0,40,29,.12) 0%,rgba(0,32,23,.78) 58%,rgba(0,24,17,.94) 100%),var(--escena) center 30%/cover no-repeat,#0b5a40;box-shadow:0 10px 26px rgba(0,66,48,.3)}
+.escena-n .drama{background:none;padding:0}
+.escena-n .drama strong{color:var(--amarillo)}
+.final .escena-n{margin:12px 0 4px;text-align:left}
+.pres-globo b small{font:600 12px "Helvetica Neue",Arial,sans-serif;color:var(--gris)}
+.pres-txt strong{color:#c24400;font-weight:800}
+.pres-txt .fac{width:20px;height:20px;vertical-align:-5px;margin-right:3px}
+.ficha .narra{margin:8px 0 2px}
+.ficha .narra .pres-globo{background:#fff;font-size:14.5px}
+.ficha .narra .pres-globo:before{border-right-color:#fff}
+.tarjeta{overflow-y:auto;align-items:safe center}
+.ficha{margin:auto 0}
+#app.jugando{background:linear-gradient(rgba(0,30,22,.86),rgba(0,18,13,.94)),var(--escena,none) center/cover no-repeat,#00281d}
+.muestra i{border-radius:8px;box-shadow:inset 0 3px 2px rgba(255,244,220,.35),inset 0 -3px 3px rgba(0,0,0,.22),0 3px 5px rgba(0,0,0,.35)}
 </style>
 <link rel="manifest" href="muro.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -366,6 +394,8 @@ const ICONOS={
  corazon:'<path fill="{c}" d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.3 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
  rayo:'<path d="M13 2L5 13h6l-1 9 8-11h-6z"/>',
  altavoz:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>',
+ pausa:'<rect x="6" y="5" width="4" height="14" rx="1" fill="{c}"/><rect x="14" y="5" width="4" height="14" rx="1" fill="{c}"/>',   /* 18-11-2026: botón de pausa del marcador */
+ mudo:'<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',   /* 18-11-2026: botón de sonido del marcador (sin sonido) */
  pesa:'<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/>',
  ladrillo:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 12h18M9 5v7M15 12v7"/>',
  llama:'<path d="M12 21a6 6 0 0 0 6-6c0-4-3-6-4-10-2 2-3 4-3 6-1-1-1.5-2-1.5-3C7 9.5 6 12 6 15a6 6 0 0 0 6 6z"/>',
@@ -432,26 +462,32 @@ function locales(c){
 }
 function ponLocales(c,n){ls.set(CLAVE_OF+'_'+normCod(c),n)}
 const pendientes=c=>enCola().filter(t=>normCod(t.cod||(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(t)||[])[1])===normCod(c)).length;
-async function pideServicio(a,c){
+/* 18-11-2026: 28 s de espera (el servicio puede tardar 15 s en apuntar si hay cola) y, para «inicio», un id del clic: si se
+   reintenta, el servicio devuelve el mismo intento en vez de gastar otro */
+async function pideServicio(a,c,rid){
  try{
-  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),12000);
-  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),28000);
+  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+(rid?'&rid='+rid:'')+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
   clearTimeout(tt);
   return typeof r.n==='number'?r:null;
  }catch(e){return null}
 }
 async function remotos(c){const r=await pideServicio('consulta',c);return r?r.n:null}
-async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:Math.max(l,r),sin:r===null}}
+/* 18-11-2026: con conexión manda el servidor (si José devuelve un intento borrando su fila, el móvil ya no lo bloquea) */
+async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:r,sin:r===null}}
 function pintaOfi(n,estado){
  const b=document.getElementById('ofi');if(!b)return;
  if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
- if(estado==='sinred'){b.disabled=true;b.textContent='Sin conexión: la partida oficial necesita internet';return}
+ if(estado==='sinred'){b.disabled=false;b.textContent='Sin conexión · pulsa para reintentar';return}   // 18-11-2026: antes se quedaba desactivado
  if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
  b.disabled=n>=INTENTOS;
- b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+ const ic=document.getElementById('cod'),f=ic&&plazo(ic.value);   // 18-11-2026: aviso con la hora del móvil; quien decide es el servidor
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
 }
 let tOfi=0;
+let ofiEnMarcha=false;   // 18-11-2026: mientras se comprueba y se apunta un intento, nada vuelve a activar el botón (dos oficiales a la vez)
 function revisaOfi(){
+ if(ofiEnMarcha)return;
  clearTimeout(tOfi);
  {const i=document.getElementById('cod');if(i&&normCod(i.value))pintaOfi(0,'mirando')}
  tOfi=setTimeout(async()=>{
@@ -462,6 +498,10 @@ function revisaOfi(){
  },400);
 }
 async function empiezaOficial(c){
+ if(ofiEnMarcha)return;ofiEnMarcha=true;
+ try{return await empiezaOficial_(c)}finally{ofiEnMarcha=false}
+}
+async function empiezaOficial_(c){
  const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
  const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
@@ -471,12 +511,15 @@ async function empiezaOficial(c){
  if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
  /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
  const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
- const ini=await pideServicio('inicio',c);
+ const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ let ini=await pideServicio('inicio',c,rid);
+ if(!ini){if(b2)b2.textContent='Reintentando…';ini=await pideServicio('inicio',c,rid)}   // mismo clic: no gasta otro intento
  if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
  if(!ini.ok&&ini.cerrado){pintaOfi(ini.n);dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en '+abajo+'.');return}
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
- arrancaOficial(c,ini.n);
+ OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
+ arrancaOficial(c,ini.n,ini.ref||'');   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
 }
 
 /* ===== Subida de nota ===== */
@@ -494,7 +537,7 @@ async function manda(e){
  if(typeof e==='string')e={txt:e,cod:(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(e)||[])[1]||'',ref:''};   // envíos guardados antes de la fase 3
  try{
   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),15000);
-  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt)+(e.nv?'&nv='+encodeURIComponent(e.nv):''),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
   clearTimeout(tt);
   return r.ok?true:r.error?'rechazado':false;
  }catch(x){return false}
@@ -505,10 +548,11 @@ let vaciando=false;
 async function vaciaCola(){
  if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
  try{const c=enCola();if(!c.length)return;
-  const quedan=[];for(const t of c){if((await manda(t))===false)quedan.push(t)}
-  guardaCola(quedan)}finally{vaciando=false}
+  /* 18-11-2026: al terminar se vuelve a leer la cola y se quita solo lo enviado (antes se perdía lo que entraba mientras tanto) */
+  const hechos=new Set();for(const t of c){if((await manda(t))!==false)hechos.add(JSON.stringify(t))}
+  guardaCola(enCola().filter(t=>!hechos.has(JSON.stringify(t))))}finally{vaciando=false}
 }
-addEventListener('online',vaciaCola);setTimeout(vaciaCola,1500);
+addEventListener('online',vaciaCola);addEventListener('online',()=>revisaOfi());setTimeout(vaciaCola,1500);
 function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
  const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
  return l.length?' | fallos: '+l.join('; '):'';
@@ -517,8 +561,10 @@ const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.g
 function envia(d){
  const est=d.est||[d.n1,d.n2,d.n3];
  const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
- const e={txt,cod:d.codigo,ref:ls.get(claveRef(d.codigo,d.intento),'')};
- return manda(e).then(ok=>{if(ok===false){const c=enCola();c.push(e);guardaCola(c)}return ok});
+ const nv=Array.isArray(d.niveles)&&d.niveles.length?d.niveles.map(x=>[x.p,x.s,x.a].map(v=>Math.round(+v||0)).join(',')).join(';'):'';   // puntos, segundos y aciertos de cada nivel (18-11-2026)
+ const mem=OFI_REF&&OFI_REF.cod===normCod(d.codigo)&&OFI_REF.n==d.intento?OFI_REF.ref:'';   // el justificante también en memoria, en todos los juegos
+ const e={txt,cod:d.codigo,ref:d.ref||mem||ls.get(claveRef(d.codigo,d.intento),''),nv};
+ return manda(e).then(ok=>{OFI_VIVA=false;if(ok===false){const c=enCola();c.push(e);guardaCola(c)}return ok});
 }
 /* lo que ve el alumno al terminar */
 function textoEnvio(ok){
@@ -532,7 +578,7 @@ async function puesto(codigo,pts,nuevo){
   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
   const txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);
   const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
-  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>+f[1]||0);
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>parseInt(String(f[1]||'').replace(/\D/g,''),10)||0);   // 18-11-2026: «12.345» (con punto de miles) también se lee bien
   const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
   return {pos,total};
  }catch(e){return null}
@@ -544,7 +590,14 @@ function textoPuesto(r,pts){
  return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 
-function arrancaOficial(c,n){presenta(1,{codigo:c,intento:n,est:[],pts:0})}   // lo llama empiezaOficial (oficial.js)
+/* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
+   Desde «Sí, empezar» hasta el envío del resultado: aviso al recargar o cerrar, y el «atrás» de Android o del navegador no
+   sale de la página (si el juego define PAUSA_JUEGO(), además la pausa). Tirar hacia abajo ya no recarga (comun.js). */
+var OFI_VIVA=false,OFI_REF=null;
+addEventListener('beforeunload',e=>{if(OFI_VIVA){e.preventDefault();e.returnValue=''}});
+addEventListener('popstate',()=>{if(!OFI_VIVA)return;try{history.pushState({ofi:1},'')}catch(e){}if(typeof PAUSA_JUEGO==='function')PAUSA_JUEGO()});
+
+function arrancaOficial(c,n){presentaNivel(1,{codigo:c,intento:n,est:[],pts:0})}   // lo llama empiezaOficial (oficial.js)
 
 const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
 const INTENTOS=3;
@@ -567,11 +620,11 @@ const PUNTOS={ladrillo:10,expediente:20,acierto:100,fallo:-50,muro:200,vida:100,
 const EXPEDIENTES=8, SEGUNDOS=12;
 const NIVELES=[
  {n:1,titulo:'¿Es del trabajo?',sub:'Decide si cada daño tiene relación con el trabajo: accidente de trabajo o daño no laboral.',col:'#2f8a5b',resp:['at','nl'],v:250,filas:3,duros:0,pala:78,
-  drama:'Primer día en el taller. Un <b>muro de riesgos</b> tapa la salida y alguien tiene que derribarlo. Dentro de algunos ladrillos hay <b>expedientes</b> de compañeros que se han hecho daño. La mutua necesita saber, ya, si cada caso es del trabajo… o no.'},
+  drama:'Un <strong>muro de riesgos</strong> tapa la salida de {sector} y alguien tiene que derribarlo. Dentro de algunos ladrillos hay <strong>expedientes</strong> de compañeras y compañeros que se han hecho daño. Necesito saber, ya, si cada caso es del trabajo… o no. Repásalos conmigo.'},
  {n:2,titulo:'¿De golpe o poco a poco?',sub:'Distingue el daño súbito del que aparece con los años: se añade la enfermedad profesional.',col:'#0d6b4f',resp:['at','ep','nl'],v:280,filas:4,duros:0,pala:72,
-  drama:'El muro ha crecido. Los expedientes ya no son solo golpes y cortes: hay daños que <b>llegan con los años</b>. Recuerda: el accidente es súbito; la enfermedad profesional es lenta y tiene que estar en el <b>cuadro del RD 1299/2006</b>.'},
+  drama:'El muro de {sector} ha crecido. Los expedientes ya no son solo golpes y cortes: hay daños que <strong>llegan con los años</strong>. Recuerda: el accidente es súbito; la enfermedad profesional es lenta y tiene que estar en el <strong>cuadro del RD 1299/2006</strong>.'},
  {n:3,titulo:'Expediente completo',sub:'Clasifica cada caso: accidente de trabajo, enfermedad profesional, patología inespecífica o daño no laboral. Algunos supuestos tienen trampa.',col:'#ff5900',resp:['at','ep','in','nl'],v:315,filas:5,duros:1,forma:'rombo',pala:66,
-  drama:'Último muro, y el más duro: un <b>rombo con el núcleo blindado</b>. Hay que abrirse paso desde fuera: <b>los ladrillos grises aguantan dos golpes</b> y <b>los gris oscuro del centro, tres</b>. Los expedientes vienen con <b>trampa</b>: desvíos en el camino a casa, imprudencias, insolaciones, teletrabajo… Lee bien cada caso antes de decidir.'}
+  drama:'Último muro de {sector}, y el más duro: un <strong>rombo con el núcleo blindado</strong>. Hay que abrirse paso desde fuera: <strong>los ladrillos grises aguantan dos golpes</strong> y <strong>los gris oscuro del centro, tres</strong>. Los expedientes vienen con <strong>trampa</strong>: desvíos en el camino a casa, imprudencias, insolaciones, teletrabajo… Lee bien cada caso antes de decidir.'}
 ];
 const DEF={
  at:'Lesión súbita con ocasión o por consecuencia del trabajo, también al ir o volver (in itinere).',
@@ -580,6 +633,48 @@ const DEF={
  nl:'Sin relación con el trabajo: accidente no laboral o enfermedad común.'
 };
 let st={}, raf=0;
+
+/* ===== Arte (17-11-2026): universo plastilina =====
+   ARTE: gancho para las imágenes nuevas de José. Vacío = el dibujo de siempre. montar_muro.py lo rellena solo con lo que
+   encuentre en fuente/muro/arte/ con estos nombres (webp, png o jpg):
+     muro_ladrillo_<factor>  textura de plastilina del ladrillo de cada riesgo (cai, maq, ene, rui, esf, qui, bio, psi, tra); 3:1 o 4:3
+     muro_ladrillo_duro · muro_ladrillo_expediente   ladrillo blindado (gris) y ladrillo con expediente (naranja)
+     muro_pared_<CICLO>      pared del fondo del muro por sector (HIG, IFC, ITE, STI); vertical 9:16
+     muro_bola · muro_pala   bola y pala de plastilina (PNG con transparencia; la pala, alargada, se estira por el centro)
+   Si una imagen falta o no carga, se pinta lo de ahora (no se rompe nada). */
+const ARTE=Object.assign({ladrillo:{},pared:{},bola:'',pala:''},{"ladrillo": {}, "pared": {}});
+const IMGS={};
+const lista=im=>!!(im&&im.complete&&im.naturalWidth>0&&!im.mal);
+function imagen(src,alCargar){                    /* se carga una vez; alCargar se llama cuando llega (si aún no estaba) */
+ if(!src)return null;let im=IMGS[src];
+ if(!im){im=IMGS[src]=new Image();im.cbs=[];im.onload=()=>{const c=im.cbs;im.cbs=[];c.forEach(f=>f())};im.onerror=()=>{im.mal=true;im.cbs=[]};im.src=src}
+ if(alCargar&&!lista(im)&&!im.mal&&im.cbs)im.cbs.push(alCargar);
+ return im;
+}
+const repintaMuro=()=>{if(st.capaCtx&&!st.fin)st.sucio=true};
+function arte(tipo,clave){                         /* imagen de ARTE ya cargada, o null (y se pide para la próxima vez) */
+ const src=clave==null?ARTE[tipo]:(ARTE[tipo]||{})[clave];if(!src)return null;
+ const im=imagen(src,repintaMuro);return lista(im)?im:null;
+}
+/* el reparto (elenco.js, común a todos los juegos) va al final de la página; sin él, el juego sigue igual pero sin presentador */
+const hayElenco=()=>typeof ELENCO!=='undefined'&&typeof personaje==='function'&&typeof presenta==='function';
+const cicloArte=()=>ciclo()||(hayElenco()?cicloJugador():'')||'HIG';
+const escena=c=>(ARTE.pared&&ARTE.pared[c])||(hayElenco()?fondoPuesto(c):'');
+/* la persona compañera del ciclo (Samuel, Curro, Marcos o Alma; ficha del libro: acaba de terminar el mismo ciclo que la
+   protagonista). En su empresa le han pedido entender los expedientes de daños y los repasa contigo; junto al nombre, su puesto */
+function companero(c){
+ c=c||cicloArte();const p=hayElenco()?personaje(c,'vet'):{nombre:'',ella:false,puesto:'',sector:'el taller',lugar:'tu empresa'};
+ return Object.assign({},p,{c,cargo:p.puesto});
+}
+const conSector=s=>s.split('{sector}').join(companero().sector).split('{empresa}').join(companero().lugar);
+function narra(cont,texto,animo,html,compacto,c){   /* presentador con su cargo; html = texto con <strong> o la chapa del riesgo */
+ if(!cont||!hayElenco())return null;
+ const m=companero(c), el=presenta(cont,{quien:'vet',ciclo:m.c,texto,animo,compacto});if(!el)return null;
+ const b=el.querySelector('b');if(b&&m.cargo){const s=document.createElement('small');s.textContent=' · '+m.cargo;b.appendChild(s)}
+ if(html)el.querySelector('.pres-txt').innerHTML=html;
+ return el;
+}
+const fondoCSS=c=>{const u=escena(c);return u?`--escena:url('${u}')`:''};
 
 function casosDe(n){
  const b=CASOS[n], c=ciclo();
@@ -599,10 +694,11 @@ const fac=F=>`<span>${chapa(F)}${F.n}</span>`;
 function portada(){
  parar();app.classList.remove('jugando');
  app.innerHTML=`<div class="portada">
-  <div class="heroe" style="--brillo:rgba(255,89,0,.3)">
+  <div class="heroe escena" id="heroe" style="--brillo:rgba(255,89,0,.3);${fondoCSS(cicloArte())}">
    <div class="hm">IPE I · Unidad 2 · Daños profesionales</div>
    <h1>Muro<br><span>de daños</span></h1>
    <div class="muestra" style="justify-content:flex-start"><i></i><i class="x">${ico('carpeta')}</i><i></i><i></i><i class="x">${ico('carpeta')}</i></div>
+   <div class="narra" id="narraP"></div>
    <p>Cada ladrillo es un riesgo del trabajo. Rómpelos y, cuando caiga un ${ico('carpeta')} expediente, cógelo con la pala: tendrás ${SEGUNDOS} segundos para decir qué tipo de daño es. Los que se te escapen te los preguntamos al acabar el nivel. Y atento a los ${ico('regalo')} ladrillos sorpresa…</p>
    <div class="chips">${NIVELES.map(l=>`<span>${l.titulo}</span>`).join('')}</div>
   </div>
@@ -617,8 +713,10 @@ function portada(){
   <h2 class="serif entreno">Entrena cuando quieras</h2>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · LGSS (arts. 156, 157 y 158) y RD 1299/2006</div>`;
- app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>presenta(+b.dataset.n));
- $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
+ app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>presentaNivel(+b.dataset.n));
+ $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none';
+  const g=grupoDe(codOficial($('#cod').value));if(g&&ELENCO_OK(g)&&g!==st.cicloP)pintaHeroe(g)};
+ pintaHeroe(cicloArte());
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
   const c=codOficial($('#cod').value);   // siempre 1HIG-07
@@ -629,14 +727,23 @@ function portada(){
  revisaOfi();
 }
 
+/* arte, 17-11-2026: en la portada, la escena del puesto del ciclo y su persona compañera (cambian al escribir el código) */
+const ELENCO_OK=g=>hayElenco()&&!!ELENCO[g];
+function pintaHeroe(c){
+ st.cicloP=c;const h=$('#heroe'), u=escena(c);if(!h)return;
+ if(u)h.style.setProperty('--escena',`url('${u}')`);
+ const pr=hayElenco()?personaje(c,'prota'):{nombre:''};
+ narra($('#narraP'),`En mi empresa me han pedido que aprenda a entender los expedientes de daños, y a ${pr.nombre} le pasa lo mismo en la suya. Rompe el muro, coge cada expediente que caiga y repásalo conmigo: ¿qué tipo de daño es?`,'neutro','',true,c);
+}
+
 /* presentación de cada nivel: un poco de teatro, las reglas y un botón para empezar */
-function presenta(n,oficial){
+function presentaNivel(n,oficial){
  parar();app.classList.remove('jugando');
  const l=NIVELES[n-1];
  app.innerHTML=`<div class="intro">
   <div class="marca">${oficial?'Partida oficial · ':''}Nivel ${n} de 3</div>
   <h1>${l.titulo}</h1>
-  <div class="drama">${l.drama}</div>
+  <div class="escena-n" id="escenaN" style="${fondoCSS(cicloArte())}"><div class="drama">${conSector(l.drama)}</div></div>
   <div class="reglas"><b>Cómo se juega</b>
   ${!oficial&&tutoPendiente()?`<p class="tuto-msg">${ico('mano')} Es tu primera partida: el juego te enseña sobre la marcha (si ya sabes, puedes saltarte la explicación).</p>`:''}
   <ul class="cortas">
@@ -657,8 +764,10 @@ function presenta(n,oficial){
   <div class="reglas"><b>Los riesgos del muro</b> <span class="libro">(arriba del muro tienes la leyenda)</span><div class="facs">${Object.values(FACTORES).map(fac).join('')}</div></div>
   <div class="btns"><button class="btn p" id="vamos">▶ ¡Vamos allá! Empezar</button><button class="btn s" id="menu">${oficial?'Abandonar la partida oficial':'Volver al menú'}</button></div>
  </div>`;
+ /* arte: el drama lo cuenta la persona compañera, sobre la escena del puesto (sin elenco, queda el texto) */
+ narra($('#escenaN'),'','neutro',conSector(l.drama));
  $('#vamos').onclick=()=>empieza(n,oficial);
- $('#menu').onclick=async()=>{if(oficial&&!(await dialogo('¿Seguro? El intento '+oficial.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:"Sí, salir",no:"Seguir jugando"})))return;portada()};
+ $('#menu').onclick=async()=>{if(oficial&&!(await dialogo('¿Seguro? El intento '+oficial.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:"Sí, salir",no:"Seguir jugando"})))return;if(oficial)OFI_VIVA=false;portada()};
 }
 
 /* ===== Motor ===== */
@@ -681,7 +790,7 @@ function finTuto(){
  const b=document.getElementById('saltar');if(b)b.remove();
 }
 
-function parar(){cancelAnimationFrame(raf);raf=0;clearInterval(st.reloj);if(st.obs)st.obs.disconnect();removeEventListener('keydown',tecla);removeEventListener('keyup',teclaUp);if(st.pm){removeEventListener('pointermove',st.pm);removeEventListener('pointerdown',st.pd);removeEventListener('pointerup',st.pu);removeEventListener('pointercancel',st.pu)}document.removeEventListener('visibilitychange',oculta)}
+function parar(){cancelAnimationFrame(raf);raf=0;clearInterval(st.reloj);if(st.obs)st.obs.disconnect();removeEventListener('keydown',tecla);removeEventListener('keyup',teclaUp);if(st.pm){removeEventListener('pointermove',st.pm);removeEventListener('pointerdown',st.pd);removeEventListener('pointerup',st.pu);removeEventListener('pointercancel',st.pu)}document.removeEventListener('visibilitychange',oculta);removeEventListener('blur',oculta);removeEventListener('pagehide',oculta)}
 
 /* El muro: igual en todos los dispositivos (8 columnas, ladrillos de 30 de alto con su pictograma) */
 function montaMuro(l,n,casos){
@@ -723,10 +832,13 @@ function empieza(n,oficial){
  /* sin el zoom de la portada antes de medir (lección de la Serpiente, 12-11-2026) */
  app.style.zoom='';app.style.maxWidth='';app.style.minHeight='';
  app.classList.add('jugando');
+ {const u=escena(cicloArte());if(u)app.style.setProperty('--escena',`url('${u}')`)}   /* arte: la escena también en las bandas que sobran */
  const l=NIVELES[n-1];
  app.innerHTML=`<div class="juego">
-  <div class="hud"><span class="pill" id="hp">0 pts</span><span class="pill exp">${ico('carpeta')} <span id="he">0/${EXPEDIENTES}</span></span><span class="pill" id="hv" aria-label="Vidas"></span><span style="display:flex;gap:6px"><button class="pill" id="pausa" aria-label="Pausa">⏸</button><button class="pill" id="salir" aria-label="Salir de la partida">✕</button></span></div>
-  <div class="marco" id="marco"><canvas id="lienzo"></canvas></div>
+  <div class="hud" id="hud"><span class="pill" id="hp">0 pts</span><span class="pill exp" id="hx" role="img" aria-label="Expedientes: 0 de ${EXPEDIENTES}">${ico('carpeta')} <span id="he">0/${EXPEDIENTES}</span></span><span class="pill" id="hv" role="img" aria-label="Vidas: 3"></span><span class="ctl"><button type="button" class="pill" id="bpa" aria-label="Pausa">${ico('pausa')}</button><button type="button" class="pill" id="bso" aria-label="Quitar el sonido"></button></span></div>
+  <div class="marco" id="marco"><canvas id="lienzo" role="img" aria-label="El muro de riesgos, la pala y la bola"></canvas></div>
+  <div class="sr" id="avisoSR" role="status" aria-live="polite"></div>
+  <div class="giro" aria-live="assertive"><span aria-hidden="true">↻</span>Gira el móvil: se juega en vertical</div>
  </div>`;
  const marco=$('#marco'), cv=$('#lienzo');
  const W=CW, H=CH;
@@ -759,9 +871,14 @@ function empieza(n,oficial){
  addEventListener('pointerdown',st.pd);addEventListener('pointermove',st.pm,{passive:true});
  addEventListener('pointerup',st.pu);addEventListener('pointercancel',st.pu);
  addEventListener('keydown',tecla);addEventListener('keyup',teclaUp);
- document.addEventListener('visibilitychange',oculta);
- $('#pausa').onclick=()=>pausa(!st.pausa);
- $('#salir').onclick=()=>pausa(true);
+ document.addEventListener('visibilitychange',oculta);addEventListener('blur',oculta);addEventListener('pagehide',oculta);
+ /* 18-11-2026 (como en Serpiente): pausa y sonido en el marcador. El ✕ de antes solo abría la pausa: ahora lo hace ❚❚, cuyo menú sale al menú */
+ const suelta=(b,e)=>{if(e.detail)b.blur()};   /* con el dedo o el ratón no se queda el foco: el Espacio sigue lanzando */
+ /* ❚❚ con el pictograma propio (el carácter ❚❚ se pintaba como un bloque macizo) */
+ $('#bpa').onclick=e=>{suelta(e.currentTarget,e);if(!reanuda())pausaManual()};
+ {const bs=$('#bso'),pinta=()=>{bs.innerHTML=ico(window.SILENCIO?'mudo':'altavoz');bs.setAttribute('aria-label',window.SILENCIO?'Poner el sonido':'Quitar el sonido')};
+  pinta();bs.onclick=e=>{suelta(bs,e);window.SILENCIO=!window.SILENCIO;ls.set('ipe_silencio',window.SILENCIO?'1':'0');pinta()}}
+ if(!oficial)guardaAtras();
  hud();
  if(st.tuto){
   const b=document.createElement('button');b.type='button';b.id='saltar';b.className='saltar';b.textContent='Saltar la explicación';
@@ -771,6 +888,7 @@ function empieza(n,oficial){
   aviso('Mueve la pala','Desliza el dedo por la mitad de abajo · toca para lanzar',6000);
  }else aviso('¡Toca para lanzar!','o espera: sale sola',2500);
  st.t=performance.now();raf=requestAnimationFrame(bucle);
+ if(MQ_GIRO.matches)pausaManual();   /* empieza con el móvil girado: en pausa hasta que se ponga en vertical */
 }
 function ajustaLienzo(){
  const m=$('#marco');if(!m||!st.cv)return;
@@ -779,38 +897,70 @@ function ajustaLienzo(){
  /* rendimiento (José, 13-11-2026: «va muy lento, se queda pillado»): como mucho ~2 megapíxeles */
  let dpr=Math.min(devicePixelRatio||1,2);if(cw*ch*dpr*dpr>2.2e6)dpr=Math.max(1,Math.sqrt(2.2e6/(cw*ch)));
  st.cv.style.width=cw+'px';st.cv.style.height=ch+'px';
+ {const h=$('#hud');if(h)h.style.maxWidth=Math.max(cw,340)+'px'}   /* tableta u ordenador en horizontal: el marcador, encima del campo y no en las esquinas */
  st.cv.width=Math.round(cw*dpr);st.cv.height=Math.round(ch*dpr);
  st.ctx.setTransform(k*dpr,0,0,k*dpr,0,0);st.esc=k;st.k2=k*dpr;
  st.capa=document.createElement('canvas');st.capa.width=st.cv.width;st.capa.height=st.cv.height;
  st.capaCtx=st.capa.getContext('2d');st.capaCtx.setTransform(k*dpr,0,0,k*dpr,0,0);st.sucio=true;st.rect=null;st.mrect=null;
 }
 function tecla(e){
+ /* 18-11-2026: Esc o P, pausa y sigue (también con un expediente abierto: lo tapa y para su reloj) */
+ if(e.key==='p'||e.key==='P'||e.key==='Escape'){e.preventDefault();if(!reanuda())pausaManual();return}
+ if(document.getElementById('velo')){if(e.key===' '){e.preventDefault();reanuda()}return}   // en pausa, nada más llega al juego
+ if((e.key===' '||e.key==='Enter')&&e.target&&e.target.closest&&e.target.closest('button'))return;   // Espacio o Intro sobre un botón: lo pulsa
  if(st.tarjeta){const i=+e.key-1;const bs=[...document.querySelectorAll('.resp')];if(bs[i]&&!bs[i].disabled){bs[i].click();e.preventDefault()}
   if((e.key==='Enter'||e.key===' ')&&$('.seguir')&&$('.seguir').style.display==='block'){$('.seguir').click();e.preventDefault()}return}
  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){st.teclas[e.key]=1;e.preventDefault()}
- if(e.key===' '){e.preventDefault();if(st.pausa)pausa(false);else if(st.pegada)lanza()}
- if(e.key==='p'||e.key==='P'||e.key==='Escape')pausa(!st.pausa);
+ if(e.key===' '){e.preventDefault();if(st.pegada)lanza()}
 }
 function teclaUp(e){delete st.teclas[e.key]}
-function oculta(){if(!document.hidden)return;if(st.tarjeta){if(st.paraFicha)st.paraFicha()}else if(!st.fin)pausa(true)}   // también con los pendientes (fase 4)
+/* ===== Pausa (18-11-2026, como en Serpiente) =====
+   Se pausa a mano (❚❚, Esc o P), al ocultar la página, al perder el foco (blur, pagehide), con el «atrás» y al girar el móvil.
+   Un solo menú: «Seguir / Salir al menú»; en la oficial, salir pide confirmación (el intento cuenta). Con un expediente
+   abierto, el menú lo tapa entero y su reloj se para: no se puede leer con el tiempo parado. */
+const jugando=()=>app.classList.contains('jugando')&&!!st.cv&&!!$('#marco');
+function oculta(e){
+ if(!(document.hidden||e&&(e.type==='blur'||e.type==='pagehide'))||!jugando())return;
+ if(st.tarjeta){if(st.paraFicha)st.paraFicha(false)}else if(!st.fin)pausa(true);   // también con los pendientes (fase 4)
+}
+function pausaManual(){
+ if(!jugando()||document.getElementById('velo'))return;
+ if(st.tarjeta){if(st.paraFicha)st.paraFicha(true)}else if(!st.fin)pausa(true);
+}
+function reanuda(){
+ const v=document.getElementById('velo');if(!v)return false;
+ v.remove();const f=st.alSeguir;st.alSeguir=null;if(f)f();return true;
+}
 function pausa(si){
  if(st.tarjeta||st.fin)return;
- st.pausa=si;st.arr=null;const m=$('#marco');
- const v=document.getElementById('velo');if(v)v.remove();
- if(si){
-  /* salir en cualquier momento (José, 13-11-2026): desde la pausa o con ✕ */
-  const of=st.oficial;
-  const d=document.createElement('div');d.id='velo';d.className='tarjeta';
-  d.innerHTML=`<div class="ficha" style="text-align:center"><div class="eti">Pausa</div><div class="caso">El muro te espera.</div>
-   <div class="btns" style="margin-top:6px"><button class="btn p" id="reanuda">▶ Seguir jugando</button>
-   <button class="btn s" id="dejar">${of?'Abandonar la partida oficial':'Salir al menú'}</button></div>
-   ${of?`<p class="libro" style="margin:10px 0 0">Si abandonas, el intento ${of.intento} de ${INTENTOS} ya está gastado y no cuenta para nota.</p>`:''}</div>`;
-  m.appendChild(d);$('#reanuda').onclick=()=>pausa(false);
-  $('#dejar').onclick=async()=>{if(of&&!(await dialogo('¿Seguro? El intento '+of.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:"Sí, salir",no:"Seguir jugando"})))return;st.fin=true;portada()};
- }
- else{st.t=performance.now();if(st.pegada)st.pegadaDesde=st.tj}
+ if(si){if(st.pausa)return;st.pausa=true;st.arr=null;menuPausa(false,()=>pausa(false))}
+ else{st.pausa=false;const v=document.getElementById('velo');if(v)v.remove();st.alSeguir=null;st.t=performance.now();if(st.pegada)st.pegadaDesde=st.tj}
 }
-function aviso(t,sub,ms){st.aviso=t;st.avisoSub=sub||'';st.avisoHasta=performance.now()+(ms||1500);pintaAviso()}
+function menuPausa(tapa,alSeguir){
+ const m=$('#marco');if(!m)return;const of=st.oficial;
+ const d=document.createElement('div');d.id='velo';d.className='tarjeta velo'+(tapa?' tapa':'');
+ d.innerHTML=`<div class="ficha" role="dialog" aria-modal="true" aria-labelledby="veloT" style="text-align:center"><div class="eti" id="veloT">Pausa</div><div class="caso">${tapa==='reloj'?'El reloj del expediente está parado.':'El muro te espera.'}</div>
+  <div class="btns" style="margin-top:6px"><button type="button" class="btn p" data-pausa="sigue">▶ Seguir</button><button type="button" class="btn s" data-pausa="sal">Salir al menú</button></div>
+  ${of?`<p class="libro" style="margin:10px 0 0">Si sales, el intento ${of.intento} de ${INTENTOS} cuenta como jugado y no contará para nota.</p>`:''}</div>`;
+ m.appendChild(d);st.alSeguir=alSeguir;
+ const b=d.querySelector('[data-pausa="sigue"]');b.onclick=reanuda;d.querySelector('[data-pausa="sal"]').onclick=salirPartida;
+ b.focus({preventScroll:true});
+}
+async function salirPartida(){
+ const of=st.oficial;
+ if(of&&!(await dialogo('¿Seguro? El intento '+of.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:'Sí, salir',no:'Seguir jugando'})))return;
+ if(of)OFI_VIVA=false;   // ya no hay oficial en marcha: ni aviso al cerrar ni «atrás» bloqueado
+ st.fin=true;portada();
+}
+/* móvil girado: el aviso «Gira el móvil» lo tapa todo y la partida se pausa */
+const MQ_GIRO=matchMedia('(orientation:landscape) and (max-height:500px) and (pointer:coarse)');
+{const f=()=>{if(MQ_GIRO.matches)pausaManual()};MQ_GIRO.addEventListener?MQ_GIRO.addEventListener('change',f):MQ_GIRO.addListener(f)}
+/* el «atrás»: en la oficial lo hace oficial.js (llama a PAUSA_JUEGO); en el entrenamiento, aquí. No sale: pausa */
+const PAUSA_JUEGO=()=>oculta({type:'blur'});
+function guardaAtras(){try{if(!history.state||!history.state.muro)history.pushState({muro:1},'')}catch(e){}}
+addEventListener('popstate',()=>{if(typeof OFI_VIVA!=='undefined'&&OFI_VIVA)return;if(jugando()){guardaAtras();oculta({type:'blur'})}});
+function aviso(t,sub,ms){st.aviso=t;st.avisoSub=sub||'';st.avisoHasta=performance.now()+(ms||1500);pintaAviso()
+ {const s=document.getElementById('avisoSR');if(s&&t)s.textContent=(t+(/[.!?…:]$/.test(t)||!sub?' ':'. ')+(sub||'')).replace(/<[^>]*>/g,'').trim()}}   /* lo mismo, para lectores de pantalla */
 function pintaAviso(){
  const m=$('#marco');if(!m)return;let a=document.getElementById('avisoC');
  if(!st.aviso||performance.now()>st.avisoHasta){if(a)a.remove();return}
@@ -820,6 +970,9 @@ function pintaAviso(){
 function hud(){
  const e=(id,t)=>{const x=document.getElementById(id);if(x&&x.textContent!==t)x.textContent=t};
  e('hp',st.pts+' pts');e('he',st.k+'/'+EXPEDIENTES);e('hv','♥'.repeat(Math.max(0,st.vidas)));
+ /* 18-11-2026: nombre para lectores de pantalla (los corazones y la carpeta solos no se entienden) */
+ const n=(id,t)=>{const x=document.getElementById(id);if(x&&x.getAttribute('aria-label')!==t)x.setAttribute('aria-label',t)};
+ n('hv','Vidas: '+Math.max(0,st.vidas));n('hx','Expedientes: '+st.k+' de '+EXPEDIENTES);
 }
 /* ===== Bolas (desde el 13-11-2026 puede haber varias: sorpresa «Trabajo en equipo») ===== */
 function nuevaBola(){st.bolas=[{x:st.pala.x,y:st.pala.y-8,r:7,vx:0,vy:0,estela:[],peg:true,off:0,ne:0}];st.pegada=true;st.pegadaDesde=st.tj||0}
@@ -833,7 +986,7 @@ function lanza(){
 }
 function anchoPala(){const e=st.efecto, t=st.tj||0;return e.tipo==='epi'&&t<e.hasta?st.l.pala*1.5:st.l.pala}   // fase 4: fallar ya no encoge la pala
 function suma(p,x,y,col,peq){
- st.pts=Math.max(0,st.pts+p);hud();
+ st.pts=Math.max(0,st.pts+p);hud();st.quieto=false;
  if(x!==undefined)st.part.push({txt:(p>0?'+':'−')+Math.abs(p),x,y,vy:peq?-55:-40,vida:peq?.8:1,col:col||'#fcd100',tipo:'txt',tam:peq?13:18});
 }
 /* ===== Ladrillos sorpresa (José, 13-11-2026: «como en los juegos de romper ladrillos de siempre») =====
@@ -870,7 +1023,10 @@ const son={
 function bucle(t){
  raf=requestAnimationFrame(bucle);
  const dt=Math.min(.1,Math.max(0,(t-st.t)/1000));st.t=t;
- if(st.pausa||st.tarjeta||st.fin){st.acc=0;dibuja();return}
+ /* 18-11-2026: en pausa, con un expediente abierto o al acabar, el lienzo se pinta una vez y queda quieto (antes, 60 veces por
+    segundo bajo el velo desenfocado: gasto de batería sin nada que ver) */
+ if(st.pausa||st.tarjeta||st.fin){st.acc=0;if(!st.quieto||st.sucio){st.quieto=true;dibuja()}return}
+ st.quieto=false;
  if(st.congela>0){st.congela-=dt;pintaAviso();dibuja();return}   /* pausa de impacto: el tiempo de juego se para 40 ms */
  st.acc+=dt;let n=0;
  while(st.acc>=PASO&&n<16){paso(PASO);st.acc-=PASO;n++;if(st.tarjeta||st.fin||st.congela>0)break}
@@ -1021,7 +1177,7 @@ function abreCaso(c,pend){
  d.innerHTML=`<div class="ficha" role="dialog" aria-label="Expediente">
   <div class="eti">${ico('carpeta')} ${pend?`Expediente pendiente ${pend.i+1} de ${pend.n}`:`Expediente ${st.k+1} de ${EXPEDIENTES}`} · ¿Qué tipo de daño es?</div>
   ${tuto?`<p class="tuto-msg">${ico('mano')} Lee el caso y elige el tipo de daño antes de que se acabe la barra. Si aciertas: +100 y la pala se ensancha.</p>`:''}
-  ${FACTORES[caso.fa]?`<div class="riesgo">${chapa(FACTORES[caso.fa])}<span>Nace del riesgo: <b>${FACTORES[caso.fa].n}</b></span></div>`:''}
+  <div class="narra" id="narraF">${FACTORES[caso.fa]?`<div class="riesgo">${chapa(FACTORES[caso.fa])}<span>Nace del riesgo: <b>${FACTORES[caso.fa].n}</b></span></div>`:''}</div>
   <div class="caso">${caso.texto}</div>
   <div class="reloj"><i id="rl"></i></div>
   <div class="resps ${l.resp.length===4?'c4':''}">${l.resp.map((k,i)=>`<button class="resp" data-k="${k}" style="background:${RESP[k].c}">${ico(RESP_ICO[k])}${RESP[k].n}</button>`).join('')}</div>
@@ -1029,16 +1185,26 @@ function abreCaso(c,pend){
   <button class="seguir" id="seguir">${!pend?'Seguir rompiendo ▶':pend.i+1<pend.n?'Siguiente expediente ▶':'Ver el resultado ▶'}</button>
  </div>`;
  m.appendChild(d);
+ /* arte: la persona compañera presenta el expediente (de qué riesgo nace) sin decir la respuesta */
+ const F0=FACTORES[caso.fa], PIDE=['Léelo con calma: ¿qué tipo de daño es?','¿Cómo lo clasificamos? Tú decides.','Fíjate en cómo y cuándo apareció el daño.','Antes de pasar al siguiente: ¿qué tipo de daño es?'];
+ const narrF=narra(d.querySelector('#narraF'),'','piensa',(F0?`${chapa(F0)}Nace del riesgo: <strong>${F0.n}</strong>. `:'')+PIDE[(pend?pend.i:st.k)%PIDE.length],true);
  /* en el tutorial, el primer expediente tiene el doble de tiempo */
- const T=SEGUNDOS*1000*(tuto?2:1);st.ft0=Date.now();st.fparado=0;st.ultTic=0;
- st.reloj=setInterval(()=>{if(st.fparado)return;const q=1-(Date.now()-st.ft0)/T, r=$('#rl');if(r)r.style.width=Math.max(0,q*100)+'%';
+ const T=SEGUNDOS*1000*(tuto?2:1);st.ft0=performance.now();st.fparado=0;st.ultTic=0;   /* 18-11-2026: reloj del navegador, no la hora del móvil */
+ st.reloj=setInterval(()=>{if(st.fparado)return;const q=1-(performance.now()-st.ft0)/T, r=$('#rl');if(r)r.style.width=Math.max(0,q*100)+'%';
   const s=Math.ceil(q*T/1000);if(s>0&&s<=3&&s!==st.ultTic){st.ultTic=s;sfx('tic')}
   if(q<=0)responde(null)},50);
- let hecho=false, ok=false, cad=[];const F=FACTORES[caso.fa];
+ let hecho=false, ok=false, cad=[], auto=0;const F=FACTORES[caso.fa];
  /* 17-11-2026: si la página se oculta con el expediente abierto, se tapa y el reloj se para */
- st.paraFicha=()=>{if(hecho||st.fparado)return;st.fparado=Date.now();
-  const p=document.createElement('button');p.type='button';p.className='pausa-j';p.innerHTML='<b>Pausa</b>El tiempo está parado.<span>Toca para seguir</span>';
-  p.onclick=()=>{st.ft0+=Date.now()-st.fparado;st.fparado=0;p.remove()};document.body.appendChild(p)};
+ /* 18-11-2026: y lo mismo con ❚❚, Esc, P, al perder el foco o con el «atrás»: el menú de pausa lo tapa (no se lee con el reloj parado).
+    Ya contestado no hay reloj: al ocultarse solo se espera (no se cierra sola); con ❚❚ sale el menú igual */
+ st.paraFicha=manual=>{
+  if(document.getElementById('velo'))return;
+  if(hecho){clearTimeout(auto);if(!manual)return}
+  const corre=!hecho;if(corre)st.fparado=performance.now();
+  d.inert=true;st.arr=null;
+  menuPausa(corre?'reloj':'tapa',()=>{d.inert=false;if(corre){st.ft0+=performance.now()-st.fparado;st.fparado=0}
+   const s=$('#seguir');if(hecho&&s)s.focus({preventScroll:true})});
+ };
  const responde=k=>{
   if(hecho)return;hecho=true;clearInterval(st.reloj);
   ok=k===caso.r;st.res.push({caso,ok});
@@ -1064,13 +1230,18 @@ function abreCaso(c,pend){
    d.querySelector('.ficha').animate([{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:300});
   }
   hud();
+  /* arte: y reacciona al veredicto */
+  if(narrF){const tipo=RESP[caso.r].n.toLowerCase(), j=st.res.length;
+   reacciona(narrF,ok?'bien':'mal',ok?(cad.length?`Correcto: ${tipo}. Y de paso ${cad.length===1?'queda controlado 1 ladrillo':'quedan controlados '+cad.length+' ladrillos'} de «${F.n}»: así funciona la prevención.`
+     :['¡Eso es! Lo apunto como '+tipo+'.','Bien visto: '+tipo+', sin duda.','Correcto. Expediente cerrado.','¡Así da gusto revisar expedientes!'][j%4])
+    :k===null?`Se acabó el tiempo. Este era ${tipo}: lee por qué aquí abajo.`:`No: este va como ${tipo}. Mira por qué aquí abajo.`)}
   const s=$('#seguir');s.style.display='block';s.focus({preventScroll:true});
   /* fase 4: solo en el nivel 1 se cierra sola la explicación del acierto; en el 2 y el 3 se lee con calma */
-  let auto=ok&&l.n===1&&!tuto?setTimeout(()=>s.click(),4500):0;
+  auto=ok&&l.n===1&&!tuto?setTimeout(()=>s.click(),4500):0;
   s.onclick=()=>{clearTimeout(auto);cierra()};
  };
  const cierra=()=>{
-  d.remove();st.tarjeta=false;st.t=performance.now();
+  d.remove();st.tarjeta=false;st.paraFicha=null;st.t=performance.now();
   if(pend)return pend.sigue();
   /* el EPI cuenta desde que se vuelve a jugar (17-11-2026: en tiempo de juego); solo tras un acierto */
   if(ok)st.efecto={tipo:'epi',hasta:(st.tj||0)+10};
@@ -1082,12 +1253,37 @@ function abreCaso(c,pend){
  d.querySelectorAll('.resp').forEach(b=>b.onclick=()=>responde(b.dataset.k));
 }
 /* ===== Dibujo ===== */
+/* Arte, 17-11-2026 (universo plastilina). Detrás del muro, la escena del puesto del ciclo (elenco_puesto_XXX.jpg, o ARTE.pared si
+   José genera una pared por sector), oscurecida con el verde del centro y algo desenfocada para que la bola se vea bien.
+   Se pinta UNA sola vez en un lienzo aparte (st.fondo, a 2×) que se copia a la capa en caché: en cada fotograma no cuesta nada.
+   El desenfoque se hace reduciendo y volviendo a ampliar la imagen (igual en todos los navegadores: Safari no tiene ctx.filter).
+   Nada del dibujo usa Math.random: la partida (física a 120 Hz) es la misma pinte lo que pinte cada dispositivo. */
+const lienzo=(w,h)=>{const o=document.createElement('canvas');o.width=w;o.height=h;return o};
 function pintaFondo(W,H){
- const o=document.createElement('canvas');o.width=W*2;o.height=H*2;const g=o.getContext('2d');g.scale(2,2);
+ const o=lienzo(W*2,H*2), g=o.getContext('2d');g.scale(2,2);
  const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#003424');gr.addColorStop(1,'#00140e');g.fillStyle=gr;g.fillRect(0,0,W,H);
+ const c=cicloArte(), pared=!!(ARTE.pared&&ARTE.pared[c]);
+ const im=imagen(escena(c),()=>{if(st.capaCtx&&!st.fin){st.fondo=pintaFondo(st.W,st.H);st.sucio=true}});   /* llega tarde: se repinta una vez */
+ if(lista(im)){
+  const red=pared?2:4, a=lienzo(Math.ceil(W/red),Math.ceil(H/red)), ag=a.getContext('2d');
+  ag.imageSmoothingEnabled=true;ag.imageSmoothingQuality='high';
+  const s=Math.max(a.width/im.naturalWidth,a.height/im.naturalHeight), w=im.naturalWidth*s, h=im.naturalHeight*s;
+  ag.drawImage(im,(a.width-w)/2,(a.height-h)/2,w,h);
+  const b=lienzo(W,H), bg=b.getContext('2d');bg.imageSmoothingEnabled=true;bg.imageSmoothingQuality='high';bg.drawImage(a,0,0,W,H);
+  g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(b,0,0,W,H);
+  /* oscurecer: más arriba (el muro) y abajo (la pala); por el centro se adivina un poco más la escena */
+  const os=g.createLinearGradient(0,0,0,H);os.addColorStop(0,'rgba(0,30,21,.86)');os.addColorStop(.5,'rgba(0,38,27,.74)');os.addColorStop(1,'rgba(0,16,11,.9)');
+  g.fillStyle=os;g.fillRect(0,0,W,H);
+ }else siluetaSector(g,W,H,c);
+ /* luz cálida (Sevilla) desde arriba a la izquierda y viñeta suave */
+ const luz=g.createRadialGradient(W*.12,-H*.05,10,W*.12,-H*.05,H*.8);luz.addColorStop(0,'rgba(255,183,94,.2)');luz.addColorStop(1,'rgba(255,183,94,0)');g.fillStyle=luz;g.fillRect(0,0,W,H);
+ const vi=g.createRadialGradient(W/2,H*.48,H*.22,W/2,H*.48,H*.78);vi.addColorStop(0,'rgba(0,0,0,0)');vi.addColorStop(1,'rgba(0,0,0,.42)');g.fillStyle=vi;g.fillRect(0,0,W,H);
+ return o;
+}
+function siluetaSector(g,W,H,c){                     /* lo de antes, si la escena no carga: rejilla y silueta del sector */
  g.strokeStyle='rgba(255,255,255,.04)';g.lineWidth=1;for(let x=0;x<W;x+=24){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}for(let y=0;y<H;y+=24){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}
  g.save();g.globalAlpha=.13;g.strokeStyle='#bfe8d6';g.fillStyle='#bfe8d6';g.lineWidth=2.2;g.lineCap='round';g.lineJoin='round';
- const c=ciclo()||'', b=H*.58;   /* silueta del sector, abajo y muy suave */
+ const b=H*.58;   /* silueta del sector, abajo y muy suave */
  if(c==='HIG'){            /* gabinete dental: sillón, lámpara y bandeja */
   g.beginPath();g.moveTo(W*.18,b+150);g.lineTo(W*.5,b+150);g.moveTo(W*.3,b+150);g.lineTo(W*.3,b+110);g.lineTo(W*.62,b+95);g.lineTo(W*.78,b+55);g.moveTo(W*.3,b+110);g.lineTo(W*.22,b+70);g.stroke();
   g.beginPath();g.moveTo(W*.42,b-10);g.lineTo(W*.42,b+30);g.lineTo(W*.6,b+40);g.stroke();g.beginPath();g.ellipse(W*.62,b+44,16,9,0,0,7);g.stroke();
@@ -1103,110 +1299,170 @@ function pintaFondo(W,H){
   g.beginPath();g.moveTo(W*.25,b+40);g.quadraticCurveTo(W*.5,b+80,W*.72,b+58);g.stroke();
  }else if(c==='STI'){      /* centro de datos: armarios con luces */
   for(let i=0;i<3;i++){const x=W*(.1+i*.3);g.strokeRect(x,b+10,W*.22,150);for(let j=0;j<7;j++){g.strokeRect(x+6,b+20+j*19,W*.22-12,13);g.fillRect(x+W*.22-16,b+24+j*19,4,4)}}
- }else{                    /* sin código: casco de obra */
+ }else{                    /* sin ciclo: casco de obra */
   g.beginPath();g.arc(W*.5,b+110,48,Math.PI,0);g.lineTo(W*.5+62,b+112);g.lineTo(W*.5-62,b+112);g.closePath();g.stroke();
  }
  g.restore();
- return o;
 }
 function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+/* azar con semilla para las huellas de dedo de la plastilina (siempre las mismas en cada ladrillo, sin tocar Math.random) */
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function azar(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_SPR=3, PAD=5;   /* los dibujos pequeños se guardan a 3×; PAD = margen de cada ladrillo para su sombra blanda */
+/* Plastilina: cuerpo blando con sombra, volumen (luz cálida arriba a la izquierda), canto inferior en sombra, brillo y huellas de dedo.
+   T = [color de arriba, color de abajo]; op.tex = textura de ARTE (si la hay), op.velo = color encima de la textura */
+function arcilla(g,x,y,w,h,r,T,op){
+ op=op||{};const sb=op.sombra==null?3:op.sombra;
+ if(sb){g.save();g.shadowColor='rgba(0,0,0,.5)';g.shadowBlur=sb*E_SPR;g.shadowOffsetY=sb*.5*E_SPR;g.fillStyle=T[1];rr(g,x,y,w,h,r);g.fill();g.restore()}
+ g.save();rr(g,x,y,w,h,r);g.clip();
+ if(op.tex){const im=op.tex,s=Math.max(w/im.naturalWidth,h/im.naturalHeight);
+  g.drawImage(im,x+(w-im.naturalWidth*s)/2,y+(h-im.naturalHeight*s)/2,im.naturalWidth*s,im.naturalHeight*s);
+  if(op.velo){g.fillStyle=op.velo;g.fillRect(x,y,w,h)}}
+ else{const gr=g.createLinearGradient(0,y,0,y+h);gr.addColorStop(0,T[0]);gr.addColorStop(1,T[1]);g.fillStyle=gr;g.fillRect(x,y,w,h)}
+ const lz=g.createRadialGradient(x+w*.28,y+h*.05,1,x+w*.28,y+h*.05,Math.max(w,h)*.85);lz.addColorStop(0,'rgba(255,240,214,.42)');lz.addColorStop(1,'rgba(255,240,214,0)');g.fillStyle=lz;g.fillRect(x,y,w,h);
+ const so=g.createLinearGradient(0,y+h*.5,0,y+h);so.addColorStop(0,'rgba(40,20,0,0)');so.addColorStop(1,'rgba(40,20,0,.3)');g.fillStyle=so;g.fillRect(x,y,w,h);
+ if(op.huellas){const r2=azar(hash(op.huellas));g.lineCap='round';g.lineWidth=.7;
+  for(let i=0;i<4;i++){const cx=x+4+r2()*(w-8),cy=y+4+r2()*(h-8),ra=2.5+r2()*3,a0=r2()*6;
+   g.strokeStyle=i%2?'rgba(255,255,255,.13)':'rgba(0,0,0,.1)';g.beginPath();g.arc(cx,cy,ra,a0,a0+1.6+r2());g.stroke()}}
+ g.restore();
+ g.lineWidth=1;g.strokeStyle='rgba(0,0,0,.2)';rr(g,x+.5,y+.5,w-1,h-1,Math.max(0,r-.5));g.stroke();                 /* canto */
+ g.fillStyle='rgba(255,255,255,.34)';rr(g,x+r*.8,y+1.6,w-r*1.6,Math.min(2.6,h*.12),1.3);g.fill();                     /* luz del borde de arriba */
+ g.fillStyle='rgba(255,255,255,.72)';g.beginPath();g.ellipse(x+Math.min(w*.2,r+5),y+h*.27,Math.min(4,w*.09),Math.min(1.8,h*.07),-.15,0,Math.PI*2);g.fill();   /* brillo */
+}
 /* El fondo y el muro se pintan en una capa aparte y solo cuando cambia algo; cada fotograma es una sola imagen
    más la bola, la pala y lo que cae. Fase 5: pictogramas propios (iconos.js) ya rasterizados, en vez de emojis. */
 function spriteLadrillo(L){
  /* fase 6: el pictograma es el del factor de riesgo, también en los expedientes y en los grises; controlado = claro con ✓ */
- const F=FACTORES[L.fa]||FACTORES.cai, T=tonoDe(L), ic=F.ic, claro=T[0]==='#f2d45c'||T[0]==='#c3ccd0';
- const im=icoImg(ic,L.neut?F.c:claro?'#004230':'#ffffff'), clave=['L',L.w.toFixed(1),L.h,T[0],ic,L.exp?1:0,L.roto?1:0,L.neut?1:0].join('|');
- return sprite(clave,L.w,L.h,g=>{
-  const gr=g.createLinearGradient(0,0,0,L.h);gr.addColorStop(0,T[0]);gr.addColorStop(1,T[1]);
-  g.fillStyle=gr;rr(g,0,0,L.w,L.h,5);g.fill();
-  g.fillStyle='rgba(255,255,255,.22)';rr(g,3,2,L.w-6,4,2);g.fill();
-  g.fillStyle='rgba(0,0,0,.12)';rr(g,3,L.h-4,L.w-6,2.5,1.2);g.fill();
-  if(L.exp){g.strokeStyle='#fcd100';g.lineWidth=1.6;rr(g,.8,.8,L.w-1.6,L.h-1.6,5);g.stroke()}
-  if(L.roto){g.strokeStyle='rgba(0,0,0,.45)';g.lineWidth=1.2;g.beginPath();g.moveTo(L.w*.3,0);g.lineTo(L.w*.45,L.h*.55);g.lineTo(L.w*.38,L.h);g.moveTo(L.w*.45,L.h*.55);g.lineTo(L.w*.7,L.h*.4);g.stroke()}
-  if(L.neut){g.strokeStyle=F.c;g.lineWidth=1.4;g.setLineDash([3,2]);rr(g,1,1,L.w-2,L.h-2,5);g.stroke();g.setLineDash([]);
-   g.strokeStyle='#1a8a4a';g.lineWidth=2;g.lineCap='round';g.beginPath();g.moveTo(L.w-11,L.h-8);g.lineTo(L.w-8,L.h-5);g.lineTo(L.w-3.5,L.h-11);g.stroke()}
-  const s=Math.round(L.h*.66);g.globalAlpha=L.exp||L.neut?1:.9;if(icoListo(im))g.drawImage(im,(L.w-s)/2,(L.h-s)/2,s,s);g.globalAlpha=1;
- },[im]);
+ const F=FACTORES[L.fa]||FACTORES.cai, T=tonoDe(L), ic=F.ic, claro=T[0]==='#f2d45c'||T[0]==='#c3ccd0'||!!L.neut;
+ /* arte: textura de ARTE si José la ha generado (por factor, o la del ladrillo duro o con expediente) */
+ const tex=L.exp?arte('ladrillo','expediente'):L.duro&&!L.neut?arte('ladrillo','duro'):arte('ladrillo',L.fa);
+ const im=icoImg(ic,L.neut?F.c:claro?'#004230':'#ffffff'), sb=icoImg(ic,claro?'#ffffff':'#000000');
+ const w=L.w, h=L.h, P=PAD, clave=['L2',w.toFixed(1),h,T[0],ic,L.exp?1:0,L.roto?1:0,L.neut?1:0,L.duro?L.vida:0,tex?1:0].join('|');
+ return sprite(clave,w+2*P,h+2*P,g=>{
+  g.translate(P,P);
+  arcilla(g,0,0,w,h,8,T,{tex,velo:L.neut?'rgba(238,245,241,.72)':L.duro&&L.vida>=3?'rgba(20,30,36,.35)':'',huellas:clave});
+  if(L.exp){g.strokeStyle='#fcd100';g.lineWidth=1.8;rr(g,1.2,1.2,w-2.4,h-2.4,7);g.stroke();
+   g.fillStyle='#fcd100';rr(g,5,-2.4,13,5,2.2);g.fill();g.fillStyle='rgba(255,255,255,.5)';rr(g,7,-1.6,8,1.4,.7);g.fill()}   /* pestaña de carpeta */
+  if(L.duro&&!L.neut){   /* remaches de plastilina: el blindaje (4 en los de 3 golpes, 2 en los de 2) */
+   const ps=L.vida>=3?[[5.5,5.5],[w-5.5,5.5],[5.5,h-5.5],[w-5.5,h-5.5]]:L.vida===2?[[5.5,5.5],[w-5.5,h-5.5]]:[];
+   for(const [x,y] of ps){g.fillStyle='rgba(0,0,0,.32)';g.beginPath();g.arc(x+.4,y+.9,2.4,0,7);g.fill();
+    const rg=g.createRadialGradient(x-.8,y-.9,.2,x,y,2.4);rg.addColorStop(0,'#f6f8f9');rg.addColorStop(1,L.vida>=3?'#56646c':'#94a1a7');g.fillStyle=rg;g.beginPath();g.arc(x,y,2.3,0,7);g.fill()}}
+  if(L.roto){   /* grieta hundida en la plastilina: luz en un labio y sombra en el otro */
+   for(const [d,c] of [[.7,'rgba(255,255,255,.35)'],[0,'rgba(0,0,0,.5)']]){g.strokeStyle=c;g.lineWidth=1.3;g.lineJoin='round';g.lineCap='round';g.beginPath();
+    g.moveTo(w*.3+d,d);g.lineTo(w*.45+d,h*.55+d);g.lineTo(w*.38+d,h+d-1);g.moveTo(w*.45+d,h*.55+d);g.lineTo(w*.7+d,h*.4+d);g.stroke()}}
+  if(L.neut){g.strokeStyle=F.c;g.lineWidth=1.4;g.setLineDash([3,2]);rr(g,1.2,1.2,w-2.4,h-2.4,7);g.stroke();g.setLineDash([]);
+   g.strokeStyle='#1a8a4a';g.lineWidth=2;g.lineCap='round';g.beginPath();g.moveTo(w-11,h-8);g.lineTo(w-8,h-5);g.lineTo(w-3.5,h-11);g.stroke()}
+  /* pictograma «grabado» en la plastilina: debajo, su sombra (o su luz en los claros); encima, el trazo */
+  const s=Math.round(h*.62), x0=(w-s)/2, y0=(h-s)/2;
+  if(icoListo(sb)){g.globalAlpha=claro?.6:.32;g.drawImage(sb,x0+(claro?-.5:.6),y0+(claro?-.5:.9),s,s)}
+  g.globalAlpha=L.exp||L.neut?1:.94;if(icoListo(im))g.drawImage(im,x0,y0,s,s);g.globalAlpha=1;
+ },[im,sb]);
 }
+const ponLadrillo=(g,L)=>g.drawImage(spriteLadrillo(L),L.x-PAD,L.y-PAD,L.w+2*PAD,L.h+2*PAD);
 function pintaCapa(){
  const g=st.capaCtx;if(!g)return;
  g.clearRect(0,0,st.W,st.H);g.drawImage(st.fondo,0,0,st.W,st.H);
  SPR_FALTA=false;
  g.drawImage(spriteLeyenda(),0,0,st.W,TOP-4);
- for(const L of st.ladr)if(L.vivo)g.drawImage(spriteLadrillo(L),L.x,L.y,L.w,L.h);
+ for(const L of st.ladr)if(L.vivo)ponLadrillo(g,L);
  st.sucio=SPR_FALTA;st.sucios=[];                 /* si algún pictograma aún no estaba cargado, se repinta en el siguiente fotograma */
+ st.nCapa=(st.nCapa||0)+1;
 }
 /* fase 6, 17-11-2026: leyenda de los riesgos del muro, en la franja de arriba (solo los factores de este muro) */
 function spriteLeyenda(){
  const ks=Object.keys(FACTORES).filter(k=>st.ladr.some(L=>L.fa===k)), H=TOP-4, filas=Math.ceil(ks.length/2), alto=Math.min(19,(H-16)/Math.max(1,filas));
  const ims=ks.map(k=>icoImg(FACTORES[k].ic,FACTORES[k].claro?'#004230':'#ffffff'));
  return sprite('ley|'+ks.join(','),st.W,H,g=>{
-  g.fillStyle='rgba(0,0,0,.28)';rr(g,6,3,st.W-12,H-6,9);g.fill();
+  g.fillStyle='rgba(0,14,10,.55)';rr(g,6,3,st.W-12,H-6,10);g.fill();g.strokeStyle='rgba(252,209,0,.18)';g.lineWidth=1;rr(g,6.5,3.5,st.W-13,H-7,10);g.stroke();
   g.textBaseline='middle';g.textAlign='left';g.font='800 9.5px Aleo,Georgia,serif';g.fillStyle='rgba(252,209,0,.9)';g.fillText('RIESGOS DEL MURO',14,11);
   ks.forEach((k,i)=>{const F=FACTORES[k],x=14+(i%2)*170,y=17+Math.floor(i/2)*alto;
-   g.fillStyle=F.claro?F.t[0]:F.c;rr(g,x,y,15,15,4);g.fill();if(icoListo(ims[i]))g.drawImage(ims[i],x+2,y+2,11,11);
+   arcilla(g,x,y,15,15,4.5,F.claro?F.t:[F.t[0],F.c],{sombra:1.5});if(icoListo(ims[i]))g.drawImage(ims[i],x+2,y+2,11,11);
    g.fillStyle='#ffffff';g.font='700 11px "Helvetica Neue",Arial,sans-serif';g.fillText(F.n,x+20,y+8)});
  },ims);
 }
-function repintaHuecos(){                       /* solo los ladrillos que han cambiado */
- const g=st.capaCtx;if(!g)return;
+function repintaHuecos(){   /* solo los ladrillos que han cambiado: su hueco con la sombra, y los vecinos que pisan ese hueco */
+ const g=st.capaCtx;if(!g)return;SPR_FALTA=false;
  for(const L of st.sucios){
-  g.save();g.beginPath();g.rect(L.x-1,L.y-1,L.w+2,L.h+2);g.clip();
-  g.drawImage(st.fondo,0,0,st.W,st.H);if(L.vivo)g.drawImage(spriteLadrillo(L),L.x,L.y,L.w,L.h);
+  const x=Math.max(0,L.x-PAD), y=Math.max(0,L.y-PAD), w=Math.min(st.W-x,L.w+2*PAD), h=Math.min(st.H-y,L.h+2*PAD);
+  g.save();g.beginPath();g.rect(x,y,w,h);g.clip();
+  g.drawImage(st.fondo,x*2,y*2,w*2,h*2,x,y,w,h);   /* st.fondo está a 2× */
+  for(const B of st.ladr)if(B.vivo&&B.x-PAD<x+w&&B.x+B.w+PAD>x&&B.y-PAD<y+h&&B.y+B.h+PAD>y)ponLadrillo(g,B);
   g.restore();
  }
- st.sucios=[];
+ st.sucios=[];if(SPR_FALTA)st.sucio=true;
 }
 const SPR={};let SPR_FALTA=false;
 function sprite(nombre,w,h,pinta,imgs){            /* dibujos pequeños que se repiten: una vez y se copian */
  if(SPR[nombre])return SPR[nombre];
- const o=document.createElement('canvas'),e=3;o.width=w*e;o.height=h*e;const g=o.getContext('2d');g.scale(e,e);pinta(g);
+ const o=lienzo(Math.ceil(w*E_SPR),Math.ceil(h*E_SPR)), g=o.getContext('2d');g.scale(E_SPR,E_SPR);pinta(g);
  if(imgs&&!imgs.every(icoListo)){SPR_FALTA=true;return o}   /* sin guardar hasta que carguen los pictogramas */
  return SPR[nombre]=o;
 }
+/* cascote de plastilina: bolita con luz y sombra, del color del ladrillo (un dibujo por color, copiado) */
+const bolita=col=>sprite('b|'+col,10,10,q=>{q.fillStyle='rgba(0,0,0,.3)';q.beginPath();q.arc(5.5,6,3.8,0,7);q.fill();
+ q.fillStyle=col;q.beginPath();q.arc(5,5,3.9,0,7);q.fill();
+ const rg=q.createRadialGradient(3.6,3.4,.2,5,5,4);rg.addColorStop(0,'rgba(255,255,255,.7)');rg.addColorStop(.45,'rgba(255,255,255,.08)');rg.addColorStop(1,'rgba(0,0,0,.28)');
+ q.fillStyle=rg;q.beginPath();q.arc(5,5,3.9,0,7);q.fill()});
 function dibuja(){
  const g=st.ctx, W=st.W, H=st.H, t=performance.now();if(!g)return;
  if(st.sucio)pintaCapa();else if(st.sucios&&st.sucios.length)repintaHuecos();
  g.setTransform(1,0,0,1,0,0);g.drawImage(st.capa,0,0);g.setTransform(st.k2,0,0,st.k2,0,0);
  /* brillo de los expedientes (solo un trazo por ladrillo) */
  g.strokeStyle=`rgba(252,209,0,${.45+Math.sin(t/220)*.35})`;g.lineWidth=2;
- for(const L of st.ladr)if(L.vivo&&L.exp){rr(g,L.x-1,L.y-1,L.w+2,L.h+2,6);g.stroke()}
- /* expedientes cayendo */
+ for(const L of st.ladr)if(L.vivo&&L.exp){rr(g,L.x-1.5,L.y-1.5,L.w+3,L.h+3,9);g.stroke()}
+ /* expedientes cayendo: cápsula de plastilina con la carpeta */
  const ic=icoImg('carpeta','#c24400');
- const exp=sprite('exp',60,40,q=>{q.fillStyle='rgba(255,140,0,.35)';rr(q,1,1,58,38,10);q.fill();q.fillStyle='#ff7a1a';rr(q,7,6,46,28,6);q.fill();q.fillStyle='#fff3c4';rr(q,11,10,38,20,3);q.fill();
+ const exp=sprite('exp2',60,40,q=>{q.fillStyle='rgba(255,140,0,.3)';rr(q,1,1,58,38,13);q.fill();
+  arcilla(q,7,6,46,28,9,['#ff9a52','#e04e00'],{sombra:2.5});
+  q.fillStyle='#fff3c4';rr(q,12,10.5,36,19,4);q.fill();q.fillStyle='rgba(120,60,0,.12)';rr(q,12,25,36,4.5,2);q.fill();
   if(icoListo(ic))q.drawImage(ic,21,11,18,18)},[ic]);
  for(const c of st.caps){
   const y=c.y+Math.sin(c.t*6)*2;
-  if(c.sorpresa){const S=SORPRESAS[c.sorpresa],im=icoImg(S.ic,'#ffffff'),sp=sprite('s_'+c.sorpresa,52,32,q=>{q.fillStyle='rgba(255,255,255,.35)';rr(q,1,1,50,30,15);q.fill();q.fillStyle=S.c;rr(q,5,4,42,24,12);q.fill();
-    q.fillStyle='rgba(255,255,255,.3)';rr(q,9,6,34,6,3);q.fill();if(icoListo(im))q.drawImage(im,17,7,18,18)},[im]);
+  if(c.sorpresa){const S=SORPRESAS[c.sorpresa],im=icoImg(S.ic,'#ffffff'),sp=sprite('s2_'+c.sorpresa,52,32,q=>{q.fillStyle='rgba(255,255,255,.3)';rr(q,1,1,50,30,15);q.fill();
+    arcilla(q,5,4,42,24,12,[S.c,S.c],{sombra:2.5});if(icoListo(im))q.drawImage(im,17,7,18,18)},[im]);
    g.save();g.translate(c.x,y);g.rotate(Math.sin(c.t*5)*.15);g.drawImage(sp,-26,-16,52,32);g.restore()}
   else{g.save();g.translate(c.x,y);g.rotate(Math.sin(c.t*3)*.12);g.drawImage(exp,-30,-20,60,40);g.restore()}
   if(c.mano)manoQueSenala(g,c.x+30,y+12,c.mano,t);
  }
  /* disparos de la herramienta */
  g.fillStyle='#fcd100';for(const s2 of (st.tiros||[])){g.fillRect(s2.x-1.5,s2.y-8,3,10)}
- /* pala (se hunde 2 px al recibir la bola) */
- const p=st.pala, e=st.efecto, act=e.tipo&&(st.tj||0)<e.hasta, py=p.y+(p.hund||0);
- if(act&&e.tipo==='epi'){g.fillStyle='rgba(255,138,0,.35)';rr(g,p.x-p.w/2-4,py-4,p.w+8,p.h+8,9);g.fill()}
- g.fillStyle='#f2c400';rr(g,p.x-p.w/2,py,p.w,p.h,7);g.fill();
- g.fillStyle='rgba(255,255,255,.35)';rr(g,p.x-p.w/2+4,py+2,p.w-8,3,2);g.fill();
- if(poder('herramienta')){g.fillStyle='#d33a1f';g.fillRect(p.x-p.w/2+3,py-5,6,6);g.fillRect(p.x+p.w/2-9,py-5,6,6)}
+ /* pala de plastilina con volumen (se hunde 2 px al recibir la bola); o la de ARTE, estirada por el centro */
+ const p=st.pala, e=st.efecto, act=e.tipo&&(st.tj||0)<e.hasta, py=p.y+(p.hund||0), x0=p.x-p.w/2;
+ if(act&&e.tipo==='epi'){g.fillStyle='rgba(255,138,0,.35)';rr(g,x0-4,py-4,p.w+8,p.h+8,9);g.fill()}
+ g.fillStyle='rgba(0,0,0,.32)';rr(g,x0+2,py+4,p.w,p.h,7);g.fill();   /* sombra */
+ const ap=arte('pala');
+ if(ap){const iw=ap.naturalWidth, ih=ap.naturalHeight, cs=Math.min(iw/3,ih), cd=Math.min(p.w/2,cs*p.h/ih);
+  g.drawImage(ap,0,0,cs,ih,x0,py,cd,p.h);g.drawImage(ap,cs,0,iw-2*cs,ih,x0+cd,py,p.w-2*cd,p.h);g.drawImage(ap,iw-cs,0,cs,ih,x0+p.w-cd,py,cd,p.h)}
+ else{const gp=g.createLinearGradient(0,py,0,py+p.h);gp.addColorStop(0,'#ffe36b');gp.addColorStop(.5,'#f2c400');gp.addColorStop(1,'#b88e00');
+  g.fillStyle=gp;rr(g,x0,py,p.w,p.h,7);g.fill();
+  g.fillStyle='rgba(255,255,255,.42)';rr(g,x0+6,py+2,p.w-12,3,1.5);g.fill();
+  g.fillStyle='rgba(255,255,255,.8)';g.beginPath();g.ellipse(x0+10,py+4.2,3,1.5,0,0,Math.PI*2);g.fill();
+  g.strokeStyle='rgba(120,88,0,.45)';g.lineWidth=1;rr(g,x0+.5,py+.5,p.w-1,p.h-1,6.5);g.stroke()}
+ if(poder('herramienta')){g.fillStyle='#d33a1f';rr(g,x0+3,py-5,6,6,2);g.fill();rr(g,x0+p.w-9,py-5,6,6,2);g.fill()}
  const marcas=(act&&e.tipo==='epi'?['chaleco']:[]).concat(['iman','herramienta','calma'].filter(poder).map(k=>SORPRESAS[k].ic));
  marcas.forEach((m,i)=>{const im=icoImg(m,'#004230'),x=p.x-(marcas.length*12)/2+i*12;if(icoListo(im))g.drawImage(im,x+1,py+2,10,10)});
- /* bola */
- const bo=sprite('bola',24,24,q=>{const gr=q.createRadialGradient(12,12,2,12,12,12);gr.addColorStop(0,'#fff');gr.addColorStop(.5,'#fff');gr.addColorStop(.6,'rgba(255,255,255,.35)');gr.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=gr;q.fillRect(0,0,24,24)});
+ /* bola de plastilina: halo cálido (para verla sobre la escena), sombra, volumen y brillo; estela de luz */
+ const ab=arte('bola');
+ const bo=sprite(ab?'bola2a':'bola2',32,32,q=>{const h=q.createRadialGradient(16,16,5,16,16,16);h.addColorStop(0,'rgba(255,236,190,.5)');h.addColorStop(1,'rgba(255,236,190,0)');q.fillStyle=h;q.fillRect(0,0,32,32);
+  if(ab)return;
+  q.fillStyle='rgba(0,0,0,.35)';q.beginPath();q.ellipse(17.6,18.6,6.8,5.8,0,0,Math.PI*2);q.fill();
+  const b=q.createRadialGradient(13.6,13,1,16,16,7.4);b.addColorStop(0,'#ffffff');b.addColorStop(.55,'#fbf3e2');b.addColorStop(1,'#d6c4a0');q.fillStyle=b;q.beginPath();q.arc(16,16,7,0,Math.PI*2);q.fill();
+  q.fillStyle='rgba(255,255,255,.95)';q.beginPath();q.ellipse(13.5,12.8,2.2,1.4,-.5,0,Math.PI*2);q.fill()});
+ const es=sprite('estela',12,12,q=>{const rg=q.createRadialGradient(6,6,0,6,6,6);rg.addColorStop(0,'rgba(255,214,90,.9)');rg.addColorStop(1,'rgba(255,214,90,0)');q.fillStyle=rg;q.fillRect(0,0,12,12)});
  for(const b of (st.bolas||[])){
   if(b.y>H+20)continue;
-  g.fillStyle='rgba(252,209,0,.22)';b.estela.forEach(([x,y],i)=>{const r=b.r*(i+1)/b.estela.length;g.fillRect(x-r/2,y-r/2,r,r)});
-  g.drawImage(bo,b.x-14,b.y-14,28,28);
+  const n=b.estela.length;b.estela.forEach(([x,y],i)=>{const r=b.r*1.5*(i+1)/n;g.globalAlpha=.5*(i+1)/n;g.drawImage(es,x-r,y-r,2*r,2*r)});g.globalAlpha=1;
+  g.drawImage(bo,b.x-16,b.y-16,32,32);
+  if(ab){g.fillStyle='rgba(0,0,0,.35)';g.beginPath();g.ellipse(b.x+1.6,b.y+2.6,b.r,b.r*.85,0,0,Math.PI*2);g.fill();g.drawImage(ab,b.x-b.r,b.y-b.r,2*b.r,2*b.r)}
  }
  /* tutorial: una mano que enseña a deslizar el dedo por la mitad de abajo */
  if(st.tuto&&st.tuto.paso==='lanza'&&!st.pausa)manoQueSenala(g,W/2+Math.sin(t/450)*70,p.y-70,'Desliza ← →',t);
- /* cascotes y puntos */
+ /* cascotes de plastilina y puntos (con contorno, que se lean sobre la escena) */
  for(const q of st.part){
   g.globalAlpha=Math.max(0,Math.min(1,q.vida));
-  if(q.tipo==='txt'){g.textAlign='center';g.textBaseline='middle';g.fillStyle=q.col;g.font=`800 ${q.tam||18}px Aleo,Georgia,serif`;g.fillText(q.txt,q.x,q.y)}
-  else{g.fillStyle=q.col;const s=q.s||3;g.fillRect(q.x,q.y,s,s)}
+  if(q.tipo==='txt'){g.textAlign='center';g.textBaseline='middle';g.font=`800 ${q.tam||18}px Aleo,Georgia,serif`;
+   g.lineJoin='round';g.lineWidth=3;g.strokeStyle='rgba(0,26,19,.75)';g.strokeText(q.txt,q.x,q.y);g.fillStyle=q.col;g.fillText(q.txt,q.x,q.y)}
+  else{const s=(q.s||3)*1.6;g.drawImage(bolita(q.col),q.x-s/2,q.y-s/2,s,s)}
  }
  g.globalAlpha=1;
 }
@@ -1237,19 +1493,33 @@ function final(est){
  if(est===3)for(let n=0;n<70;n++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=['#004230','#ff5900','#fcd100','#2f8a5b'][n%4];c.style.animationDuration=(1.6+Math.random()*1.6)+'s';c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
  app.innerHTML=`<div class="final">
   <div class="marca">Nivel ${st.l.n} · ${st.l.titulo}</div>
-  <div class="estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
+  <div class="estrellas" role="img" aria-label="${est} de 3 estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
   <div class="gran">${st.pts}</div><div>puntos · ${st.aciertos} de ${EXPEDIENTES} expedientes bien clasificados${st.muroEntero?' · muro derribado':' · el muro ha aguantado'}</div>
   ${st.nPend?`<p class="libro">${st.nPend===1?'Uno de ellos lo clasificaste':'De ellos, '+st.nPend+' los clasificaste'} al acabar el nivel, como ${st.nPend===1?'expediente pendiente':'expedientes pendientes'}.</p>`:''}
   ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
+  ${hayElenco()?`<div class="escena-n" id="escenaF" style="${fondoCSS(cicloArte())}"></div>`:''}
   ${repasoRiesgos()}
   ${st.fallos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estos expedientes</h2>${porFactor(st.fallos).map(([F,v])=>`<h3>${chapa(F)}${F.n}</h3>`+v.map(c=>`<div class="fallo">${c.texto}<b>${ico(RESP_ICO[c.r])} ${RESP[c.r].n}</b><small>${c.ex} ${libro(1,c.ap)}</small></div>`).join('')).join('')}</div>`:(st.aciertos?'<p style="margin-top:14px">¡Ni un fallo! Ese expediente lo firma una persona experta en prevención.</p>':'')}
   ${st.oficial?bloqueOficial(est):''}
   <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.l.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
  </div>`;
+ /* arte: la persona compañera resume el nivel según las estrellas */
+ narra($('#escenaF'),cierreNivel(est,st.l.n,st.muroEntero),est>=2?'bien':est===1?'piensa':'mal');
  if(st.oficial)return finOficial();
- $('#otra').onclick=()=>presenta(st.l.n);
+ $('#otra').onclick=()=>presentaNivel(st.l.n);
  $('#menu').onclick=portada;
- if($('#sigui'))$('#sigui').onclick=()=>presenta(st.l.n+1);
+ if($('#sigui'))$('#sigui').onclick=()=>presentaNivel(st.l.n+1);
+}
+/* arte, 17-11-2026: lo que dice la persona compañera al acabar (nunca repite la nota: la comenta) */
+function cierreNivel(est,n,muro){
+ const m=companero(), clave={1:'La clave está en si tiene relación con el trabajo, también al ir o volver.',
+  2:'La clave: de golpe es accidente; poco a poco y en el cuadro, enfermedad profesional.',
+  3:'La clave: si el trabajo influye junto con otros factores, es patología inespecífica.'}[n];
+ return {3:`¡Expedientes impecables! No he tenido que corregirte ni uno. Así se protege a quien trabaja en ${m.sector}.`,
+  2:`Buen trabajo: casi todos los expedientes quedan bien clasificados. Repasa los que se te han escapado y el próximo muro es tuyo.`,
+  1:`Vas cogiendo el criterio, pero varios expedientes hay que mirarlos otra vez. ${clave}`,
+  0:`Hoy casi todos los expedientes se nos han torcido. A mí también me costó al principio: repasa el apartado 1.3 del libro y vuelve a intentarlo. ${clave}`}[est]
+  +(muro&&est<3?' Y el muro, al suelo: eso también cuenta.':!muro&&est===3?' El muro ha aguantado, pero lo que importa son los expedientes.':'');
 }
 /* fase 6, 17-11-2026: repaso final agrupado por factor de riesgo («Ruido y vibraciones: 2 accidentes de trabajo y 1 enfermedad profesional») */
 function porFactor(casos){return Object.keys(FACTORES).map(k=>[FACTORES[k],casos.filter(c=>c.fa===k)]).filter(x=>x[1].length)}
@@ -1272,7 +1542,7 @@ function bloqueOficial(est){
 }
 function finOficial(){
  const o=st.oficial;
- if(st.l.n<3){$('#ofsig').onclick=()=>presenta(st.l.n+1,o);return}
+ if(st.l.n<3){$('#ofsig').onclick=()=>presentaNivel(st.l.n+1,o);return}
  $('#ofmenu').onclick=portada;
  const m=mediaEst(o.est);
  const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts);ponMejor(o.codigo,mejor);
@@ -1282,10 +1552,11 @@ function finOficial(){
   $('#envio').textContent=textoEnvio(ok);
  });
 }
-portada();
+/* arte, 17-11-2026: el reparto (elenco.js) se carga al final de la página; la portada se pinta cuando ya está todo */
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portada,{once:true});else portada();
 </script>
 <style>
-#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
  background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button">⛶ Pantalla completa</button>
@@ -1339,6 +1610,126 @@ portada();
 <script>
 /* Generado por herramientas/juegos_paginas.py: no tocar a mano. */
 const PAGINAS={"UD1": {"HIG": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "IFC": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "ITE": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "STI": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}}, "UD2": {"HIG": {"2.2.3": 9}, "IFC": {"2.2.3": 9}, "ITE": {"2.2.3": 9}, "STI": {"2.2.3": 9}}, "UD3": {"HIG": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "IFC": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "ITE": {"3.6": 17, "3.6.1": 17, "PLS": 19}, "STI": {"3.6": 17, "3.6.1": 18, "PLS": 20}}};
+const ELENCO_GESTOS=["elenco_prota_HIG_bien.jpg"];
+/* ===== Universo plastilina: el reparto común de los juegos (arte, 17-11-2026) =====
+   Los mismos personajes de «Mi primer día» en todos los juegos: por ciclo, una persona protagonista recién titulada y su
+   compañero o compañera de ciclo (ver la ficha del libro, más abajo). Sus imágenes (plastilina, José) van junto a cada juego: elenco_prota_XXX.jpg,
+   elenco_vet_XXX.jpg y elenco_puesto_XXX.jpg (su puesto de trabajo). comun_montar.py mete este archivo y copia las imágenes.
+
+   cicloJugador()                      ciclo del código de lista (o el elegido para entrenar, o uno fijo por dispositivo)
+   personaje(ciclo, 'prota'|'vet')     {nombre, ella, cara, puesto, sector, empresa, visita}
+   fondoPuesto(ciclo)                  url de la escena de su puesto de trabajo
+   presenta(contenedor, {quien, texto, animo, ciclo})   cara + nombre + bocadillo; animo: 'neutro' | 'bien' | 'mal' | 'piensa'
+   reacciona(contenedor, animo, texto)                    cambia gesto y texto del presentador que ya está pintado */
+
+/* FICHA DEL LIBRO (libro/ipe1/ud01_casos.py, PERSONAJES; José, 17-11-2026: «la Alba que elegimos definitivamente en los
+   libros»). Por ciclo, dos personas que ACABAN DE TERMINAR el mismo ciclo y empiezan su primer empleo, cada una en una
+   empresa distinta: la protagonista (19-20 años, primer empleo en la empresa de su formación en empresa) y su compañero o
+   compañera de ciclo (23 años, primer trabajo estable). No hay «veteranos»: se ayudan entre iguales. Las caras salen de las
+   portadas del libro (recursos/libro/img/portada_ud01_XXX.jpg). La clave «vet» se mantiene por compatibilidad: es la
+   persona compañera.
+   vetVisita (José, 17-11-2026, opción B): por qué la persona compañera está ese día en el trabajo de la protagonista
+   (Auxilios y Evacuación), con «para…» y sin posesivos, para que valga en primera y en tercera persona. */
+const ELENCO = {
+  HIG: { prota: 'Alba', ella: true, edad: 20, de: 'Triana', puesto: 'higienista', lugar: 'la clínica dental de Triana',
+         vet: 'Samuel', vetElla: false, vetEdad: 23, vetDe: 'Sevilla', vetPuesto: 'higienista', vetLugar: 'el centro de salud',
+         vetVisita: 'para preparar una campaña de salud bucodental con el centro de salud',
+         sector: 'la clínica dental' },
+  IFC: { prota: 'Rafa', ella: false, edad: 20, de: 'Dos Hermanas', puesto: 'técnico de climatización', lugar: 'los hoteles que mantiene',
+         vet: 'Curro', vetElla: false, vetEdad: 23, vetDe: 'el Cerro del Águila', vetPuesto: 'técnico de climatización', vetLugar: 'la empresa instaladora',
+         vetVisita: 'para cambiar una enfriadora de la sala de máquinas',
+         sector: 'la sala de máquinas' },
+  ITE: { prota: 'Claudia', ella: true, edad: 19, de: 'Alcalá de Guadaíra', puesto: 'instaladora de telecomunicaciones', lugar: 'los hoteles y oficinas donde instala',
+         vet: 'Marcos', vetElla: false, vetEdad: 23, vetDe: 'Bellavista', vetPuesto: 'instalador de telecomunicaciones', vetLugar: 'las azoteas donde instala antenas',
+         vetVisita: 'para instalar la nueva antena del edificio',
+         sector: 'la azotea' },
+  STI: { prota: 'Fran', ella: false, edad: 20, de: 'Mairena del Aljarafe', puesto: 'técnico de sistemas', lugar: 'el centro de datos del aeropuerto',
+         vet: 'Alma', vetElla: true, vetEdad: 23, vetDe: 'la Macarena', vetPuesto: 'técnica de sistemas', vetLugar: 'las empresas clientes',
+         vetVisita: 'para montar la red de una empresa cliente de la terminal',
+         sector: 'el centro de datos' }
+};
+
+function cicloJugador() {
+  try {
+    const m = /^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase());
+    if (m && ELENCO[m[1]]) return m[1];
+    const e = localStorage.getItem('ipe_ciclo_elegido');
+    if (e && ELENCO[e]) return e;
+    let f = localStorage.getItem('ipe_ciclo_dispositivo');
+    if (!f || !ELENCO[f]) { f = Object.keys(ELENCO)[Math.floor(Math.random() * 4)]; localStorage.setItem('ipe_ciclo_dispositivo', f) }
+    return f;
+  } catch (e) { return 'HIG' }
+}
+
+/* Caras con gesto (elenco_prota_HIG_bien.jpg, _mal, _piensa…): comun_montar.py escribe en ELENCO_GESTOS las que existen.
+   Sin el archivo, se usa la cara de siempre y el gesto lo pone el aro de color. */
+const gestoDe = (cara, animo) => { const g = cara.replace(/\.jpg$/, '_' + animo + '.jpg');
+  return typeof ELENCO_GESTOS !== 'undefined' && ELENCO_GESTOS.indexOf(g) >= 0 ? g : cara };
+
+function personaje(ciclo, quien) {
+  const c = ELENCO[ciclo] || ELENCO.HIG, k = ELENCO[ciclo] ? ciclo : 'HIG', vet = quien === 'vet';
+  return { nombre: vet ? c.vet : c.prota, ella: vet ? c.vetElla : c.ella, cara: `elenco_${vet ? 'vet' : 'prota'}_${k}.jpg`,
+    edad: vet ? c.vetEdad : c.edad, de: vet ? c.vetDe : c.de, puesto: vet ? c.vetPuesto : c.puesto,
+    lugar: vet ? c.vetLugar : c.lugar, empresa: vet ? c.vetLugar : c.lugar, sector: c.sector, visita: vet ? c.vetVisita : '' };
+}
+
+const fondoPuesto = ciclo => `elenco_puesto_${ELENCO[ciclo] ? ciclo : 'HIG'}.jpg`;
+
+function presenta(cont, op) {
+  if (!cont) return null;
+  op = op || {};
+  const p = personaje(op.ciclo || cicloJugador(), op.quien || 'prota');
+  const el = document.createElement('div');
+  el.className = 'pres pres-' + (op.animo || 'neutro') + (op.compacto ? ' pres-compacto' : '');
+  el.dataset.cara = p.cara;
+  el.innerHTML = `<div class="pres-cara"><img src="${gestoDe(p.cara, op.animo || 'neutro')}" alt="" draggable="false"></div>
+    <div class="pres-globo" role="status" aria-live="polite"><b>${p.nombre}</b><span class="pres-txt"></span></div>`;
+  el.querySelector('.pres-txt').textContent = op.texto || '';
+  cont.innerHTML = ''; cont.appendChild(el);
+  return el;
+}
+
+function reacciona(cont, animo, texto) {
+  const el = cont && (cont.classList && cont.classList.contains('pres') ? cont : cont.querySelector('.pres'));
+  if (!el) return;
+  el.classList.remove('pres-neutro', 'pres-bien', 'pres-mal', 'pres-piensa');
+  void el.offsetWidth;
+  el.classList.add('pres-' + (animo || 'neutro'));
+  const img = el.querySelector('.pres-cara img');
+  if (img && el.dataset.cara) img.src = gestoDe(el.dataset.cara, animo || 'neutro');
+  if (texto != null) el.querySelector('.pres-txt').textContent = texto;
+}
+
+(function () {
+  const css = document.createElement('style');
+  css.textContent = `
+.pres{display:flex;align-items:flex-end;gap:10px;text-align:left}
+.pres-cara{flex:none;width:64px;height:64px;border-radius:50%;overflow:hidden;background:#e9e2d6;
+ box-shadow:inset 0 -3px 6px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.25);border:3px solid #fff;transform-origin:50% 90%}
+.pres-cara img{width:100%;height:100%;object-fit:cover;display:block}
+.pres-globo{position:relative;flex:1;min-width:0;background:#fffaf0;color:#1d2a30;border-radius:16px;padding:9px 12px;
+ font:15px/1.4 "Helvetica Neue",Arial,sans-serif;box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.18)}
+.pres-globo:before{content:"";position:absolute;left:-7px;bottom:14px;border:8px solid transparent;border-right-color:#fffaf0;border-left:0}
+.pres-globo b{display:block;font:800 14px Aleo,Georgia,serif;color:#004230;margin-bottom:1px}
+.pres-compacto .pres-cara{width:48px;height:48px;border-width:2px}
+.pres-compacto .pres-globo{font-size:14px;padding:7px 10px}
+.pres-bien .pres-cara{box-shadow:0 0 0 3px #2fd47a,0 4px 10px rgba(0,0,0,.25)}
+.pres-mal .pres-cara{box-shadow:0 0 0 3px #c24400,0 4px 10px rgba(0,0,0,.25);filter:saturate(.85)}
+.pres-piensa .pres-cara{box-shadow:0 0 0 3px #fcd100,0 4px 10px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:no-preference){
+ .pres-cara{animation:presRespira 3.2s ease-in-out infinite}
+ .pres-bien .pres-cara{animation:presSalta .55s cubic-bezier(.3,1.6,.5,1) 1,presRespira 3.2s ease-in-out .55s infinite}
+ .pres-mal .pres-cara{animation:presNo .5s ease-in-out 1,presRespira 3.2s ease-in-out .5s infinite}
+ .pres-piensa .pres-cara{animation:presPiensa 1.6s ease-in-out infinite}
+ .pres-globo{animation:presGlobo .28s ease-out}
+}
+@keyframes presRespira{0%,100%{transform:scale(1)}50%{transform:scale(1.025) translateY(-1px)}}
+@keyframes presSalta{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-10px) scale(1.06,.95)}70%{transform:translateY(0) scale(.97,1.04)}100%{transform:none}}
+@keyframes presNo{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
+@keyframes presPiensa{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg) translateY(-1px)}}
+@keyframes presGlobo{from{transform:translateY(6px) scale(.97)}to{transform:none}}   /* sin opacidad: si el navegador congela la animación, el texto se sigue viendo */`;
+  document.head.appendChild(css);
+})();
 /* ===== Común a los tres juegos (José, 9-11-2026): libro, sonido sí/no, accesibilidad e instalable =====
    Lo meten los montar_*.py antes de </body>, junto con PAGINAS (paginas_libro.js). */
 
@@ -1458,7 +1849,8 @@ try {
 .libro{display:block;margin-top:5px;color:#004230;font-weight:700;font-size:13px}
 p.libro{margin:0 0 8px}
 .opcs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 4px}
-.opc{border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
+html,body{overscroll-behavior:none}   /* 18-11-2026: tirar hacia abajo no recarga la página (se perdía la partida) */
+.opc{min-height:44px;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
 .opc[aria-pressed="false"]{background:#5b6b70}
 button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
 .op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
@@ -1485,16 +1877,19 @@ button,a,input,.op,.resp{touch-action:manipulation}
   /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
   const caja = document.createElement('div');
   caja.className = 'opcs';
-  function boton(texto, activo, alCambiar) {
+  /* lee (opcional): de dónde sale el estado real. 18-11-2026: el sonido también se cambia desde el marcador de los juegos; al
+     volver a la portada, el botón se repinta con el estado real (antes enseñaba el antiguo y el primer toque no hacía nada) */
+  function boton(texto, activo, alCambiar, lee) {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'opc';
     const pinta = v => { b.setAttribute('aria-pressed', v ? 'true' : 'false'); b.textContent = texto(v) };
     let v = activo; pinta(v);
-    b.onclick = e => { e.stopPropagation(); v = !v; pinta(v); alCambiar(v) };
+    b.sync = () => { if (lee) { v = lee(); pinta(v) } };
+    b.onclick = e => { e.stopPropagation(); b.sync(); v = !v; pinta(v); alCambiar(v) };
     caja.appendChild(b);
     return b;
   }
-  const muestra = () => { const p = app && app.querySelector('.portada'); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
+  const muestra = () => { const p = app && app.querySelector('.portada'); [...caja.children].forEach(b => b.sync && b.sync()); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
   if (app) new MutationObserver(muestra).observe(app, { childList: true });
 
   /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
@@ -1507,7 +1902,7 @@ button,a,input,.op,.resp{touch-action:manipulation}
       } catch (e) {}
     };
     window.SILENCIO = L.get('ipe_silencio', '0') === '1';
-    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() });
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() }, () => !window.SILENCIO);
     aplica();
     /* si el juego crea el sonido después, se vuelve a silenciar */
     document.addEventListener('click', () => setTimeout(aplica, 0), true);
