@@ -72,7 +72,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .pie{text-align:center;font-size:12px;color:var(--gris);margin-top:auto;padding-top:14px}
 .oficial{background:#fff;border:2px solid var(--verde);border-radius:16px;padding:14px;margin:14px 0;text-align:left;display:grid;gap:8px}
 .oficial label span,.oficial small{font-size:13px;opacity:.75}
-.oficial input{font:700 20px/1.2 inherit;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;border:2px solid #cfd8d3;border-radius:10px;width:100%;box-sizing:border-box}
+.oficial input{font:700 20px/1.2 "Helvetica Neue",Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;border:2px solid #cfd8d3;border-radius:10px;width:100%;box-sizing:border-box}
 .oficial input.error{border-color:#c0392b;background:#fdecea}
 .oficial .btn[disabled]{opacity:.5}
 .entreno{color:var(--verde);font-size:18px;margin:6px 0 4px;text-align:left}
@@ -137,7 +137,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .rcp .abajo{background:linear-gradient(180deg,rgba(3,16,12,0),rgba(3,16,12,.85) 30%)}
 .rcp .msg{min-height:44px;max-width:480px;text-align:center;font:700 16px/1.3 "Helvetica Neue",Arial,sans-serif;padding:4px 14px;color:#dff3ea}
 .rcp .cuerpo{flex:1;width:100%;max-width:420px;min-height:0;position:relative}
-.rcp .cuerpo svg{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));will-change:transform}
+.rcp .cuerpo>svg{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));will-change:transform}   /* 19-11-2026 (revisión total): solo la figura; antes alcanzaba al icono del rótulo «¡Relevo!», que tapaba a la persona entera */
 .asa{animation:asa 1.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes asa{50%{transform:scale(1.18)}}
 .rcp .abajo{width:100%;max-width:520px;padding:6px 14px calc(14px + env(safe-area-inset-bottom));display:grid;gap:8px}
@@ -257,6 +257,9 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 @keyframes acerca{to{transform:scale(1.12) translate(-2%,-1.5%)}}
 /* niveles 1 y 2: cabecera de la escena (el puesto desenfocado y oscurecido) con la persona que narra */
 .tarjeta.con-escena{overflow:hidden}
+/* 19-11-2026 (revisión total): #app es columna flexible al alto de la pantalla y la tarjeta encogía hasta caber: en la llamada al 112
+   «Siguiente» quedaba fuera y la explicación de las escenas salía cortada. Nada de esto encoge: la página se desplaza */
+#app>.tarjeta,#app>.cab,#app>.barra,#app>.tiempo,.tarjeta>*,.escena-cab,.llamada,.chips112{flex-shrink:0}
 .escena-cab{position:relative;align-self:stretch;margin:-18px -18px 10px;padding:16px 12px 12px;min-height:92px;display:flex;align-items:flex-end;overflow:hidden;background:#123a2d}
 .escena-cab .fondo{position:absolute;inset:-14px;background-image:var(--fondo,none);background-size:cover;background-position:center 40%;filter:blur(3px) brightness(.5) saturate(.85);transition:filter .5s}
 .escena-cab.bien .fondo{filter:blur(3px) brightness(.55) saturate(1.1)}
@@ -271,7 +274,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .rcp .msg.habla .pres-cara{width:42px;height:42px;border-width:2px}
 .rcp .msg.habla .pres-globo{padding:6px 10px;font-size:14px;line-height:1.35}
 .rcp .msg.habla .pres-globo b{color:#004230;font-size:13px;margin:0}
-.rcp .msg.habla .pres-txt b{color:#c24400;font-size:inherit}
+.rcp .msg.habla .pres-txt b{color:#c24400;display:inline;font:inherit;font-weight:700;margin:0}   /* 19-11-2026: las negritas del texto, en línea y con la letra del texto (salía «el DEA !») */
 @media (min-width:760px){.rcp .msg.habla .pres-globo{font-size:17px}.rcp .msg.habla .pres-cara{width:56px;height:56px}}
 /* final: la protagonista resume */
 .final .pres{margin:14px 0 4px}
@@ -303,6 +306,21 @@ button:focus-visible,input:focus-visible{outline:3px solid #fcd100;outline-offse
  .rcp .cuerpo{grid-area:c;max-width:none;align-self:stretch;justify-self:stretch;padding:12px 0 12px max(12px,env(safe-area-inset-left))}
  .rcp .abajo{grid-area:b;max-width:none}
 }
+/* 19-11-2026 (revisión total): escenario fijo. La figura cambiaba de tamaño mientras se jugaba (433 → 287 → 485 px a 375 × 812;
+   115 px a 360 × 640 con la pregunta del DEA; en la PLS el destino saltaba 42 px bajo el dedo): el mensaje crecía o encogía con
+   el texto y las opciones del DEA empujaban desde abajo. Ahora el mensaje tiene alto fijo (la letra se ajusta para caber: ajustaMsg)
+   y las opciones del DEA van en una capa encima de la parte baja, sin empujar nada */
+.rcp .msg{flex:none;height:84px;overflow:hidden;display:block}
+.rcp.pls .msg{height:98px}   /* la PLS no tiene monitor: cabe una línea más para los pasos */
+.rcp .msg.habla{display:flex;align-items:center}
+.rcp .msg.habla .pres{width:100%;align-items:center}
+.rcp .msg.habla .pres-globo>b{display:inline;margin:0 6px 0 0}   /* el nombre en la misma línea: una línea más para lo que dice */
+.rcp .combo .pic{width:24px;height:24px;vertical-align:-3px}
+.rcp .abajo{position:relative}
+.rcp .botones{height:52px}.rcp .botones>.btn{height:100%;padding-top:0;padding-bottom:0}
+.rcp .tarjeta-rcp.capa{position:absolute;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:4;background:rgba(7,26,20,.95);max-height:calc(100vh - 160px);overflow:auto}
+.rcp #ayuda{height:2.8em;display:flex;align-items:center;justify-content:center}
+@media (min-width:760px){.rcp .msg{height:96px}.rcp.pls .msg{height:112px}}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -434,6 +452,10 @@ const ico=(n,c='')=>`<svg class="pic ${c}" viewBox="0 0 24 24" aria-hidden="true
 
 
 const JUEGO='UD3 Auxilios', PREF='auxilios', INTENTOS=3, RESTA=50;
+const APERTURAS={};  /* José, 18-11-2026: apertura de la oficial por grupo, como CIERRES ({HIG:'AAAA-MM-DDT00:00:00',…}); vacío = abierta */
+const CIERRES={};
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
 const NIVELES=[
  {n:1,titulo:'Proteger, avisar y socorrer',sub:'Escenas de tu sector: ¿qué haces primero? Cuidado con las trampas.',col:'#2f8a5b',modo:'test',banco:'pas',preg:8,t:20},
  {n:2,titulo:'¿Qué le pasa y qué hago?',sub:'Valora a la persona y elige la actuación correcta.',col:'#0d6b4f',modo:'test',banco:'val',preg:8,t:20},
@@ -459,11 +481,22 @@ const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').to
 /* el código tal como se guarda y se envía: siempre con dos cifras (17-11-2026: 1HIG-7 y 1HIG-07 salían como dos códigos) */
 const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'').trim().toUpperCase().replace(/\s+/g,'');
 
-/* Plazo de cada grupo (CIERRES lo pone cada juego) */
-function plazo(c){const l=CIERRES[grupoDe(c)];return l?new Date(l):null}
-function textoPlazo(c){const f=plazo(c);if(!f)return '';
- const fecha=`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]} a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`;
+/* Apertura y cierre de cada grupo (José, 18-11-2026: «apertura y cierre en todos los juegos»). Cada juego pone APERTURAS y
+   CIERRES ({HIG:'2026-12-03T00:00:00',…}); sin apertura, la oficial está abierta; sin cierre, no caduca. Aquí solo se avisa
+   con la hora del móvil: quien decide es el servidor (las mismas fechas en servicio_intentos/Codigo.js). */
+const fechasDe_=n=>{try{return (n==='a'?APERTURAS:CIERRES)||{}}catch(e){return {}}};   // un juego sin APERTURAS no se rompe
+function apertura(c){const l=fechasDe_('a')[grupoDe(c)];return l?new Date(l):null}
+function plazo(c){const l=fechasDe_('c')[grupoDe(c)];return l?new Date(l):null}
+const sinAbrir=c=>{const a=apertura(c);return !!a&&new Date()<a};
+const fechaTxt=(f,hora)=>`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]}`+
+ (hora||f.getHours()||f.getMinutes()?` a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`:'');
+function textoPlazo(c){const a=apertura(c),f=plazo(c);
+ if(a&&new Date()<a)return `⏰ La partida oficial de tu grupo se abre ${fechaTxt(a)}${f?' y se podrá jugar hasta '+fechaTxt(f,1):''}. Mientras tanto, entrena todo lo que quieras.`;
+ if(!f)return '';
+ const fecha=fechaTxt(f,1);
  return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+const avisoSinAbrir=(c,abajo,l)=>{const a=l?new Date(l):apertura(c);   // l: la fecha que manda el servidor
+ return 'La partida oficial de tu grupo todavía no está abierta'+(a&&!isNaN(a)?': se abre '+fechaTxt(a):'')+'.\n\nMientras tanto puedes entrenar en '+abajo+' todo lo que quieras.'};
 
 /* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
    dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
@@ -487,22 +520,27 @@ async function pideServicio(a,c,rid){
   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),28000);
   const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+(rid?'&rid='+rid:'')+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
   clearTimeout(tt);
-  return typeof r.n==='number'?r:null;
+  return typeof r.n==='number'?r:r&&r.error==='datos'?{sinJuego:true}:null;   // 19-11-2026: el servidor aún no tiene este juego ≠ sin conexión
  }catch(e){return null}
 }
-async function remotos(c){const r=await pideServicio('consulta',c);return r?r.n:null}
 /* 18-11-2026: con conexión manda el servidor (si José devuelve un intento borrando su fila, el móvil ya no lo bloquea) */
-async function intentosDe(c){const r=await remotos(c),l=locales(c);return {n:r===null?l:r,sin:r===null}}
+async function intentosDe(c){const r=await pideServicio('consulta',c),l=locales(c);return r&&r.sinJuego?{n:l,sinJuego:true}:{n:r===null?l:r.n,sin:r===null}}
+const noPreparada=abajo=>'La partida oficial de este juego todavía no está preparada en el servidor. Tu profe te avisará cuando se abra.\n\nMientras tanto puedes entrenar en '+abajo+' todo lo que quieras.';
 function pintaOfi(n,estado){
  const b=document.getElementById('ofi');if(!b)return;
  if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
  if(estado==='sinred'){b.disabled=false;b.textContent='Sin conexión · pulsa para reintentar';return}   // 18-11-2026: antes se quedaba desactivado
+ if(estado==='sinjuego'){b.disabled=false;b.textContent='Partida oficial aún no preparada · entrena abajo';return}
  if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
  b.disabled=n>=INTENTOS;
  const ic=document.getElementById('cod'),f=ic&&plazo(ic.value);   // 18-11-2026: aviso con la hora del móvil; quien decide es el servidor
- b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+ const a=ic&&sinAbrir(ic.value)&&apertura(ic.value);
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':a?'Se abre '+fechaTxt(a)+' · entrena abajo':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
 }
 let tOfi=0;
+/* 19-11-2026: la portada consultaba el servicio en cada vuelta al menú (cada consulta lee las hojas enteras; con un grupo entrenando se
+   acerca al límite de Apps Script). Se recuerda 60 s; «Partida oficial» siempre pregunta de nuevo */
+const INT_MEM={};
 let ofiEnMarcha=false;   // 18-11-2026: mientras se comprueba y se apunta un intento, nada vuelve a activar el botón (dos oficiales a la vez)
 function revisaOfi(){
  if(ofiEnMarcha)return;
@@ -511,33 +549,44 @@ function revisaOfi(){
  tOfi=setTimeout(async()=>{
   const i=document.getElementById('cod');if(!i)return;
   const c=i.value;if(!normCod(c)){pintaOfi(0,'libre');return}
-  pintaOfi(0,'mirando');
-  const r=await intentosDe(c);if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n,r.sin?'sinred':'');
+  const k=normCod(c),m=INT_MEM[k];
+  const r=m&&Date.now()-m.t<60000?m.r:(pintaOfi(0,'mirando'),await intentosDe(c));
+  if(!r.sin)INT_MEM[k]={t:m&&m.r===r?m.t:Date.now(),r};
+  if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n,r.sinJuego?'sinjuego':r.sin?'sinred':'');
  },400);
 }
 async function empiezaOficial(c){
  if(ofiEnMarcha)return;ofiEnMarcha=true;
- try{return await empiezaOficial_(c)}finally{ofiEnMarcha=false}
+ /* 19-11-2026 (revisión total, común): mientras se comprueba y se apunta el intento (hasta 28 + 28 s) la página no responde. Antes se
+    podía entrar a entrenar y la oficial llegaba encima (en Señales, un reloj del entrenamiento seguía vivo y hundía la oficial). Los
+    diálogos van fuera de #app y siguen funcionando */
+ const app=document.getElementById('app');if(app)app.inert=true;
+ try{return await empiezaOficial_(c)}finally{ofiEnMarcha=false;if(app)app.inert=false}
 }
 async function empiezaOficial_(c){
  const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
  const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
  const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
- const r=await intentosDe(c);pintaOfi(r.n,r.sin?'sinred':'');
+ const r=await intentosDe(c);pintaOfi(r.n,r.sinJuego?'sinjuego':r.sin?'sinred':'');
+ if(r.sinJuego){dialogo(noPreparada(abajo));return}
  if(r.sin){dialogo('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en '+abajo+'.');return}
  if(r.n>=INTENTOS){dialogo(yaJugadas);return}
+ if(sinAbrir(c)){dialogo(avisoSinAbrir(c,abajo));return}
  if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
  /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
  const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
  const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
  let ini=await pideServicio('inicio',c,rid);
  if(!ini){if(b2)b2.textContent='Reintentando…';ini=await pideServicio('inicio',c,rid)}   // mismo clic: no gasta otro intento
+ if(ini&&ini.sinJuego){pintaOfi(r.n,'sinjuego');dialogo(noPreparada(abajo));return}
  if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini.ok&&ini.sinabrir){pintaOfi(ini.n);dialogo(avisoSinAbrir(c,abajo,ini.abre));return}
  if(!ini.ok&&ini.cerrado){pintaOfi(ini.n);dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en '+abajo+'.');return}
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'');   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
 /* ===== Subida de nota ===== */
@@ -554,7 +603,7 @@ const claveRef=(c,n)=>'ofi_ref_'+JUEGO+'_'+normCod(c)+'_'+n;
 async function manda(e){
  if(typeof e==='string')e={txt:e,cod:(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(e)||[])[1]||'',ref:''};   // envíos guardados antes de la fase 3
  try{
-  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),15000);
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),30000);   // 19-11-2026: 30 s (con 30 envíos a la vez, el servicio puede tardar 15 s solo en dar turno)
   const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt)+(e.nv?'&nv='+encodeURIComponent(e.nv):''),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
   clearTimeout(tt);
   return r.ok?true:r.error?'rechazado':false;
@@ -567,45 +616,76 @@ async function vaciaCola(){
  if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
  try{const c=enCola();if(!c.length)return;
   /* 18-11-2026: al terminar se vuelve a leer la cola y se quita solo lo enviado (antes se perdía lo que entraba mientras tanto) */
-  const hechos=new Set();for(const t of c){if((await manda(t))!==false)hechos.add(JSON.stringify(t))}
+  const hechos=new Set();for(const t of c){if(EN_VUELO.has(JSON.stringify(t)))continue;if((await manda(t))!==false)hechos.add(JSON.stringify(t))}
   guardaCola(enCola().filter(t=>!hechos.has(JSON.stringify(t))))}finally{vaciando=false}
 }
+/* 19-11-2026: lo que queda en la cola se reintenta también en esta misma visita, cada vez más espaciado (antes, solo al volver
+   la conexión o al abrir otra vez el juego); el servicio responde «ok» si ese resultado ya le había llegado */
+function reintenta(){[20000,60000,180000].forEach(ms=>setTimeout(vaciaCola,ms))}
 addEventListener('online',vaciaCola);addEventListener('online',()=>revisaOfi());setTimeout(vaciaCola,1500);
 function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
  const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
  return l.length?' | fallos: '+l.join('; '):'';
 }
 const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
+const EN_VUELO=new Set();   // lo que está mandando envia(): vaciaCola no lo manda a la vez
 function envia(d){
  const est=d.est||[d.n1,d.n2,d.n3];
  const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
  const nv=Array.isArray(d.niveles)&&d.niveles.length?d.niveles.map(x=>[x.p,x.s,x.a].map(v=>Math.round(+v||0)).join(',')).join(';'):'';   // puntos, segundos y aciertos de cada nivel (18-11-2026)
  const mem=OFI_REF&&OFI_REF.cod===normCod(d.codigo)&&OFI_REF.n==d.intento?OFI_REF.ref:'';   // el justificante también en memoria, en todos los juegos
  const e={txt,cod:d.codigo,ref:d.ref||mem||ls.get(claveRef(d.codigo,d.intento),''),nv};
- return manda(e).then(ok=>{OFI_VIVA=false;if(ok===false){const c=enCola();c.push(e);guardaCola(c)}return ok});
+ /* 19-11-2026 (revisión total, común): primero a la cola y luego se manda; al llegar respuesta se quita. Antes solo se guardaba si fallaba,
+    y si se cerraba la app durante el envío (hasta 30 s) el resultado se perdía con el intento gastado. El servicio ignora un reenvío */
+ const k=JSON.stringify(e);EN_VUELO.add(k);{const c=enCola();c.push(e);guardaCola(c)}
+ return manda(e).then(ok=>{
+  EN_VUELO.delete(k);
+  if(!OFI_REF||!e.ref||OFI_REF.ref===e.ref)OFI_VIVA=false;   // la respuesta de una oficial anterior no desprotege la que está en marcha
+  if(ok!==false)guardaCola(enCola().filter(t=>JSON.stringify(t)!==k));else reintenta();
+  return ok});
 }
+/* 19-11-2026 (revisión total, común): cierre de la oficial igual en todos los juegos. «Tu mejor» y el puesto, solo si el servicio no
+   rechaza el resultado (antes se apuntaban antes de saberlo); y sin error si ya no está la pantalla del resultado */
+function cierraOficial(d,pref){
+ const antes=mejorDe(d.codigo),mejor=Math.max(antes,+d.puntos||0);
+ return envia(d).then(ok=>{
+  const e=document.getElementById('envio');if(e)e.textContent=textoEnvio(ok);
+  if(ok!=='rechazado'){
+   ponMejor(d.codigo,mejor);if(!antes)ls.set(pref+'_primer_envio',Date.now());
+   puesto(d.codigo,mejor,true).then(r=>{const q=document.getElementById('puesto');if(q)q.innerHTML=textoPuesto(r,mejor)});
+  }else{const q=document.getElementById('puesto');if(q)q.textContent=''}
+  return ok;
+ });
+}
+
 /* lo que ve el alumno al terminar */
 function textoEnvio(ok){
- return ok===true?'✔ Resultado enviado a tu profesor.':ok==='rechazado'?'⚠ Este resultado no se ha podido aceptar. Tu profesor lo revisará.':
+ return ok===true?'✔ Resultado enviado a tu profe.':ok==='rechazado'?'⚠ Este resultado no se ha podido aceptar. Tu profe lo revisará.':
   '⚠ Se ha cortado la conexión y tu resultado no ha llegado todavía. Se queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet: vuelve a abrir el juego con conexión.';
 }
 
 /* ===== Puesto en el ranking del grupo (tabla pública con grupo, puntos y juego; sin códigos ni nombres) ===== */
+let RANK_MEM=null;   // 19-11-2026: la clasificación se recuerda 60 s (antes se descargaba en cada vuelta al menú)
 async function puesto(codigo,pts,nuevo){
  try{
-  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
-  const txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);
+  let txt=!nuevo&&RANK_MEM&&Date.now()-RANK_MEM.t<60000?RANK_MEM.txt:null;
+  if(txt===null){
+   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
+   txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);RANK_MEM={t:Date.now(),txt};
+  }
   const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
   const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>parseInt(String(f[1]||'').replace(/\D/g,''),10)||0);   // 18-11-2026: «12.345» (con punto de miles) también se lee bien
   const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
-  return {pos,total};
+  const empate=Math.max(0,lista.filter(x=>x===pts).length-(nuevo?0:1));   // 19-11-2026: otras personas con los mismos puntos
+  return {pos,total,empate};
  }catch(e){return null}
 }
 const recien=()=>Date.now()-(+ls.get(CLAVE_OF.replace(/_oficiales$/,'')+'_primer_envio',0))<10*60*1000;
 function textoPuesto(r,pts){
  if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
+ const emp=r.empate?` (empatas con ${r.empate===1?'otra persona':r.empate+' personas'}; a igualdad de puntos, cuenta quien llegó antes)`:'';
  const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos).${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos)${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 
 /* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
@@ -615,7 +695,7 @@ var OFI_VIVA=false,OFI_REF=null;
 addEventListener('beforeunload',e=>{if(OFI_VIVA){e.preventDefault();e.returnValue=''}});
 addEventListener('popstate',()=>{if(!OFI_VIVA)return;try{history.pushState({ofi:1},'')}catch(e){}if(typeof PAUSA_JUEGO==='function')PAUSA_JUEGO()});
 
-function arrancaOficial(c,n,ref){empieza(1,{codigo:c,intento:n,ref:ref||'',est:[],pts:0})}   // lo llama empiezaOficial (oficial.js); el ref viaja también en memoria (18-11-2026)
+function arrancaOficial(c,n,ref){empieza(1,{codigo:c,intento:n,ref:ref||'',est:[],pts:0,niveles:[]})}   // lo llama empiezaOficial (oficial.js); el ref viaja también en memoria (18-11-2026)
 
 const usados=()=>+ls.get(PREF+'_oficiales',0);
 const CLAVE_OF=PREF+'_oficiales';
@@ -668,16 +748,38 @@ const compi=(may)=>{if(!hayElenco())return may?'Tu compañera':'tu compañera';c
 const LUGAR_PROTA={HIG:['la clínica dental de Triana','la clínica dental de Triana'],IFC:['una cadena de hoteles de Sevilla','un hotel de Sevilla'],
  ITE:['hoteles y edificios de oficinas','un edificio de oficinas de Sevilla'],STI:['el aeropuerto de Sevilla','el aeropuerto de Sevilla']};
 const enEmpresa=(c,fisico)=>(LUGAR_PROTA[c]||LUGAR_PROTA.HIG)[fisico?1:0];
+const aLugar=x=>/^el /.test(x)?'al '+x.slice(3):'a '+x;   // 19-11-2026 (revisión total): «ha venido al aeropuerto» (antes, «a el aeropuerto»)
 const fondoDe=(nueva,c)=>capas(nueva,fondoPuesto(c));
 /* presentador con texto enriquecido (negritas): presenta() de elenco.js pone el texto plano */
 function narra(cont,op,html){if(!hayElenco()||!cont)return null;const el=presenta(cont,op);if(el&&html!=null)el.querySelector('.pres-txt').innerHTML=html;return el}
 function reaccionaHtml(cont,animo,html){if(!hayElenco()||!cont)return;reacciona(cont,animo,null);const t=cont.querySelector('.pres-txt');if(t&&html!=null)t.innerHTML=html}
 /* la persona compañera habla en la franja de mensajes de la RCP (aviso() vuelve al texto normal) */
-function dice(html,animo){const m=$('#msg');if(!m)return;if(!hayElenco())return aviso(html);m.classList.add('habla');narra(m,{ciclo:cc(),quien:'vet',animo:animo||'neutro',compacto:true},html)}
+function dice(html,animo){const m=$('#msg');if(!m)return;if(!hayElenco())return aviso(html);m.classList.add('habla');narra(m,{ciclo:cc(),quien:'vet',animo:animo||'neutro',compacto:true},html);ajustaMsg()}
+/* 19-11-2026 (revisión total): el mensaje de la RCP y la PLS tiene alto fijo (la figura ya no cambia de tamaño); si un texto no cabe,
+   se reduce la letra poco a poco hasta que quepa (como mucho, a 11,5 px) */
+function ajustaMsg(){
+ const m=$('#msg');if(!m||!m.closest('.rcp'))return;
+ const g=m.querySelector('.pres-globo')||m;m.style.fontSize='';g.style.fontSize='';
+ let f=parseFloat(getComputedStyle(g).fontSize)||16,k=0;
+ while(m.scrollHeight>m.clientHeight+1&&f>11.5&&k++<16){f-=.5;g.style.fontSize=f+'px'}
+}
 
 /* 17-11-2026: reloj del juego. Si la página se oculta (llamada, bloqueo, otra aplicación) se para, y al volver se sigue
    tocando la pantalla de pausa: ninguna pregunta ni prueba pierde tiempo por eso. */
 const ahoraJ=()=>(st.parado||performance.now())-(st.pausadoT||0);   // 18-11-2026: reloj del navegador (cambiar la hora del móvil no da tiempo)
+/* 19-11-2026 (revisión total): espera en tiempo de juego. Antes eran setTimeout sueltos: si se salía al menú y se entraba en otro
+   nivel, el de la PLS (1,8 s) pintaba su final encima («Nivel 1 · NaN pts»), y pausar durante las ventilaciones avanzaba al DEA
+   por detrás de la pausa. Ahora no dispara si la partida ha cambiado o se ha salido, y la pausa la detiene */
+function tras(ms,fn){
+ const yo=st,fin=ahoraJ()+ms;
+ const mira=()=>{if(st!==yo||yo.salido)return;if(yo.parado)return setTimeout(mira,200);const q=fin-ahoraJ();if(q>5)return setTimeout(mira,q);fn()};
+ return setTimeout(mira,ms);
+}
+/* 19-11-2026 (revisión total): doble toque. Al pintar cada escena se ignoran los toques 0,35 s: el segundo toque de un doble toque
+   en «Siguiente» caía en la opción de la escena nueva y quitaba una vida en 0 s */
+const ESPERA_TOQUE=350;
+const bloqueaToques=()=>{st.listo=performance.now()+ESPERA_TOQUE};
+const tocaPronto=()=>performance.now()<(st.listo||0);
 /* ===== Pausa (18-11-2026, como en «Serpiente PRL») =====
    Botón de pausa en el marcador, Esc o P, el «atrás» y perder el foco (otra pestaña, otra aplicación, bloqueo, girar el móvil).
    Menú «Seguir / Salir al menú» que tapa la pregunta y el cuerpo: con el reloj parado no se puede ir leyendo.
@@ -787,7 +889,7 @@ function portada(){
    <div class="chips"><span>PAS · 112</span><span>PLS</span><span>RCP 30:2</span><span>DEA</span></div>
   </div>
   <div class="oficial">
-   <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profesor; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
+   <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profe; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
    <button class="btn p" id="ofi" ${normCod($cod0())?'disabled':''}>${normCod($cod0())?'Comprobando tus intentos…':'Partida oficial'}</button>
    <small>La partida oficial son los ${ULT} niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
@@ -801,7 +903,7 @@ function portada(){
  if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
  $('#ofi').onclick=()=>{
   const c=codOficial($('#cod').value);   // siempre 1HIG-07
-  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profesor: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
+  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profe: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
   empiezaOficial(c);
  };
  $('#cod').oninput=()=>{revisaOfi();const m=/^[12]([A-Z]{2,5})-/.exec(normCod($('#cod').value)||'');if(m&&typeof ELENCO!=='undefined'&&ELENCO[m[1]])pintaHeroe(m[1])};   // al escribir el código, el presentador de su ciclo
@@ -809,12 +911,12 @@ function portada(){
  pintaHeroe();
 }
 /* portada (arte, 17-11-2026): la protagonista del ciclo da la bienvenida, con su puesto de trabajo de fondo */
-function pintaHeroe(c){
+function pintaHeroe(c){   // 19-11-2026 (revisión total): la persona compañera, del mismo ciclo que la protagonista (antes salía la del ciclo de la primera carga)
  const h=$('.heroe');if(!h||!hayElenco())return;   // en la primera carga, elenco.js aún no está: se pinta al terminar de cargar
  c=c||cicloJugador();if(h.dataset.c===c)return;h.dataset.c=c;
  h.querySelector('.fondo').style.setProperty('--fondo',fondoDe(ARTE.portada[c],c));
  const p=personaje(c,'prota');
- narra($('#hpres'),{ciclo:c,quien:'prota'},`Soy ${p.nombre}, ${p.puesto} en ${enEmpresa(c)}. ${(v=>v.visita?`Hoy ${v.nombre}, ${v.ella?'mi compañera':'mi compañero'} de ciclo, ha venido a ${enEmpresa(c,true)} ${v.visita}. `:'')(vetJ())}Si a alguien le pasa algo en el trabajo, lo que hagas en los primeros minutos importa. <b>Vamos a entrenarlo.</b>`);   // opción B (José, 17-11-2026): por qué está aquí
+ narra($('#hpres'),{ciclo:c,quien:'prota'},`Soy ${p.nombre}, ${p.puesto} en ${enEmpresa(c)}. ${(v=>v.visita?`Hoy ${v.nombre}, ${v.ella?'mi compañera':'mi compañero'} de ciclo, ha venido ${aLugar(enEmpresa(c,true))} ${v.visita}. `:'')(personaje(c,'vet'))}Si a alguien le pasa algo en el trabajo, lo que hagas en los primeros minutos importa. <b>Vamos a entrenarlo.</b>`);   // opción B (José, 17-11-2026): por qué está aquí
 }
 document.addEventListener('DOMContentLoaded',()=>pintaHeroe());
 
@@ -836,13 +938,22 @@ function empieza(n,oficial){
 }
 
 /* ===== Niveles 1 y 2: escenas tipo test ===== */
+/* 19-11-2026 (revisión total): el marcador se repinta al responder (antes, vidas y puntos cambiaban con la escena siguiente) */
+const escTxt=()=>st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length;
+const vidasTxt=()=>'♥'.repeat(Math.max(0,st.vidas))+'♡'.repeat(3-Math.max(0,st.vidas));
+const cabHtml=()=>`<div class="cab"><span class="pill" id="cpts">${st.pts} pts</span><span class="pill" id="cesc">${escTxt()}</span><span class="pill vidas" id="cvid" role="img" aria-label="Vidas: ${st.vidas} de 3">${vidasTxt()}</span>${ctlHtml()}</div>`;
+function pintaCab(){
+ const p=$('#cpts'),e=$('#cesc'),v=$('#cvid');
+ if(p)p.textContent=st.pts+' pts';if(e)e.innerHTML=escTxt();
+ if(v){v.textContent=vidasTxt();v.setAttribute('aria-label','Vidas: '+Math.max(0,st.vidas)+' de 3')}
+}
 function pregunta(){
  clearInterval(st.reloj);
  if(st.i>=st.lista.length||st.vidas<=0)return final();
  const s=st.lista[st.i];
  if(s.tipo==='llamada')return llamada(s);
  const ops=baraja([s.ok,...s.no]);
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas" role="img" aria-label="Vidas: ${st.vidas} de 3">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span>${ctlHtml()}</div>
+ app.innerHTML=`${cabHtml()}
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
   <div class="tiempo"><i id="t"></i></div>
   <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">
@@ -852,13 +963,15 @@ function pregunta(){
    <div class="explica" id="ex" role="status" aria-live="polite"></div>
    <button class="sig" id="sig">Siguiente</button>
   </div>`;
- narraEscena(s);
+ narraEscena(s);bloqueaToques();
  const T=st.l.t*1000,t0=ahoraJ(),barra=$('#t');
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)responde(null)},50);
  latido(()=>1-(ahoraJ()-t0)/T);
  const responde=k=>{
+  if(k!==null&&tocaPronto())return;   // segundo toque de un doble toque
   clearInterval(st.reloj);calla();
-  const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=(ahoraJ()-t0)/1000;
+  const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=Math.min(st.l.t,(ahoraJ()-t0)/1000);
+  st.tj=(st.tj||0)+seg;   // tiempo de juego del nivel (para el servidor): solo mientras corre el reloj de la escena
   app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(ops[b.dataset.k]===s.ok)b.classList.add('ok');else if(+b.dataset.k===k)b.classList.add('mal')});
   const ex=$('#ex');
   if(ok){
@@ -872,6 +985,7 @@ function pregunta(){
    $('#tj').classList.add('sacude');fallo();
    if(!explicaEscena(false,`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto.'}</b> Lo correcto: «${s.ok}». ${s.e}`)){ex.className='explica mal';ex.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}</b>Lo correcto: «${s.ok}». ${s.e}`}
   }
+  pintaCab();
   const b=$('#sig');b.style.display='block';setTimeout(()=>muestraRespuesta(b),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';
   b.onclick=()=>{st.i++;pregunta()};
@@ -928,7 +1042,7 @@ function llamada(s){
  const orden=ordenLlamada(s);
  const fichas=baraja(orden.map((x,k)=>({k,x})).concat([{k:-1,x:s.trampa}]));
  let paso=0,hecho=false;
- app.innerHTML=`<div class="cab"><span class="pill">${st.pts} pts</span><span class="pill">${st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length}</span><span class="pill vidas" role="img" aria-label="Vidas: ${st.vidas} de 3">${'♥'.repeat(st.vidas)}${'♡'.repeat(3-st.vidas)}</span>${ctlHtml()}</div>
+ app.innerHTML=`${cabHtml()}
   <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div><div class="tiempo"><i id="t"></i></div>
   <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">${cabEscena(s,ARTE.llamada[cc()])}
    <div class="preg">Llamada al 112</div><div class="escena">${hayElenco()?'Toca las tarjetas en el orden en que lo cuentas.':s.t}</div>
@@ -936,20 +1050,23 @@ function llamada(s){
    <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div>`;
  if(hayElenco())narraEscena(s,'vet','Un compañero se ha desplomado: no responde y no respira con normalidad. Me quedo con él y empiezo la RCP. <b>Llama tú al 112, con el altavoz puesto.</b>');
+ bloqueaToques();
  const T=(st.l.t+15)*1000,t0=ahoraJ(),barra=$('#t');
  const acaba=ok=>{
   if(hecho)return;hecho=true;clearInterval(st.reloj);calla();app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
-  const ex=$('#ex'),seg=(ahoraJ()-t0)/1000;
+  const ex=$('#ex'),seg=Math.min(T/1000,(ahoraJ()-t0)/1000);st.tj=(st.tj||0)+seg;
   if(ok){st.racha++;st.aciertos++;const g=Math.round((150+Math.min(45,Math.max(0,T/1000-seg)*6))*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');sfx('premio');
    if(!explicaEscena(true,`<b>¡Llamada perfecta!</b> ${s.e}`)){ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}}
   else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();
    if(!explicaEscena(false,`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así.'}</b> ${s.e}`)){ex.className='explica mal';ex.innerHTML=`<b>${seg*1000>=T?'¡Se acabó el tiempo!':'No es así'}</b>${s.e}`}}
+  pintaCab();
   const b=$('#sig');b.style.display='block';setTimeout(()=>muestraRespuesta(b),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';b.onclick=()=>{st.i++;pregunta()};
  };
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.width=Math.max(0,q*100)+'%';if(q<=0)acaba(false)},50);
  latido(()=>hecho?null:1-(ahoraJ()-t0)/T);
  app.querySelectorAll('.chip112').forEach(b=>b.onclick=()=>{
+  if(tocaPronto())return;   // segundo toque de un doble toque
   const k=+b.dataset.k;
   if(k!==paso)return acaba(false);
   b.classList.add('usada');sfx('acierto',paso);paso++;   // fase 5: cada tarjeta bien puesta, un tono más alto
@@ -1075,12 +1192,12 @@ function pls(){
  Object.assign(st,{paso:0,errores:0,arrastre:null,pista:0});
  app.innerHTML=`<div class="rcp pls" id="esc">
   <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">60</span><span class="pill" id="pp">Paso 1/5</span>${ctlHtml()}</div>
-  <div class="msg" id="msg" aria-live="polite">No responde, pero respira con normalidad y no ha sufrido golpes. Arrastra con el dedo, en orden, para ponerla en posición lateral de seguridad. Estás a su lado, a la derecha de la pantalla.</div>
+  <div class="msg" id="msg" aria-live="polite">No responde, pero respira con normalidad y no ha sufrido golpes. Pon a la persona en posición lateral de seguridad, paso a paso y en orden.</div>
   <div class="cuerpo"><svg id="svg" viewBox="0 0 300 402" preserveAspectRatio="xMidYMid meet">${DEFS}${escena(1)}<g id="asas"></g><g id="meta"></g></svg><div class="combo" id="combo"></div></div>
-  <div class="abajo"><div class="tarjeta-rcp"><p id="ayuda">Toca y arrastra la parte del cuerpo que se mueve primero.</p></div></div>
+  <div class="abajo"><div class="tarjeta-rcp"><p id="ayuda">Estás a su lado, a la derecha de la pantalla. Arrastra lo que se mueve primero.</p></div></div>
  </div>`;
  const svg=$('#svg'), asas=$('#asas'), meta=$('#meta');
- $('#salir').onclick=sal;
+ $('#salir').onclick=sal;ajustaMsg();
  st.cancelaGesto=()=>{if(!st.arrastre)return;st.arrastre=null;meta.innerHTML='';asasDe()};   // pausa con el dedo a medio arrastre: el asa vuelve a su sitio
  const asasDe=()=>{   // las cuatro «agarraderas» posibles: todas visibles, para que haya que saber el orden
   const p=st.paso;
@@ -1102,7 +1219,7 @@ function pls(){
   const paso=PLS_PASOS[st.paso];
   if(c.dataset.id!==paso.id){   // parte equivocada o fuera de orden
    st.errores++;fallo();$('#esc').classList.add('sacude');setTimeout(()=>$('#esc')&&$('#esc').classList.remove('sacude'),400);
-   st.pista++;$('#msg').textContent=st.pista<2?paso.pista:paso.resp;   // fase 4: antes, el primer fallo ya enseñaba el orden completo
+   st.pista++;aviso(st.pista<2?paso.pista:paso.resp);ptsPls();   // fase 4: antes, el primer fallo ya enseñaba el orden completo
    return;
   }
   st.arrastre={c,ini:p};
@@ -1121,21 +1238,30 @@ function pls(){
    st.paso++;st.pista=0;vibra(40);sfx('acierto',st.paso-1);
    cambiaImg(imgPaso(st.paso));
    if(st.paso>=5)$('#meta').innerHTML='<g filter="url(#brillo)"><path d="M196 72 q12 -6 20 3 M200 60 q16 -8 27 5" stroke="#7dffb5" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
-   $('#msg').innerHTML=ico('hecho')+paso.txt;$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
+   aviso(ico('hecho')+paso.txt);$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
    $('#ayuda').textContent=st.paso<5?'Paso '+(st.paso+1)+' de 5: ¿qué mueves ahora?':'¡Posición lateral de seguridad conseguida!';
-   if(st.paso>=5){clearInterval(st.reloj);calla();$('#cr').classList.remove('urge');asas.innerHTML='';acierto();return setTimeout(()=>acabaPls(true,t0),1800)}
+   if(st.paso>=5){
+    clearInterval(st.reloj);calla();$('#cr').classList.remove('urge');asas.innerHTML='';acierto();
+    st.segPls=(ahoraJ()-t0)/1000;ptsPls();   // 19-11-2026 (revisión total): el tiempo para al completarla (antes contaba los 1,8 s de celebración)
+    return tras(1800,()=>acabaPls(true));
+   }
+   ptsPls();
   }else{
-   st.errores++;fallo();$('#msg').textContent='Casi: llévalo hasta el círculo verde.';
+   st.errores++;fallo();aviso('Casi: llévalo hasta el círculo verde.');ptsPls();
   }
   asasDe();
  };
 }
-function acabaPls(completa,t0){
+/* puntos de la PLS: completa, 500 + rapidez (hasta 125); a medias, 80 por paso; −50 por fallo. 19-11-2026 (revisión total): también en
+   el marcador mientras se juega (antes se quedaba en «0 pts» todo el nivel). El servidor tiene el mismo tope (Codigo.js) */
+const puntosPls=(completa,seg)=>Math.max(0,(completa?500+Math.round(Math.min(125,Math.max(0,60-seg)*8)):st.paso*80)-st.errores*RESTA);
+function ptsPls(){const p=$('#pts');if(p)p.textContent=(st.paso>=5?puntosPls(true,st.segPls):puntosPls(false))+' pts'}
+function acabaPls(completa){
  if(st.salido)return;                 // fase 5: ya se ha salido al menú
  clearInterval(st.reloj);calla();
- const seg=t0?(ahoraJ()-t0)/1000:60;
- st.aciertos=completa?5:Math.min(st.paso,5);st.lista={length:5};
- st.pts=Math.max(0,(completa?500:st.paso*80)+(completa?Math.round(Math.min(125,Math.max(0,60-seg)*8)):0)-st.errores*RESTA);
+ const seg=completa?st.segPls:60;
+ st.aciertos=completa?5:Math.min(st.paso,5);st.lista={length:5};st.tj=seg;
+ st.pts=puntosPls(completa,seg);
  st.estrellas=!completa?(st.paso>=3?1:0):st.errores===0?3:st.errores<=2?2:1;
  st.resumen=completa?`Posición lateral de seguridad completa en ${Math.round(seg)} s, con ${st.errores} ${st.errores===1?'fallo':'fallos'}.`:`Se acabó el tiempo: llegaste al paso ${st.paso} de 5.`;
  final();
@@ -1144,8 +1270,13 @@ function acabaPls(completa,t0){
 /* ===== Nivel 4: RCP con relevo y DEA ===== */
 const SITIO={x:150,y:152}, PARCHES=[{x:127,y:125},{x:184,y:161}];
 const MET=545;              // 110 por minuto
+/* 19-11-2026 (revisión total): el relevo, en un solo sitio (el lote de las estrellas y los tiempos lo ajustará aquí). Antes, tras el
+   ciclo 5 se podían abrir ciclos sin fin y cada compresión sumaba: alargar el relevo daba el podio. Ahora, desde los 2:00 las
+   compresiones no suman, a los 2:05 la compañera releva sola (relevo tarde) y un relevo tarde quita la tercera estrella.
+   RCP_MIN_INT: el ritmo se mide sobre al menos los 29 intervalos de un ciclo de 30 (pausar no sube el porcentaje) */
+const RELEVO_DESDE=118, RELEVO_2MIN=120, RELEVO_SOLO=125, RCP_MIN_INT=29;
 function rcp(){
- Object.assign(st,{serie:[],fase:'intro',cuenta:0,cicloN:1,t0:0,ultimo:0,inter:[],enRitmo:0,total:0,errores:0,compa:false,relevo:false,agotado:false,deaPaso:0,parches:0,sitioOk:true,combo:0,ecg:[]});
+ Object.assign(st,{serie:[],fase:'intro',cuenta:0,cicloN:1,t0:0,ultimo:0,inter:[],enRitmo:0,total:0,errores:0,compa:false,relevo:false,agotado:false,avisoRel:false,deaPaso:0,parches:0,sitioOk:true,combo:0,ecg:[],tIni:0,tFin:0});
  app.innerHTML=`<div class="rcp" id="esc">
   <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">0:00</span><span class="pill" id="ci">Ciclo 1</span>${ctlHtml()}</div>
   <div class="monitor"><span class="et">ECG · RCP</span><span class="corazon" id="cor">${ico('corazonLleno')}</span><canvas class="ecg" id="ecg" aria-hidden="true"></canvas></div>
@@ -1169,7 +1300,7 @@ function rcp(){
  st.fase='sitio';
  svg.onpointerdown=ev=>{ev.preventDefault();toque(svgPunto(svg,ev),ev)};
  $('#vent').onclick=ventilar;
- $('#rel').onclick=relevar;
+ $('#rel').onclick=()=>relevar();
  $('#salir').onclick=sal;
  st.reloj=setInterval(tic,200);
  /* fase 5: el ECG se pinta en un lienzo a 30 fotogramas por segundo, con un halo hecho con un segundo trazo ancho y tenue
@@ -1195,6 +1326,7 @@ function rcp(){
  if(g)st.raf=requestAnimationFrame(dibuja);
  msgInicio();
  if(ls.get(CLAVE_TUTO,'')!=='1')tutorial();   // fase 5: la primera vez, práctica de ritmo
+ else st.tIni=ahoraJ();                       // tiempo de juego del nivel (para el servidor): sin la práctica de ritmo
 }
 const crono=()=>st.t0?(ahoraJ()-st.t0)/1000:0;
 /* arte, 17-11-2026: la persona compañera de ciclo llama al 112, trae el DEA y te releva; habla en los momentos clave */
@@ -1205,12 +1337,20 @@ function msgInicio(){
 function tic(){
  if(!$('#cr'))return;
  const s=Math.floor(crono());$('#cr').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
- if(st.compa&&!st.relevo&&st.fase==='comp'&&s>=140&&!st.agotado){st.agotado=true;st.errores++;fallo();dice('Llevas más de 2 minutos: el cansancio te quita profundidad. <b>¡Pídeme el relevo!</b>','mal');$('#rel').classList.add('alarma')}   // fase 4: solo mientras comprimes tú (con el DEA no hay botón de relevo)
- if(st.fase==='dea3'&&ahoraJ()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';dice('Tenías que avisarme: el DEA no puede analizar si alguien la toca. Ya me aparto. <b>¡Que nadie la toque!</b>','mal');pasoDea()}
+ /* fase 4: solo mientras comprimes tú, tras el DEA (con el DEA no hay botón de relevo). 19-11-2026 (revisión total): a los 2:00 avisa y
+    a los 2:05 releva sola, como relevo tarde (antes avisaba a los 2:20 y se podía seguir sin fin) */
+ if(st.compa&&!st.relevo&&st.t0&&(st.fase==='comp'||st.fase==='vent')){
+  if(s>=RELEVO_SOLO){st.agotado=true;st.errores++;fallo();return relevar(true)}
+  if(s>=RELEVO_2MIN&&!st.avisoRel){st.avisoRel=true;$('#rel').classList.add('alarma');dice('¡Ya van 2 minutos! Con el cansancio se comprime peor. <b>¡Pídeme el relevo!</b>','mal')}
+ }
+ if(st.fase==='dea3'&&ahoraJ()-st.deaT>4000){st.errores++;fallo();st.fase='dea4';dice('Tenías que avisarme: el DEA no puede analizar si alguien toca a la persona. Ya me aparto. <b>¡Que nadie toque a la persona!</b>','mal');pasoDea()}
 }
-function aviso(t){const m=$('#msg');if(m){m.classList.remove('habla');if(m.innerHTML!==t)m.innerHTML=t}}
+function aviso(t){const m=$('#msg');if(m){m.classList.remove('habla');if(m.innerHTML!==t){m.innerHTML=t;ajustaMsg()}}}
 function pintaPts(){const p=$('#pts');if(p)p.textContent=Math.max(0,puntosRcp())+' pts'}
-const puntosRcp=()=>st.enRitmo*10+(st.sitioOk?100:0)+(st.relevo==='ok'?150:0)+st.deaPaso*40-st.errores*RESTA;
+const puntosRcp=()=>st.enRitmo*10+(st.sitioOk?100:0)+(st.relevo==='ok'?150:0)+st.deaPaso*40-st.errores*RESTA;   // el servidor tiene el mismo tope: 450 + 10 por compresión a ritmo
+/* estrellas de la RCP (19-11-2026, revisión total): la tercera, solo con relevo a tiempo; el porcentaje se mide sobre al menos un ciclo
+   (RCP_MIN_INT), así el servidor puede comprobarlas con las compresiones a ritmo (Codigo.js) */
+const estrellasRcp=(bien,total,e,relevo)=>{const r=bien/Math.max(total,RCP_MIN_INT);return r>=.7&&e<=1&&relevo==='ok'?3:r>=.5&&e<=3?2:r>=.3?1:0};
 function marca(p,color){
  const cu=$('#cu'),svg=$('#svg'),r=svg.getBoundingClientRect(),m=svg.getScreenCTM();
  const o=document.createElement('div');o.className='onda';o.style.borderColor=color;
@@ -1238,7 +1378,9 @@ function toque(p,ev){
  st.cuenta++;st.ecg.push(ahora);vibra(25);hunde(1);
  const co=$('#cor');if(co){co.classList.remove('latido');void co.offsetWidth;co.classList.add('latido')}
  let col='#7dffb5';
- if(st.ultimo&&st.cuenta>1){
+ const pasada=st.compa&&(ahora-st.t0)/1000>=RELEVO_2MIN;   // 19-11-2026 (revisión total): desde los 2:00 ya no suman
+ if(pasada){st.combo=0;aviso('Ya van 2 minutos: estas compresiones no suman. <b>¡Pide el relevo!</b>')}
+ else if(st.ultimo&&st.cuenta>1){
   const iv=ahora-st.ultimo;st.inter.push(iv);if(st.inter.length>3)st.inter.shift();
   const v=60000/(st.inter.reduce((a,b)=>a+b,0)/st.inter.length), inst=60000/iv;
   st.total++;st.aguja(v);(st.serie=st.serie||[]).push({r:inst,c:st.cicloN});$('#bpm').innerHTML=Math.round(v)+'<small>por minuto</small>';
@@ -1253,6 +1395,8 @@ function toque(p,ev){
  if(st.cuenta===30){$('#vent').disabled=false;$('#vent').classList.add('alarma');aviso('¡30! Ahora, <b>2 ventilaciones</b>.');metronomo(false)}
  pintaPts();
 }
+/* el círculo de «tus manos» en el pecho: se quita durante el análisis y la descarga del DEA, y vuelve al reanudar (19-11-2026) */
+function manos(si){const m=$('#manosg');if(m)m.style.display=si?'':'none'}
 function combo(t,ms=500,clase=''){const c=$('#combo');if(!c)return;c.className='combo '+clase;c.innerHTML=t;c.style.opacity=1;clearTimeout(st.cto);st.cto=setTimeout(()=>c.style.opacity=0,ms)}
 /* fase 5: brillo local sobre el cuerpo (la descarga del DEA); ya no hay destellos a pantalla completa */
 function destello(col){const cu=$('#cu');if(!cu||MOV_REDUCIDO)return;const d=document.createElement('div');d.className='brillo';d.style.setProperty('--c',col);cu.appendChild(d);setTimeout(()=>d.remove(),480)}
@@ -1275,7 +1419,7 @@ function ventilar(){
  if(st.cuenta<30){st.errores++;fallo();aviso('Aún no llevas 30 compresiones.');return pintaPts()}
  st.fase='vent';$('#vent').disabled=true;$('#vent').classList.remove('alarma');
  aviso('Abre la vía aérea (frente atrás y mentón arriba) y da 2 ventilaciones de 1 segundo cada una…');
- setTimeout(()=>{
+ tras(2600,()=>{   // 19-11-2026 (revisión total): en tiempo de juego (pausar aquí ya no avanza al DEA por detrás de la pausa)
   if(st.fase!=='vent')return;
   st.cicloN++;st.cuenta=0;st.ultimo=0;st.inter=[];
   // fase 4, 17-11-2026 (ERC 2025: el DEA se pone en cuanto llega y la otra persona sigue comprimiendo mientras se colocan los parches):
@@ -1286,45 +1430,49 @@ function ventilar(){
   if(st.cicloN===3&&!st.saltado){st.saltado=true;return avanceRapido()}
   $('#ci').textContent='Ciclo '+st.cicloN;$('#cuenta').innerHTML='0<small>/30</small>';
   st.fase='comp';
-  aviso(st.compa&&!st.relevo?'Otra vez: 30 compresiones. <b>Relevaos cada 2 minutos.</b>':'Otra vez: 30 compresiones.');
+  if(!st.avisoRel)aviso(st.compa&&!st.relevo?'Otra vez: 30 compresiones. <b>Relevaos cada 2 minutos.</b>':'Otra vez: 30 compresiones.');
   metronomo(true);
- },2600);
+ });
 }
-function relevar(){
- if(!st.compa||st.relevo||st.fase!=='comp')return;
- if(crono()<118){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
- st.relevo=st.agotado?'tarde':'ok';$('#rel').disabled=true;$('#rel').classList.remove('alarma');
+function relevar(solo){   // solo: la compañera releva sin que se lo pidas (a los 2:05)
+ if(!st.compa||st.relevo||!(st.fase==='comp'||solo&&st.fase==='vent'))return;
+ if(!solo&&crono()<RELEVO_DESDE){st.errores++;aviso('Aún no: el relevo es <b>cada 2 minutos</b>. Mira el cronómetro.');fallo();return pintaPts()}
+ st.relevo=solo||st.agotado?'tarde':'ok';st.tFin=ahoraJ();$('#rel').disabled=true;$('#rel').classList.remove('alarma');
  st.fase='fin';clearInterval(st.metro);ritmoCompa();
  combo(ico('relevo')+' ¡Relevo!',900);if(st.relevo==='ok')acierto();
  if(st.relevo==='ok')dice('¡Cambio! Sigo yo. Así, con el DEA puesto y relevándonos cada 2 minutos, hasta que llegue la ambulancia. <b>Cada minuto cuenta.</b>','bien');
- else dice('Sigo yo. La próxima vez, cambiamos a los 2 minutos: con el cansancio se comprime peor. Seguimos hasta que llegue la ambulancia.','neutro');
- setTimeout(acabaRcp,2600);   // fase 4, 17-11-2026: antes el relevo traía el DEA; ahora cierra el nivel
+ else dice('Ya van más de 2 minutos y el cansancio te quita profundidad: <b>sigo yo</b>. La próxima vez, pídeme el relevo a los 2 minutos.','mal');
+ tras(2600,acabaRcp);   // fase 4, 17-11-2026: antes el relevo traía el DEA; ahora cierra el nivel
  pintaPts();
 }
 /* fase 4, 17-11-2026: las compresiones de la compañera (animación y ECG) y los botones de RCP de vuelta tras el DEA */
 function ritmoCompa(){clearInterval(st.compRitmo);st.compRitmo=setInterval(()=>{if(st.parado)return;st.ecg.push(ahoraJ());hunde(.6,false)},MET)}
-function botonesRcp(){$('#bot').innerHTML=`<button class="btn vent" id="vent" disabled>${ico('aire')}2 ventilaciones</button><button class="btn rel" id="rel">${ico('relevo')}¡Relevo!</button>`;$('#vent').onclick=ventilar;$('#rel').onclick=relevar}
+function botonesRcp(){$('#bot').innerHTML=`<button class="btn vent" id="vent" disabled>${ico('aire')}2 ventilaciones</button><button class="btn rel" id="rel">${ico('relevo')}¡Relevo!</button>`;$('#vent').onclick=ventilar;$('#rel').onclick=()=>relevar()}
+/* 19-11-2026 (revisión total): las opciones van en una capa encima de la parte baja (antes empujaban y encogían la figura) y no
+   atienden el segundo toque de un doble toque (caía en la pregunta siguiente del DEA) */
 function opcionesDea(txt,ops,ok,sig){
  const orden=baraja(ops.map((o,k)=>k));      // la correcta no sale siempre en el mismo sitio
- $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${txt}</p>${orden.map(k=>`<button class="op" data-k="${k}">${ops[k]}</button>`).join('')}</div>`;
+ $('#bot').innerHTML=`<div class="tarjeta-rcp capa"><p>${txt}</p>${orden.map(k=>`<button class="op" data-k="${k}">${ops[k]}</button>`).join('')}</div>`;
+ bloqueaToques();
  $('#bot').querySelectorAll('.op').forEach(b=>b.onclick=()=>{
+  if(tocaPronto())return;
   if(+b.dataset.k===ok){st.deaPaso++;sfx('acierto',st.deaPaso);sig()}else{st.errores++;fallo();b.classList.add('mal');b.disabled=true;pintaPts()}
  });
 }
 function pasoDea(){
  pintaPts();
- if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='pecho';habla('Coloque los parches sobre el pecho desnudo del paciente.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo del paciente». Pero lleva ropa…');$('#bot').innerHTML=`<button class="btn alarma" id="desc" style="flex:1">${ico('camiseta')}Descubrir el pecho</button>`;$('#desc').onclick=descubre});
+ if(st.fase==='dea1')return opcionesDea('¿Qué haces con el DEA?',['Encenderlo y seguir sus instrucciones de voz','Esperar a que llegue la ambulancia','Parar la RCP para buscar el pulso'].map((x,i)=>x),0,()=>{st.fase='pecho';habla('Coloque los parches sobre el pecho desnudo de la persona.');st.parches=0;aviso('«Coloque los parches sobre el pecho desnudo de la persona». Pero lleva ropa…');$('#bot').innerHTML=`<button class="btn alarma" id="desc" style="flex:1">${ico('camiseta')}Descubrir el pecho</button>`;$('#desc').onclick=descubre});
  if(st.fase==='dea4'||st.fase==='dea3'){
   if(st.fase==='dea3')return;
  }
  if(st.fase==='dea4'){
   clearInterval(st.compRitmo);
-  habla('Descarga recomendada. Apártense del paciente. Pulse el botón de descarga.');
-  return opcionesDea('«Descarga recomendada. Apártense del paciente».',['Pulsar el botón de descarga, sin que nadie la toque','Sujetarle la mano para tranquilizarla','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');sfx('golpe');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
+  habla('Descarga recomendada. Apártense todos. Pulse el botón de descarga.');   // 19-11-2026 (revisión total): texto neutro sobre la persona
+  return opcionesDea('«Descarga recomendada. Apártense todos».',['Pulsar el botón de descarga, sin que nadie toque a la persona','Darle la mano para calmar a la persona','Quitar los parches'],0,()=>{st.fase='dea5';destello('#fff');sfx('golpe');vibra([60,40,60]);habla('Descarga administrada. Comience la reanimación cardiopulmonar.');pasoDea()});
  }
  if(st.fase==='dea5')return opcionesDea('Descarga administrada. ¿Y ahora?',['Reanudar las compresiones de inmediato','Comprobar si ya respira antes de seguir','Esperar a ver si se despierta'],0,()=>{
   // fase 4, 17-11-2026: tras la descarga sigues tú comprimiendo (tu compañera descansa) y el relevo llega a los 2 minutos
-  acierto();botonesRcp();clearInterval(st.compRitmo);
+  acierto();botonesRcp();clearInterval(st.compRitmo);manos(true);
   Object.assign(st,{fase:'comp',t0:0,ultimo:0,inter:[],cuenta:0});$('#cuenta').innerHTML='0<small>/30</small>';$('#ci').textContent='Ciclo '+st.cicloN;
   dice('¡Bien! Seguimos ya: <b>ahora comprimes tú</b> y yo descanso. 30 compresiones, y nos relevamos cada 2 minutos.','bien');
   metronomo(true);pintaPts()});
@@ -1335,7 +1483,7 @@ function descubre(){
  st.fase='dea2';sfx('toque');
  aviso(`Le abres la ropa: pecho descubierto. ${compi(true)} sigue comprimiendo. <b>Toca los dos sitios donde van los parches.</b>`);
  if(arte(ARTE.dea,'')&&$('#im0'))cambiaImg(0,ARTE.dea);   // arte: el pecho descubierto, si José ha hecho la imagen
- $('#bot').innerHTML=`<div class="tarjeta-rcp" style="flex:1"><p>${st.oficial?'Toca los dos sitios del pecho donde se pegan los parches.':'Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.'}</p></div>`;
+ $('#bot').innerHTML=`<div class="tarjeta-rcp capa"><p>${st.oficial?'Toca los dos sitios del pecho donde se pegan los parches.':'Un parche bajo la clavícula derecha de la persona y el otro en su costado izquierdo, bajo la axila.'}</p></div>`;
 }
 function poneParche(p){
  const k=PARCHES.findIndex(q=>dist(p,q)<30&&!q.puesto);
@@ -1343,10 +1491,10 @@ function poneParche(p){
  PARCHES[k].puesto=true;st.parches++;sfx('acierto',st.parches);
  $('#marcas').innerHTML+=`<rect x="${PARCHES[k].x-16}" y="${PARCHES[k].y-12}" width="32" height="24" rx="5" fill="#fff" stroke="#2fd47a" stroke-width="3"/>`;
  if(st.parches===2){
-  st.deaPaso++;st.fase='dea3';st.deaT=ahoraJ();
-  aviso(`«Analizando el ritmo cardiaco»… ${compi(true)} sigue comprimiendo.`);habla('Analizando el ritmo cardiaco. No toque al paciente.');
-  $('#bot').innerHTML=`<button class="btn alarma" id="apart" style="flex:1">${ico('mano')}¡Que nadie la toque!</button>`;
-  $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';dice('¡Me aparto! Manos fuera: nadie la toca mientras el DEA analiza.','bien');pasoDea()};
+  st.deaPaso++;st.fase='dea3';st.deaT=ahoraJ();manos(false);   // 19-11-2026 (revisión total): sin el círculo de «tus manos» en el pecho mientras nadie toca a la persona
+  aviso(`«Analizando el ritmo cardiaco»… ${compi(true)} sigue comprimiendo.`);habla('Analizando el ritmo cardiaco. No toquen a la persona.');
+  $('#bot').innerHTML=`<button class="btn alarma" id="apart" style="flex:1">${ico('mano')}¡Que nadie toque a la persona!</button>`;
+  $('#apart').onclick=()=>{if(st.fase!=='dea3')return;st.deaPaso++;clearInterval(st.compRitmo);st.fase='dea4';dice('¡Me aparto! Manos fuera: nadie toca a la persona mientras el DEA analiza.','bien');pasoDea()};
  }
  pintaPts();
 }
@@ -1403,7 +1551,7 @@ function tutorial(){
   if(hecho)return;hecho=true;clearInterval(st.metro);clearTimeout(st.tutoT);ls.set(CLAVE_TUTO,'1');d.remove();
   if(st.salido||st.fase!=='tuto')return;
   st.ecg=[];st.ultimo=0;st.inter=[];st.aguja(110);$('#bpm').innerHTML='—<small>por minuto</small>';
-  st.fase='sitio';
+  st.fase='sitio';st.tIni=ahoraJ();
   msgInicio();
  };
  pad.onpointerdown=ev=>{
@@ -1419,7 +1567,7 @@ function tutorial(){
    fb.style.color=bien?'#7dffb5':'#ffb27a';
   }
   ult=ahora;$('#tn').textContent=n+'/'+TUTO_N;
-  if(n>=TUTO_N){clearInterval(st.metro);fb.style.color='#fcd100';fb.textContent='¡Ya lo tienes! Ahora, con la persona.';st.tutoT=setTimeout(fin,1200)}
+  if(n>=TUTO_N){clearInterval(st.metro);fb.style.color='#fcd100';fb.textContent='¡Ya lo tienes! Ahora, con la persona.';st.tutoT=tras(1200,fin)}
  };
  $('#tsal').onclick=fin;
  st.tutoT=setTimeout(()=>{const b=$('#tsal');if(b&&!hecho)b.textContent='Empezar ya'},10000);
@@ -1449,8 +1597,9 @@ function acabaRcp(){
  clearInterval(st.reloj);clearInterval(st.metro);clearInterval(st.compRitmo);cancelAnimationFrame(st.raf||0);
  PARCHES.forEach(q=>delete q.puesto);
  const r=st.total?st.enRitmo/st.total:0, e=st.errores;
- st.estrellas=r>=.7&&e<=1?3:r>=.5&&e<=3?2:r>=.3?1:0;
+ st.estrellas=estrellasRcp(st.enRitmo,st.total,e,st.relevo);
  st.pts=Math.max(0,puntosRcp());st.aciertos=st.enRitmo;st.lista={length:st.total};
+ st.tj=((st.tFin||ahoraJ())-(st.tIni||ahoraJ()))/1000;   // tiempo de juego del nivel, sin pausas ni la práctica de ritmo
  st.grafica=graficaRitmo(st.serie);
  st.resumen=`Compresiones con buen ritmo (100-120 por minuto): <b>${Math.round(r*100)} %</b> (${st.enRitmo} de ${st.total}). Fallos: ${e}. Relevo: ${st.relevo==='ok'?'a tiempo':st.relevo==='tarde'?'tarde (más de 2 minutos)':'sin hacer'}.`;
  final();
@@ -1663,7 +1812,7 @@ function profDesc(ok){
  if(!MOV_REDUCIDO)marca(SITIO,bien?'#2fd47a':'#ff9a3d');
  if(bien){st.combo++;if(st.combo>=5)combo('¡Compresión completa! x'+st.combo);if(st.combo%5===0)sfx('acierto',st.combo/5-1)}else st.combo=0;
  const p=$('#pts');if(p)p.textContent=st.ptsP+' pts';
- if(st.cuenta>=PROF_N){st.fase='finP';st.tr=null;clearInterval(st.metro);st.profT=setTimeout(acabaProf,800)}
+ if(st.cuenta>=PROF_N){st.fase='finP';st.tr=null;clearInterval(st.metro);st.profT=tras(800,acabaProf)}
 }
 function acabaProf(){
  if(st.salido)return;
@@ -1779,23 +1928,21 @@ function final(){
  $('#menu').onclick=portada;
  if($('#sigui'))$('#sigui').onclick=()=>empieza(l.n+1);
 }
+/* 19-11-2026 (revisión total): cada nivel guarda sus puntos, su tiempo de juego sin pausas (s) y sus aciertos (a: escenas acertadas en
+   los niveles 1 y 2, paso alcanzado en la PLS, compresiones a ritmo en la RCP); el servidor comprueba cada nivel con ellos */
 function bloqueOficial(est){
  const o=st.oficial;o.est[st.l.n-1]=est;o.fallos=(o.fallos||[]).concat(st.fallos.map(x=>`N${st.l.n} ${x.t||''}`));o.pts+=st.pts;
+ (o.niveles=o.niveles||[])[st.l.n-1]={p:st.pts,s:Math.round(st.tj||0),a:st.aciertos||0};
  if(st.l.n<ULT)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.l.n+1}</button></div>`;
  const m=mediaEst(o.est);
  return `<div class="aviso-of"><b>Partida oficial terminada</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota (media de tus estrellas): <b>+${extraDe(m)}</b> en el criterio de primeros auxilios (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
 }
 function finOficial(){
  const o=st.oficial;
- if(st.l.n<ULT){$('#ofsig').onclick=()=>empieza(st.l.n+1,o);return}
+ if(st.l.n<ULT){bloqueaToques();$('#ofsig').onclick=()=>{if(!tocaPronto())empieza(st.l.n+1,o)};return}   // 19-11-2026: sin saltarse el resumen con un doble toque
  $('#ofmenu').onclick=portada;
  const m=mediaEst(o.est);
- const antes=mejorDe(o.codigo), mejor=Math.max(antes,o.pts);ponMejor(o.codigo,mejor);
- if(!antes)ls.set(PREF+'_primer_envio',Date.now());
- puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
- envia({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,puntos:o.pts,extra:extraDe(m)}).then(ok=>{
-  $('#envio').textContent=textoEnvio(ok);
- });
+ cierraOficial({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,niveles:o.niveles,puntos:o.pts,extra:extraDe(m)},PREF);   /* 19-11-2026: cierre común (oficial.js): «tu mejor» y puesto solo si se acepta */
 }
 portada();
 </script>
