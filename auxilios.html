@@ -874,7 +874,7 @@ const ARTE={
  escena:{HIG:'aux_escena_HIG.jpg',IFC:'aux_escena_IFC.jpg',ITE:'aux_escena_ITE.jpg',STI:'aux_escena_STI.jpg'},    // niveles 1 y 2: el puesto, sin personas (va de fondo)
  descanso:'aux_escena_descanso.jpg',      // nivel 2, escenas comunes: la sala de descanso, sin personas
  llamada:{HIG:'',IFC:'',ITE:'',STI:''},   // llamada al 112: la persona compañera junto a la víctima, en el suelo del puesto
- pls:['aux_mujer1.jpg','aux_mujer2.jpg','','','',''],   // víctima mujer: las 6 posturas de aux1 … aux6, en el mismo orden
+ pls:['aux_mujer1.jpg','aux_mujer2.jpg','aux_mujer3.jpg','aux_mujer4.jpg','aux_mujer5.jpg','aux_mujer6.jpg'],   // víctima mujer: las 6 posturas de aux1 … aux6, en el mismo orden
  rcp:'aux_mujer1.jpg',                     // víctima mujer boca arriba y vestida (como aux1)
  dea:'aux_mujer_dea.jpg',                  // la misma, con el pecho descubierto de forma respetuosa y los dos sitios de los parches a la vista
  /* 19-11-2026 (arte de José, piezas de plastilina): recortadas con transparencia (WebP; los PNG de José, en fuente/img/originales/) */
@@ -1439,11 +1439,16 @@ const PLS_PASOS=[
 const PLS_SENUELOS=p=>p>=4?[{id:'brazo',x:250,y:133},{id:'rodilla_arriba',x:195,y:279},{id:'pie_arriba',x:60,y:330},{id:'pie_abajo',x:193,y:343}]
  :[{id:'pie_cerca',x:179,y:p>=3?358:355},{id:'cabeza0',x:150,y:48}];
 const PLS_T=60;
+/* 20-11-2026: la víctima nueva (aux_mujer1 … aux_mujer6) coincide con la de antes salvo dos sitios: su mano levantada (aux_mujer2-4) queda
+   14 unidades más a la izquierda y, en aux_mujer6, la cara queda más arriba y a la izquierda (cabeza más inclinada). Medidos sobre sus imágenes.
+   aux6 se rehízo el mismo día tomando de modelo a aux_mujer6 (José): la cabeza y el aire, ya iguales en las dos */
+const PLS_SITIOS={antes:{mano:{x:241,y:58},cabeza:{x:188,y:49},aire:' transform="translate(-24 4)"'},mujer:{mano:{x:227,y:57},cabeza:{x:188,y:49},aire:' transform="translate(-24 4)"'}};
 const ASA_NOMBRE={mano_cerca:'Brazo más cercano',mano_lejos:'Brazo más lejano',rodilla:'Pierna más lejana',rodilla2:'Rodilla doblada',cabeza:'Cabeza',cabeza0:'Cabeza',
  pie_cerca:'Pierna más cercana',brazo:'Brazo de arriba',rodilla_arriba:'Rodilla de arriba',pie_arriba:'Pie de arriba',pie_abajo:'Pie de abajo'};   // nombres para el teclado y el lector (lote 7)
 function pls(){
  const t0=ahoraJ(),T=PLS_T*K();   // 19-11-2026: con «más tiempo», el doble
  Object.assign(st,{paso:0,errores:0,arrastre:null,pista:0,sinRap:false,plsNueva:ARTE.pls.every(r=>r&&ARTE_OK[r]===1)});
+ const sitios=PLS_SITIOS[st.plsNueva?'mujer':'antes'];PLS_PASOS[0].a=sitios.mano;PLS_PASOS[4].a=sitios.cabeza;
  st.enPausa=()=>{if(st.paso<5){st.sinRap=true;ptsPls()}};   // 19-11-2026 (decisión 2): pausar con la postura a la vista quita la rapidez
  app.innerHTML=`<div class="rcp pls" id="esc">
   <div class="arriba"><div class="izq"><button class="salir" id="salir" type="button" aria-label="Salir al menú" title="Salir">${ico('salir')}</button><span class="pill" id="pts">0 pts</span></div><span class="crono" id="cr">${T}</span><span class="pill" id="pp">Paso 1/5</span>${ctlHtml()}</div>
@@ -1457,7 +1462,7 @@ function pls(){
  const asasDe=()=>{   // las cinco «agarraderas»: todas visibles, para que haya que saber el orden (19-11-2026: con dos señuelos)
   const p=st.paso;
   const lista=p>=5?[]:(p>=4?[{id:'cabeza',x:176,y:96}]:[   // al pintarlas se barajan: el orden del tabulador no chiva el de los pasos (lote 7)
-   {id:'mano_cerca',x:p>=1?241:203,y:p>=1?58:228},{id:'mano_lejos',x:p>=2?161:98,y:p>=2?92:225},
+   {id:'mano_cerca',x:p>=1?sitios.mano.x:203,y:p>=1?sitios.mano.y:228},{id:'mano_lejos',x:p>=2?161:98,y:p>=2?92:225},
    p>=3?{id:'rodilla2',x:120,y:268}:{id:'rodilla',x:121,y:357}]).concat(PLS_SENUELOS(p));
   asas.innerHTML=baraja(lista).map(a=>`<circle class="asa" data-id="${a.id}" cx="${a.x}" cy="${a.y}" r="${Math.max(17,14/escSvg()).toFixed(1)}" fill="rgba(252,209,0,.28)" stroke="#fcd100" stroke-width="3" stroke-dasharray="5 4" tabindex="0" role="button" aria-label="${ASA_NOMBRE[a.id]||a.id}"/>`).join('');
   if(st.conTeclado){const f=asas.querySelector('.asa');if(f)try{f.focus({preventScroll:true})}catch(e){}}
@@ -1469,7 +1474,7 @@ function pls(){
  const bien=paso=>{
    st.paso++;st.pista=0;vibra(40);sfx('acierto',st.paso-1);plop();
    cambiaImg(imgPaso(st.paso));rebota();
-   if(st.paso>=5)$('#meta').innerHTML='<g filter="url(#brillo)"><path d="M196 72 q12 -6 20 3 M200 60 q16 -8 27 5" stroke="#7dffb5" stroke-width="3" fill="none" stroke-linecap="round"/></g>';
+   if(st.paso>=5)$('#meta').innerHTML=`<g filter="url(#brillo)"${sitios.aire}><path d="M196 72 q12 -6 20 3 M200 60 q16 -8 27 5" stroke="#7dffb5" stroke-width="3" fill="none" stroke-linecap="round"/></g>`;
    aviso(ico('hecho')+paso.txt);$('#pp').textContent='Paso '+Math.min(st.paso+1,5)+'/5';
    $('#ayuda').textContent=st.paso<5?'Paso '+(st.paso+1)+' de 5: ¿qué mueves ahora?':'¡Posición lateral de seguridad conseguida!';
    if(st.paso>=5){
