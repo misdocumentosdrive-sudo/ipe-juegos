@@ -90,9 +90,9 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .grafica .ley{margin:4px 4px 2px;font-size:12.5px;line-height:1.5;color:var(--gris);text-align:left}
 .grafica .ley span{font-weight:700;margin-right:6px;white-space:nowrap}
 .chips112{display:grid;gap:8px;margin-top:12px;width:100%}
-.chip112 small{display:block;font-weight:400;color:var(--gris);font-size:13px}
-.chip112.usada{pointer-events:none;background:#e3ece8;border-style:solid;color:#40524c}.chip112.usada small{color:#40524c}   /* 19-11-2026 (revisión total, lote 7): antes, opacidad .35 (1,6:1) */
-.llamada{width:100%;min-height:54px;margin-top:10px;border-radius:12px;background:#0f2f25;color:#dff3ea;padding:10px 12px;font-size:14px;line-height:1.45;text-align:left}
+.chip112 small{display:block;font-weight:600;color:#5e4229;font-size:13px;text-shadow:none}
+.chip112.usada{pointer-events:none;--placa:url(aux_placa_gris.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.4)}.chip112.usada small{color:#fff}   /* 19-11-2026 (revisión total, lote 7): antes, opacidad .35 (1,6:1); lote 6: placa gris (4,7:1) */
+.llamada{width:100%;min-height:54px;margin-top:0;border-radius:22px;background:url(aux_bandeja.webp) center/100% 100% no-repeat,#1c3327;color:#dff3ea;padding:16px 20px;font-size:14px;line-height:1.45;text-align:left;filter:drop-shadow(0 6px 8px rgba(0,0,0,.4))}   /* lote 6: la bandeja verde de plastilina */
 .llamada b{color:#7dffb5}
 .heroe{--brillo:rgba(255,89,0,.35)}   /* 19-11-2026 (lote 7): el resto de la tarjeta de la portada lo pone comun.js (antes, repetido aquí) */
 .heroe h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}   /* gana a .portada h1 del estilo común */
@@ -111,7 +111,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .opciones.textos .op{font-weight:600;font-size:15px;line-height:1.3}
 .rcp{position:fixed;inset:0;background:radial-gradient(circle at 50% 35%,#16332a 0%,#071a14 70%);color:#fff;display:flex;flex-direction:column;align-items:center;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;z-index:5}
 .rcp.pls{background:radial-gradient(circle at 50% 35%,#16304a 0%,#08162a 70%)}
-.rcp .crono{font:800 22px Aleo,Georgia,serif;letter-spacing:1px}
+.rcp .crono{--placa:url(aux_placa_crema.webp);font:800 22px Aleo,Georgia,serif;letter-spacing:1px;padding:7px 18px 8px;min-width:86px;text-align:center;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}   /* lote 6: el reloj, en una placa crema */
 .monitor{width:calc(100% - 28px);max-width:492px;margin-top:8px;border-radius:14px;background:#03100c;border:1px solid rgba(125,255,181,.25);box-shadow:inset 0 0 24px rgba(47,212,122,.08),0 6px 20px rgba(0,0,0,.4);position:relative;overflow:hidden;
  background-image:linear-gradient(rgba(125,255,181,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(125,255,181,.07) 1px,transparent 1px);background-size:14px 14px}
 .monitor .ecg{width:100%;height:58px;display:block}   /* fase 5: lienzo a 30 fps, sin filtros (antes, polilínea SVG + drop-shadow en cada fotograma) */
@@ -120,7 +120,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .latido{animation:latido .25s ease-out}
 @keyframes latido{40%{transform:scale(1.35)}}
 .rcp .msg b{color:#7dffb5}
-.rcp .arriba .crono{font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(125,255,181,.4)}
+.rcp .arriba .crono{font-variant-numeric:tabular-nums}
 .rcp .cuenta,.rcp .bpm{font-variant-numeric:tabular-nums}
 .rcp .cuerpo{flex:1;width:100%;max-width:420px;min-height:0;position:relative}
 .rcp .cuerpo>svg{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));will-change:transform}   /* 19-11-2026 (revisión total): solo la figura; antes alcanzaba al icono del rótulo «¡Relevo!», que tapaba a la persona entera */
@@ -128,17 +128,17 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .asa:focus-visible,.zt:focus-visible{stroke:#fff;stroke-width:5;stroke-dasharray:none;fill:rgba(252,209,0,.45)}   /* teclado (lote 7) */
 .zt{fill:transparent;outline:none}
 @keyframes asa{50%{transform:scale(1.18)}}
-.rcp .marcador{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.rcp .cuenta{font:800 34px Aleo,Georgia,serif;min-width:92px}
+.rcp .marcador{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 18px;border-radius:22px;background:url(aux_bandeja.webp) center/100% 100% no-repeat;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}   /* lote 6: en la bandeja de plastilina */
+.rcp .cuenta{font:800 34px Aleo,Georgia,serif;min-width:92px;color:#fcd100;text-shadow:0 2px 0 #b48a00,0 3px 0 #7a5d00,0 5px 6px rgba(0,0,0,.45)}   /* lote 6: la cifra en relieve amarillo, como el líquido de la nómina */
 .rcp .cuenta small{font-size:15px;opacity:.7}
 .rcp .gauge{width:150px;height:84px}
-.rcp .bpm{font:800 24px Aleo,Georgia,serif;text-align:right;min-width:86px}
+.rcp .bpm{font:800 24px Aleo,Georgia,serif;text-align:right;min-width:86px;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
 .rcp .bpm small{display:block;font:600 11px "Helvetica Neue",Arial;opacity:.75}
 .rcp .botones .btn{border-radius:16px;flex:1;font-size:16px;padding:13px 8px}
-.rcp .btn.rel{background:#fcd100;color:#3a2f00}
-.rcp .btn.alarma{background:#c24400;color:#fff;animation:late .6s infinite}
-.rcp .btn[disabled]{opacity:.28}
-@keyframes late{50%{transform:scale(1.04);filter:brightness(1.25)}}
+.rcp .btn.rel{--placa:url(aux_placa_mostaza.webp);color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.rcp .btn.alarma{--placa:url(aux_placa_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45);animation:late .6s infinite}
+.rcp .btn[disabled]{opacity:.45;filter:grayscale(.6)}
+@keyframes late{50%{transform:scale(1.04);filter:brightness(1.2) drop-shadow(0 3px 3px rgba(0,0,0,.38))}}
 .rcp .combo{position:absolute;left:0;right:0;top:6%;text-align:center;font:800 26px Aleo,Georgia,serif;color:#7dffb5;text-shadow:0 0 14px rgba(125,255,181,.6);pointer-events:none;opacity:0;transition:opacity .2s;z-index:2}
 .rcp .combo.rotulo{left:50%;right:auto;transform:translateX(-50%);white-space:nowrap;font-size:22px;color:#062a1f;text-shadow:none;background:#fcd100;border-radius:999px;padding:8px 18px;box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -4px 0 rgba(0,0,0,.18),0 8px 20px rgba(0,0,0,.4)}
 .onda{position:absolute;width:150px;height:150px;margin:-75px 0 0 -75px;border:3px solid #7dffb5;border-radius:50%;pointer-events:none;animation:onda .55s ease-out forwards}   /* 19-11-2026 (revisión total, lote 7): con transform (antes animaba width y height: ~18 recolocaciones por compresión) */
@@ -146,7 +146,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 /* fase 5: sin destellos a pantalla completa; solo un brillo local sobre el cuerpo (descarga del DEA) */
 .brillo{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 50% 38%,var(--c) 0,transparent 58%);animation:brillo .45s ease-out forwards}
 @keyframes brillo{from{opacity:.6}to{opacity:0}}
-.rcp .tarjeta-rcp .op{background:rgba(255,255,255,.92)}
+.rcp .tarjeta-rcp .op{--placa:url(aux_placa_crema.webp);position:relative;justify-content:center;text-align:center;padding:12px 38px 13px;font:700 15px/1.25 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}
 .rcp .tarjeta-rcp p{margin:0;text-align:center;font-size:15px;line-height:1.4}
 
 /* pausa (18-11-2026, como en «Serpiente PRL»): menú «Seguir / Salir al menú» que tapa la pregunta y el cuerpo con el reloj parado */
@@ -172,13 +172,12 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .nivel .n{box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.22)}
 .pill{box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,66,48,.08),0 2px 4px rgba(0,66,48,.08)}
 .icoesc{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:-4px auto 6px;color:#fff;font-size:0;box-shadow:inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 0 rgba(0,0,0,.2),0 6px 14px rgba(0,0,0,.18)}
-.chip112{border:2px dashed #b9cdc4;background:#f4f9f6;border-radius:12px;padding:10px 12px;text-align:left;font:600 14.5px/1.3 "Helvetica Neue",Arial;color:var(--texto);cursor:pointer;box-shadow:0 2px 5px rgba(0,66,48,.06)}
+.chip112{--placa:url(aux_placa_crema.webp);padding:12px 30px 13px;text-align:center;font:700 14.5px/1.25 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;cursor:pointer;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}   /* lote 6: placa crema (antes, borde discontinuo) */
 .oficial{box-shadow:inset 0 2px 0 #fff,0 6px 14px rgba(0,66,48,.08)}
 .oficial .btn[disabled]{opacity:1;background:#5b6b70;color:#fff}   /* 19-11-2026 (revisión total, lote 7): «Comprobando tus intentos…» legible (antes 2,8:1) */
-.rcp .pill{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.25)}
-.rcp .botones .btn,.rcp .tarjeta-rcp .op{box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -4px 0 rgba(0,0,0,.25),0 6px 16px rgba(0,0,0,.35)}
-.rcp .tarjeta-rcp{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:12px;display:grid;gap:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 8px 20px rgba(0,0,0,.3)}
-.rcp .crono.urge{color:#fcd100}
+.rcp .pill{--placa:url(aux_placa_marron.webp);color:#fbf6ec;padding:9px 15px;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
+.rcp .tarjeta-rcp{background:url(aux_bandeja.webp) center/100% 100% no-repeat,#1c3327;border-radius:22px;padding:14px 18px;display:grid;gap:8px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))}   /* lote 6: la bandeja de plastilina */
+.rcp .crono.urge{--placa:url(aux_placa_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
 /* salir de los niveles 3 y 4 */
 .rcp .izq{display:flex;align-items:center;gap:8px}
 .rcp .salir .pic{width:20px;height:20px}
@@ -236,12 +235,9 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 /* 19-11-2026 (revisión total): #app es columna flexible al alto de la pantalla y la tarjeta encogía hasta caber: en la llamada al 112
    «Siguiente» quedaba fuera y la explicación de las escenas salía cortada. Nada de esto encoge: la página se desplaza */
 #app>.tarjeta,#app>.cab,#app>.barra,#app>.tiempo,.tarjeta>*,.escena-cab,.llamada,.chips112{flex-shrink:0}
-.escena-cab{position:relative;align-self:stretch;margin:-18px -18px 10px;padding:16px 12px 12px;min-height:92px;display:flex;align-items:flex-end;overflow:hidden;background:#123a2d}
-.escena-cab .fondo{position:absolute;inset:-14px;background-image:var(--fondo,none);background-size:cover;background-position:center 40%;filter:blur(3px) brightness(.5) saturate(.85);transition:filter .5s}
-.escena-cab.bien .fondo{filter:blur(3px) brightness(.55) saturate(1.1)}
-.escena-cab.mal .fondo{filter:blur(3px) brightness(.4) saturate(.6)}
+.escena-cab{position:relative;align-self:stretch;margin:2px 0 10px;display:flex;align-items:flex-end}   /* lote 6: el escenario va detrás de toda la pantalla (.tras) */
 .escena-cab .slot{position:relative;z-index:1;width:100%}
-.escena-cab .pres-globo{font-size:14.5px;line-height:1.42}
+.escena-cab .pres-globo{font-size:15px;line-height:1.42;box-shadow:0 6px 14px rgba(0,0,0,.35)}
 .tarjeta.con-escena .preg{font-size:17px;margin:0 0 2px}
 .tarjeta.con-escena .escena{font-size:14.5px;margin:2px 4px 0;color:var(--gris)}
 /* RCP: la persona compañera habla en la franja de mensajes, sin tapar el cuerpo ni los botones */
@@ -259,12 +255,13 @@ button:focus-visible,input:focus-visible{outline:3px solid #fcd100;outline-offse
 .ctl{display:flex;gap:6px;flex:none}
 .ctl button{width:44px;height:44px;border:0;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;color:var(--verde);background:#fff;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,66,48,.08),0 2px 4px rgba(0,66,48,.08)}
 .ctl .pic{width:20px;height:20px}
-.rcp .ctl button{color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.25)}
-.cab{gap:6px}.cab .pill{padding:6px 10px;white-space:nowrap}
-.rcp .salir{flex:none;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#fff;background:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.25);width:44px;height:44px}
+.rcp .ctl button,.cab .ctl button{--placa:url(aux_placa_marron.webp);width:48px;height:46px;color:#fbf6ec}
+.cab{gap:6px}.cab .pill{--placa:url(aux_placa_marron.webp);padding:9px 15px;white-space:nowrap;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
+.rcp .salir{--placa:url(aux_placa_marron.webp);flex:none;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#fbf6ec;width:48px;height:46px}
 .rcp .arriba{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;gap:6px}.rcp .arriba .pill{white-space:nowrap}
-@media (max-width:380px){.rcp .arriba{padding:10px 10px 0;gap:4px}.rcp .izq{gap:4px}.rcp .arriba .pill{padding:6px 8px;font-size:13px}.rcp .arriba .crono{font-size:20px;letter-spacing:0}.ctl{gap:4px}}
-.rcp .btn.vent{color:#fff;background:#2a74c6}   /* contraste AA con el texto blanco (antes 4,1:1) */
+@media (min-width:381px) and (max-width:430px){.rcp .arriba{padding:12px 10px 0;gap:4px}.rcp .izq{gap:4px}.rcp .arriba .pill{padding:9px 12px}.rcp .arriba .crono{padding:7px 13px;min-width:0}.rcp .ctl button,.rcp .salir{width:46px;height:44px}.ctl{gap:4px}}
+@media (max-width:380px){.rcp .arriba{padding:10px 8px 0;gap:3px}.rcp .izq{gap:3px}.rcp .arriba .pill{padding:8px 11px;font-size:13px}.rcp .arriba .crono{font-size:19px;letter-spacing:0;padding:7px 12px;min-width:0}.ctl{gap:3px}.rcp .ctl button,.rcp .salir,.cab .ctl button{width:44px;height:44px}}
+.rcp .btn.vent{--placa:url(aux_placa_azul.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.5)}   /* lote 6: placa azul (texto blanco, más de 10:1) */
 /* RCP en un móvil de 360 px: el marcador se salía por la derecha y arrastraba el botón «¡Relevo!» fuera de la pantalla */
 @media (max-width:380px){.rcp .gauge{width:124px;height:70px}.rcp .cuenta{min-width:78px;font-size:30px}.rcp .bpm{min-width:72px;font-size:21px}}
 /* móvil girado (apaisado y bajo): el cuerpo quedaba diminuto; se pide girarlo y la partida se pausa */
@@ -285,7 +282,7 @@ button:focus-visible,input:focus-visible{outline:3px solid #fcd100;outline-offse
  box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -4px 0 rgba(0,0,0,.35),0 6px 16px rgba(0,0,0,.35)}
 .rcp .abajo{background:linear-gradient(180deg,rgba(3,16,12,0),rgba(3,16,12,.85) 30%);width:100%;max-width:520px;padding:6px 14px calc(14px + env(safe-area-inset-bottom));display:grid;gap:8px;grid-template-columns:minmax(0,1fr);position:relative}
 .rcp .botones{display:flex;gap:8px;height:52px}.rcp .botones>.btn{height:100%;padding-top:0;padding-bottom:0}
-.rcp .tarjeta-rcp.capa{position:absolute;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:4;background:rgba(7,26,20,.95);max-height:calc(100vh - 160px);overflow:auto}
+.rcp .tarjeta-rcp.capa{position:absolute;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:4;background:url(aux_bandeja.webp) center/100% 100% no-repeat,#13291f;max-height:calc(100vh - 160px);overflow:auto}   /* lote 6: la bandeja de plastilina */
 .rcp #ayuda{height:2.8em;display:flex;align-items:center;justify-content:center}
 @media (min-width:760px){.rcp .msg{height:96px}.rcp.pls .msg{height:112px}}
 /* 19-11-2026 (revisión total, decisión 3): «Más tiempo para leer» al entrenar (como en «Cuadra la nómina») */
@@ -327,9 +324,8 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 }
 /* ===== 19-11-2026 (revisión total, lote 5): sensación de juego ===== */
 /* el marcador de los niveles 1 y 2 se queda arriba al desplazar la página; los puntos salen sobre él (antes tapaban el texto) */
-#app>.cab{position:sticky;top:0;z-index:4;margin:-16px -16px 10px;padding:16px 16px 6px;background:var(--fondo)}
-.escena-cab,#tj{scroll-margin-top:72px}
-.tiempo i{transform-origin:left center;will-change:transform}   /* 19-11-2026 (revisión total, lote 7): la barra del tiempo se encoge con transform */   /* al llevar la explicación a la vista, que no quede debajo del marcador */
+#app>.cab{position:sticky;top:0;z-index:4;margin:-16px -16px 4px;padding:12px 14px 10px;flex-wrap:wrap;row-gap:2px;background:linear-gradient(180deg,rgba(4,20,14,.9) 0%,rgba(4,20,14,.82) calc(100% - 12px),rgba(4,20,14,0) 100%)}   /* lote 6: con las cuentas y la mecha dentro */
+.escena-cab,#tj{scroll-margin-top:128px}
 .puntos-flota.junto{top:0;left:0;font:800 19px/1 Aleo,Georgia,serif;color:#fff;padding:6px 11px;border-radius:999px;background:var(--c,#178045);z-index:30;white-space:nowrap;
  box-shadow:inset 0 2px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.25);animation:subeMarcador 1s ease-out forwards}
 @keyframes subeMarcador{0%{transform:translate(-50%,10px) scale(.5);opacity:0}22%{transform:translate(-50%,-2px) scale(1.12);opacity:1}60%{transform:translate(-50%,-6px) scale(1);opacity:1}100%{transform:translate(-50%,-22px) scale(.9);opacity:0}}
@@ -367,10 +363,74 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 .rcp .tarjeta-rcp p .dea-op{float:left;width:44px;height:auto;margin:-4px 8px 0 0}
 .estrellas{position:relative}
 .final .estrellas{margin-top:30px}   /* sitio para el sello sin tapar el título */
-@media (max-width:380px){.vidas img{width:16px;height:16px;margin:0 -1px}.cab .pill.vidas{padding:6px 7px}.cab{gap:4px}}
+@media (max-width:380px){.vidas img{width:16px;height:16px;margin:0 -1px}.cab .pill.vidas{padding:8px 12px}.cab{gap:3px}.cab .pill{padding:8px 11px;font-size:13px}#app>.cab{padding:12px 10px 10px}}
 .sello-f{position:absolute;top:0;left:0;width:38px;height:auto;opacity:0;pointer-events:none;transform:translate(-50%,-22px) rotate(90deg);filter:drop-shadow(0 4px 4px rgba(0,0,0,.25))}
 /* la oficial: entre nivel y nivel, solo lo esencial (lo que hay que repasar sale al final) */
 .final.corto .gran{font-size:46px}
+/* ===== 19-11-2026 (revisión total, lote 6): dirección de arte, como en «Cuadra la nómina» =====
+   Los niveles 1 y 2 eran una página web (tarjeta blanca, botones grises, dos barras sin rótulo y el 40 % de abajo vacío). Ahora la
+   escena se juega en el escenario del puesto, a toda pantalla; opciones, rótulos, marcador y botones son las placas de plastilina
+   de José (estiradas por el centro, sin costuras) con la letra en relieve; cada escena es una cuenta de plastilina con su número y
+   el tiempo, una mecha que se consume. En la RCP y la PLS, el mismo lenguaje en el marcador, el reloj y los botones (el monitor
+   de compresiones sigue siendo un aparato). Solo cambia el aspecto: ni tiempos ni puntos */
+.tarjeta.escenario .preg,.escenario .op,.tarjeta.escenario .sig,.chip112,.escenario .explica,.cab .pill,.cab .ctl button,.rcp .pill,.rcp .ctl button,.rcp .salir,.rcp .crono,.rcp .botones .btn,.rcp .tarjeta-rcp .op{
+ border:0;border-radius:999px;box-shadow:none!important;background:var(--placa,url(aux_placa_marron.webp)) center/100% 100% no-repeat!important;filter:drop-shadow(0 3px 3px rgba(0,0,0,.38))}
+/* el escenario: fijo detrás de todo; velo oscuro arriba (marcador) y abajo (opciones), claro en medio (se ve el puesto) */
+.tras{position:fixed;inset:0;z-index:-1;background-color:#2b3a33;background-image:linear-gradient(180deg,rgba(4,20,14,.7) 0%,rgba(4,20,14,.16) 24%,rgba(4,20,14,.08) 48%,rgba(4,20,14,.5) 74%,rgba(4,20,14,.8) 100%),var(--fondo,none);
+ background-size:cover;background-position:center 55%;background-repeat:no-repeat;transition:filter .5s}
+.tras.bien{filter:saturate(1.15) brightness(1.06)}
+.tras.mal{filter:saturate(.55) brightness(.78)}
+#app:has(>.tras){max-width:620px}
+.tarjeta.escenario{background:none;box-shadow:none;border-radius:0;padding:0;overflow:visible;flex:1 0 auto;align-items:stretch}
+#app.midiendo .tarjeta.escenario{flex:none}
+#app.midiendo .tarjeta.escenario .sig{display:block!important;visibility:hidden}   /* el zoom de la tableta deja sitio para «Siguiente» */
+.abajo-e{margin-top:auto;padding-top:10px;display:flex;flex-direction:column;align-items:stretch}
+.tarjeta.escenario .preg{--placa:url(aux_placa_verde.webp);align-self:center;display:flex;align-items:center;justify-content:center;margin:0 0 8px;padding:11px 32px 12px;font:800 18px/1.2 Aleo,Georgia,serif;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.tarjeta.escenario .preg .tel{height:30px;margin:-6px 6px -6px -10px}
+.tarjeta.escenario .opciones{margin-top:0;gap:8px}
+.escenario .op{--placa:url(aux_placa_crema.webp);position:relative;justify-content:center;text-align:center;min-height:56px;padding:13px 38px 14px;font:700 15.5px/1.28 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15);transition:transform .08s,filter .12s}
+.escenario .op:active:not(:disabled){transform:translateY(2px);filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
+.escenario .op.ok,.rcp .tarjeta-rcp .op.ok{--placa:url(aux_placa_verde.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.escenario .op.mal,.rcp .tarjeta-rcp .op.mal{--placa:url(aux_placa_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+.escenario .op::after,.rcp .tarjeta-rcp .op::after{position:absolute;right:16px;top:50%;transform:translateY(-50%);margin:0;font-size:18px}
+.tarjeta.escenario .sig{--placa:url(aux_placa_mostaza.webp);min-height:52px;padding:13px 30px;color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.escenario .explica{--placa:url(aux_placa_marron.webp);padding:14px 30px;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.escenario .explica.ok{--placa:url(aux_placa_verde.webp);color:#fbf6ec}
+.escenario .escena{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.llamada .ins{font-size:13px;color:#cfe9de;margin-bottom:4px}
+.llamada .lin{max-height:max(132px,26vh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(223,243,234,.35) transparent}
+.tarjeta.escenario .chips112{margin-top:0}
+.chips112.hecha{display:none}
+.cab .pill.racha{--placa:url(aux_placa_naranja.webp)}
+.cab .pill.racha .pic{color:#ffe08a}
+.cab .pill.racha.no{visibility:hidden}
+/* cada escena, una cuenta de plastilina con su número; la de ahora, amarilla; las hechas, ✓ verde o ✗ naranja */
+.cab>.barra.cuentas{flex:1 0 100%;display:flex;justify-content:center;align-items:center;gap:5px;height:30px;margin:4px 0 0;background:none;border-radius:0;overflow:visible}
+.cuentas i{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:800 11px/1 Aleo,Georgia,serif;font-style:normal;color:#4a3420;
+ background:radial-gradient(circle at 34% 28%,#fff6e6 0,#e6d6bd 42%,#bea584 100%);box-shadow:inset 0 -2px 2px rgba(80,50,20,.25),0 2px 3px rgba(0,0,0,.45)}
+.cuentas i.ok{color:#fff;background:radial-gradient(circle at 34% 28%,#7fd39f 0,#1f7a45 46%,#145a32 100%)}
+.cuentas i.mal{color:#fff;background:radial-gradient(circle at 34% 28%,#ff9f7a 0,#b8401c 46%,#8a2c10 100%)}
+.cuentas i.ya{width:28px;height:28px;font-size:13px;color:#3a2a00;background:radial-gradient(circle at 34% 28%,#fff4a8 0,#fcd100 45%,#c49c00 100%);
+ box-shadow:inset 0 -2px 2px rgba(90,60,0,.3),0 0 0 3px rgba(252,209,0,.35),0 3px 4px rgba(0,0,0,.45)}
+/* la mecha: un churro de plastilina trenzado que se consume de derecha a izquierda (recorte, sin recolocar la página), con la chispa
+   en la punta; en el último 30 % la chispa crece. Lo quemado queda como un hilo de ceniza */
+.cab>.tiempo.mecha{flex:0 0 calc(100% - 22px);position:relative;height:24px;margin:0 16px 0 6px;background:none;border-radius:0;overflow:visible}
+.mecha::before{content:"";position:absolute;left:6px;right:0;top:50%;height:3px;margin-top:-1px;border-radius:3px;background:rgba(40,28,18,.75)}
+.mecha i{position:absolute;inset:0;width:auto;height:auto;background:none;clip-path:inset(0 calc((1 - var(--q,1))*100%) 0 0)}
+.mecha i::before{content:"";position:absolute;left:0;right:0;top:6px;height:12px;border-radius:999px;
+ background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 42%,rgba(60,30,0,.32)),repeating-linear-gradient(118deg,#e6b062 0 7px,#b87a35 7px 10px);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+.mecha .carril{position:absolute;inset:0;transform:translateX(calc((var(--q,1) - 1)*100%));pointer-events:none}
+.chispa{position:absolute;right:-14px;top:50%;width:28px;height:28px;margin-top:-14px;transition:transform .3s;filter:drop-shadow(0 0 6px rgba(255,170,40,.9))}
+.chispa::before,.chispa::after{content:"";position:absolute;inset:0;clip-path:polygon(50% 0,61% 32%,95% 18%,72% 46%,100% 62%,66% 66%,72% 100%,50% 76%,26% 98%,32% 66%,0 60%,28% 44%,6% 16%,39% 32%);animation:chispa .18s steps(2,jump-none) infinite alternate}
+.chispa::before{background:radial-gradient(circle at 45% 40%,#ffb347,#e85d04)}
+.chispa::after{inset:7px;background:radial-gradient(circle at 40% 35%,#fffbe0,#ffd23a);animation-duration:.13s}
+@keyframes chispa{to{transform:rotate(30deg) scale(.8)}}
+.mecha.urge .chispa{transform:scale(1.35)}
+.mecha.apagada .chispa{display:none}
+/* tableta y ordenador: el velo del marcador, de lado a lado de la pantalla (no una franja del ancho de la columna) y las tarjetas
+   del 112 en dos columnas (placas menos estiradas y «Siguiente» más cerca) */
+@media (min-width:760px){.escenario .op{font-size:16.5px}.escena-cab .pres-globo{font-size:16px}.tarjeta.escenario .chips112{grid-template-columns:1fr 1fr}
+ #app>.cab{background:none;border-image:linear-gradient(180deg,rgba(4,20,14,.9) 0%,rgba(4,20,14,.82) calc(100% - 12px),rgba(4,20,14,0) 100%) fill 0/0/0 100vw}}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -1104,14 +1164,22 @@ function presentaNivel(va){
 
 /* ===== Niveles 1 y 2: escenas tipo test ===== */
 /* 19-11-2026 (revisión total): el marcador se repinta al responder (antes, vidas y puntos cambiaban con la escena siguiente) */
-const escTxt=()=>st.racha>1?ico('llama')+' x'+st.racha:'Escena '+(st.i+1)+'/'+st.lista.length;
+/* 19-11-2026 (revisión total, lote 6, dirección de arte): el número de escena va en las cuentas de plastilina (una por escena, con su
+   número; ✓ o ✗ al responder); la placa del marcador solo enseña la racha y guarda su sitio cuando no la hay (nada salta) */
+const escTxt=()=>st.racha>1?ico('llama')+' x'+st.racha:'';
+const cuentasIn=()=>st.lista.map((x,k)=>{const m=(st.marcas||[])[k];return m===true?'<i class="ok">✓</i>':m===false?'<i class="mal">✗</i>':`<i${k===st.i?' class="ya"':''}>${k+1}</i>`}).join('');
+const cuentasHtml=()=>`<div class="barra cuentas" id="cuentas" role="img" aria-label="Escena ${st.i+1} de ${st.lista.length}">${cuentasIn()}</div>`;
+/* el tiempo de cada escena: una mecha de plastilina que se consume, con su chispa (antes, una barra plana) */
+const mechaHtml=()=>'<div class="tiempo mecha" id="t" aria-hidden="true"><i></i><span class="carril"><b class="chispa"></b></span></div>';
+function quemaMecha(m,q){if(!m)return;q=Math.max(0,q);m.style.setProperty('--q',q.toFixed(4));m.classList.toggle('urge',q<.3)}
 const vidasTxt=()=>'♥'.repeat(Math.max(0,st.vidas))+'♡'.repeat(3-Math.max(0,st.vidas));
 /* 19-11-2026 (arte de José, piezas de plastilina): corazones de plastilina; si aún no han cargado (o faltan), los de texto */
 const vidasHtml=()=>{const ll=arte(ARTE.corazon[0],''),va=arte(ARTE.corazon[1],''),v=Math.max(0,st.vidas);return ll&&va?[0,1,2].map(i=>`<img src="${i<v?ll:va}" alt="">`).join(''):vidasTxt()};
-const cabHtml=()=>`<div class="cab"><span class="pill" id="cpts">${st.pts} pts</span><span class="pill" id="cesc">${escTxt()}</span><span class="pill vidas" id="cvid" role="img" aria-label="Vidas: ${st.vidas} de 3">${vidasHtml()}</span>${ctlHtml()}</div>`;
+const cabHtml=()=>`<div class="cab"><span class="pill" id="cpts">${st.pts} pts</span><span class="pill racha${st.racha>1?'':' no'}" id="cesc">${escTxt()}</span><span class="pill vidas" id="cvid" role="img" aria-label="Vidas: ${st.vidas} de 3">${vidasHtml()}</span>${ctlHtml()}${cuentasHtml()}${mechaHtml()}</div>`;   // lote 6: las cuentas y la mecha, dentro del marcador fijo (se ven aunque se desplace la página)
 function pintaCab(){
- const p=$('#cpts'),e=$('#cesc'),v=$('#cvid');
- if(p)p.textContent=st.pts+' pts';if(e)e.innerHTML=escTxt();
+ const p=$('#cpts'),e=$('#cesc'),v=$('#cvid'),cu=$('#cuentas');
+ if(p)p.textContent=st.pts+' pts';if(e){e.innerHTML=escTxt();e.classList.toggle('no',st.racha<2)}
+ if(cu){cu.innerHTML=cuentasIn();const b=cu.children[st.i];if(b&&b.animate&&(st.marcas||[])[st.i]!=null)b.animate([{transform:'scale(.4)'},{transform:'scale(1.25)',offset:.6},{transform:'scale(1)'}],{duration:340,easing:'ease-out'})}
  if(v){const antes=v.querySelectorAll('img').length?v.innerHTML:null;v.innerHTML=vidasHtml();if(antes!==null&&antes!==v.innerHTML&&v.animate)v.animate([{transform:'scale(1)'},{transform:'scale(1.2)',offset:.35},{transform:'scale(1)'}],{duration:320});v.setAttribute('aria-label','Vidas: '+Math.max(0,st.vidas)+' de 3')}
 }
 /* 19-11-2026 (revisión total, decisión 2): pausa sin ventaja, como en «Cuadra la nómina». Antes, pausar (o cambiar de aplicación) con una
@@ -1130,26 +1198,28 @@ function pregunta(resto){   // resto: ms que le quedaban a la escena que se ha c
  if(s.tipo==='llamada')return llamada(s);
  if(resto==null)st.sinRap=false;
  const ops=baraja([s.ok,...s.no]);
+ /* 19-11-2026 (revisión total, lote 6): la escena se juega dentro del escenario (el puesto a toda pantalla, detrás), sin la tarjeta
+    blanca de página web; las opciones, placas de plastilina abajo, a mano del pulgar */
  app.innerHTML=`${cabHtml()}
-  <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div>
-  <div class="tiempo"><i id="t"></i></div>
-  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">
+  <div class="tarjeta escenario" id="tj">
    ${cabEscena(s)}
-   <div class="preg">${st.l.banco==='pas'?'¿Qué haces?':'¿Qué le pasa y qué haces?'}</div>
+   <div class="abajo-e"><div class="preg">${st.l.banco==='pas'?'¿Qué haces?':'¿Qué le pasa y qué haces?'}</div>
    <div class="opciones textos">${ops.map((o,k)=>`<button class="op" data-k="${k}">${o}</button>`).join('')}</div>
    <div class="explica" id="ex" role="status" aria-live="polite"></div>
-   <button class="sig" id="sig">Siguiente</button>
+   <button class="sig" id="sig">Siguiente</button></div>
   </div>`;
- narraEscena(s);bloqueaToques();alPrincipio();
+ ponTras();narraEscena(s);bloqueaToques();alPrincipio();
  const T=st.l.t*K()*1000,t0=ahoraJ()-(resto==null?0:T-resto),barra=$('#t');
  let hecha=false;
  st.enPausa=()=>{if(hecha)return;st.sinRap=true;const r=repuesto(s);if(!r)return;(st.fuera=st.fuera||[]).push(s);st.lista[st.i]=r;pregunta(T-(ahoraJ()-t0))};
- st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.transform=`scaleX(${Math.max(0,q).toFixed(4)})`;if(q<=0)responde(null)},50);   // lote 7: transform, sin recolocar la página
+ st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;quemaMecha(barra,q);if(q<=0)responde(null)},50);   // lote 7: sin recolocar la página (lote 6: la mecha, con recorte y transform)
+ quemaMecha(barra,1-(ahoraJ()-t0)/T);
  latido(()=>1-(ahoraJ()-t0)/T);
  const responde=k=>{
   if(k!==null&&tocaPronto())return;   // segundo toque de un doble toque
   hecha=true;clearInterval(st.reloj);calla();
   const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=Math.min(T/1000,(ahoraJ()-t0)/1000);
+  (st.marcas=st.marcas||[])[st.i]=ok;barra.classList.add('apagada');   // lote 6: la cuenta de esta escena, ✓ o ✗; la chispa se apaga
   st.tj=(st.tj||0)+seg;   // tiempo de juego del nivel (para el servidor): solo mientras corre el reloj de la escena
   app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(ops[b.dataset.k]===s.ok)b.classList.add('ok');else if(+b.dataset.k===k)b.classList.add('mal')});
   const ex=$('#ex');
@@ -1177,12 +1247,16 @@ function pregunta(resto){   // resto: ms que le quedaban a la escena que se ha c
 /* 19-11-2026 (revisión total, lote 7): al pasar de escena, la página vuelve arriba y el foco va a la pregunta (antes volvía al principio del documento) */
 function alPrincipio(){if(st.i>0||st.fuera){window.scrollTo(0,0);const q=app.querySelector('.preg');if(q){q.tabIndex=-1;try{q.focus({preventScroll:true})}catch(e){}}}}
 function cabEscena(s,fondo){
- if(!hayElenco())return `<div class="icoesc" style="background:${st.l.col}">${ico(s.tipo==='llamada'?'telefono':st.l.banco==='pas'?'escudo':'fonendo')}</div>${s.tipo==='llamada'?'':`<div class="escena">${s.t}</div>`}`;
+ /* 19-11-2026 (revisión total, lote 6): el escenario va a toda pantalla detrás de la escena (ponTras), no en una cabecera desenfocada */
+ if(!hayElenco()){st.fondoEsc=ARTE.escena.HIG?`url('${ARTE.escena.HIG}')`:'none';return `<div class="icoesc" style="background:${st.l.col}">${ico(s.tipo==='llamada'?'telefono':st.l.banco==='pas'?'escudo':'fonendo')}</div>${s.tipo==='llamada'?'':`<div class="escena">${s.t}</div>`}`}
  const c=s.s&&s.s!==cc()&&typeof ELENCO!=='undefined'&&ELENCO[s.s]?s.s:cc();   // escena de un sector: su puesto; común: el tuyo
  if(fondo===undefined)fondo=st.l.banco==='val'&&!s.s&&ARTE.descanso&&ARTE_OK[ARTE.descanso]!==0?ARTE.descanso:ARTE.escena[c];   // 19-11-2026: las comunes del nivel 2, en la sala de descanso (si falta, el puesto)
  if(!fondo)fondo=ARTE.escena[c];   // la llamada, sin imagen propia: el puesto sin personas
- return `<div class="escena-cab" id="ecab"><div class="fondo" aria-hidden="true" style="--fondo:${fondoDe(fondo,c)}"></div><div class="slot" id="epres" aria-live="polite" aria-atomic="true"></div></div>`;
+ st.fondoEsc=fondoDe(fondo,c);
+ return `<div class="escena-cab" id="ecab"><div class="slot" id="epres" aria-live="polite" aria-atomic="true"></div></div>`;
 }
+/* el escenario, detrás de todo y fijo al desplazar (fuera de la tarjeta: su sacudida al fallar no lo mueve) */
+function ponTras(){const d=document.createElement('div');d.className='tras';d.id='tras';d.setAttribute('aria-hidden','true');d.style.setProperty('--fondo',st.fondoEsc||'none');app.prepend(d)}
 function entradaEscena(s){
  if(s.s&&typeof ELENCO!=='undefined'&&ELENCO[s.s])return `<b>Estás trabajando en ${enEmpresa(s.s,true)}.</b> `;
  if(/^¿/.test(s.t))return '<b>Esto hay que saberlo sin dudar.</b> ';
@@ -1195,12 +1269,14 @@ function narraEscena(s,quien,html){
 }
 function explicaEscena(ok,html){
  const cab=$('#ecab'),slot=$('#epres');if(!cab||!slot||!slot.querySelector('.pres'))return false;
- cab.classList.add(ok?'bien':'mal');reaccionaHtml(slot,ok?'bien':'mal',html);return true;
+ cab.classList.add(ok?'bien':'mal');const t=$('#tras');if(t)t.classList.add(ok?'bien':'mal');reaccionaHtml(slot,ok?'bien':'mal',html);return true;
 }
 function muestraRespuesta(b){
  const tj=$('#tj'),cab=$('#ecab');if(!tj||!b)return;
  if(!cab)return b.scrollIntoView({behavior:'smooth',block:'end'});
- if(tj.getBoundingClientRect().height<=innerHeight-12)tj.scrollIntoView({behavior:'smooth',block:'end'});   // cabe: explicación, opciones y «Siguiente» a la vista
+ /* 19-11-2026 (revisión total, lote 6): se cuenta el marcador fijo de arriba (con las cuentas y la mecha), que si no tapaba el principio de la explicación */
+ const m=app.querySelector('.cab'),h=m?m.getBoundingClientRect().height:0;if(m)cab.style.scrollMarginTop=(m.offsetHeight+6)+'px';   // h, en la pantalla (con el zoom de la tableta)
+ if(b.getBoundingClientRect().bottom-cab.getBoundingClientRect().top<=innerHeight-h-12)b.scrollIntoView({behavior:'smooth',block:'end'});   // cabe: explicación, opciones y «Siguiente» a la vista
  else cab.scrollIntoView({behavior:'smooth',block:'start'});                                                  // no cabe: primero la explicación
 }
 /* La llamada al 112 (José, 5-11-2026): se contesta tocando tarjetas; una es trampa («Cuelgo ya»).
@@ -1231,14 +1307,15 @@ function llamada(s){
  const orden=ordenLlamada(s);
  const fichas=baraja(orden.map((x,k)=>({k,x:x.r})).concat([{k:-1,x:s.trampa}]));
  let paso=0,hecho=false;
+ /* 19-11-2026 (revisión total, lote 6): en el escenario, como las escenas; la conversación en una bandeja de plastilina y las tarjetas
+    abajo, quietas mientras la conversación crece hacia ellas */
  app.innerHTML=`${cabHtml()}
-  <div class="barra"><i style="width:${st.i/st.lista.length*100}%"></i></div><div class="tiempo"><i id="t"></i></div>
-  <div class="tarjeta" id="tj" style="border-top:6px solid ${st.l.col}">${cabEscena(s,ARTE.llamada[cc()])}
-   <div class="preg">${arte(ARTE.telefono,'')?`<img class="tel" src="${ARTE.telefono}" alt="">`:''}Llamada al 112</div><div class="escena">${hayElenco()?'Te van preguntando: contesta tocando la tarjeta que toca.':s.t}</div>
-   <div class="llamada" id="ll" aria-live="polite">${preg112(orden[0].p)}</div>
-   <div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
-   <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div>`;
- alPrincipio();
+  <div class="tarjeta escenario" id="tj">${cabEscena(s,ARTE.llamada[cc()])}
+   <div class="preg">${arte(ARTE.telefono,'')?`<img class="tel" src="${ARTE.telefono}" alt="">`:''}Llamada al 112</div>
+   <div class="llamada"><div class="lin" id="ll" aria-live="polite"><div class="ins">${hayElenco()?'Te van preguntando: contesta tocando la tarjeta que toca.':s.t}</div>${preg112(orden[0].p)}</div></div>
+   <div class="abajo-e"><div class="chips112">${fichas.map(f=>`<button class="chip112" data-k="${f.k}">${f.x[0]}<small>${f.x[1]}</small></button>`).join('')}</div>
+   <div class="explica" id="ex" role="status" aria-live="polite"></div><button class="sig" id="sig">Siguiente</button></div></div>`;
+ ponTras();alPrincipio();
  if(hayElenco())narraEscena(s,'vet','Alguien de nuestro equipo se ha desplomado: no responde y no respira con normalidad. Me quedo a su lado y empiezo la RCP. <b>Llama tú al 112, con el altavoz puesto.</b>');
  bloqueaToques();
  const T=(st.l.t+15)*K()*1000,t0=ahoraJ(),barra=$('#t');
@@ -1248,6 +1325,8 @@ function llamada(s){
  const acaba=(ok,mala)=>{
   if(hecho)return;hecho=true;clearInterval(st.reloj);calla();app.querySelectorAll('.chip112').forEach(b=>b.disabled=true);
   const ex=$('#ex'),seg=Math.min(T/1000,(ahoraJ()-t0)/1000);st.tj=(st.tj||0)+seg;
+  (st.marcas=st.marcas||[])[st.i]=!!ok;barra.classList.add('apagada');   // lote 6: la cuenta de la llamada y la chispa apagada
+  app.querySelector('.chips112').classList.add('hecha');   // lote 6: las tarjetas ya no sirven (lo dicho queda en la conversación): «Siguiente» sube, sin bajar media página
   if(ok){st.racha++;st.aciertos++;const g=Math.round((150+rapidez(45,T/1000-seg))*(1+Math.min(st.racha-1,4)*.25));st.pts+=g;flota('+'+g,'var(--ok)');sfx('premio');
    if(!explicaEscena(true,`<b>¡Llamada perfecta!</b> ${s.e}`)){ex.className='explica ok';ex.innerHTML=`<b>¡Llamada perfecta!</b>${s.e}`}}
   else{st.racha=0;st.vidas--;st.fallos.push(s);const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo();
@@ -1257,7 +1336,8 @@ function llamada(s){
   const b=$('#sig');b.style.display='block';setTimeout(()=>muestraRespuesta(b),150);
   b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Siguiente';b.onclick=()=>{st.i++;pregunta()};
  };
- st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;barra.style.transform=`scaleX(${Math.max(0,q).toFixed(4)})`;if(q<=0)acaba(false)},50);
+ st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;quemaMecha(barra,q);if(q<=0)acaba(false)},50);
+ quemaMecha(barra,1);
  latido(()=>hecho?null:1-(ahoraJ()-t0)/T);
  app.querySelectorAll('.chip112').forEach(b=>b.onclick=()=>{
   if(tocaPronto())return;   // segundo toque de un doble toque
@@ -1265,7 +1345,8 @@ function llamada(s){
   const k=+b.dataset.k;
   if(k!==paso)return acaba(false,k);
   b.classList.add('usada');sfx('acierto',paso);paso++;   // fase 5: cada tarjeta bien puesta, un tono más alto
-  $('#ll').innerHTML+=`<div class="tu"><b>Tú:</b> ${orden[k].r[1]}</div>`+(paso<orden.length?preg112(orden[paso].p):'<div class="q"><b>Te dicen:</b> «No cuelgue: le voy indicando qué hacer.»</div>');
+  const ll=$('#ll');ll.innerHTML+=`<div class="tu"><b>Tú:</b> ${orden[k].r[1]}</div>`+(paso<orden.length?preg112(orden[paso].p):'<div class="q"><b>Te dicen:</b> «No cuelgue: le voy indicando qué hacer.»</div>');
+  ll.scrollTop=ll.scrollHeight;   // lote 6: la conversación tiene alto máximo y enseña siempre lo último (las tarjetas no se mueven)
   if(paso===orden.length)acaba(true);
  });
 }
@@ -1325,6 +1406,9 @@ function precargaVictima(){
 }
 try{speechSynthesis.getVoices()}catch(e){}
 [ARTE.telefono,ARTE.sello,...ARTE.corazon].forEach(sonda);   // piezas pequeñas de la interfaz (unos 30 KB): se ven nada más empezar
+/* 19-11-2026 (revisión total, lote 6): las placas de plastilina de «Cuadra la nómina» (unos 75 KB): opciones, rótulos, marcador y botones */
+const PLACAS=['crema','verde','marron','naranja','mostaza','azul','gris'].map(c=>`aux_placa_${c}.webp`).concat('aux_bandeja.webp');
+PLACAS.forEach(sonda);
 /* 19-11-2026 (revisión total, lote 5): dianas de al menos 24 px de radio en pantalla. A 360 × 640 el dibujo se ve a 0,65 px por
    unidad: el sitio de las manos tenía 17 px de radio y la meta de la PLS 23, y las tres estrellas de la RCP bajaban del 90 % al 78 %
    solo por el tamaño del dedo. tope: para que una diana no alcance otra (el parche de la clavícula no llega al centro del pecho) */
@@ -1648,7 +1732,7 @@ function hunde(f=1,suena=true,ms=260){
 function metronomo(on){
  clearInterval(st.metro);
  if(!on)return;
- pulsoMet(()=>st.fase==='comp'&&!(st.oficial&&st.cuenta>=10)&&st.cuenta<30,()=>{const c=$('#cuenta');if(c&&c.animate)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})});
+ pulsoMet(()=>st.fase==='comp'&&!(st.oficial&&st.cuenta>=10)&&st.cuenta<30,()=>{const c=$('#cuenta');if(c&&c.animate)c.animate([{color:'#7dffb5'},{color:'#fcd100'}],{duration:200})});
 }
 function ventilar(){
  if(st.fase!=='comp')return;
@@ -1966,7 +2050,7 @@ function profEmpieza(){
   $('#flecha').setAttribute('opacity','1');
   aviso('Desliza hacia abajo desde el círculo hasta la franja verde (5-6 cm) y suelta. <b>Al ritmo del pitido.</b>');
  }
- pulsoMet(()=>st.fase==='prof'&&st.cuenta<10,()=>{const c=$('#cuenta');if(c&&c.animate&&!MOV_REDUCIDO)c.animate([{color:'#7dffb5'},{color:'#fff'}],{duration:200})});
+ pulsoMet(()=>st.fase==='prof'&&st.cuenta<10,()=>{const c=$('#cuenta');if(c&&c.animate&&!MOV_REDUCIDO)c.animate([{color:'#7dffb5'},{color:'#fcd100'}],{duration:200})});
 }
 /* Deslizar: máquina de estados de cada trazo (profundidad en cm desde donde se apoyó el dedo).
    arriba → (pasa de 1 cm) baja → (sube 1 cm desde el máximo) sube → (vuelve a menos de 0,5 cm) arriba.
@@ -2230,8 +2314,8 @@ portada();
   const fija=app.querySelector('.rcp');           // pantallas de juego a pantalla completa: sin escalar
   btn.style.visibility=fija||app.querySelector('#tj')?'hidden':'';   // el botón no tapa el juego (18-11-2026: en la tableta tapaba la última opción de las escenas)
   if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
-  app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
-  const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
+  app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';app.classList.add('midiendo');   // lote 6: la escena no se estira mientras se mide
+  const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].filter(c=>c.id!=='tras').map(c=>c.getBoundingClientRect().bottom))-t+16};   // lote 6: sin el escenario de fondo (fijo, a toda pantalla)
   const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
   let z=H/alto();
   if(z>=zw){z=zw}                                   // vertical: llena el ancho, como en el móvil
@@ -2240,7 +2324,7 @@ portada();
    for(let k=0;k<3;k++){app.style.maxWidth=Math.min(ANCHO_MAX,Math.floor(innerWidth/z))+'px';z=Math.min(2.4,H/alto())}
    z=Math.max(1,z);app.style.maxWidth=Math.min(ANCHO_MAX,Math.floor(innerWidth/z))+'px';
   }
-  app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
+  app.classList.remove('midiendo');app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
   midiendo=false;
  }
  new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});   // 19-11-2026 (revisión total, lote 7): solo al cambiar de pantalla (con subtree, al salir la explicación la tarjeta encogía un 15 % y volvía a crecer)
