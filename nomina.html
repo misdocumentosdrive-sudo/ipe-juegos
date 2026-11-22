@@ -97,7 +97,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
  background:linear-gradient(rgba(22,52,42,.92),rgba(8,28,21,.92));box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.3),0 4px 0 rgba(0,0,0,.25);
  font:700 16px/1.2 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;pointer-events:none}
 .chapa small{display:block;font-weight:600;font-size:13px;color:#bfe3d2;margin-top:3px}
-.actual .chapa{top:146px}
+.actual .chapa{top:146px;max-width:262px}   /* 22-11-2026: con 200 px, «Dietas de viaje / mantenimiento en hoteles de otra provincia» bajaba a 3 líneas y tapaba «No va en la nómina» */
 /* bandejas */
 .bandeja{position:absolute;border:0;padding:0;background:none;cursor:pointer;touch-action:manipulation}
 .bandeja img{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 8px rgba(0,0,0,.4));pointer-events:none}
@@ -327,7 +327,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
    Letreros con la Aleo de la identidad del centro, más fina: respiran mejor */
 .b-izq{left:calc(6px - min(var(--ext,0px),26px));top:158px;width:90px;height:124px}
 .b-der{right:calc(6px - min(var(--ext,0px),26px));top:158px;width:90px;height:124px}
-.b-abj{top:calc(404px + min(var(--ext,0px),26px));bottom:auto}   /* el mismo hueco que a los lados, contando desde el letrero de la ficha */
+.b-abj{top:calc(404px + min(var(--ext,0px),26px) + var(--baja,0px));bottom:auto}   /* el mismo hueco que a los lados, contando desde el letrero de la ficha */
 .chapa{font:600 16.5px/1.18 Aleo,Georgia,serif;letter-spacing:.005em}
 /* revisión 19-11-2026: un punto más (a 320 px quedaba en unos 11 px) */
 .chapa small{font:500 14px/1.25 Aleo,Georgia,serif;letter-spacing:.01em;margin-top:4px}
@@ -1188,7 +1188,7 @@ function siguiente(){
  if(st.tuto)tutoMano();
 }
 function pintaFicha(f){const im=$('#actImg');im.src=img(f.img);st.sinImg=!im.complete;if(st.sinImg)im.onload=im.onerror=()=>{st.sinImg=false};   // revisión 19-11-2026: sin dibujo todavía (mala cobertura), el reloj espera
- $('#actCh').classList.toggle('larga',f.t.length>26);$('#actCh').innerHTML=`${junto(f.t)}${f.s?`<small>${junto(f.s)}</small>`:''}`}
+ $('#actCh').classList.toggle('larga',f.t.length>26);$('#actCh').innerHTML=`${junto(f.t)}${f.s?`<small>${junto(f.s)}</small>`:''}`;huecoAbajo()}
 function decirFicha(f){decir(`${f.t}${f.s?', '+f.s:''}. ${st.modo==='nomina'?'¿En qué parte de la nómina va?':'¿'+Object.values(st.l.band).map(b=>b.n).join(', ')+'?'}`)}
 /* Pausa sin ventaja (revisión del 19-11-2026): quien pausa con una ficha a la vista no gana tiempo para pensarla. En los niveles
    1 y 2 se cambia por otra de la misma bandeja que aún no ha salido (con el tiempo que le quedaba); en el nivel 3 (12 piezas
@@ -1492,6 +1492,15 @@ function guardaAtras(){try{if(!history.state||!history.state.nomina)history.push
 addEventListener('popstate',()=>{if(typeof OFI_VIVA!=='undefined'&&OFI_VIVA)return;if(jugando()){guardaAtras();oculta({type:'blur'})}});
 
 /* ===== Final de cada nivel ===== */
+/* 22-11-2026: una placa de tres líneas («Indemnización por fin de contrato / acaba tu contrato temporal») pisaba el letrero de la
+   bandeja de abajo, que va siempre encima de su bandeja (José, 18-11-2026): la bandeja baja lo justo y vuelve con la siguiente ficha */
+function huecoAbajo(){
+ const b=document.querySelector('.b-abj'),ch=$('#actCh');if(!b||!ch)return;
+ b.style.setProperty('--baja','0px');const r=b.querySelector('.rot');if(!r)return;
+ const ov=Math.ceil(ch.getBoundingClientRect().bottom+6-r.getBoundingClientRect().top);
+ const k=b.offsetHeight?b.getBoundingClientRect().height/b.offsetHeight:1;   // la escena puede ir escalada
+ if(ov>0)b.style.setProperty('--baja',Math.ceil(ov/(k||1))+'px');
+}
 function final(est){
  parar();app.classList.remove('jugando','v','pausado');
  const l=st.l,antes=rec(st.n);guarda(st.n,st.pts);
