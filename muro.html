@@ -95,7 +95,7 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 .resp .pl{position:absolute;inset:0;z-index:-1;background:var(--c);-webkit-mask:url(aux_placa_crema.webp) center/100% 100% no-repeat;mask:url(aux_placa_crema.webp) center/100% 100% no-repeat}
 .resp .pl::after{content:'';position:absolute;inset:0;background:url(aux_placa_crema.webp) center/100% 100% no-repeat;mix-blend-mode:multiply}
 /* sello del expediente: «Cerrado» (verde) al acertar y «Revisar» (rojo) al fallar, con el lacre de la nómina */
-.sello-f{position:absolute;right:-10px;top:-34px;width:74px;height:74px;display:grid;place-items:center;transform:rotate(-12deg);pointer-events:none;z-index:2;animation:sella .32s cubic-bezier(.3,1.8,.5,1) both}
+.sello-f{position:absolute;right:-4px;top:-34px;width:74px;height:74px;display:grid;place-items:center;transform:rotate(-12deg);pointer-events:none;z-index:2;animation:sella .32s cubic-bezier(.3,1.8,.5,1) both}
 .sello-f img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .sello-f.ok img{filter:hue-rotate(125deg) saturate(.85) brightness(.95) drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .sello-f b{position:relative;font:800 13px Aleo,Georgia,serif;letter-spacing:1px;color:#fff6e8;text-transform:uppercase;text-shadow:0 -1px 0 rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.25)}
@@ -189,7 +189,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .heroe.escena{background:linear-gradient(180deg,rgba(0,40,29,.7) 0%,rgba(0,34,25,.86) 48%,rgba(0,24,17,.96) 100%),var(--escena) center 35%/cover no-repeat,#062a1f}
 .heroe.escena h1,.heroe.escena .hm,.heroe.escena>p,.escena-n .drama{text-shadow:0 1px 3px rgba(0,0,0,.55)}
 .heroe .narra{margin:12px 0 4px}
-.escena-n{position:relative;border-radius:20px;overflow:hidden;padding:56px 12px 12px;background:linear-gradient(180deg,rgba(0,40,29,.12) 0%,rgba(0,32,23,.78) 58%,rgba(0,24,17,.94) 100%),var(--escena) center 30%/cover no-repeat,#0b5a40;box-shadow:0 10px 26px rgba(0,66,48,.3)}
+.escena-n{position:relative;border-radius:20px;overflow:hidden;padding:56px 12px 12px;background:linear-gradient(180deg,rgba(0,40,29,.12) 0%,rgba(0,32,23,.78) 58%,rgba(0,24,17,.94) 100%),var(--escena) var(--pos,center 30%)/cover no-repeat,#0b5a40;box-shadow:0 10px 26px rgba(0,66,48,.3)}
 .escena-n .drama{background:none;padding:0}
 .escena-n .drama strong{color:var(--amarillo)}
 .final .escena-n{margin:12px 0 4px;text-align:left}
@@ -804,7 +804,7 @@ let st={}, raf=0;
      muro_bola · muro_pala   bola y pala de plastilina (PNG con transparencia; la pala, alargada, se estira por el centro)
      muro_nivel_<1|2|3>      22-11-2026 (decisión de José: 3 escenas comunes sin personas): escenario de cada nivel, detrás del muro
    Si una imagen falta o no carga, se pinta lo de ahora (no se rompe nada). */
-const ARTE=Object.assign({ladrillo:{},pared:{},nivel:{},bola:'',pala:''},{"ladrillo": {}, "pared": {}, "nivel": {}});
+const ARTE=Object.assign({ladrillo:{},pared:{},nivel:{},bola:'',pala:''},{"ladrillo": {}, "pared": {}, "nivel": {"1": "muro_nivel_1.webp", "2": "muro_nivel_2.webp", "3": "muro_nivel_3.webp"}});
 const IMGS={};
 const lista=im=>!!(im&&im.complete&&im.naturalWidth>0&&!im.mal);
 function imagen(src,alCargar){                    /* se carga una vez; alCargar se llama cuando llega (si aún no estaba) */
@@ -842,7 +842,7 @@ const fondoCSS=c=>{const u=escena(c);return u?`--escena:url('${u}')`:''};
    puesto del ciclo sin personas de la Serpiente (ya oscurecido y desenfocado: por eso se oscurece menos encima) */
 const escenaNivel=n=>(ARTE.nivel&&ARTE.nivel[n])||`serpiente_tablero_${cicloArte()}_fondo.jpg`;
 const escenaOscura=n=>!(ARTE.nivel&&ARTE.nivel[n]);
-const fondoNivelCSS=n=>`--escena:url('${escenaNivel(n)}')`;
+const fondoNivelCSS=n=>`--escena:url('${escenaNivel(n)}')`+(escenaOscura(n)?'':';--pos:center 78%');   /* las escenas de José tienen el interés abajo (arriba, la pared del muro) */
 
 /* 22-11-2026 (revisión total, lote 1): sorteo con mínimos y máximos por tipo. Antes era al azar y el accidente de trabajo dominaba
    las bolsas: pulsando siempre «Accidente de trabajo» el 83 % de las partidas sacaba +0,10, y en el nivel 3 de IFC e ITE la mitad
