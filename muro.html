@@ -831,7 +831,7 @@ let st={}, raf=0;
      muro_bola · muro_pala   bola y pala de plastilina (PNG con transparencia; la pala, alargada, se estira por el centro)
      muro_nivel_<1|2|3>      22-11-2026 (decisión de José: 3 escenas comunes sin personas): escenario de cada nivel, detrás del muro
    Si una imagen falta o no carga, se pinta lo de ahora (no se rompe nada). */
-const ARTE=Object.assign({ladrillo:{},pared:{},nivel:{},bola:'',pala:''},{"ladrillo": {}, "pared": {}, "nivel": {"1": "muro_nivel_1.webp", "2": "muro_nivel_2.webp", "3": "muro_nivel_3.webp"}});
+const ARTE=Object.assign({ladrillo:{},pared:{},nivel:{},bola:'',pala:''},{"ladrillo": {}, "pared": {}, "nivel": {"1": "muro_nivel_1.webp", "1_HIG": "muro_nivel_1_HIG.webp", "1_IFC": "muro_nivel_1_IFC.webp", "1_ITE": "muro_nivel_1_ITE.webp", "1_STI": "muro_nivel_1_STI.webp", "2": "muro_nivel_2.webp", "2_HIG": "muro_nivel_2_HIG.webp", "2_IFC": "muro_nivel_2_IFC.webp", "2_ITE": "muro_nivel_2_ITE.webp", "2_STI": "muro_nivel_2_STI.webp", "3": "muro_nivel_3.webp", "3_HIG": "muro_nivel_3_HIG.webp", "3_IFC": "muro_nivel_3_IFC.webp", "3_ITE": "muro_nivel_3_ITE.webp", "3_STI": "muro_nivel_3_STI.webp"}});
 const IMGS={};
 const lista=im=>!!(im&&im.complete&&im.naturalWidth>0&&!im.mal);
 function imagen(src,alCargar){                    /* se carga una vez; alCargar se llama cuando llega (si aún no estaba) */
@@ -867,8 +867,12 @@ const fondoCSS=c=>{const u=escena(c);return u?`--escena:url('${u}')`:''};
 /* 22-11-2026 (revisión total, lote 1): detrás del muro y en la presentación del nivel iba el retrato de la pareja del ciclo y se veían
    caras gigantes a través de los ladrillos. Ahora, el escenario del nivel (ARTE.nivel, cuando José lo genere) o, mientras tanto, el
    puesto del ciclo sin personas de la Serpiente (ya oscurecido y desenfocado: por eso se oscurece menos encima) */
-const escenaNivel=n=>(ARTE.nivel&&ARTE.nivel[n])||`serpiente_tablero_${cicloArte()}_fondo.jpg`;
-const escenaOscura=n=>!(ARTE.nivel&&ARTE.nivel[n]);
+/* 22-11-2026 (José: «los fondos de higiene no son de higiene… lo suyo sería contextualizarlos»): primero la escena del nivel en el
+   sitio del ciclo (muro_nivel_<n>_<CICLO>: salida, puesto de trabajo y archivo de la clínica dental, la sala de máquinas, la azotea o
+   el centro de datos); si aún no está, la común del nivel */
+const nivelArte=n=>ARTE.nivel&&(ARTE.nivel[n+'_'+cicloArte()]||ARTE.nivel[n]);
+const escenaNivel=n=>nivelArte(n)||`serpiente_tablero_${cicloArte()}_fondo.jpg`;
+const escenaOscura=n=>!nivelArte(n);
 const fondoNivelCSS=n=>`--escena:url('${escenaNivel(n)}')`+(escenaOscura(n)?'':';--pos:center 78%');   /* las escenas de José tienen el interés abajo (arriba, la pared del muro) */
 
 /* 22-11-2026 (revisión total, lote 1): sorteo con mínimos y máximos por tipo. Antes era al azar y el accidente de trabajo dominaba
@@ -926,7 +930,7 @@ function portada(){
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
   ${(()=>{const t=casosDelCiclo(),a=archivo(),n=t.filter(x=>a.has(hashCaso(x[0]))).length;return `<div class="archivo">${ico('carpeta')} <b>Archivo de expedientes:</b> ${n} de ${t.length} bien clasificados${n?'':' (cada caso que aciertas se sella y se guarda aquí)'}<div class="barra"><i style="width:${Math.round(n/t.length*100)}%"></i></div></div>`})()}
-  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por expediente (${SEGUNDOS*2} s en vez de ${SEGUNDOS})</span></label>
+  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por expediente (${SEGUNDOS*2} s en vez de ${SEGUNDOS}). Solo al entrenar.</span></label>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · LGSS (arts. 156, 157 y 158) y RD 1299/2006</div>`;
  app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>presentaNivel(+b.dataset.n));
