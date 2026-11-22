@@ -1,0 +1,1936 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuadra la nómina · IPE I</title>
+<style>@font-face{font-family:"Aleo";src:url(aleo.woff2?v=d7c8feba) format("woff2"),url(aleo.ttf?v=fed0d713) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<style>
+:root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--naranjaAA:#c24400;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#178045;--mal:#d33a1f;--piedra:#6b6f72}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overscroll-behavior:none}
+body{background:var(--fondo);color:var(--texto);font:16px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:520px;min-height:100%;display:flex;flex-direction:column;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+h1,h2,.serif{font-family:Aleo,Georgia,serif}
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block}
+.marca{font:800 13px Aleo,Georgia,serif;color:var(--verde);letter-spacing:.3px}
+.pill{background:#fff;border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;box-shadow:0 1px 3px rgba(0,0,0,.08);white-space:nowrap}
+.confeti{position:fixed;top:-12px;width:10px;height:14px;border-radius:2px;pointer-events:none;animation:cae linear forwards;z-index:40}
+@keyframes cae{to{transform:translateY(105vh) rotate(720deg)}}
+/* portada */
+.portada{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px}
+.heroe.mesa{background:linear-gradient(180deg,rgba(0,40,29,.55) 0%,rgba(0,34,25,.82) 46%,rgba(0,22,16,.96) 100%),url(nomina_fondo.webp) center 40%/cover no-repeat,#062a1f}
+.heroe.mesa h1,.heroe.mesa .hm,.heroe.mesa>p{text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.heroe .narra{margin:12px 0 6px}
+.heroe .tira{display:flex;gap:6px;margin:10px 0 6px}
+.heroe .tira img{width:46px;height:46px;filter:drop-shadow(0 4px 5px rgba(0,0,0,.45))}
+.heroe .tira img:nth-child(2n){transform:translateY(-4px) rotate(-6deg)}
+.nivel{border:0;border-radius:18px;padding:14px 16px;text-align:left;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.07);cursor:pointer;display:flex;gap:14px;align-items:center;font:inherit;color:inherit}
+.nivel .n{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 20px Aleo,Georgia,serif;color:#fff}
+.nivel b{display:block;font:800 17px Aleo,Georgia,serif;color:var(--verde)}
+.nivel span{font-size:14px;color:var(--gris)}
+.record{font-size:13px;color:var(--gris)}
+.oficial{background:#fff;border:2px solid var(--verde);border-radius:16px;padding:14px;margin:14px 0;text-align:left;display:grid;gap:8px}
+.oficial label span,.oficial small{font-size:13px;opacity:.75}
+.oficial input{font:700 20px/1.2 "Helvetica Neue",Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;border:2px solid #cfd8d3;border-radius:10px;width:100%}
+.oficial input.error{border-color:#c0392b;background:#fdecea}
+.oficial .btn[disabled]{opacity:.5}
+.entreno{color:var(--verde);font-size:18px;margin:6px 0 4px;text-align:left}
+.oficial .primera{margin:8px 0 0;font-size:14px;font-weight:700;color:var(--verde)}
+.aviso-of{background:#fff8d6;border:2px solid #fcd100;border-radius:14px;padding:12px;margin:14px 0;line-height:1.5}
+.cifras{font-size:12.5px;color:var(--gris);background:#fff;border-radius:12px;padding:8px 12px;text-align:left}
+#envio{margin-top:8px;font-weight:700;color:var(--verde)}
+.libro{font-size:14px;color:var(--verde2)}
+.btns{display:grid;gap:10px;margin-top:16px}
+.btn{border:0;border-radius:14px;padding:14px;font:800 17px Aleo,Georgia,serif;cursor:pointer;min-height:48px}
+.btn.p{background:var(--verde);color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25),0 4px 12px rgba(0,66,48,.25)}
+.btn.s{background:#e3ece8;color:var(--verde)}
+.pie{text-align:center;font-size:12px;color:var(--gris);margin-top:auto;padding-top:14px}
+/* presentación del nivel */
+.intro{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.intro h1{color:var(--verde);margin:0;font-size:27px;line-height:1.15}
+.escena-n{position:relative;border-radius:20px;overflow:hidden;padding:64px 12px 12px;background:linear-gradient(180deg,rgba(0,40,29,.05) 0%,rgba(0,32,23,.72) 58%,rgba(0,24,17,.94) 100%),var(--fondo,url(nomina_fondo.webp)) center 45%/cover no-repeat,#0b5a40;box-shadow:0 10px 26px rgba(0,66,48,.3)}
+.reglas{background:#fff;border-radius:16px;padding:12px 16px;font-size:15px;line-height:1.45;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.reglas .cortas{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.reglas .cortas li{display:flex;gap:10px;align-items:flex-start}
+.reglas .cortas .ico{color:var(--naranjaAA);margin-top:2px}
+.reglas details{margin-top:8px;font-size:14px}
+.reglas summary{cursor:pointer;font-weight:700;color:var(--verde);min-height:44px;display:flex;align-items:center}
+.tres{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.tres div{border-radius:12px;padding:8px 6px;color:#fff;font:700 13px/1.25 "Helvetica Neue",Arial,sans-serif;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.tres .ico{width:22px;height:22px}
+.tres small{font-weight:600;opacity:.9;font-size:11.5px}
+.tuto-msg{background:#fff8d6;border-radius:10px;padding:8px 10px;margin:8px 0 0;font-size:14px;line-height:1.4}
+/* ===== pantalla de juego: escenario lógico fijo de 360 × 640 (igual en todos los dispositivos), escalado a la pantalla ===== */
+#app.jugando{max-width:none;padding:6px 6px calc(6px + env(safe-area-inset-bottom));height:100%;min-height:0;background:linear-gradient(rgba(10,6,0,.14),rgba(10,6,0,.28)),var(--fondo,url(nomina_fondo.webp)) center/cover no-repeat,#3b3026}
+@media (orientation:portrait){#app.jugando.v{background:linear-gradient(rgba(10,6,0,.12),rgba(10,6,0,.28)),url(nomina_fondo_v.webp) center/cover no-repeat,#5a4630}}
+.juego{flex:1;display:flex;flex-direction:column;min-height:0}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 auto 6px;width:100%;flex-wrap:wrap}
+.hud .pill{background:rgba(8,28,21,.82);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 6px rgba(0,0,0,.25);font-size:14px;padding:6px 11px;font-variant-numeric:tabular-nums;backdrop-filter:blur(3px)}
+.hud .racha{background:linear-gradient(#ff7a2e,#c24400);display:none}
+.hud .racha.si{display:inline-block;animation:salta .35s cubic-bezier(.3,1.7,.5,1)}
+.hud .ctl{display:flex;gap:6px}
+.hud button.pill{border:0;cursor:pointer;font:inherit;font-weight:700;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.hud .ctl .ico{width:22px;height:22px}
+@keyframes salta{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+.marco{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none}
+.lienzo{position:relative;flex:none}
+.esc{position:absolute;left:0;top:0;width:360px;height:640px;transform-origin:0 0}
+/* la cinta de arriba: lo que viene. Larga, con rodillos en los extremos (la banda da la vuelta sobre el cilindro) y estirada a los
+   lados si sobra pantalla (--ext). Revisión del 19-11-2026: una sola regla (antes, tres que se pisaban), sombra de caja en vez
+   de filtro (el filtro se recalculaba entero en cada fotograma) y las fichas se mueven con transform */
+.cinta{position:absolute;left:calc(60px - var(--ext,0px));right:calc(60px - var(--ext,0px));top:2px;height:88px;overflow:hidden;
+ background:url(nomina_cinta.webp) 0 0/auto 100% repeat-x;box-shadow:0 6px 6px rgba(0,0,0,.4)}
+.cinta::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 70%,rgba(0,0,0,.25))}
+.cinta img{position:absolute;left:0;top:13px;width:62px;height:62px;z-index:1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5));will-change:transform}
+/* la ficha activa */
+.actual{position:absolute;left:0;top:0;width:150px;height:150px;margin:-75px 0 0 -75px;will-change:transform;cursor:grab;touch-action:none}
+.actual img{position:absolute;left:11px;top:11px;width:128px;height:128px;filter:drop-shadow(0 10px 10px rgba(0,0,0,.45));pointer-events:none}
+.actual svg.anillo{position:absolute;inset:0;width:150px;height:150px;transform:rotate(-90deg);pointer-events:none}
+.anillo circle{fill:none;stroke-width:7;stroke-linecap:round}
+.anillo .fondo{stroke:rgba(0,0,0,.28)}
+.anillo .t{stroke:#2fd47a;transition:stroke .2s}
+.anillo .t.medio{stroke:#fcd100}.anillo .t.poco{stroke:#ff5900}
+.actual.oro img{filter:drop-shadow(0 0 10px rgba(252,209,0,.95)) drop-shadow(0 0 22px rgba(252,190,0,.7)) drop-shadow(0 10px 10px rgba(0,0,0,.45))}
+.actual.oro::after{content:"×3";position:absolute;right:2px;top:2px;background:linear-gradient(#ffe25a,#e0a800);color:#3a2a00;font:900 15px Aleo,Georgia,serif;border-radius:999px;padding:3px 8px;box-shadow:0 3px 6px rgba(0,0,0,.35)}
+.chapa{position:absolute;left:50%;transform:translateX(-50%);width:max-content;max-width:200px;text-align:center;padding:7px 14px 8px;border-radius:14px;color:#f1f8f4;
+ background:linear-gradient(rgba(22,52,42,.92),rgba(8,28,21,.92));box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.3),0 4px 0 rgba(0,0,0,.25);
+ font:700 16px/1.2 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;pointer-events:none}
+.chapa small{display:block;font-weight:600;font-size:13px;color:#bfe3d2;margin-top:3px}
+.actual .chapa{top:146px}
+/* bandejas */
+.bandeja{position:absolute;border:0;padding:0;background:none;cursor:pointer;touch-action:manipulation}
+.bandeja img{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 8px rgba(0,0,0,.4));pointer-events:none}
+.bandeja .rot{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:5px;width:max-content;max-width:130px;padding:5px 10px;border-radius:12px;color:#fff;
+ font:800 13px/1.15 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -2px 0 rgba(0,0,0,.25),0 3px 0 rgba(0,0,0,.25)}
+.bandeja .rot .ico{width:17px;height:17px}
+.b-izq{left:-34px;top:168px;width:118px;height:160px}
+.b-der{right:-34px;top:168px;width:118px;height:160px}
+.b-abj{left:84px;bottom:70px;width:192px;height:138px}   /* José, 18-11-2026: más cerca de las fichas */
+.b-izq .rot,.b-der .rot{top:-32px;transform:none}
+.b-izq .rot{left:34px}.b-der .rot{left:auto;right:34px}
+.b-abj .rot{top:-30px}
+.bandeja.traga{animation:traga .32s cubic-bezier(.3,1.6,.5,1)}
+@keyframes traga{0%{transform:scale(1)}35%{transform:scale(1.1,.9)}100%{transform:scale(1)}}
+.bandeja.buena img{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 12px rgba(47,212,122,.95)) drop-shadow(0 8px 8px rgba(0,0,0,.4))}
+.mano{position:absolute;width:56px;height:56px;pointer-events:none;z-index:6;color:#fff;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5))}
+.flota{position:absolute;font:900 22px Aleo,Georgia,serif;color:#fcd100;text-shadow:0 2px 0 #6b4a00,0 3px 8px rgba(0,0,0,.5);pointer-events:none;white-space:nowrap;z-index:7}
+.flota.mal{color:#ffb39a;text-shadow:0 2px 0 #5c1608,0 3px 8px rgba(0,0,0,.5)}
+.porque{position:absolute;left:12px;right:12px;top:366px;z-index:8;border-radius:14px;padding:9px 12px;font:700 14.5px/1.35 "Helvetica Neue",Arial,sans-serif;color:#fff;background:linear-gradient(rgba(140,30,10,.95),rgba(110,22,6,.95));box-shadow:0 6px 18px rgba(0,0,0,.4);pointer-events:none}
+.porque.bien{background:linear-gradient(rgba(10,90,50,.95),rgba(6,64,36,.95))}
+.porque .tit{display:block;font:800 15px Aleo,Georgia,serif;color:#ffd9cc;margin-bottom:1px}
+.porque.bien .tit{color:#bff3d6}
+.porque b{color:#fcd100}
+.nomina3 .porque{top:474px}
+.aviso-c{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);color:#fff;font:900 30px Aleo,Georgia,serif;text-align:center;text-shadow:0 3px 0 rgba(0,0,0,.35),0 4px 14px rgba(0,0,0,.6);pointer-events:none;z-index:9;white-space:nowrap}
+.aviso-c small{display:block;font:700 15px "Helvetica Neue",Arial,sans-serif;margin-top:6px}
+/* nivel 3: la nómina de plastilina */
+.doc{position:absolute;left:4px;top:0;width:352px;height:485px}   /* José, 18-11-2026: la nómina, algo más grande */
+.doc>img{width:100%;height:100%;display:block;filter:drop-shadow(0 12px 14px rgba(0,0,0,.45));pointer-events:none}
+.zona{position:absolute;border:0;background:transparent;padding:0;cursor:pointer;border-radius:8px;touch-action:manipulation}
+.zona::before{content:"";position:absolute;left:-6px;right:-6px;top:calc(-1*var(--arr,0%));bottom:calc(-1*var(--abj,0%))}   /* el toque, hasta la mitad del hueco */
+.zona .zt{position:absolute;left:3px;top:3px;font:800 10.5px/1 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#fff;background:rgba(0,66,48,.88);border-radius:999px;padding:3px 7px;letter-spacing:.02em;pointer-events:none}
+.zona .zp{position:absolute;right:4px;bottom:3px;left:4px;display:flex;justify-content:flex-end;gap:2px;pointer-events:none}
+.zona .zp img{width:30px;height:30px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));animation:encaja .3s cubic-bezier(.3,1.7,.5,1)}
+@keyframes encaja{from{transform:scale(1.8)}}
+.zona.sobre,.zona:focus-visible{box-shadow:0 0 0 3px #fcd100,0 0 18px rgba(252,209,0,.7);outline:none}
+.zona.buena{box-shadow:0 0 0 3px #2fd47a,0 0 18px rgba(47,212,122,.8)}
+.zona.mala{box-shadow:0 0 0 3px #ff5900}
+.z2 .zt{top:50%;transform:translateY(-50%)}
+.z2 .zp{bottom:50%;transform:translateY(50%)}
+.z2 .zp img{width:24px;height:24px}
+.lineas{position:absolute;inset:18px 6px 4px 6px;font:600 10.5px/1.32 "Helvetica Neue",Arial,sans-serif;color:#2b2015;font-variant-numeric:tabular-nums;pointer-events:none}
+.lineas div{display:flex;justify-content:space-between;gap:6px;white-space:nowrap}
+.lineas div span:first-child{overflow:hidden;text-overflow:ellipsis}
+.lineas .tot{font-weight:800;border-top:1px solid rgba(43,32,21,.35);margin-top:1px;padding-top:1px}
+.z2 .lineas{inset:0 6px 0 98px;display:flex;align-items:center}
+.z5 .lineas{inset:22px 10px 6px 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.z5 .lineas div{flex-direction:column;align-items:center;justify-content:center;gap:1px;white-space:normal;font-size:9.5px;line-height:1.15}
+.z5 .lineas b{font-size:11px}
+.sello{position:absolute;left:50%;top:44%;z-index:8;transform:translate(-50%,-50%) rotate(-14deg);border:5px solid #c8341b;border-radius:12px;padding:6px 16px;color:#c8341b;
+ font:900 40px/1 Aleo,Georgia,serif;letter-spacing:.06em;background:rgba(255,250,240,.35);box-shadow:inset 0 0 0 3px rgba(200,52,27,.35);mix-blend-mode:multiply;pointer-events:none}
+.liquido{position:absolute;left:10px;right:10px;top:478px;border-radius:16px;padding:10px 14px;color:#fff;background:linear-gradient(#0b5a40,#063524);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -3px 0 rgba(0,0,0,.3),0 8px 18px rgba(0,0,0,.4);text-align:center}
+.liquido small{display:block;font:700 12px "Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+.liquido .cifra{font:900 38px/1.1 Aleo,Georgia,serif;color:#fcd100;font-variant-numeric:tabular-nums}
+.odo{display:inline-flex;overflow:hidden;height:1.1em;vertical-align:top}
+.odo span{display:inline-block;width:.62em;text-align:center}
+.odo .sep{width:auto}
+.odo .col{display:flex;flex-direction:column;transition:transform 1.1s cubic-bezier(.2,.9,.25,1)}
+.odo .col span{height:1.1em;line-height:1.1em}
+.abajo3{position:absolute;left:0;right:0;top:487px;height:153px}
+.abajo3 .actual{left:74px!important;top:76px!important}
+.abajo3 .ch3{left:136px;top:50%;transform:translateY(-50%);max-width:214px;text-align:left}
+.z3 .lineas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:10px;align-content:start;font-size:9.8px}
+.z3 .lineas div{min-width:0}
+.z3 .lineas .tot{grid-column:1/-1}
+.liquido{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}
+.liquido .btn{padding:10px 14px;font-size:15px;min-height:44px;background:#fcd100;color:#3a2a00;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}
+/* tarjetas, pausa y giro */
+.tarjeta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,20,14,.55);backdrop-filter:blur(2px);z-index:20;overflow-y:auto}
+.tarjeta.tapa{background:#0b1f19;backdrop-filter:none}
+.ficha{width:100%;max-width:440px;background:#fbf6ea;border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.45);border-top:8px solid var(--naranja);margin:auto 0}
+.ficha .eti{font:800 12px Aleo,Georgia,serif;letter-spacing:1.5px;color:#c24400;text-transform:uppercase}
+.ficha .caso{font:600 18px/1.4 Aleo,Georgia,serif;color:var(--texto);margin:6px 0 10px}
+.saltar{position:absolute;top:6px;right:6px;z-index:12;min-height:44px;border:0;border-radius:999px;padding:8px 14px;background:rgba(0,0,0,.5);color:#fff;font:700 13px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.giro{display:none}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){.juego .giro{display:flex;position:fixed;inset:0;z-index:30;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#0d2a20;color:#fff;font:800 20px Aleo,Georgia,serif;text-align:center;padding:20px}.giro span{font-size:46px}}
+/* final */
+.final{text-align:center}
+.final .gran{font:800 56px Aleo,Georgia,serif;color:var(--verde);margin:4px 0}
+#finT:focus{outline:none}
+.final .falta{margin-top:4px;font-weight:700;color:#8a4a00}
+.estrellas{font-size:34px;letter-spacing:4px;color:var(--amarillo);text-shadow:0 1px 0 #c9a400}
+.final .escena-n{margin:12px 0 4px;text-align:left;padding:30px 12px;background-position:center 45%}   /* José, 18-11-2026: el presentador, centrado en vertical */
+.fallos{text-align:left;margin-top:16px}
+.fallo{background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:14px;display:flex;gap:10px;align-items:center}
+.fallo img{width:44px;height:44px;flex:none}
+.fallo b{display:block;color:var(--verde);margin-top:2px}
+.fallo small{color:var(--gris)}
+@keyframes no{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #fcd100;outline-offset:2px;box-shadow:0 0 0 6px #004230}
+/* ===== 18-11-2026: todo plastilina dentro del juego (José: «muy tosco, mezcla plastilina con no plastilina») ===== */
+/* letras grabadas en la plastilina: hundidas (brillo debajo, sombra encima), del color del barro */
+.zona .zt{left:7px;top:6px;background:none;padding:0;border-radius:0;color:#1d4d3a;font:800 10.5px/1 Aleo,Georgia,serif;letter-spacing:.1em;text-transform:uppercase;
+ text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(90,55,20,.4)}
+.grabado{position:absolute;color:#5b3f22;font-family:Aleo,Georgia,serif;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(80,45,10,.45);pointer-events:none}
+.grabado b{font-weight:800}
+.z1 .zt{left:13px;top:14px}
+.z5 .zt{top:auto;bottom:1px}
+.grabado{text-align:left}
+.g1{left:13px;right:13px;top:30px;display:flex;flex-direction:column;gap:3px;font-size:13px;line-height:1.15}
+.g1 span{font-weight:600;font-size:11.5px}
+.g2{left:96px;right:12px;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;gap:8px;font-size:11px;white-space:nowrap}
+.grabado.cifra{right:10px;bottom:5px;text-align:right}
+.cifra small{display:block;font-weight:800;font-size:9px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.grabado.cifra b{font-size:23px;line-height:1.1;font-variant-numeric:tabular-nums}
+.caja{top:78.8%;height:10.4%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1}
+.caja small{font-weight:800;font-size:7.4px;letter-spacing:.05em;text-transform:uppercase}
+.caja b{font-size:12px;font-variant-numeric:tabular-nums}
+.cuadrada .zp{justify-content:flex-start}
+.cuadrada .z1 .zp,.cuadrada .z2 .zp,.cuadrada .z5 .zp{opacity:0}
+/* el líquido, en una placa de plastilina verde (la bandeja tumbada, estirada por el centro sin deformar el borde) y la cifra en relieve amarillo */
+.liquido{left:2px;right:2px;top:0;height:100px;padding:0 6px;border-radius:0;background:none;box-shadow:none;border:30px solid transparent;border-image:url(nomina_bandeja_verde_h.webp) 96 fill / 30px stretch;
+ filter:drop-shadow(0 8px 8px rgba(0,0,0,.42));margin:0;align-items:center}
+.liquido>div{margin:-22px 0}
+.liquido small{color:#cdeedf;font:800 11px Aleo,Georgia,serif;letter-spacing:.14em;text-shadow:0 -1px 0 rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.18)}
+.liquido .cifra{font:900 34px/1.05 Aleo,Georgia,serif;color:#fcd100;text-shadow:0 2px 0 #b48a00,0 3px 0 #7a5d00,0 6px 8px rgba(0,0,0,.45)}
+.odo{vertical-align:top;line-height:1.1em}
+.odo>span{vertical-align:top}
+/* botones y avisos dentro del juego: la «chapita oscura» de la Serpiente (no botones de página web) */
+.chapa-btn{flex:none;margin:-22px -8px -22px 0;border:0;border-radius:14px;padding:10px 14px;min-height:44px;cursor:pointer;color:#fff;font:800 15px Aleo,Georgia,serif;
+ background:linear-gradient(rgba(22,52,42,.96),rgba(8,28,21,.96));box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 0 rgba(0,0,0,.3),0 4px 0 rgba(0,0,0,.3)}
+.nomina3 .aviso-c{top:40%;padding:10px 18px 12px;border-radius:16px;color:#fcd100;font-size:28px;background:linear-gradient(rgba(22,52,42,.95),rgba(8,28,21,.95));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -2px 0 rgba(0,0,0,.3),0 4px 0 rgba(0,0,0,.28);text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.nomina3 .aviso-c small{color:#e8f5ee}
+/* ===== 18-11-2026 (2): las placas de plastilina de José (nomina_rotulo_*.webp) en TODOS los rótulos del juego; cada placa se
+   estira por el centro (border-image) sin deformar los cantos, y el texto va en relieve: claro sobre placa oscura, oscuro sobre clara ===== */
+.placa{border-style:solid;border-color:transparent;border-width:12px 17px;border-image:var(--placa) 44% 30% fill / 12px 17px stretch;
+ background:none!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 3px 3px rgba(0,0,0,.32))}
+.grab-c{color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.grab-o{color:#43301c;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.25)}
+.bandeja .rot{padding:0 2px}
+.b-izq .rot{left:28px}.b-der .rot{right:28px}
+/* la ficha: su nombre en una placa crema */
+.chapa{--placa:url(nomina_rotulo_crema.webp);border-style:solid;border-color:transparent;border-width:13px 18px;border-image:var(--placa) 44% 30% fill / 13px 18px stretch;
+ background:none;box-shadow:none;border-radius:0;padding:0 2px;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.65),0 -1px 0 rgba(0,0,0,.18);filter:drop-shadow(0 4px 4px rgba(0,0,0,.35))}
+.chapa small{color:#6e5134}
+/* marcador: placas marrón (la racha, naranja) */
+.hud .pill{--placa:url(nomina_rotulo_marron.webp);border-style:solid;border-color:transparent;border-width:10px 14px;border-image:var(--placa) 44% 30% fill / 10px 14px stretch;
+ background:none;box-shadow:none;border-radius:0;padding:0 2px;backdrop-filter:none;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5);filter:drop-shadow(0 3px 3px rgba(0,0,0,.3))}
+.hud .racha{--placa:url(nomina_rotulo_naranja.webp);background:none}
+.jugando .hud{flex-wrap:nowrap;gap:4px}
+.hud .pill{border-width:10px 11px;border-image-width:10px 11px;font-size:13px}
+.hud button.pill{min-width:48px;min-height:46px;padding:0;border-style:solid;border-color:transparent;border-width:10px 14px;border-image:var(--placa) 44% 30% fill / 10px 14px stretch;color:#fbf6ec}
+/* avisos y explicaciones: placa marrón (fallo) o verde (bien); botones dentro del juego: placa verde */
+.porque{--placa:url(nomina_rotulo_marron.webp);border-style:solid;border-color:transparent;border-width:14px 18px;border-image:var(--placa) 44% 30% fill / 14px 18px stretch;
+ background:none;box-shadow:none;border-radius:0;padding:0 4px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.4));text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+.porque.bien{--placa:url(nomina_rotulo_verde.webp);background:none}
+.porque .tit{color:#ffc9b5}
+.aviso-c,.nomina3 .aviso-c{--placa:url(nomina_rotulo_marron.webp);border-style:solid;border-color:transparent;border-width:14px 20px;border-image:var(--placa) 44% 30% fill / 14px 20px stretch;
+ background:none;box-shadow:none;border-radius:0;padding:0 6px;color:#fcd100;filter:drop-shadow(0 6px 8px rgba(0,0,0,.4))}
+.chapa-btn{--placa:url(nomina_rotulo_verde.webp);border-style:solid;border-color:transparent;border-width:12px 16px;border-image:var(--placa) 44% 30% fill / 12px 16px stretch;
+ background:none;box-shadow:none;border-radius:0;padding:0 2px;text-shadow:0 -1px 0 rgba(0,0,0,.5);filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+/* el sello del final: la pieza roja de plastilina, con la palabra en relieve */
+.sello{left:27%!important;top:40%!important;width:150px;height:150px;padding:0;border:0;border-radius:50%;background:url(nomina_sello.webp) center/contain no-repeat;box-shadow:none;mix-blend-mode:normal;
+ display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 10px 10px rgba(0,0,0,.45))}
+.sello span{font:900 15px/1 Aleo,Georgia,serif;letter-spacing:.03em;color:#ffd9cf;text-shadow:0 -1px 0 rgba(80,0,0,.6),0 1px 0 rgba(255,255,255,.28)}
+/* ===== 18-11-2026 (3): placas sin costuras (fondo estirado en vez de border-image, que dejaba rayitas al escalar), el aro de
+   plastilina como reloj (se vacía con una máscara cónica y pasa de verde a amarillo y naranja) y la cinta de plastilina que corre ===== */
+.placa,.chapa,.hud .pill,.hud button.pill,.porque,.aviso-c,.nomina3 .aviso-c,.chapa-btn{border:0!important;border-image:none!important;background:var(--placa) center/100% 100% no-repeat!important}
+.bandeja .rot.placa{padding:9px 15px}
+.chapa{padding:12px 20px 13px}
+.abajo3 .ch3{padding:12px 20px 13px}
+.hud .pill{padding:9px 13px}
+.hud button.pill{padding:0;min-width:50px;min-height:46px}
+.porque{padding:13px 20px}
+.aviso-c,.nomina3 .aviso-c{padding:12px 22px}
+.chapa-btn{padding:11px 18px}
+.aro{position:absolute;right:-4px;top:-4px;width:60px;height:60px;z-index:2;pointer-events:none;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.aro::before{content:"";position:absolute;inset:0;background:url(nomina_aro_verde.webp) center/contain no-repeat;filter:grayscale(1) brightness(.5);opacity:.45}
+.aro i{position:absolute;inset:0;background:var(--aro,url(nomina_aro_verde.webp)) center/contain no-repeat;
+ -webkit-mask:conic-gradient(#000 calc(var(--q,1)*360deg),transparent 0);mask:conic-gradient(#000 calc(var(--q,1)*360deg),transparent 0)}
+.actual.oro::after{right:auto;left:2px}
+.liquido{height:92px}
+.marco{overflow:hidden}
+.rodillo{position:absolute;top:-4px;height:100px;width:50px;pointer-events:none;z-index:1;filter:drop-shadow(0 4px 4px rgba(0,0,0,.35))}
+.r-izq{left:calc(10px - var(--ext,0px))}.r-der{right:calc(10px - var(--ext,0px))}
+/* José, 18-11-2026 («algo más centrado o algo más diseño top»): la escena del nivel como un cartel de cine, con el escenario a
+   la vista y la persona compañera centrada en vertical; en pantallas anchas el bocadillo no se estira de lado a lado */
+.escena-n{display:flex;align-items:center;justify-content:center;min-height:178px;padding:22px 16px;
+ background:linear-gradient(90deg,rgba(0,26,18,.82) 0%,rgba(0,26,18,.5) 50%,rgba(0,26,18,.2) 100%),linear-gradient(0deg,rgba(0,20,14,.55),rgba(0,20,14,0) 60%),var(--fondo,url(nomina_fondo.webp)) center 45%/cover no-repeat,#0b5a40;
+ box-shadow:0 14px 32px rgba(0,40,28,.32),inset 0 1px 0 rgba(255,255,255,.12)}
+.escena-n .pres{width:100%;max-width:640px}
+.escena-n .pres-cara{width:72px;height:72px}
+.final .escena-n{padding:22px 16px}
+/* José, 18-11-2026 («los verdes confunden»): las tres categorías no son botones: la bandeja de plastilina de cada una, con su placa y
+   su gesto; así el único botón verde de la pantalla es «¡Vamos allá!» */
+.tres .ley{background:none!important;color:var(--texto);padding:4px 0 0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tres .ley img{height:56px;width:auto;max-width:100%;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(0,0,0,.28))}
+.tres .ley .placa{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;font:800 12.5px/1.15 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;text-align:center}
+.tres .ley .placa .ico{width:15px;height:15px;flex:none}
+.tres .ley small{color:var(--gris);font-weight:700;font-size:12px;opacity:1}
+/* José, 18-11-2026 («las letras deben respirar»): en una placa con forma de pastilla, el texto va en el hueco del centro: margen
+   ancho en las puntas redondeadas y algo arriba y abajo para no pisar el reborde */
+.chapa{padding:15px 34px 16px;max-width:248px}
+.abajo3 .ch3{padding:14px 32px 15px;max-width:224px}
+.bandeja .rot.placa{padding:10px 22px}
+.hud .pill{padding:9px 17px}
+.porque{padding:16px 36px 17px}
+.aviso-c,.nomina3 .aviso-c{padding:14px 32px}
+.chapa-btn{padding:12px 26px}
+.tres .ley .placa{padding:8px 20px}
+/* José, 18-11-2026: «Salarial» y «No salarial», centrados sobre sus bandejas (las bandejas, algo hacia dentro para que quepan
+   enteras también en el móvil) */
+.b-izq{left:8px;top:176px;width:104px;height:142px}.b-der{right:8px;top:176px;width:104px;height:142px}
+.b-izq .rot,.b-der .rot{left:50%!important;right:auto!important;top:-36px;transform:translateX(-50%)!important;max-width:124px;white-space:nowrap}
+.bandeja .rot.placa{padding:10px 16px}
+/* José, 18-11-2026 («vamos a cuidar el diseño»): en pantalla ancha, la portada como un cartel de juego: título, fichas, texto
+   y niveles a la izquierda (con un ancho de lectura cómodo) y la protagonista a la derecha, sobre la mesa de la gestoría más
+   visible. En el móvil, todo en columna como antes. */
+.portada{container-type:inline-size}
+.heroe.mesa p{max-width:46ch}
+@container (min-width:640px){
+ .heroe.mesa{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"hm narra" "h1 narra" "tira narra" "p narra" "chips narra";
+  column-gap:28px;align-items:start;padding:30px 30px 26px;min-height:330px;
+  background:linear-gradient(90deg,rgba(0,30,22,.94) 0%,rgba(0,30,22,.82) 40%,rgba(0,30,22,.35) 72%,rgba(0,30,22,.18) 100%),linear-gradient(0deg,rgba(0,22,16,.6),rgba(0,22,16,0) 45%),url(nomina_fondo.webp) center 42%/cover no-repeat,#062a1f}
+ .heroe.mesa .hm{grid-area:hm}.heroe.mesa h1{grid-area:h1;font-size:52px}.heroe.mesa .tira{grid-area:tira}
+ .heroe.mesa>p{grid-area:p;font-size:15.5px}.heroe.mesa .chips{grid-area:chips}
+ .heroe.mesa .narra{grid-area:narra;align-self:center;justify-self:center;width:100%;max-width:440px;margin:0}
+ .heroe.mesa .narra .pres{flex-direction:column-reverse;align-items:flex-start;text-align:left;gap:12px}   /* José, 19-11-2026: la cara debajo del bocadillo, a la izquierda */
+ .heroe.mesa .narra .pres-cara{width:96px;height:96px;border-width:4px;margin-left:6px}
+ .heroe.mesa .narra .pres-globo{flex:none;width:100%;box-sizing:border-box;font-size:16px;padding:14px 18px}
+ .heroe.mesa .narra .pres-globo:before{left:44px;bottom:-8px;border:9px solid transparent;border-top-color:#fffaf0;border-bottom:0}
+}
+/* José, 18-11-2026 («separar un pelín las bandejas… que la distancia de las 3 sea simétrica»): la ficha a la altura del centro
+   de las bandejas de los lados y las tres bandejas a la misma distancia de ella; en el PC, donde sobra sitio, algo más separadas.
+   Letreros con la Aleo de la identidad del centro, más fina: respiran mejor */
+.b-izq{left:calc(6px - min(var(--ext,0px),26px));top:158px;width:90px;height:124px}
+.b-der{right:calc(6px - min(var(--ext,0px),26px));top:158px;width:90px;height:124px}
+.b-abj{top:calc(404px + min(var(--ext,0px),26px));bottom:auto}   /* el mismo hueco que a los lados, contando desde el letrero de la ficha */
+.chapa{font:600 16.5px/1.18 Aleo,Georgia,serif;letter-spacing:.005em}
+/* revisión 19-11-2026: un punto más (a 320 px quedaba en unos 11 px) */
+.chapa small{font:500 14px/1.25 Aleo,Georgia,serif;letter-spacing:.01em;margin-top:4px}
+.bandeja .rot.placa{font:600 13.5px/1.1 Aleo,Georgia,serif;letter-spacing:.02em}
+.bandeja .rot.placa .ico{width:15px;height:15px}
+.tres .ley .placa{font:600 12.5px/1.15 Aleo,Georgia,serif;letter-spacing:.02em}
+/* José, 18-11-2026: «Cotiza entero se sale del letrero»: el letrero crece con su texto (en una línea si cabe; en el móvil, en dos,
+   siempre dentro de la placa) y el de abajo, que tiene sitio, en una sola línea */
+.b-izq .rot,.b-der .rot{white-space:normal!important;text-align:center;justify-content:center;max-width:calc(118px + 2 * min(var(--ext,0px),60px))!important;width:max-content}
+.b-abj .rot{white-space:nowrap;max-width:none;width:max-content}
+/* José, 18-11-2026: los letreros, siempre por encima de su bandeja (crecen hacia arriba si van en dos líneas) y con margen para no
+   pisar las puntas redondeadas de la placa */
+.bandeja .rot{top:auto!important;bottom:calc(100% + 5px)}
+.bandeja .rot.placa{padding:10px 24px}
+.b-izq .rot.placa,.b-der .rot.placa{padding:10px 20px}
+/* José, 18-11-2026 («elimina arriba los objetos y deja solo la cinta»): en pantalla ancha el escenario se apoya por abajo y la franja
+   de arriba (maceta, taza, archivador, carpetas) queda fuera; la cinta, sola arriba */
+@media (orientation:landscape){#app.jugando{background-position:0 0,center 88%}}   /* sin llegar a enseñar las patas de la mesa */
+/* José, 18-11-2026 («esos letreros sí que hay que hacer que respiren, y bastante»): el aviso del fallo, con mucho margen dentro de
+   su placa, la misma letra de los letreros y arriba, sobre la cinta (no tapa el nombre de la ficha ni la bandeja de abajo) */
+.porque{top:0;left:6px;right:6px;padding:22px 52px 24px!important;font:500 14.5px/1.4 Aleo,Georgia,serif;text-align:center;z-index:12}
+.porque .tit{font:700 15.5px/1.3 Aleo,Georgia,serif;margin-bottom:4px}
+.nomina3 .porque{top:474px}
+/* la placa de la ficha, más ancha: debajo de la ficha hay sitio y así no baja hasta el letrero de abajo */
+.actual .chapa{max-width:296px}
+.actual .chapa.larga{font-size:14px;letter-spacing:-.005em;max-width:340px;padding-left:34px;padding-right:34px}   /* revisión 19-11-2026: los títulos largos, en una línea (en dos, la chapa tapaba el rótulo de la bandeja de abajo) */
+/* José, 19-11-2026 («afina, que respiren y estén justificados todos los títulos»): la chapa del nivel 3 siempre del mismo tamaño,
+   con el título y la letra pequeña centrados y equilibrados en el hueco de la pastilla, lejos de las puntas redondeadas */
+.abajo3 .ch3{width:214px;max-width:214px;min-height:96px;box-sizing:border-box;padding:17px 38px 18px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ text-align:center;text-wrap:balance;font-size:15px;line-height:1.2;letter-spacing:.01em}
+.abajo3 .ch3 small{font-size:11.5px;line-height:1.25;margin-top:5px;text-wrap:balance}
+/* revisión 19-11-2026: el sello dice cuántos retoques hubo y las piezas falladas quedan marcadas en naranja */
+.sello small{display:block;margin-top:4px;font:800 11px/1 Aleo,Georgia,serif;letter-spacing:.04em;text-transform:none}
+.zona .zp img.retoque{filter:drop-shadow(0 0 1.5px #ff5900) drop-shadow(0 0 3px #ff5900) drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+label.lento{display:flex;gap:10px;align-items:flex-start;text-align:left;margin:0 0 4px;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.7);font-size:14px;line-height:1.35;color:var(--gris);cursor:pointer}
+label.lento b{color:var(--verde)}
+label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--verde)}
+.porque .seguir{display:block;margin:10px auto 0;position:static;pointer-events:auto}
+.abajo3 .ch3.larga{padding:17px 28px 18px!important;font-size:14px;line-height:1.15}   /* títulos largos: dos líneas, no tres */
+/* José, 18-11-2026 («sigo viendo muy basta la nómina»): los rótulos de las partes, finos y grabados en el barro (marrón suave,
+   letra pequeña y espaciada), que acompañan sin gritar */
+.zona .zt{font:600 10px/1 Aleo,Georgia,serif;letter-spacing:.2em;color:#8a6a48;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(90,55,20,.22)}
+.zona.sobre .zt,.zona.buena .zt{color:#1d4d3a}
+/* la nómina fina y elegante (José, 18-11-2026): algo más estrecha, centrada; sus partes y sus casillas, medidas de nuevo */
+.doc{left:28px;width:304px;height:485px}
+.caja{top:74.4%;height:14.5%}
+.z1 .zt{left:8px;top:6px}
+.g1{left:8px;right:8px;top:22px}
+.narraR{position:absolute;left:10px;right:10px;top:4px;z-index:9}
+.narraR.fuera{left:372px;right:auto;width:290px;top:70px}
+.narraR .pres-globo{font-size:12.5px;line-height:1.38}.narraR .pres-globo b{font-size:13px}   /* José, 18-11-2026: un pelín más pequeña */
+</style>
+<link rel="manifest" href="nomina.webmanifest">
+<meta name="theme-color" content="#004230">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cuadra la nómina">
+<link rel="apple-touch-icon" href="icono-nomina-192.png">
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===== «Cuadra la nómina» (UD6, CE d del RA3): cifras, motor de la nómina y banco de fichas (18-11-2026) =====
+   montar_nomina.py lo mete en la plantilla. Las cifras de cotización están en UN SOLO SITIO (COTIZA): el curso que viene se
+   cambia aquí y nada más. Cotejadas con el BOE consolidado el 18-11-2026 (Orden PJC/297/2026, de 30 de marzo, BOE-A-2026-7296):
+   arts. 2-5, 16 y 33. Dietas y kilometraje exentos: Reglamento del IRPF, art. 9 (Orden HFP/792/2023), sin cambios en 2026.
+   El libro trae las de 2024: el juego usa siempre las últimas publicadas (José, 18-11-2026). */
+const COTIZA = {
+ año: 2026, norma: 'Orden PJC/297/2026',
+ baseMin: { 1: 1989.30, 2: 1649.70, 3: 1435.20, 4: 1424.40, 5: 1424.40, 6: 1424.40, 7: 1424.40 }, baseMax: 5101.20,
+ trab: { cc: 4.70, mei: 0.15, desInd: 1.55, desTemp: 1.60, fp: 0.10, he: 4.70, heFM: 2.00 },
+ emp: { cc: 23.60, mei: 0.75, desInd: 5.50, desTemp: 6.70, fogasa: 0.20, fp: 0.60, he: 23.60 },
+ dietaSin: 26.67, dietaCon: 53.34, km: 0.26
+};
+const r2 = x => Math.round(x * 100 + (x >= 0 ? 1e-7 : -1e-7)) / 100;
+const euros = x => r2(x).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping: false }) + ' €';
+const pct = x => (Number.isInteger(x) ? String(x) : x.toFixed(2).replace('.', ',')) + ' %';
+
+/* La nómina de un mes (Figura 6.3 del libro, con las cifras de COTIZA).
+   d.sal: [{t, i, pagas}] percepciones salariales (pagas: entra en las pagas extra) · d.he: horas extraordinarias
+   d.noSal: [{t, i}] con tipo 'entero' (cotiza entero: transporte, distancia, quebranto, prendas, herramientas),
+            'dieta' ({dias, dia, pernocta}) o 'km' ({km, porKm}): solo cotiza y tributa lo que pasa del límite */
+function nomina(d) {
+ const T = COTIZA.trab, E = COTIZA.emp;
+ const noSal = d.noSal.map(x => {
+  if (x.tipo === 'dieta') { const lim = x.pernocta ? COTIZA.dietaCon : COTIZA.dietaSin;
+   return Object.assign({}, x, { i: r2(x.dias * x.dia), exceso: r2(x.dias * Math.max(0, x.dia - lim)), exento: r2(x.dias * Math.min(x.dia, lim)) }) }
+  if (x.tipo === 'km') return Object.assign({}, x, { i: r2(x.km * x.porKm), exceso: r2(x.km * Math.max(0, x.porKm - COTIZA.km)), exento: r2(x.km * Math.min(x.porKm, COTIZA.km)) });
+  return Object.assign({}, x, { exceso: x.i, exento: 0 });
+ });
+ const sumSal = d.sal.reduce((a, x) => a + x.i, 0), he = d.he || 0;
+ const devengado = r2(sumSal + he + noSal.reduce((a, x) => a + x.i, 0));
+ const prorrata = r2((d.pagas || 2) * d.sal.filter(x => x.pagas).reduce((a, x) => a + x.i, 0) / 12);
+ const tope = b => Math.min(COTIZA.baseMax, Math.max(COTIZA.baseMin[d.grupo] || 0, b));
+ const bcc = r2(tope(sumSal + prorrata + noSal.reduce((a, x) => a + x.exceso, 0)));
+ const bcp = r2(Math.min(COTIZA.baseMax, bcc + he)), bhe = he;
+ const des = d.temporal ? T.desTemp : T.desInd;
+ const cuotas = [
+  { t: 'Contingencias comunes', p: r2(T.cc + T.mei), i: r2(bcc * (T.cc + T.mei) / 100) },
+  { t: 'Desempleo', p: des, i: r2(bcp * des / 100) },
+  { t: 'Formación profesional', p: T.fp, i: r2(bcp * T.fp / 100) }
+ ].concat(he ? [{ t: 'Horas extraordinarias', p: T.he, i: r2(bhe * T.he / 100) }] : []);
+ const totalCuotas = r2(cuotas.reduce((a, x) => a + x.i, 0));
+ const baseIrpf = r2(devengado - noSal.reduce((a, x) => a + x.exento, 0));
+ const irpf = r2(baseIrpf * d.irpf / 100);
+ const deducir = r2(totalCuotas + irpf);
+ const empresa = r2(bcc * (E.cc + E.mei) / 100 + bcp * ((d.temporal ? E.desTemp : E.desInd) + E.fogasa + E.fp) / 100 + bhe * E.he / 100);
+ return { sal: d.sal, he, noSal, devengado, prorrata, bcc, bcp, bhe, cuotas, totalCuotas, baseIrpf, irpf, irpfP: d.irpf, deducir, liquido: r2(devengado - deducir), empresa };
+}
+
+/* La nómina de abril de la protagonista de cada ciclo (nivel 3). HIG = el ejemplo del guion: 1308,21 € (pruebas). */
+const NOMINAS = {
+ HIG: { empresa: 'Clínica dental de Triana', grupo: 5, irpf: 12, sal: [{ t: 'Salario base', i: 1250, pagas: true }, { t: 'Plus de convenio', i: 150, pagas: true }], he: 80,
+  noSal: [{ t: 'Plus de transporte', i: 70, tipo: 'entero' }, { t: 'Dietas (3 días, sin dormir fuera)', tipo: 'dieta', dias: 3, dia: 20, pernocta: false }] },
+ IFC: { empresa: 'Empresa de mantenimiento de climatización', grupo: 5, irpf: 11, sal: [{ t: 'Salario base', i: 1200, pagas: true }, { t: 'Plus de convenio', i: 140, pagas: true }, { t: 'Plus de guardias', i: 120 }], he: 60,
+  noSal: [{ t: 'Plus de transporte', i: 60, tipo: 'entero' }, { t: 'Dietas (2 noches en Córdoba)', tipo: 'dieta', dias: 2, dia: 50, pernocta: true }, { t: 'Desgaste de herramientas', i: 25, tipo: 'entero' }] },
+ ITE: { empresa: 'Empresa instaladora de telecomunicaciones', grupo: 5, irpf: 10, sal: [{ t: 'Salario base', i: 1180, pagas: true }, { t: 'Plus de convenio', i: 140, pagas: true }, { t: 'Plus de peligrosidad (altura)', i: 90 }], he: 0,
+  noSal: [{ t: 'Kilometraje (300 km a 0,30 €)', tipo: 'km', km: 300, porKm: 0.30 }, { t: 'Plus de uniformidad', i: 30, tipo: 'entero' }] },
+ STI: { empresa: 'Centro de datos del aeropuerto', grupo: 5, irpf: 13, sal: [{ t: 'Salario base', i: 1300, pagas: true }, { t: 'Plus de convenio', i: 150, pagas: true }, { t: 'Plus de nocturnidad', i: 110 }], he: 120,
+  noSal: [{ t: 'Plus de transporte', i: 70, tipo: 'entero' }] }
+};
+
+/* Banco de fichas. Cada ficha: t (lo que pone la chapa), s (letra pequeña), b (bandeja correcta), img (objeto de plastilina:
+   arte/nomina_ficha_<img>.webp), ex (la explicación al fallar, del libro, ≤ 90 caracteres) y oro (la ficha dorada del nivel).
+   Nivel 1, bandejas: s = percepción salarial (←), n = no salarial (→), f = no va en la nómina (↓).
+   Nivel 2 (base de contingencias comunes): c = cotiza entero (←), x = no entra en la base (→), e = solo lo que pasa del límite (↓). */
+const F = (t, s, b, img, ex, oro) => ({ t, s, b, img, ex, oro: !!oro });
+const BANCO = {
+ 1: {
+  comun: [
+   F('Salario base', 'por tu jornada, cada mes', 's', 'billete', 'Retribuye tu trabajo por unidad de tiempo: es salario.'),
+   F('Plus de convenio', 'lo fija tu convenio', 's', 'convenio', 'Lo paga el convenio por tu trabajo: complemento salarial.'),
+   F('Antigüedad', 'por tus años en la empresa', 's', 'arena', 'Premia tus años en la empresa: complemento personal, salarial.'),
+   F('Plus de titulación', 'por tu título de FP', 's', 'birrete', 'Retribuye algo tuyo, tu título: complemento personal, salarial.'),
+   F('Turnicidad', 'mañana, tarde o noche', 's', 'solluna', 'Paga cómo es tu puesto: complemento del puesto, salarial.'),
+   F('Plus de responsabilidad', 'abres y cierras el centro', 's', 'llaves', 'Paga la responsabilidad del puesto: complemento salarial.'),
+   F('Asistencia y puntualidad', 'si no faltas en todo el mes', 's', 'reloj', 'Premia la cantidad o calidad del trabajo: es salarial.'),
+   F('Incentivos', 'por cumplir objetivos', 's', 'diana', 'Premia tu rendimiento: complemento por calidad o cantidad, salarial.'),
+   F('Comisiones', 'por cada venta que cierras', 's', 'monedas', 'Retribuyen tu trabajo según lo que vendes: son salario.'),
+   F('Pagas extraordinarias', 'dos al año como mínimo', 's', 'paga', 'Las pagas extra son salario de vencimiento periódico superior al mes.'),
+   F('Participación en beneficios', 'si a la empresa le va bien', 's', 'grafica', 'Es salario de vencimiento superior al mes, aunque dependa del año.'),
+   F('Horas extraordinarias', 'por encima de tu jornada', 's', 'crono', 'Las horas extra retribuyen trabajo: son salario.', true),
+   F('Coche de empresa', 'también lo usas en tu tiempo libre', 's', 'llavecoche', 'Si lo usas también para ti, es salario en especie.', true),
+   F('Vivienda de la empresa', 'vives en ella sin pagar', 's', 'tejado', 'Te la cede la empresa para vivir: salario en especie.'),
+   F('Plus de transporte', 'para ir y volver del trabajo', 'n', 'autobus', 'Compensa un gasto para ir al trabajo: es no salarial.'),
+   F('Plus de distancia', 'tu centro está lejos', 'n', 'mojon', 'Compensa la distancia hasta el trabajo: es no salarial.'),
+   F('Dietas', 'comes fuera por trabajo', 'n', 'plato', 'Compensan un gasto que haces por trabajar: no salariales.'),
+   F('Dietas con pernocta', 'duermes fuera por trabajo', 'n', 'cama', 'Compensan el gasto de dormir fuera por trabajo: no salariales.'),
+   F('Gastos de locomoción', 'con tu coche, a ver clientes', 'n', 'coche', 'Te devuelven un gasto de desplazarte por trabajo: no salarial.'),
+   F('Quebranto de moneda', 'por si descuadra la caja', 'n', 'quebranto', 'Te cubre los descuadres de caja, una pérdida, no tu trabajo: no salarial.'),
+   F('Plus de uniformidad', 'compras tú la ropa y te la pagan', 'n', 'bota', 'Suplido de un gasto tuyo por trabajar (art. 26.2 ET): no salarial.'),
+   F('Desgaste de herramientas', 'trabajas con las tuyas', 'n', 'herramientas', 'Compensa el desgaste de lo tuyo: indemnización, no salarial.'),
+   F('Indemnización por traslado', 'te cambian de ciudad', 'n', 'mudanza', 'Compensa el perjuicio del traslado: es no salarial.'),
+   F('Indemnización por despido', 'al acabar la relación', 'n', 'despido', 'Compensa la pérdida del empleo, no tu trabajo: no salarial.', true),
+   F('Indemnización por fin de contrato', 'acaba tu contrato temporal', 'n', 'pergamino', 'Compensa el fin del contrato temporal: es no salarial.'),
+   F('Móvil de empresa', 'solo para trabajar', 'f', 'movil', 'Es una herramienta de trabajo, no dinero tuyo: no va en la nómina.'),
+   F('Uniforme de la empresa', 'te lo da ella: tú no pagas nada', 'f', 'chaqueta', 'Te lo da la empresa: no va. Si lo pagas tú y te lo compensan, es no salarial.', true),   // 19-11-2026: la dorada también puede caer aquí
+   F('Equipo de protección', 'guantes, gafas, arnés: gratis', 'f', 'guante', 'El EPI te lo da la empresa para trabajar con seguridad: no va en la nómina.'),
+   F('Portátil de empresa', 'solo para trabajar', 'f', 'pantalla', 'Es una herramienta de trabajo: no va en la nómina.'),
+   F('Curso de la empresa', 'lo organiza y lo paga ella', 'f', 'pizarra', 'La formación que te da la empresa no es dinero tuyo: no va en la nómina.')
+  ],
+  HIG: [F('Plus de idiomas', 'pacientes extranjeros en la clínica', 's', 'idiomas', 'Retribuye algo tuyo, tus idiomas: complemento personal, salarial.'),
+   F('Plus de toxicidad', 'productos de esterilización', 's', 'calavera', 'Paga cómo es tu puesto: complemento del puesto, salarial.')],
+  IFC: [F('Plus de guardias', 'avisos fuera de tu horario', 's', 'busca', 'Paga cómo es tu puesto: complemento del puesto, salarial.'),
+   F('Dietas de viaje', 'mantenimiento en hoteles de otra provincia', 'n', 'maleta', 'Compensan un gasto que haces por trabajar: no salariales.')],
+  ITE: [F('Plus de peligrosidad', 'trabajas en azoteas', 's', 'escalera', 'Paga el riesgo de tu puesto: complemento del puesto, salarial.'),
+   F('Plus de penosidad', 'falsos techos y arquetas', 's', 'agacharse', 'Paga cómo es tu puesto: complemento del puesto, salarial.')],
+  STI: [F('Nocturnidad', 'guardias de noche en el centro de datos', 's', 'luna', 'Trabajar de noche se paga: complemento del puesto, salarial.'),
+   F('Plus de idiomas', 'clientes de la terminal', 's', 'idiomas', 'Retribuye algo tuyo, tus idiomas: complemento personal, salarial.')]
+ },
+ 2: {
+  comun: [
+   F('Salario base', '1250 € al mes', 'c', 'billete', 'Todo lo salarial cotiza entero.'),
+   F('Plus de convenio', '150 € al mes', 'c', 'convenio', 'Es salarial: cotiza entero.'),
+   F('Pagas extraordinarias', 'dos de 1400 €', 'c', 'paga', 'Cotizan enteras, repartidas: 2 × 1400 ÷ 12 cada mes.'),
+   F('Plus de transporte', '70 € al mes', 'c', 'autobus', 'No es salario, pero cotiza entero (desde 2013).', true),
+   F('Plus de distancia', '40 € al mes', 'c', 'mojon', 'No es salario, pero cotiza entero, como el transporte.'),
+   F('Quebranto de moneda', '20 € al mes', 'c', 'quebranto', 'No es salario, pero cotiza entero.'),
+   F('Plus de uniformidad', '30 €: compras tú la ropa', 'c', 'bota', 'No es salario, pero cotiza entero: no está entre las exclusiones del art. 147 LGSS.'),
+   F('Desgaste de herramientas', '25 € al mes', 'c', 'herramientas', 'No es salario, pero cotiza entero.'),
+   F('Coche de empresa', 'uso personal · salario en especie', 'c', 'llavecoche', 'El salario en especie cotiza entero.'),
+   F('Dietas · 20 €/día', 'sin dormir fuera', 'x', 'plato', 'No pasan de 26,67 €/día: exentas, no cotizan.'),
+   F('Dietas · 50 €/día', 'comidas, durmiendo fuera · hotel aparte', 'x', 'cama', 'No pasan de 53,34 €/día: exentas, no cotizan. El hotel se justifica aparte.'),
+   F('Kilometraje · 0,20 €/km', 'con tu coche, a ver clientes', 'x', 'coche', 'No pasa de 0,26 €/km: exento, no cotiza.'),
+   F('Despido · la del ET', 'la indemnización obligatoria', 'x', 'despido', 'La indemnización obligatoria del ET no cotiza.'),
+   F('Indemnización por traslado', 'mudanza, lo que fija tu convenio', 'x', 'mudanza', 'Hasta lo que fija el convenio no entra en la base (art. 147.2.c LGSS).'),
+   F('Horas extraordinarias', '80 € este mes', 'x', 'crono', 'No van a esta base: cotizan aparte (base de horas extra).', true),
+   F('Dietas · 35 €/día', 'sin dormir fuera', 'e', 'plato', 'Cotiza lo que pasa de 26,67 €/día: 8,33 € al día.'),
+   F('Dietas · 60 €/día', 'comidas, durmiendo fuera · hotel aparte', 'e', 'cama', 'Cotiza lo que pasa de 53,34 €/día: 6,66 € al día. El hotel va aparte.'),
+   F('Kilometraje · 0,30 €/km', 'con tu coche, a ver clientes', 'e', 'coche', 'Cotiza lo que pasa de 0,26 €/km: 0,04 € por km.'),
+   F('Despido · más del ET', 'te pagan por encima', 'e', 'despido', 'Solo cotiza lo que supera la indemnización obligatoria del ET.', true),
+   F('Dietas · 40 €/día', 'comes de viaje y duermes en casa', 'e', 'plato',   // 19-11-2026: antes la maleta, que solo salía aquí y delataba la bandeja
+   'Cotiza lo que pasa de 26,67 €/día: 13,33 € al día.')
+  ],
+  HIG: [F('Dietas · 20 €/día', '3 días de campaña en un pueblo', 'x', 'plato', 'No pasan de 26,67 €/día: exentas, no cotizan.'),
+   F('Plus de idiomas', '60 € al mes', 'c', 'idiomas', 'Es salarial: cotiza entero.')],
+  IFC: [F('Dietas · 50 €/día', '2 noches en Córdoba · hotel aparte', 'x', 'cama', 'No pasan de 53,34 €/día: exentas, no cotizan. El hotel se justifica aparte.'),
+   F('Plus de guardias', '120 € al mes', 'c', 'busca', 'Es salarial: cotiza entero.')],
+  ITE: [F('Kilometraje · 0,30 €/km', '300 km hasta una azotea en Huelva', 'e', 'coche', 'Cotiza lo que pasa de 0,26 €/km: 0,04 € por km.'),
+   F('Plus de peligrosidad', '90 € al mes', 'c', 'escalera', 'Es salarial: cotiza entero.')],
+  STI: [F('Nocturnidad', '110 € al mes', 'c', 'luna', 'Es salarial: cotiza entero.'),
+   F('Dietas · 60 €/día', 'una noche en Madrid · hotel aparte', 'e', 'cama', 'Cotiza lo que pasa de 53,34 €/día: 6,66 € al día. El hotel va aparte.')]
+ }
+};
+
+/* Nivel 3: el banco de piezas de la nómina de cada ciclo y su parte (b): 1 encabezamiento, 2 período de liquidación, 3 devengos,
+   4 deducciones, 5 bases de cotización y aportación de la empresa (Figura 6.2 del libro). Los importes salen del motor.
+   Revisión del 19-11-2026: antes eran siempre las mismas 12 piezas y el nivel se aprendía de memoria; ahora cada partida sortea
+   12 de unas 20 (reparto 2/1/3/3/3, en la plantilla) y la dorada sale de tres candidatas (oro): la aportación de la empresa,
+   el devengo no salarial y la base de IRPF. */
+function piezas(c) {
+ const d = NOMINAS[c], N = nomina(d), cc = N.cuotas[0], des = N.cuotas[1], heC = N.cuotas.find(x => x.t === 'Horas extraordinarias');
+ const salarios = d.sal.map(x => ({ 'Salario base': ['Salario base', '', 'billete'], 'Plus de convenio': ['Plus de convenio', '', 'convenio'],
+  'Plus de guardias': ['Plus de guardias', '', 'busca'], 'Plus de peligrosidad (altura)': ['Plus de peligrosidad', ' · trabajo en altura', 'escalera'],
+  'Plus de nocturnidad': ['Nocturnidad', '', 'luna'] })[x.t]).map(([t, s, img], k) => F(t, euros(d.sal[k].i) + s, 3, img));
+ const noSal = N.noSal.map(x => x.tipo === 'dieta' ? F('Dietas', euros(x.i) + ' · ' + (x.pernocta ? x.dias + ' noches a ' : x.dias + ' días a ') + euros(x.dia).replace(',00', ''), 3, x.pernocta ? 'cama' : 'plato')
+  : x.tipo === 'km' ? F('Kilometraje', euros(x.i) + ' · ' + x.km + ' km a ' + euros(x.porKm), 3, 'coche')
+  : F(x.t, euros(x.i), 3, { 'Plus de transporte': 'autobus', 'Desgaste de herramientas': 'herramientas', 'Plus de uniformidad': 'bota' }[x.t]));
+ noSal[0].oro = true;   // la candidata a dorada de los devengos: no es salario, pero va en los devengos
+ const ex = { 1: 'Los datos de la empresa y los tuyos van arriba, en el encabezamiento.',
+  2: 'Las fechas que paga la nómina son el período de liquidación.',
+  3: 'Todo lo que cobras, salarial o no, va en los devengos.',
+  4: 'Lo que te descuentan va en las deducciones.',
+  5: 'Las bases y lo que cotiza la empresa van abajo: no te lo descuentan.' };
+ const exPropia = { 'Aportación de la empresa': 'Lo que cotiza la empresa no te lo descuentan: va abajo, con las bases.',
+  'Anticipo': 'Lo que te adelantaron ya lo cobraste: se descuenta en las deducciones.',
+  'Cuota sindical': 'Te la descuentan solo si la pides: va en las deducciones.',
+  'Cotización por horas extra': 'Lo que cotizas por las horas extra te lo descuentan: deducciones.' };
+ return [
+  F('Datos de la empresa', 'nombre, NIF y cuenta de cotización', 1, 'edificio'),
+  F('Tu número de afiliación', 'a la Seguridad Social', 1, 'tarjeta'),
+  F('Tu grupo de cotización', 'y tu categoría profesional', 1, 'plantilla'),
+  F('Tu antigüedad', 'desde cuándo trabajas allí', 1, 'arena'),
+  F('Del 1 al 30 de abril', '30 días', 2, 'calendario'),
+  ...salarios,
+  ...(N.he ? [F('Horas extraordinarias', euros(N.he), 3, 'crono')] : []),
+  ...noSal,
+  F('Contingencias comunes', pct(cc.p) + ' de tu base', 4, 'candado'),
+  F('Desempleo y formación', pct(des.p) + ' + ' + pct(COTIZA.trab.fp), 4, 'paraguas'),
+  F('Retención de IRPF', pct(N.irpfP), 4, 'impuesto'),
+  ...(heC ? [F('Cotización por horas extra', pct(heC.p) + ' de ' + euros(N.he), 4, 'crono')] : []),
+  F('Anticipo', 'si te adelantaron parte del sueldo', 4, 'anticipo'),
+  F('Cuota sindical', 'si te afilias y pides que te la descuenten', 4, 'megafono'),
+  F('Base de contingencias comunes', euros(N.bcc), 5, 'regla'),
+  F('Base de contingencias profesionales', euros(N.bcp), 5, 'alerta'),
+  F('Base de IRPF', euros(N.baseIrpf), 5, 'grafica', '', true),
+  F('Aportación de la empresa', 'a la Seguridad Social', 5, 'maletin', '', true)
+ ].map(p => Object.assign(p, { ex: exPropia[p.t] || ex[p.b] }));
+}
+
+/* Apertura y cierre de la oficial de cada grupo (José, 19-11-2026: la UD6, del 9 al 18-12, los 4 grupos). Las mismas fechas en
+   servicio_intentos/Codigo.js (APERTURAS y CIERRES) y en herramientas/juegos_importar.py (CIERRES). */
+const APERTURAS={HIG:'2026-12-09T00:00:00',IFC:'2026-12-09T00:00:00',ITE:'2026-12-09T00:00:00',STI:'2026-12-09T00:00:00'};
+const CIERRES={HIG:'2026-12-18T23:59:59',IFC:'2026-12-18T23:59:59',ITE:'2026-12-18T23:59:59',STI:'2026-12-18T23:59:59'};
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+/* ===== Partida oficial: común a todos los juegos (fase 2, 17-11-2026) =====
+   Antes estaba copiado en cada plantilla; cada arreglo había que hacerlo siete veces. Los montar_*.py lo meten donde la
+   plantilla tiene la marca de oficial (comun_montar.py). Cada juego define antes, o después, sus propios datos:
+   JUEGO, INTENTOS, CLAVE_OF, CLAVE_MEJOR, CIERRES, DIAS, MESES y arrancaOficial(código, intento); y si quiere,
+   OFI_ABAJO (por defecto «los niveles de abajo») y OFI_AVISO() (una frase más antes de «¿Empezamos?»). */
+
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const PODIO=['1','0,75','0,50'];
+/* Servicio «Juegos IPE · intentos» (Apps Script de José, juegos/servicio_intentos): cuenta AL MOMENTO y apunta cada inicio. */
+const SERVICIO='https://script.google.com/macros/s/AKfycbw56Jq-wbMnwqNgdTatBKiyfdN3TP8fM0IarXeM2YD1d79qJKXgrPpOLip2Bb0BFRhqrQ/exec';
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
+const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m&&RX_COD.test(m[1]+'-'+m[2])?m[1]+'-'+m[2]:''};
+/* el código tal como se guarda y se envía: siempre con dos cifras (17-11-2026: 1HIG-7 y 1HIG-07 salían como dos códigos) */
+const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'').trim().toUpperCase().replace(/\s+/g,'');
+
+/* Apertura y cierre de cada grupo (José, 18-11-2026: «apertura y cierre en todos los juegos»). Cada juego pone APERTURAS y
+   CIERRES ({HIG:'2026-12-03T00:00:00',…}); sin apertura, la oficial está abierta; sin cierre, no caduca. Aquí solo se avisa
+   con la hora del móvil: quien decide es el servidor (las mismas fechas en servicio_intentos/Codigo.js). */
+const fechasDe_=n=>{try{return (n==='a'?APERTURAS:CIERRES)||{}}catch(e){return {}}};   // un juego sin APERTURAS no se rompe
+function apertura(c){const l=fechasDe_('a')[grupoDe(c)];return l?new Date(l):null}
+function plazo(c){const l=fechasDe_('c')[grupoDe(c)];return l?new Date(l):null}
+const sinAbrir=c=>{const a=apertura(c);return !!a&&new Date()<a};
+const fechaTxt=(f,hora)=>`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]}`+
+ (hora||f.getHours()||f.getMinutes()?` a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`:'');
+function textoPlazo(c){const a=apertura(c),f=plazo(c);
+ if(a&&new Date()<a)return `⏰ La partida oficial de tu grupo se abre ${fechaTxt(a)}${f?' y se podrá jugar hasta '+fechaTxt(f,1):''}. Mientras tanto, entrena todo lo que quieras.`;
+ if(!f)return '';
+ const fecha=fechaTxt(f,1);
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+const avisoSinAbrir=(c,abajo,l)=>{const a=l?new Date(l):apertura(c);   // l: la fecha que manda el servidor
+ return 'La partida oficial de tu grupo todavía no está abierta'+(a&&!isNaN(a)?': se abre '+fechaTxt(a):'')+'.\n\nMientras tanto puedes entrenar en '+abajo+' todo lo que quieras.'};
+
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+function mejorDe(c){c=normCod(c);if(!c)return 0;const v=ls.get(CLAVE_MEJOR+'_'+c,null);if(v!==null)return +v||0;const viejo=+ls.get(CLAVE_MEJOR,0);if(!viejo)return 0;
+ let mio=false,otro=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf(CLAVE_OF+'_')!==0||!(+localStorage.getItem(k)>0))continue;if(k===CLAVE_OF+'_'+c)mio=true;else otro=true}}catch(e){}
+ return mio&&!otro?viejo:0}
+const ponMejor=(c,v)=>{if(normCod(c))ls.set(CLAVE_MEJOR+'_'+normCod(c),v)};
+
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») ===== */
+function locales(c){
+ const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
+ if(v!==null)return +v||0;
+ return normCod(ls.get('ipe_codigo',''))===normCod(c)?+ls.get(CLAVE_OF,0):0;   // contador antiguo (por dispositivo)
+}
+function ponLocales(c,n){ls.set(CLAVE_OF+'_'+normCod(c),n)}
+const pendientes=c=>enCola().filter(t=>normCod(t.cod||(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(t)||[])[1])===normCod(c)).length;
+/* 18-11-2026: 28 s de espera (el servicio puede tardar 15 s en apuntar si hay cola) y, para «inicio», un id del clic: si se
+   reintenta, el servicio devuelve el mismo intento en vez de gastar otro */
+async function pideServicio(a,c,rid){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),28000);
+  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+(rid?'&rid='+rid:'')+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  clearTimeout(tt);
+  return typeof r.n==='number'?r:r&&r.error==='datos'?{sinJuego:true}:null;   // 19-11-2026: el servidor aún no tiene este juego ≠ sin conexión
+ }catch(e){return null}
+}
+/* 18-11-2026: con conexión manda el servidor (si José devuelve un intento borrando su fila, el móvil ya no lo bloquea) */
+async function intentosDe(c){const r=await pideServicio('consulta',c),l=locales(c);return r&&r.sinJuego?{n:l,sinJuego:true}:{n:r===null?l:r.n,sin:r===null}}
+const noPreparada=abajo=>'La partida oficial de este juego todavía no está preparada en el servidor. Tu profe te avisará cuando se abra.\n\nMientras tanto puedes entrenar en '+abajo+' todo lo que quieras.';
+function pintaOfi(n,estado){
+ const b=document.getElementById('ofi');if(!b)return;
+ if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
+ if(estado==='sinred'){b.disabled=false;b.textContent='Sin conexión · pulsa para reintentar';return}   // 18-11-2026: antes se quedaba desactivado
+ if(estado==='sinjuego'){b.disabled=false;b.textContent='Partida oficial aún no preparada · entrena abajo';return}
+ if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
+ b.disabled=n>=INTENTOS;
+ const ic=document.getElementById('cod'),f=ic&&plazo(ic.value);   // 18-11-2026: aviso con la hora del móvil; quien decide es el servidor
+ const a=ic&&sinAbrir(ic.value)&&apertura(ic.value);
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':a?'Se abre '+fechaTxt(a)+' · entrena abajo':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+}
+let tOfi=0;
+/* 19-11-2026: la portada consultaba el servicio en cada vuelta al menú (cada consulta lee las hojas enteras; con un grupo entrenando se
+   acerca al límite de Apps Script). Se recuerda 60 s; «Partida oficial» siempre pregunta de nuevo */
+const INT_MEM={};
+let ofiEnMarcha=false;   // 18-11-2026: mientras se comprueba y se apunta un intento, nada vuelve a activar el botón (dos oficiales a la vez)
+function revisaOfi(){
+ if(ofiEnMarcha)return;
+ clearTimeout(tOfi);
+ {const i=document.getElementById('cod');if(i&&normCod(i.value))pintaOfi(0,'mirando')}
+ tOfi=setTimeout(async()=>{
+  const i=document.getElementById('cod');if(!i)return;
+  const c=i.value;if(!normCod(c)){pintaOfi(0,'libre');return}
+  const k=normCod(c),m=INT_MEM[k];
+  const r=m&&Date.now()-m.t<60000?m.r:(pintaOfi(0,'mirando'),await intentosDe(c));
+  if(!r.sin)INT_MEM[k]={t:m&&m.r===r?m.t:Date.now(),r};
+  if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n,r.sinJuego?'sinjuego':r.sin?'sinred':'');
+ },400);
+}
+async function empiezaOficial(c){
+ if(ofiEnMarcha)return;ofiEnMarcha=true;
+ /* 19-11-2026 (revisión total, común): mientras se comprueba y se apunta el intento (hasta 28 + 28 s) la página no responde. Antes se
+    podía entrar a entrenar y la oficial llegaba encima (en Señales, un reloj del entrenamiento seguía vivo y hundía la oficial). Los
+    diálogos van fuera de #app y siguen funcionando */
+ const app=document.getElementById('app');if(app)app.inert=true;
+ try{return await empiezaOficial_(c)}finally{ofiEnMarcha=false;if(app)app.inert=false}
+}
+async function empiezaOficial_(c){
+ const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
+ const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
+ const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
+ const r=await intentosDe(c);pintaOfi(r.n,r.sinJuego?'sinjuego':r.sin?'sinred':'');
+ if(r.sinJuego){dialogo(noPreparada(abajo));return}
+ if(r.sin){dialogo('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en '+abajo+'.');return}
+ if(r.n>=INTENTOS){dialogo(yaJugadas);return}
+ if(sinAbrir(c)){dialogo(avisoSinAbrir(c,abajo));return}
+ if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
+ /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
+ const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
+ const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ let ini=await pideServicio('inicio',c,rid);
+ if(!ini){if(b2)b2.textContent='Reintentando…';ini=await pideServicio('inicio',c,rid)}   // mismo clic: no gasta otro intento
+ if(ini&&ini.sinJuego){pintaOfi(r.n,'sinjuego');dialogo(noPreparada(abajo));return}
+ if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini.ok&&ini.sinabrir){pintaOfi(ini.n);dialogo(avisoSinAbrir(c,abajo,ini.abre));return}
+ if(!ini.ok&&ini.cerrado){pintaOfi(ini.n);dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en '+abajo+'.');return}
+ if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
+ ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
+ OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
+}
+
+/* ===== Subida de nota ===== */
+const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
+/* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
+const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
+
+/* ===== Envío del resultado (fase 3, 17-11-2026): al servicio, no al formulario. Va con el «ref» que dio el servicio al
+   empezar; el servicio comprueba puntos y duración y lo apunta en la hoja. Si no hay red, se guarda en el dispositivo y se
+   envía solo al volver la conexión (o la próxima vez que se abra el juego). ===== */
+const COLA=()=>'cola_envios_'+JUEGO;
+const claveRef=(c,n)=>'ofi_ref_'+JUEGO+'_'+normCod(c)+'_'+n;
+/* true = apuntado; 'rechazado' = el servicio no lo acepta (no se reintenta); false = sin conexión (se reintenta) */
+async function manda(e){
+ if(typeof e==='string')e={txt:e,cod:(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(e)||[])[1]||'',ref:''};   // envíos guardados antes de la fase 3
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),30000);   // 19-11-2026: 30 s (con 30 envíos a la vez, el servicio puede tardar 15 s solo en dar turno)
+  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt)+(e.nv?'&nv='+encodeURIComponent(e.nv):''),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  clearTimeout(tt);
+  return r.ok?true:r.error?'rechazado':false;
+ }catch(x){return false}
+}
+function enCola(){try{return JSON.parse(localStorage.getItem(COLA())||'[]')}catch(e){return[]}}
+function guardaCola(c){try{localStorage.setItem(COLA(),JSON.stringify(c))}catch(e){}}
+let vaciando=false;
+async function vaciaCola(){
+ if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
+ try{const c=enCola();if(!c.length)return;
+  /* 18-11-2026: al terminar se vuelve a leer la cola y se quita solo lo enviado (antes se perdía lo que entraba mientras tanto) */
+  const hechos=new Set();for(const t of c){if(EN_VUELO.has(JSON.stringify(t)))continue;if((await manda(t))!==false)hechos.add(JSON.stringify(t))}
+  guardaCola(enCola().filter(t=>!hechos.has(JSON.stringify(t))))}finally{vaciando=false}
+}
+/* 19-11-2026: lo que queda en la cola se reintenta también en esta misma visita, cada vez más espaciado (antes, solo al volver
+   la conexión o al abrir otra vez el juego); el servicio responde «ok» si ese resultado ya le había llegado */
+function reintenta(){[20000,60000,180000].forEach(ms=>setTimeout(vaciaCola,ms))}
+addEventListener('online',vaciaCola);addEventListener('online',()=>revisaOfi());setTimeout(vaciaCola,1500);
+function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
+ const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
+ return l.length?' | fallos: '+l.join('; '):'';
+}
+const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
+const EN_VUELO=new Set();   // lo que está mandando envia(): vaciaCola no lo manda a la vez
+function envia(d){
+ const est=d.est||[d.n1,d.n2,d.n3];
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ const nv=Array.isArray(d.niveles)&&d.niveles.length?d.niveles.map(x=>[x.p,x.s,x.a].map(v=>Math.round(+v||0)).join(',')).join(';'):'';   // puntos, segundos y aciertos de cada nivel (18-11-2026)
+ const mem=OFI_REF&&OFI_REF.cod===normCod(d.codigo)&&OFI_REF.n==d.intento?OFI_REF.ref:'';   // el justificante también en memoria, en todos los juegos
+ const e={txt,cod:d.codigo,ref:d.ref||mem||ls.get(claveRef(d.codigo,d.intento),''),nv};
+ /* 19-11-2026 (revisión total, común): primero a la cola y luego se manda; al llegar respuesta se quita. Antes solo se guardaba si fallaba,
+    y si se cerraba la app durante el envío (hasta 30 s) el resultado se perdía con el intento gastado. El servicio ignora un reenvío */
+ const k=JSON.stringify(e);EN_VUELO.add(k);{const c=enCola();c.push(e);guardaCola(c)}
+ return manda(e).then(ok=>{
+  EN_VUELO.delete(k);
+  if(!OFI_REF||!e.ref||OFI_REF.ref===e.ref)OFI_VIVA=false;   // la respuesta de una oficial anterior no desprotege la que está en marcha
+  if(ok!==false)guardaCola(enCola().filter(t=>JSON.stringify(t)!==k));else reintenta();
+  return ok});
+}
+/* 19-11-2026 (revisión total, común): cierre de la oficial igual en todos los juegos. «Tu mejor» y el puesto, solo si el servicio no
+   rechaza el resultado (antes se apuntaban antes de saberlo); y sin error si ya no está la pantalla del resultado */
+function cierraOficial(d,pref){
+ /* 22-11-2026: un juego puede ordenar su podio por otra cosa que los puntos (RANK_VAL: el Muro, aciertos y luego puntos, igual que la
+    hoja «Ranking»); RANK_TXT dice cómo se lee ese valor. Sin ellos, los puntos de siempre */
+ const val=typeof RANK_VAL==='function'?RANK_VAL(d):(+d.puntos||0);
+ const antes=mejorDe(d.codigo),mejor=Math.max(antes,val);
+ return envia(d).then(ok=>{
+  const e=document.getElementById('envio');if(e)e.textContent=textoEnvio(ok);
+  if(ok!=='rechazado'){
+   ponMejor(d.codigo,mejor);if(!antes)ls.set(pref+'_primer_envio',Date.now());
+   puesto(d.codigo,mejor,true).then(r=>{const q=document.getElementById('puesto');if(q)q.innerHTML=textoPuesto(r,mejor)});
+  }else{const q=document.getElementById('puesto');if(q)q.textContent=''}
+  return ok;
+ });
+}
+
+/* lo que ve el alumno al terminar */
+function textoEnvio(ok){
+ return ok===true?'✔ Resultado enviado a tu profe.':ok==='rechazado'?'⚠ Este resultado no se ha podido aceptar. Tu profe lo revisará.':
+  '⚠ Se ha cortado la conexión y tu resultado no ha llegado todavía. Se queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet: vuelve a abrir el juego con conexión.';
+}
+
+/* ===== Puesto en el ranking del grupo (tabla pública con grupo, puntos y juego; sin códigos ni nombres) ===== */
+let RANK_MEM=null;   // 19-11-2026: la clasificación se recuerda 60 s (antes se descargaba en cada vuelta al menú)
+async function puesto(codigo,pts,nuevo){
+ try{
+  let txt=!nuevo&&RANK_MEM&&Date.now()-RANK_MEM.t<60000?RANK_MEM.txt:null;
+  if(txt===null){
+   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
+   txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);RANK_MEM={t:Date.now(),txt};
+  }
+  const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>parseInt(String(f[1]||'').replace(/\D/g,''),10)||0);   // 18-11-2026: «12.345» (con punto de miles) también se lee bien
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  const empate=Math.max(0,lista.filter(x=>x===pts).length-(nuevo?0:1));   // 19-11-2026: otras personas con los mismos puntos
+  return {pos,total,empate};
+ }catch(e){return null}
+}
+const recien=()=>Date.now()-(+ls.get(CLAVE_OF.replace(/_oficiales$/,'')+'_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
+ const emp=r.empate?` (empatas con ${r.empate===1?'otra persona':r.empate+' personas'}; a igualdad de puntos, cuenta quien llegó antes)`:'';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${typeof RANK_TXT==='function'?RANK_TXT(pts):pts+' puntos'})${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+}
+
+/* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
+   Desde «Sí, empezar» hasta el envío del resultado: aviso al recargar o cerrar, y el «atrás» de Android o del navegador no
+   sale de la página (si el juego define PAUSA_JUEGO(), además la pausa). Tirar hacia abajo ya no recarga (comun.js). */
+var OFI_VIVA=false,OFI_REF=null;
+addEventListener('beforeunload',e=>{if(OFI_VIVA){e.preventDefault();e.returnValue=''}});
+addEventListener('popstate',()=>{if(!OFI_VIVA)return;try{history.pushState({ofi:1},'')}catch(e){}if(typeof PAUSA_JUEGO==='function')PAUSA_JUEGO()});
+
+function arrancaOficial(c,n,ref,mas){presentaNivel(1,{codigo:c,intento:n,ref:ref||'',lento:!!mas,est:[],pts:0,niveles:[],fallos:[]})}   // lo llama empiezaOficial (oficial.js); mas: «más tiempo» que concede el servidor
+
+const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
+const INTENTOS=3;
+const JUEGO='UD6 Cuadra la nómina';
+const CLAVE_OF='nomina_oficiales';
+const CLAVE_MEJOR='nomina_mejor';
+const OFI_ABAJO='los niveles de abajo';
+/* revisión 19-11-2026: quien va directo a la oficial no ha visto el tutorial */
+const OFI_AVISO=()=>tutoPendiente()?'Aún no has entrenado en este dispositivo: si es tu primera vez, prueba antes el nivel 1 (te enseña a jugar).\n\n':'';
+
+/* ===== El juego ===== */
+const $=s=>document.querySelector(s), app=$('#app');
+const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const rec=n=>+ls.get('nomina_record_'+n,0)||0;
+const guarda=(n,p)=>{if(p>rec(n))ls.set('nomina_record_'+n,p)};
+const ciclo=()=>grupoDe(ls.get('ipe_codigo',''));
+const hayElenco=()=>typeof ELENCO!=='undefined'&&typeof personaje==='function'&&typeof presenta==='function';
+const cicloArte=()=>{const c=ciclo();return c&&NOMINAS[c]?c:hayElenco()?cicloJugador():'HIG'};
+const FONDO_V=true;   // montar_nomina.py: true si hay fondo vertical para el móvil
+const img=k=>`nomina_ficha_${k}.webp`;
+
+/* Pictogramas propios (sin emojis): trazo blanco de 24 × 24 */
+const ICO={
+ pausa:'<rect x="6" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none"/>',
+ altavoz:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/>',
+ mudo:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/>',
+ salario:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="3"/><path d="M6.5 9.5v5M17.5 9.5v5"/>',
+ gasto:'<path d="M9 7H4v5"/><path d="M4.5 11.5A8 8 0 1 1 7 17.6"/>',
+ fuera:'<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>',
+ candado:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ abierto:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 7.6-1.7"/>',
+ regla:'<rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6 8v3M9.5 8v4M13 8v3M16.5 8v4"/><path d="M12 4v16" stroke="#ff8a6a"/>',
+ doc:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 11h7M9 14.5h7M9 18h4"/>',
+ mano:'<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4 14.5a1.5 1.5 0 0 1 2.4-1.8L9 15"/>',
+ racha:'<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 2 1.3 3 2.5 3-1.5-3-.5-6 0-8z" fill="currentColor"/>',
+ sello:'<path d="M9 3h6v5l3 3v3H6v-3l3-3z"/><path d="M4 18h16v3H4z"/>'
+};
+const ico=(n,cl)=>`<svg class="ico${cl?' '+cl:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]||''}</svg>`;
+
+/* Los niveles. Bandejas: posición → clave de la ficha; colores con significado y SIEMPRE con pictograma además del color */
+const NIVELES=[
+ {n:1,titulo:'¿Es salario?',sub:'Lo que te paga la empresa: ¿salario, no salarial o ni siquiera va en la nómina?',col:'#0d6b4f',t0:6.2,tmin:3.4,
+  fondo:'nomina_fondo.webp',largo:.37,   // la gestoría (José, 19-11-2026: «te has pasado un pelín»: ni el cepillo ni el carrete bajo la cinta)
+  band:{izq:{k:'s',n:'Salarial',ic:'salario',col:'#0a5a3e',img:'nomina_bandeja_verde.webp',rot:'verde'},der:{k:'n',n:'No salarial',ic:'gasto',col:'#c24400',img:'nomina_bandeja_naranja.webp',rot:'naranja'},abj:{k:'f',n:'No va en la nómina',ic:'fuera',col:'#585d60',img:'nomina_bandeja_gris_h.webp',rot:'gris'}},
+  reparto:{s:[4,5],n:[3,5],f:[2,4]},   // revisión 19-11-2026: con variación (antes 5/4/3 fijo: las últimas fichas se deducían)
+  drama:'Lo primero es separar. Lo que te pagan <strong>por trabajar</strong> es salario; lo que te <strong>compensa un gasto</strong> o un perjuicio, no. Y hay cosas que te da la empresa que <strong>ni siquiera van en la nómina</strong>.'},
+ {n:2,titulo:'¿Cotiza?',sub:'Con importes: ¿entra en tu base de contingencias comunes, no entra o solo entra lo que pasa del límite?',col:'#c24400',t0:7.6,tmin:4.6,
+  fondo:'nomina_fondo2.webp',largo:.232,   // la cinta acaba antes del sello y de la planta del mostrador   // la Seguridad Social: otro escenario y otras bandejas (José, 18-11-2026: «al final crees que es el nivel anterior»)
+  band:{izq:{k:'c',n:'Cotiza entero',ic:'candado',col:'#22346a',img:'nomina_bandeja2_azul.webp',rot:'azul'},der:{k:'x',n:'No entra en la base',ic:'abierto',col:'#8a6100',img:'nomina_bandeja2_mostaza.webp',rot:'mostaza',oscuro:true},abj:{k:'e',n:'Solo lo que pasa del límite',ic:'regla',col:'#4f6578',img:'nomina_bandeja2_gris_h.webp',rot:'grisazul'}},
+  reparto:{c:[3,5],x:[3,5],e:[3,5]},
+  drama:'Ahora, con importes. Lo que cotiza entra en tu <strong>base de contingencias comunes</strong>, y de ahí salen tus cuotas. Ojo con las dietas y el kilometraje: <strong>tienen límite</strong>, y solo cotiza lo que pasa de él.'},
+ {n:3,titulo:'Cuadra la nómina',sub:'Coloca cada pieza en su parte de la nómina. Si todo encaja, la nómina cuadra sola.',col:'#004230',t0:9,tmin:5,
+  reparto:{1:2,2:1,3:3,4:3,5:3},
+  fondo:'nomina_fondo3.webp',   // el banco, donde empezó todo
+  drama:'Ya sabes qué es cada cosa. Toca montar la nómina de {prota}: <strong>cada pieza a su parte</strong>. Si todo encaja, los números ruedan solos y cae el sello.'}
+];
+const ZONAS={1:'Encabezamiento',2:'Período',3:'Devengos',4:'Deducciones',5:'Bases y empresa'};
+/* zonas medidas en la nómina de plastilina (fracciones de la imagen) y su zona de toque, algo mayor */
+/* medio hueco entre una parte y la de arriba (-1) o la de abajo (1), en fracción de la nómina; en los extremos, .02 */
+const hueco=(z,d)=>{const o=ZONA_XY[z+d];return o?(d<0?ZONA_XY[z][1]-o[3]:o[1]-ZONA_XY[z][3])/2:.02};
+const ZONA_XY={1:[.077,.049,.916,.218],2:[.077,.246,.916,.298],3:[.077,.327,.916,.538],4:[.077,.563,.916,.695],5:[.077,.72,.916,.908]};   // la nómina fina (18-11-2026)
+const PUNTOS={acierto:100,fallo:-50,rapido:20,cuadra:300};   // revisión 19-11-2026: rapidez hasta +20 (antes 50: el teclado del PC sacaba un fallo de ventaja al móvil)
+const ORO_EN=6;   // la dorada sale siempre la 7.ª: la misma dificultad para todo el mundo
+const estrellas=a=>a>=12?3:a>=10?2:a>=8?1:0;
+let st={}, raf=0, actx=null;
+
+/* el reparto común: la protagonista abre la historia y la persona compañera de ciclo la ayuda */
+function quien(c,q){c=c||cicloArte();return hayElenco()?personaje(c,q):{nombre:q==='vet'?'Alguien de tu ciclo':'Alba',ella:q!=='vet',puesto:'',lugar:'tu empresa'}}
+const conProta=s=>s.split('{prota}').join(quien(null,'prota').nombre);
+function narra(cont,texto,animo,html,compacto,c,q){
+ if(!cont||!hayElenco())return null;
+ const el=presenta(cont,{quien:q||'vet',ciclo:c||cicloArte(),texto,animo,compacto});if(!el)return null;
+ if(html)el.querySelector('.pres-txt').innerHTML=html;
+ return el;
+}
+
+/* ===== Las fichas de cada partida ===== */
+function fichasDe(n,c){
+ const l=NIVELES[n-1],B=BANCO[n],todas=(B[c]||[]).concat(B.comun);
+ const vistos=new Set(),cand=[];
+ for(const f of todas)if(!vistos.has(f.t)){vistos.add(f.t);cand.push(f)}
+ /* la dorada, en cualquier bandeja: primero la bandeja, luego una de sus candidatas */
+ const conOro=baraja([...new Set(cand.filter(f=>f.oro).map(f=>f.b))])[0], oro=baraja(cand.filter(f=>f.oro&&f.b===conOro))[0], usadas=new Set([oro.img]), sale=[];
+ const propias=new Set((B[c]||[]).map(f=>f.t));
+ for(const [k,cuantas] of Object.entries(repartoDe(l.reparto))){
+  let falta=cuantas-(oro.b===k?1:0);
+  /* primero lo propio del ciclo; después el resto, sin repetir objeto si se puede */
+  const pool=baraja(cand.filter(f=>f!==oro&&f.b===k)).sort((a,b)=>propias.has(b.t)-propias.has(a.t));
+  for(const f of pool){if(!falta)break;if(usadas.has(f.img))continue;sale.push(f);usadas.add(f.img);falta--}
+  for(const f of pool){if(!falta)break;if(!sale.includes(f)){sale.push(f);falta--}}
+ }
+ const r=baraja(sale);r.splice(ORO_EN,0,oro);
+ return r.map(f=>Object.assign({},f,{oro:f===oro}));   // las otras candidatas a dorada salen como fichas normales
+}
+/* un reparto al azar entre los que caben en los márgenes de cada bandeja y suman 12 */
+function repartoDe(r){
+ const ks=Object.keys(r),ok=[];
+ const va=(i,acc,suma)=>{if(i===ks.length){if(suma===12)ok.push(acc);return}for(let m=r[ks[i]][0];m<=r[ks[i]][1];m++)va(i+1,{...acc,[ks[i]]:m},suma+m)};
+ va(0,{},0);return baraja(ok)[0];
+}
+/* nivel 3 (revisión 19-11-2026): 12 piezas de unas 20, con el reparto del nivel y sin repetir dibujo; la dorada, una de sus tres candidatas */
+function fichas3(c){
+ const p=piezas(c),oro=baraja(p.filter(f=>f.oro))[0],usadas=new Set([oro.img]),sale=[];
+ for(const [z,m] of Object.entries(NIVELES[2].reparto)){
+  let falta=m-(oro.b==z?1:0);const pool=baraja(p.filter(f=>f!==oro&&f.b==z));
+  for(const f of pool){if(!falta)break;if(usadas.has(f.img))continue;sale.push(f);usadas.add(f.img);falta--}
+  for(const f of pool){if(!falta)break;if(!sale.includes(f)){sale.push(f);falta--}}
+ }
+ const r=baraja(sale);r.splice(ORO_EN,0,oro);
+ return r.map(f=>Object.assign({},f,{oro:f===oro}));
+}
+
+/* ===== Portada ===== */
+/* Más tiempo para leer (revisión 19-11-2026, pensado para NEAE pero abierto a todo el mundo en el entrenamiento): tiempo ×2 y, tras
+   un fallo, la ficha siguiente espera a que se pulse «Seguir». En la partida oficial, la casilla no cuenta: solo lo da el servidor
+   a los códigos que el profe apunta (José, 19-11-2026, opción A), sin decirlo en pantalla y con la rapidez en el doble de tiempo
+   para que pueda puntuar igual que el resto */
+const lento=()=>ls.get('nomina_lento','')==='1';
+function portada(){
+ parar();app.classList.remove('jugando','v');app.style.removeProperty('--fondo');
+ const c=cicloArte();
+ app.innerHTML=`<div class="portada">
+  <div class="heroe mesa" id="heroe" style="--brillo:rgba(252,209,0,.3)">
+   <div class="hm">IPE I · Unidad 6 · El salario</div>
+   <h1>Cuadra<br><span>la nómina</span></h1>
+   <div class="tira" aria-hidden="true">${['billete','autobus','plato','candado','impuesto','paga'].map(k=>`<img src="${img(k)}" alt="">`).join('')}</div>
+   <div class="narra" id="narraP"></div>
+   <p>Cada concepto llega como una ficha: <b>desliza</b> hacia su bandeja (o tócala) antes de que se acabe el tiempo. En el último nivel montas la nómina pieza a pieza y, si todo encaja, cuadra sola.</p>
+   <div class="chips">${NIVELES.map(l=>`<span>${l.titulo}</span>`).join('')}</div>
+  </div>
+  <div class="oficial">
+   <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profe; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
+   <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
+   <button class="btn p" id="ofi" ${normCod($cod0())?'disabled':''}>${normCod($cod0())?'Comprobando tus intentos…':'Partida oficial'}</button>
+   ${tutoPendiente()?'<div class="primera">¿Primera vez? Antes, entrena el nivel 1: te enseña a jugar.</div>':''}
+   <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
+   <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
+  </div>
+  ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
+  <h2 class="serif entreno">Entrena cuando quieras</h2>
+  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por ficha y, si fallas, sigues cuando hayas leído la explicación (sin puntos de rapidez)</span></label>
+  ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
+  <p class="cifras">Cifras de ${COTIZA.año} (${COTIZA.norma} y Reglamento del IRPF): tu libro trae las de 2024. Contingencias comunes, ${pct(r2(COTIZA.trab.cc+COTIZA.trab.mei))} (con el MEI); dietas exentas hasta ${euros(COTIZA.dietaSin)} al día sin dormir fuera y ${euros(COTIZA.dietaCon)} durmiendo fuera; kilometraje, ${String(COTIZA.km).replace('.',',')} €/km.</p>
+ </div><div class="pie">CPIFP Los Viveros · ET (arts. 26 a 29), LGSS (art. 147) y ${COTIZA.norma}</div>`;
+ $('#lento').onchange=e=>ls.set('nomina_lento',e.target.checked?'1':'');
+ app.querySelectorAll('.nivel').forEach(b=>b.onclick=()=>{const n=+b.dataset.n;if(n===1&&tutoPendiente())return tutorial();presentaNivel(n)});
+ $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none';
+  const g=grupoDe(codOficial($('#cod').value));if(g&&NOMINAS[g]&&g!==st.cicloP)pintaHeroe(g)};
+ pintaHeroe(c);
+ if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
+ $('#ofi').onclick=()=>{
+  const c=codOficial($('#cod').value);
+  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profe: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
+  {const f=plazo(c);if(f&&new Date()>f){dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
+  empiezaOficial(c);
+ };
+ revisaOfi();
+}
+/* la protagonista cuenta lo del banco con SU nómina (el motor da el bruto y el neto de su ciclo) */
+function pintaHeroe(c){
+ st.cicloP=c;const p=quien(c,'prota'),N=nomina(NOMINAS[c]);
+ narra($('#narraP'),`Vengo del banco y estoy ${p.ella?'indignada':'indignado'}: en mi nómina el total devengado es ${euros(N.devengado)} y me han ingresado ${euros(N.liquido)}. ¿Dónde está el resto? ¿Me ayudas a entenderla?`,'mal','',true,c,'prota');
+}
+
+/* ===== Presentación de cada nivel ===== */
+/* Revisión del 19-11-2026: mientras se lee la presentación de un nivel, se descarga el siguiente (el 3.º tiene la nómina, el
+   sello y unas 20 piezas: con mala cobertura, las primeras salían en blanco) */
+const PRECARGADAS=[];
+function precarga(n){
+ const l=NIVELES[n-1];if(!l)return;
+ const urls=[l.fondo,...Object.values(l.band||{}).flatMap(b=>[b.img,`nomina_rotulo_${b.rot}.webp`])];
+ if(n===3)urls.push('nomina_documento.webp','nomina_sello.webp',...piezas(cicloArte()).map(f=>img(f.img)));
+ for(const u of new Set(urls)){const i=new Image();i.src=u;PRECARGADAS.push(i)}
+}
+function presentaNivel(n,oficial){
+ parar();app.classList.remove('jugando','v');
+ const l=NIVELES[n-1];precarga(n);precarga(n+1);
+ const tres=l.band?`<div class="tres">${['izq','der','abj'].map(p=>{const b=l.band[p];return `<div class="ley"><img src="${b.img}" alt=""><span class="placa ${b.oscuro?'grab-o':'grab-c'}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span><small>${{izq:'← desliza a la izquierda',der:'desliza a la derecha →',abj:'↓ desliza hacia abajo'}[p]}</small></div>`}).join('')}</div>`:'';
+ app.innerHTML=`<div class="intro">
+  <div class="marca">${oficial?'Partida oficial · ':''}Nivel ${n} de 3</div>
+  <h1>${l.titulo}</h1>
+  <div class="escena-n" id="escenaN" style="--fondo:url(${l.fondo})"><div class="drama" style="color:#fff">${conProta(l.drama)}</div></div>
+  <div class="reglas"><b>Cómo se juega</b>
+  <ul class="cortas">
+   ${n<3?`<li>${ico('mano')}<span><b>Desliza</b> la ficha hacia su bandeja, o <b>toca la bandeja</b>. En el ordenador, ← → ↓.</span></li>
+   <li>${ico('racha')}<span>El aro de colores es tu tiempo: se va vaciando. Si encadenas aciertos, las fichas llegan más deprisa y cada una vale el doble.</span></li>`:
+   `<li>${ico('mano')}<span><b>Arrastra</b> la pieza a su parte de la nómina, o <b>toca la parte</b>. En el ordenador, teclas 1 a 5.</span></li>
+   <li>${ico('doc')}<span>Las partes: ${Object.entries(ZONAS).map(([k,v])=>`<b>${k}</b> ${v.toLowerCase()}`).join(', ')}.</span></li>`}
+   <li>${ico('sello')}<span>Doce fichas. La <b>dorada</b> es la más difícil y vale el triple.</span></li>
+  </ul>
+  <details><summary>Puntos y estrellas</summary><ul>
+   <li>Acierto: <b>+100</b>; desde el 3.º seguido, <b>×2</b>; la dorada, <b>×3</b>. Si decides en menos de 1,5 s, hasta <b>+50</b> más.</li>
+   <li>Fallo o tiempo agotado: <b>−50</b>, se corta la racha y la ficha va sola a su sitio para que veas dónde iba.</li>
+   ${n===3?`<li>Si cuadras la nómina sin ningún fallo: <b>+${PUNTOS.cuadra}</b>.</li>`:''}
+   <li>Estrellas por aciertos de 12: ★★★ con 12, ★★ con 10 u 11 y ★ con 8 o 9.</li>
+  </ul></details>
+  ${tres}</div>
+  <div class="btns"><button class="btn p" id="vamos">▶ ¡Vamos allá!</button><button class="btn s" id="menu">${oficial?'Abandonar la partida oficial':'Volver al menú'}</button></div>
+ </div>`;
+ narra($('#escenaN'),'','neutro',conProta(l.drama));
+ $('#vamos').onclick=()=>empieza(n,oficial);
+ $('#menu').onclick=async()=>{if(oficial&&!(await dialogo('¿Seguro? El intento '+oficial.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:'Sí, salir',no:'Seguir jugando'})))return;if(oficial)OFI_VIVA=false;portada()};
+}
+
+/* ===== Motor ===== */
+const W=360,H=640;
+const TUTO='nomina_tutorial';
+const tutoPendiente=()=>!ls.get(TUTO,'');
+function parar(){cancelAnimationFrame(raf);raf=0;if(st.obs)st.obs.disconnect();removeEventListener('keydown',tecla);if(st.pm){removeEventListener('pointermove',st.pm);removeEventListener('pointerup',st.pu);removeEventListener('pointercancel',st.pu)}
+ document.removeEventListener('visibilitychange',oculta);removeEventListener('blur',oculta);removeEventListener('pagehide',oculta);st.esperas=[]}
+
+/* pantalla de juego común: marcador, escenario de 360 × 640 escalado, avisos para lectores de pantalla y aviso de girar */
+function pantalla(oficial,hudExtra,escenario){
+ parar();
+ app.style.zoom='';app.style.maxWidth='';app.style.minHeight='';
+ app.classList.add('jugando');app.classList.toggle('v',FONDO_V&&escenario===NIVELES[0].fondo);app.style.setProperty('--fondo',`url(${escenario})`);
+ app.dataset.nivel=String(NIVELES.findIndex(l=>l.fondo===escenario)+1);   // para encuadrar el escenario de cada nivel
+ app.innerHTML=`<div class="juego">
+  <div class="hud" id="hud">${hudExtra}<span class="ctl"><button type="button" class="pill" id="bpa" aria-label="Pausa">${ico('pausa')}</button><button type="button" class="pill" id="bso" aria-label="Quitar el sonido"></button></span></div>
+  <div class="marco" id="marco"><div class="lienzo" id="lienzo"><div class="esc" id="esc"></div></div></div>
+  <div class="sr" id="avisoSR" role="status" aria-live="polite"></div>
+  <div class="giro" aria-live="assertive"><span aria-hidden="true">↻</span>Gira el móvil: se juega en vertical</div>
+ </div>`;
+ st.obs=new ResizeObserver(ajusta);st.obs.observe($('#marco'));ajusta();
+ const suelta=(b,e)=>{if(e.detail)b.blur()};
+ $('#bpa').onclick=e=>{suelta(e.currentTarget,e);if(!reanuda())pausaManual()};
+ {const bs=$('#bso'),pinta=()=>{bs.innerHTML=ico(window.SILENCIO?'mudo':'altavoz');bs.setAttribute('aria-label',window.SILENCIO?'Poner el sonido':'Quitar el sonido')};
+  pinta();bs.onclick=e=>{suelta(bs,e);window.SILENCIO=!window.SILENCIO;ls.set('ipe_silencio',window.SILENCIO?'1':'0');pinta()}}
+ addEventListener('keydown',tecla);
+ document.addEventListener('visibilitychange',oculta);addEventListener('blur',oculta);addEventListener('pagehide',oculta);
+ if(!oficial)guardaAtras();
+ return $('#esc');
+}
+function ajusta(){
+ const m=$('#marco'),lz=$('#lienzo'),e=$('#esc');if(!m||!lz||!e)return;
+ const r=m.getBoundingClientRect();if(r.width<10||r.height<10)return;
+ const k=Math.min(r.width/W,r.height/H);
+ lz.style.width=Math.floor(W*k)+'px';lz.style.height=Math.floor(H*k)+'px';e.style.transform=`scale(${k})`;st.k=k;
+ {const h=$('#hud');if(h)h.style.maxWidth=Math.max(W*k,340)+'px'}
+ /* José, 18-11-2026: la cinta, más larga si sobra pantalla a los lados (hasta el 10 % de cada borde; en el móvil, el ancho del escenario) */
+ st.ext=Math.max(0,Math.min(260,((st.l&&st.l.largo)||.40)*r.width/k-170));   // cada escenario, su largura: la cinta no pisa sus objetos
+ e.style.setProperty('--ext',st.ext.toFixed(1)+'px');
+ despeja(e);
+ st.cintaW=0;   // se vuelve a medir
+ {const dpr=Math.min(devicePixelRatio||1,2);for(const cv of document.querySelectorAll('canvas.rodillo')){cv.width=Math.round(50*k*dpr);cv.height=Math.round(100*k*dpr)}if(st.f)colocaCola(st.qAct==null?1:st.qAct)}
+}
+/* Revisión del 19-11-2026 (tableta 4:3: la cinta pisaba la planta y la taza): los objetos de cada fondo (fracciones de la imagen
+   cuadrada: x0,y0,x1,y1). En la tableta, si la cinta, con sus rodillos, cae a la altura de alguno, se acorta hasta no tocarlo */
+const OBJETOS={
+ 'nomina_fondo.webp':[[0,.05,.275,.34],[.795,.19,.96,.36],[0,.385,.105,.56],[0,.47,.13,.63],[.875,.4,1,.63],[.03,.68,.25,.86],[.67,.7,.93,.87],[.87,.64,1,.8]],
+ 'nomina_fondo2.webp':[[.14,.38,.26,.52],[.73,.37,.92,.57],[.15,.64,.33,.8],[.75,.64,.86,.74],[.69,.68,.8,.84]]};
+function despeja(e){
+ const ob=st.l&&OBJETOS[st.l.fondo],I=$('#rodI'),D=$('#rodD');
+ if(!ob||!I||!D||innerWidth/innerHeight>=1.5)return;   // solo en pantallas casi cuadradas (tableta): en el PC y en el móvil apaisado se dejó a ojo; en vertical, otro fondo
+ const a=app.getBoundingClientRect(),S=Math.max(a.width,a.height),ox=a.left+(a.width-S)/2,oy=a.top+(a.height-S)/2;   // fondo cuadrado, «cover»
+ const ri=I.getBoundingClientRect(),rd=D.getBoundingClientRect(),y0=(ri.top-oy)/S,y1=(ri.bottom-oy)/S,L=(ri.left-ox)/S,R=(rd.right-ox)/S;
+ let sobra=0;
+ for(const [x0,yA,x1,yB] of ob){if(yB<y0||yA>y1)continue;sobra=Math.max(sobra,x1<.5?(x1+.01-L)*S:(R-(x0-.01))*S)}
+ if(sobra>0){st.ext=Math.max(0,st.ext-sobra/st.k);e.style.setProperty('--ext',st.ext.toFixed(1)+'px')}
+}
+const aLocal=(cx,cy)=>{const b=$('#lienzo').getBoundingClientRect();return {x:(cx-b.left)/st.k,y:(cy-b.top)/st.k}};
+function decir(t){const s=$('#avisoSR');if(s)s.textContent=t}
+
+/* ---------- niveles 1 y 2: la cinta y las tres bandejas ---------- */
+function empieza(n,oficial){
+ if(n===3)return empieza3(oficial);
+ const l=NIVELES[n-1],c=cicloArte();
+ const esc=pantalla(oficial,`<span class="pill" id="hp">0 pts</span><span class="pill" id="hf">1/12</span><span class="pill racha" id="hr"></span>`,l.fondo);
+ esc.innerHTML=`<div class="cinta" id="cinta" role="img" aria-label="La cinta con las fichas que vienen"></div><canvas class="rodillo r-izq" id="rodI"></canvas><canvas class="rodillo r-der" id="rodD"></canvas>
+  ${['izq','der','abj'].map(p=>{const b=l.band[p];return `<button type="button" class="bandeja b-${p}" data-p="${p}" aria-label="Bandeja: ${b.n}"><img src="${b.img}" alt=""><span class="rot placa ${b.oscuro?'grab-o':'grab-c'}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span></button>`}).join('')}
+  <div class="actual" id="act"><div class="aro" id="aro"><i></i></div><img id="actImg" alt="" draggable="false"><div class="chapa" id="actCh"></div></div>`;
+ st={l,n,c,lento:oficial?!!oficial.lento:!st.tutoFichas&&lento(),oficial:oficial||null,fichas:st.tutoFichas||fichasDe(n,c),i:-1,pts:0,aciertos:0,racha:0,fallos:[],tj:0,t:performance.now(),pausa:false,fin:false,maxR:0,obs:st.obs,k:st.k,ext:st.ext,
+  tuto:st.tutoFichas?{paso:0}:null,inicio:0,modo:'cinta'};
+ st.cx=180;st.cy=220;   // a la altura del centro de las bandejas de los lados
+ ajusta();   // revisión 19-11-2026: con el nivel nuevo ya en st (antes, el primer encaje usaba el largo de cinta del nivel anterior)
+ esc.querySelectorAll('.bandeja').forEach(b=>b.onclick=e=>{e.stopPropagation();decide(b.dataset.p)});
+ mandoArrastre($('#act'),(dx,dy)=>{if(Math.max(Math.abs(dx),Math.abs(dy))<44)return null;return Math.abs(dx)>Math.abs(dy)?(dx<0?'izq':'der'):dy>0?'abj':null},p=>decide(p));
+ colocaActual(0,0);
+ if(st.tuto){const b=document.createElement('button');b.type='button';b.className='saltar';b.textContent='Saltar la explicación';b.onclick=()=>{ls.set(TUTO,'1');st.tutoFichas=null;presentaNivel(1)};$('#marco').appendChild(b)}
+ st.inicio=performance.now();
+ siguiente();
+ raf=requestAnimationFrame(bucle);
+ if(MQ_GIRO.matches)pausaManual();
+}
+function aroLleno(){const ar=$('#aro');if(!ar)return;ar.style.setProperty('--q',1);ar.dataset.q='1.000';ar.dataset.c='verde';ar.style.setProperty('--aro','url(nomina_aro_verde.webp)');ar.style.display=st.tuto?'none':''}
+function colocaActual(dx,dy,rot){const a=$('#act');if(a)a.style.transform=`translate(${st.cx+dx}px,${st.cy+dy}px) rotate(${rot||0}deg)`}
+/* arrastre con el dedo o el ratón: la ficha sigue al dedo (un poco más lenta) y al soltar decide la dirección */
+function mandoArrastre(el,dir,alSoltar){
+ el.onpointerdown=e=>{if(st.pausa||st.fin||st.ocupada)return;e.preventDefault();st.arr={id:e.pointerId,x0:e.clientX,y0:e.clientY};sfx('toque')};
+ st.pm=e=>{const a=st.arr;if(!a||a.id!==e.pointerId||st.ocupada)return;const dx=(e.clientX-a.x0)/st.k,dy=(e.clientY-a.y0)/st.k;
+  a.dx=dx;a.dy=dy;if(st.modo==='nomina'){arrastra3(e,dx,dy);return}colocaActual(dx*.85,Math.max(-30,dy*.85),dx*.06)};
+ st.pu=e=>{const a=st.arr;if(!a||a.id!==e.pointerId)return;st.arr=null;
+  if(st.modo==='nomina'){suelta3(e,a);return}
+  const p=e.type==='pointerup'&&!st.ocupada?dir(a.dx||0,a.dy||0):null;
+  if(p)decide(p);else if(!st.ocupada)vuelve()};
+ addEventListener('pointermove',st.pm,{passive:true});addEventListener('pointerup',st.pu);addEventListener('pointercancel',st.pu);
+}
+function vuelve(){const a=$('#act');if(!a)return;a.animate([{transform:a.style.transform},{transform:`translate(${st.cx}px,${st.cy}px)`}],{duration:180,easing:'cubic-bezier(.3,1.5,.5,1)'});colocaActual(0,0)}
+/* La cinta de arriba (José, 18-11-2026): larga, con rodillos en los extremos, y sincronizada con el tiempo: mientras decides,
+   las fichas avanzan; la siguiente llega al rodillo de la izquierda justo cuando se acaba tu tiempo y cae al centro. Si decides
+   antes, la cinta corre deprisa hasta entregarla. La banda se mueve con las fichas. */
+const CINTA={paso:100,y:46,rod:50};   // la cinta se estira a los lados si sobra pantalla (st.ext)
+/* el número y su unidad nunca se separan de línea («0,30 €/km», «12 %») */
+const junto=t=>String(t).replace(/(\d) (€|%)/g,'$1\u00a0$2');
+function pintaCinta(){
+ const c=$('#cinta');if(!c)return;
+ c.querySelectorAll('img').forEach(x=>x.remove());
+ st.fichas.slice(st.i+1,st.i+8).forEach(f=>{const im=document.createElement('img');im.src=img(f.img);im.alt='';c.appendChild(im)});
+ colocaCola(1);
+}
+function colocaCola(q){
+ const c=$('#cinta');if(!c)return;const av=CINTA.paso*(1-q);
+ c.querySelectorAll('img').forEach((im,k)=>{im.style.transform=`translateX(${(4+(k+1)*CINTA.paso-av).toFixed(1)}px)`});
+ c.style.backgroundPositionX=(-((st.avTot||0)+av)).toFixed(1)+'px';
+ pintaRodillos((st.avTot||0)+av,st.cintaW||(st.cintaW=c.offsetWidth));   // el ancho, guardado: leerlo tras mover obligaba a maquetar en cada fotograma
+}
+/* Los rodillos (José, 18-11-2026: «que dé la sensación de girar hacia abajo»): la misma banda, envuelta en un cilindro de radio
+   50 px. Cada columna toma la banda en el punto del arco que le toca (x = R·sen θ): hacia el borde los nervios se juntan y se
+   oscurecen, y se mueven a la vez que la cinta. */
+const TRAMO=(()=>{const i=new Image();i.src='nomina_cinta.webp';return i})(), GRIS=(()=>{const i=new Image();i.src='nomina_rodillo.webp';return i})();
+const ROD_H=100, BANDA_Y=6;   // el cilindro es 12 px más largo que la banda: asoma 6 px por arriba y por abajo
+/* Revisión del 19-11-2026: lo que no se mueve (el cilindro, su sombra y su brillo) se dibuja una sola vez por tamaño; en cada
+   fotograma solo se pinta la banda (antes, unas 900 operaciones de dibujo por fotograma) */
+const ROD_CAPAS={};
+function capasRodillo(W,H,der){
+ const k=W+'x'+H+(der?'d':'i');if(ROD_CAPAS[k])return ROD_CAPAS[k];
+ if(!GRIS.complete||!GRIS.naturalWidth)return null;
+ const lienzo=()=>{const c=document.createElement('canvas');c.width=W;c.height=H;return c};
+ const base=lienzo(),capa=lienzo(),gb=base.getContext('2d'),gc=capa.getContext('2d'),f=W/50,y0=BANDA_Y*f,bh=88*f,s=[],cs=[];
+ for(let i=0;i<W;i++){
+  const d=der?(i+.5)/W:(W-i-.5)/W, th=Math.asin(Math.min(.999,d));s.push(th*50);cs.push(Math.max(.12,Math.cos(th)));
+  gb.drawImage(GRIS,Math.min(GRIS.naturalWidth-1,i/W*GRIS.naturalWidth),0,1,GRIS.naturalHeight,i,0,1,H);   // el cilindro
+  const sombra=.88*Math.pow(1-Math.cos(th),.55);   // volumen: la curva se oscurece pronto, como un cilindro de verdad
+  gc.fillStyle=`rgba(0,0,0,${sombra.toFixed(3)})`;gc.fillRect(i,0,1,H);
+  const b=.24*Math.exp(-(((th-.38)/.22)**2));if(b>.01){gc.fillStyle=`rgba(255,255,255,${b.toFixed(3)})`;gc.fillRect(i,0,1,H)}
+ }
+ gc.fillStyle='rgba(0,0,0,.35)';gc.fillRect(0,y0-f,W,f);gc.fillRect(0,y0+bh,W,f);   // la sombra de la banda sobre el cilindro
+ return ROD_CAPAS[k]={base,capa,s,cs,f,y0,bh};
+}
+function pintaRodillos(off,bw){
+ if(!TRAMO.complete||!TRAMO.naturalWidth)return;
+ const esc=TRAMO.naturalHeight/88, tw=TRAMO.naturalWidth/esc;   // px de la imagen por px lógico · ancho del tramo en px lógicos
+ for(const [id,der] of [['rodI',false],['rodD',true]]){
+  const cv=document.getElementById(id);if(!cv||!cv.width)continue;
+  const g=cv.getContext('2d'),W=cv.width,H=cv.height,c=capasRodillo(W,H,der);if(!c)continue;
+  g.clearRect(0,0,W,H);g.drawImage(c.base,0,0);
+  for(let i=0;i<W;i++){
+   const u=(((der?bw+off+c.s[i]:off-c.s[i])%tw)+tw)%tw, sw=Math.min(TRAMO.naturalWidth-u*esc,Math.max(1,esc/c.f/c.cs[i]));
+   g.drawImage(TRAMO,u*esc,0,sw,TRAMO.naturalHeight,i,c.y0,1,c.bh);   // la banda, envuelta
+  }
+  g.drawImage(c.capa,0,0);
+ }
+}
+function siguiente(){
+ st.i++;st.ocupada=false;
+ if(st.i>=st.fichas.length)return terminaNivel();
+ const f=st.fichas[st.i];
+ const lim=st.tuto?1e9:Math.max(st.l.tmin,st.l.t0*Math.pow(.93,st.racha))*(st.lento?2:1);
+ st.f=f;st.t0=st.tj;st.lim=lim;
+ aroLleno();if(st.i)st.avTot=(st.avTot||0)+CINTA.paso;st.qFin=null;st.fPausa=false;st.tLlega=performance.now();
+ const a=$('#act');a.style.opacity='';a.classList.toggle('oro',!!f.oro);pintaFicha(f);
+ colocaActual(0,0);
+ if(!MOV_REDUCIDO)a.animate([{transform:`translate(${60-(st.ext||0)+4+31}px,${CINTA.y}px) scale(.41)`},{transform:`translate(${st.cx}px,${st.cy}px) scale(1.06)`,offset:.75},{transform:`translate(${st.cx}px,${st.cy}px)`}],{duration:300,easing:'cubic-bezier(.3,1,.5,1)'});
+ pintaCinta();hud();
+ if(f.oro){aviso('¡Ficha dorada!','vale el triple',1100);sfx('premio')}
+ decirFicha(f);
+ if(st.tuto)tutoMano();
+}
+function pintaFicha(f){const im=$('#actImg');im.src=img(f.img);st.sinImg=!im.complete;if(st.sinImg)im.onload=im.onerror=()=>{st.sinImg=false};   // revisión 19-11-2026: sin dibujo todavía (mala cobertura), el reloj espera
+ $('#actCh').classList.toggle('larga',f.t.length>26);$('#actCh').innerHTML=`${junto(f.t)}${f.s?`<small>${junto(f.s)}</small>`:''}`}
+function decirFicha(f){decir(`${f.t}${f.s?', '+f.s:''}. ${st.modo==='nomina'?'¿En qué parte de la nómina va?':'¿'+Object.values(st.l.band).map(b=>b.n).join(', ')+'?'}`)}
+/* Pausa sin ventaja (revisión del 19-11-2026): quien pausa con una ficha a la vista no gana tiempo para pensarla. En los niveles
+   1 y 2 se cambia por otra de la misma bandeja que aún no ha salido (con el tiempo que le quedaba); en el nivel 3 (12 piezas
+   fijas) se queda, pero sin puntos de rapidez */
+function repuesto(f){
+ const B=BANCO[st.n],usadas=new Set(st.fichas.map(x=>x.t)),pool=st.n===3?piezas(st.c):B?(B[st.c]||[]).concat(B.comun):[];
+ const cand=baraja(pool.filter(x=>x.b===f.b&&!usadas.has(x.t))),dib=new Set(st.fichas.map(x=>x.img));
+ const r=cand.find(x=>!dib.has(x.img))||cand[0];
+ return r?Object.assign({},r,{oro:!!f.oro}):null;
+}
+function fichaEnPausa(){
+ st.cambiada=st.sinRap=false;if(!st.f||st.ocupada||st.tuto||st.fin)return;
+ st.fPausa=st.sinRap=true;
+ {const r=repuesto(st.f);if(r){st.fichas[st.i]=r;st.f=r;pintaFicha(r);st.cambiada=true}}
+}
+function decide(p){
+ if(st.ocupada||st.pausa||st.fin||!st.f)return;
+ const b=st.l.band[p],f=st.f;if(!b)return;
+ st.ocupada=true;quitaMano();
+ const ok=b.k===f.b,seg=(st.tj-st.t0);
+ if(st.tuto&&!ok){st.ocupada=false;sacudir($('#actImg'),7);sfx('fallo');vuelve();tutoDice(`Casi. ${f.ex}`);return}
+ ok?acierta(p,seg):falla(p,false);
+}
+/* revisión 19-11-2026: la dorada vale ×3 a secas (sin el ×2 de la racha encima: un fallo pesaba según dónde cayera) y la rapidez
+   cuenta desde que la ficha aterriza (0,3 s) */
+function puntosAcierto(seg,oro){
+ st.racha++;st.maxR=Math.max(st.maxR||0,st.racha);const s=Math.max(0,seg-.3),x=oro?3:st.racha>=3?2:1,v=st.lento?3:1.5,rap=!st.fPausa&&(!st.lento||st.oficial)&&s<v?Math.round(PUNTOS.rapido*(1-s/v)):0;
+ return {p:PUNTOS.acierto*x+rap,x,rap};
+}
+function acierta(p,seg){
+ const f=st.f,{p:pt,x}=puntosAcierto(seg,f.oro);
+ st.aciertos++;suma(pt);
+ vuela(p,true);
+ sfx('acierto',Math.min(st.racha-1,9));vibrar(12);
+ flota('+'+pt+(x>1?` ×${x}`:''),posBandeja(p),false);
+ if(st.racha===3)aviso('¡Racha!','cada acierto vale el doble',900);
+ st.tSig=espera(siguiente,st.tuto?650:330);
+ if(st.tuto)tutoBien(f);
+}
+function falla(p,tiempo){
+ const f=st.f,buena=Object.keys(st.l.band).find(k=>st.l.band[k].k===f.b);
+ st.racha=0;suma(PUNTOS.fallo);st.fallos.push(f);
+ sfx('fallo');vibrar([30,40,30]);sacudir($('#actImg'),8);
+ if(p)flota(String(PUNTOS.fallo).replace('-','−'),posBandeja(p),true);
+ porque((tiempo?'¡Tiempo! ':'')+f.t+' → '+st.l.band[buena].n,f.ex,false);   // 18-11-2026: con el nombre (la siguiente ficha ya está en pantalla)
+ const bb=document.querySelector(`.b-${buena}`);if(bb){bb.classList.add('buena');setTimeout(()=>bb.classList.remove('buena'),900)}
+ trasFallo(()=>{vuela(buena,false);st.tSig=espera(siguiente,650)},420);
+}
+/* tras un fallo: sigue sola o, con «Más tiempo para leer», cuando se pulsa «Seguir» (el porqué no se va mientras tanto) */
+function trasFallo(fn,ms){
+ if(!st.lento){st.tSig=espera(fn,ms);return}
+ quita(st.tPorque);st.alFallo=fn;const d=$('#porque');
+ if(d){const b=document.createElement('button');b.type='button';b.className='chapa-btn seguir';b.textContent='Seguir ▶';b.onclick=e=>{e.stopPropagation();seguirFallo()};d.appendChild(b);b.focus({preventScroll:true})}
+}
+function seguirFallo(){const fn=st.alFallo;if(!fn||st.pausa)return;st.alFallo=null;const d=$('#porque');if(d)d.remove();fn()}
+const posBandeja=p=>({izq:{x:51,y:217},der:{x:309,y:217},abj:{x:180,y:473}})[p];
+function vuela(p,ok){
+ const a=$('#act'),d=posBandeja(p);if(!a)return;
+ const fin=`translate(${d.x}px,${d.y}px) scale(.3) rotate(${p==='izq'?-30:p==='der'?30:0}deg)`;
+ a.animate([{transform:a.style.transform,opacity:1},{transform:fin,opacity:.2}],{duration:220,easing:'cubic-bezier(.5,0,.9,.5)'});
+ a.style.transform=fin;a.style.opacity='0';
+ setTimeout(()=>{const b=document.querySelector(`.b-${p}`);if(b){b.classList.remove('traga');void b.offsetWidth;b.classList.add('traga')}sfx('golpe')},200);
+}
+function suma(p){st.pts+=p;hud()}   // revisión 19-11-2026: sin suelo durante el nivel (fallar la 1.ª ficha no salía gratis); al acabar, nunca menos de 0
+function hud(){
+ const e=(id,t)=>{const x=document.getElementById(id);if(x&&x.textContent!==t)x.textContent=t};
+ e('hp',String(st.pts).replace('-','−')+' pts');e('hf',Math.min(st.i+1,st.fichas.length)+'/'+st.fichas.length);
+ const r=$('#hr');if(r){const si=st.racha>=3;if(si!==r.classList.contains('si'))r.classList.toggle('si',si);if(si)r.innerHTML=ico('racha')+' ×2 · '+st.racha}
+}
+function flota(t,pos,mal){
+ const e=$('#esc');if(!e)return;const d=document.createElement('div');d.className='flota'+(mal?' mal':'');d.textContent=t;d.style.left=(pos.x-30)+'px';d.style.top=(pos.y-60)+'px';e.appendChild(d);
+ d.animate([{transform:'translateY(0) scale(.7)'},{transform:'translateY(-12px) scale(1.1)',opacity:1,offset:.25},{transform:'translateY(-46px) scale(1)',opacity:0}],{duration:900,easing:'ease-out'}).onfinish=()=>d.remove();
+}
+function porque(tit,txt,bien){
+ const e=$('#esc');if(!e)return;let d=$('#porque');if(d)d.remove();
+ d=document.createElement('div');d.id='porque';d.className='porque'+(bien?' bien':'');d.innerHTML=`<span class="tit">${junto(tit)}</span>${junto(txt)}`;e.appendChild(d);
+ if(!MOV_REDUCIDO)d.animate([{transform:'translateY(-10px) scale(.96)'},{transform:'none'}],{duration:160});   // sin opacidad: si el navegador congela la animación, se sigue leyendo
+ decir((tit+'. '+txt).replace(/<[^>]*>/g,''));
+ const dura=st.modo==='nomina'?1500:2000;if(!bien&&!st.lento)st.leeHasta=(st.te||0)+dura/1000;
+ quita(st.tPorque);st.tPorque=espera(()=>{if(d.isConnected)d.animate([{opacity:1},{opacity:0}],{duration:200}).onfinish=()=>d.remove()},dura);
+}
+function aviso(t,sub,ms){
+ const e=$('#esc');if(!e)return;let a=$('#avisoC');if(a)a.remove();
+ a=document.createElement('div');a.id='avisoC';a.className='aviso-c';a.innerHTML=t+(sub?`<small>${sub}</small>`:'');e.appendChild(a);
+ a.animate([{transform:'translate(-50%,-50%) scale(.6)'},{transform:'translate(-50%,-50%) scale(1.08)',offset:.2},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.8},{transform:'translate(-50%,-50%) scale(1)',opacity:0}],{duration:ms||1200}).onfinish=()=>a.remove();
+}
+/* Esperas en tiempo de juego (revisión del 19-11-2026): con la pausa se paran (antes, debajo del velo llegaba la ficha siguiente,
+   se borraba el porqué sin leerlo o saltaba el resultado). Mueren con el bucle al salir de la pantalla */
+function espera(fn,ms){const e={at:(st.te||0)+ms/1000,fn};(st.esperas||(st.esperas=[])).push(e);return e}
+function quita(e){if(e&&st.esperas)st.esperas=st.esperas.filter(x=>x!==e)}
+/* bucle: el reloj de la ficha y las esperas (el resto son animaciones del navegador) */
+function bucle(t){
+ raf=requestAnimationFrame(bucle);
+ const dt=Math.min(.25,Math.max(0,(t-st.t)/1000));st.t=t;   // 19-11-2026: antes .1 (por debajo de 10 fps el reloj iba a cámara lenta: un móvil lento daba más tiempo)
+ if(st.pausa)return;
+ st.te=(st.te||0)+dt;
+ if(st.esperas&&st.esperas.length){const ya=st.esperas.filter(e=>e.at<=st.te);if(ya.length){st.esperas=st.esperas.filter(e=>e.at>st.te);ya.forEach(e=>e.fn())}}
+ if(st.fin)return;
+ st.tj+=dt;
+ if(st.f&&!st.ocupada&&(st.te<(st.leeHasta||0)||st.sinImg))st.t0+=dt;   // revisión 19-11-2026: el reloj de la ficha nueva no corre mientras se lee el porqué del fallo
+ if(st.modo==='cinta'&&st.f&&!st.tuto&&!st.fin){   // la cinta: avanza con el tiempo; al decidir, corre hasta entregar la siguiente
+  let qc;if(st.ocupada){if(st.qFin==null){st.qFin=st.qAct==null?1:st.qAct;st.tFin=t}qc=Math.max(0,st.qFin*(1-(t-st.tFin)/260))}
+  else qc=Math.max(0,1-(st.tj-st.t0)/st.lim);
+  st.qAct=qc;colocaCola(qc);
+ }
+ if(!st.f||st.ocupada||st.tuto)return;
+ const q=Math.max(0,1-(st.tj-st.t0)/st.lim),ar=$('#aro');
+ if(ar){const qe=(Math.ceil(q*120)/120).toFixed(3);if(ar.dataset.q!==qe){ar.dataset.q=qe;ar.style.setProperty('--q',qe)}   // por escalones de 3°: solo se repinta cuando cambia
+  const col=q<.25?'naranja':q<.55?'amarillo':'verde';if(ar.dataset.c!==col){ar.dataset.c=col;ar.style.setProperty('--aro',`url(nomina_aro_${col}.webp)`)}}
+ if(q<=0){st.ocupada=true;st.modo==='nomina'?falla3(null,true):falla(null,true)}
+}
+function terminaNivel(){
+ if(st.fin)return;st.fin=true;st.pts=Math.max(0,st.pts);
+ const est=estrellas(st.aciertos);
+ aviso(est===3?'¡Perfecto!':est?'¡Nivel superado!':'Fin del nivel',`${st.aciertos} de 12`,1100);
+ if(est===3){sfx('fanfarria');vibrar([30,50,30,50,60])}else sfx('premio');
+ setTimeout(()=>final(est),1150);
+}
+
+/* ---------- nivel 3: la nómina de plastilina ---------- */
+function empieza3(oficial){
+ const l=NIVELES[2],c=cicloArte();
+ const esc=pantalla(oficial,`<span class="pill" id="hp">0 pts</span><span class="pill" id="hf">1/12</span><span class="pill racha" id="hr"></span>`,l.fondo);
+ esc.classList.add('nomina3');
+ esc.innerHTML=`<div class="doc" id="doc"><img src="nomina_documento.webp" alt="La nómina de ${quien(c,'prota').nombre}, vacía">
+  ${[1,2,3,4,5].map(z=>{const [x0,y0,x1,y1]=ZONA_XY[z];return `<button type="button" class="zona z${z}" data-z="${z}" style="left:${x0*100}%;top:${y0*100}%;width:${(x1-x0)*100}%;height:${(y1-y0)*100}%;--arr:${(hueco(z,-1)/(y1-y0)*100).toFixed(1)}%;--abj:${(hueco(z,1)/(y1-y0)*100).toFixed(1)}%" aria-label="Parte ${z}: ${ZONAS[z]}"><span class="zt">${z} · ${ZONAS[z]}</span><span class="zp"></span></button>`}).join('')}</div>
+  <div class="abajo3" id="abajo3"><div class="actual" id="act"><div class="aro" id="aro"><i></i></div><img id="actImg" alt="" draggable="false"></div><div class="chapa ch3" id="actCh"></div></div>`;
+ st={l,n:3,c,lento:oficial?!!oficial.lento:lento(),oficial:oficial||null,fichas:fichas3(c),i:-1,pts:0,aciertos:0,racha:0,fallos:[],tj:0,t:performance.now(),pausa:false,fin:false,maxR:0,obs:st.obs,k:st.k,ext:st.ext,modo:'nomina',inicio:performance.now()};
+ st.cx=0;st.cy=0;
+ const a=$('#act');a.style.transform='scale(.72)';
+ esc.querySelectorAll('.zona').forEach(z=>z.onclick=e=>{e.stopPropagation();decide3(+z.dataset.z)});
+ mandoArrastre(a,null,null);
+ siguiente3();
+ raf=requestAnimationFrame(bucle);
+ if(MQ_GIRO.matches)pausaManual();
+}
+function siguiente3(){
+ st.i++;st.ocupada=false;
+ if(st.i>=st.fichas.length)return remate();
+ const f=st.fichas[st.i];st.f=f;st.t0=st.tj;st.lim=Math.max(st.l.tmin,st.l.t0*Math.pow(.94,st.racha))*(st.lento?2:1);st.fPausa=false;st.tLlega=performance.now();
+ aroLleno();
+ const a=$('#act');a.classList.toggle('oro',!!f.oro);pintaFicha(f);
+ a.style.transform='scale(.72)';
+ if(!MOV_REDUCIDO)a.animate([{transform:'translateX(140px) scale(.4)'},{transform:'scale(.78)',offset:.7},{transform:'scale(.72)'}],{duration:280,easing:'cubic-bezier(.3,1,.5,1)'});
+ hud();if(f.oro){aviso('¡Pieza dorada!','vale el triple',1100);sfx('premio')}
+ decirFicha(f);
+}
+/* la zona bajo el dedo (revisión 19-11-2026): cada parte llega hasta la mitad del hueco con la de al lado (en un móvil 16:9 la
+   parte 2 medía 19 px de alto); arriba y abajo del todo, 12 px más */
+function zonaEn(cx,cy){
+ const zs=[...document.querySelectorAll('.zona')].map(z=>({z:+z.dataset.z,r:z.getBoundingClientRect()})).sort((a,b)=>a.r.top-b.r.top);
+ for(let i=0;i<zs.length;i++){const r=zs[i].r,arr=i?(zs[i-1].r.bottom+r.top)/2:r.top-12,abj=i<zs.length-1?(r.bottom+zs[i+1].r.top)/2:r.bottom+12;
+  if(cx>=r.left-6&&cx<=r.right+6&&cy>=arr&&cy<abj)return zs[i].z}
+ return 0}
+function arrastra3(e,dx,dy){
+ const a=$('#act');a.style.transform=`translate(${dx}px,${dy}px) scale(.62)`;
+ const z=zonaEn(e.clientX,e.clientY);document.querySelectorAll('.zona').forEach(x=>x.classList.toggle('sobre',+x.dataset.z===z));
+}
+function suelta3(e,a){
+ document.querySelectorAll('.zona.sobre').forEach(x=>x.classList.remove('sobre'));
+ const z=e.type==='pointerup'?zonaEn(e.clientX,e.clientY):0;
+ if(z&&!st.ocupada)decide3(z);else{const el=$('#act');el.animate([{transform:el.style.transform},{transform:'scale(.72)'}],{duration:180,easing:'cubic-bezier(.3,1.5,.5,1)'});el.style.transform='scale(.72)'}
+}
+function decide3(z){
+ if(st.ocupada||st.pausa||st.fin||!st.f)return;
+ st.ocupada=true;const f=st.f,seg=st.tj-st.t0;
+ if(z===f.b){const {p,x}=puntosAcierto(seg,f.oro);st.aciertos++;suma(p);encaja(z,true);sfx('acierto',Math.min(st.racha-1,9));vibrar(12);
+  flota('+'+p+(x>1?` ×${x}`:''),centroZona(z),false);st.tSig=espera(siguiente3,300)}
+ else falla3(z,false);
+}
+function falla3(z,tiempo){
+ const f=st.f;st.racha=0;suma(PUNTOS.fallo);st.fallos.push(f);sfx('fallo');vibrar([30,40,30]);sacudir($('#actImg'),8);
+ const zm=z&&document.querySelector(`.z${z}`);if(zm){zm.classList.add('mala');setTimeout(()=>zm.classList.remove('mala'),600);flota('−50',centroZona(z),true)}
+ porque((tiempo?'¡Tiempo! ':'')+f.t+' → '+ZONAS[f.b],f.ex,false);
+ const zb=document.querySelector(`.z${f.b}`);if(zb){zb.classList.add('buena');setTimeout(()=>zb.classList.remove('buena'),1000)}
+ trasFallo(()=>{encaja(f.b,false);st.tSig=espera(siguiente3,1100)},420);
+}
+function centroZona(z){const [x0,y0,x1,y1]=ZONA_XY[z];return {x:28+(x0+x1)/2*304,y:(y0+y1)/2*485}}
+function encaja(z,ok){
+ const a=$('#act'),c=centroZona(z),r=a.getBoundingClientRect(),o=aLocal(r.left+r.width/2,r.top+r.height/2);
+ a.animate([{transform:a.style.transform,opacity:1},{transform:`translate(${c.x-o.x}px,${c.y-o.y}px) scale(.2)`,opacity:.3}],{duration:200,easing:'cubic-bezier(.5,0,.9,.5)'});
+ a.style.transform='scale(0)';
+ setTimeout(()=>{const zp=document.querySelector(`.z${z} .zp`);if(zp){const im=document.createElement('img');im.src=img(st.f.img);im.alt='';if(!ok)im.className='retoque';zp.appendChild(im)}nota(1500,.04,'triangle',.14);nota(700,.05,'sine',.1,.02)},190);   // «clac»
+}
+/* el remate: los importes ruedan, cae el sello y la protagonista lo entiende */
+function remate(){
+ st.fin=true;const c=st.c,N=nomina(NOMINAS[c]),p=quien(c,'prota'),perfecta=!st.fallos.length;
+ if(perfecta)suma(PUNTOS.cuadra);
+ st.pts=Math.max(0,st.pts);
+ if(st.oficial){registraNivel(estrellas(st.aciertos));st.oficial.envio=enviaOficial(st.oficial)}
+ document.querySelectorAll('.zona').forEach(z=>{z.disabled=true});$('#doc').classList.add('cuadrada');
+ $('#abajo3').innerHTML='';
+ /* 18-11-2026 (José: «muy tosco, mezcla plastilina con no plastilina»): nada de texto de página web sobre la nómina. Cada parte
+    guarda sus bolas y UNA cifra, grabada en la plastilina (hundida: brillo debajo y sombra encima); el desglose, en el resultado */
+ const pon=(z,html,cl)=>{const d=document.createElement('div');d.className='grabado g'+z+(cl?' '+cl:'');d.innerHTML=html;document.querySelector(`.z${z}`).appendChild(d);
+  if(!MOV_REDUCIDO)d.animate([{transform:'scale(1.18)',filter:'blur(1.5px)'},{transform:'none',filter:'none'}],{duration:300,delay:(z-1)*110,fill:'backwards',easing:'cubic-bezier(.3,1.4,.5,1)'})};
+ pon(1,`<b>${NOMINAS[c].empresa}</b><span>${p.nombre} · ${p.puesto||''} · grupo ${NOMINAS[c].grupo}</span>`);
+ pon(2,`<b>Del 1 al 30 de abril</b><span>30 días</span>`);
+ pon(3,`<small>Total devengado</small><b id="odoDev"></b>`,'cifra');
+ pon(4,`<small>Total a deducir</small><b id="odoDed"></b>`,'cifra');
+ const CAJAS=[[.106,.342],[.377,.609],[.646,.881]];   // las tres casillas de la parte 5, medidas en la imagen
+ [['Base de comunes',N.bcc],['Base de profesionales',N.bcp],['Base de IRPF',N.baseIrpf]].forEach(([t,v],i)=>{const d=document.createElement('div');d.className='grabado caja';
+  d.style.left=CAJAS[i][0]*100+'%';d.style.width=(CAJAS[i][1]-CAJAS[i][0])*100+'%';d.innerHTML=`<small>${t}</small><b>${euros(v)}</b>`;$('#doc').appendChild(d);
+  if(!MOV_REDUCIDO)d.animate([{transform:'scale(1.18)',filter:'blur(1.5px)'},{transform:'none',filter:'none'}],{duration:300,delay:440+i*90,fill:'backwards'})});
+ const ab=$('#abajo3');ab.innerHTML=`<div class="liquido" id="liq"><div><small>Líquido a percibir</small><div class="cifra"><span id="odoLiq"></span></div></div></div>`;
+ setTimeout(()=>{odometro($('#odoDev'),N.devengado);odometro($('#odoDed'),N.deducir)},500);
+ setTimeout(()=>{odometro($('#odoLiq'),N.liquido);sfx('barrido')},900);
+ setTimeout(()=>{
+  const s=document.createElement('div');s.className='sello';s.innerHTML=perfecta?'<span>CUADRADA</span>':`<span>CUADRADA<small>${st.fallos.length} ${st.fallos.length===1?'retoque':'retoques'}</small></span>`;$('#doc').appendChild(s);   // revisión 19-11-2026: lo que se gana se ve
+  s.animate([{transform:'translate(-50%,-50%) rotate(-14deg) scale(2.6)',opacity:0},{transform:'translate(-50%,-50%) rotate(-14deg) scale(.94)',opacity:1,offset:.7},{transform:'translate(-50%,-50%) rotate(-14deg) scale(1)',opacity:1}],{duration:MOV_REDUCIDO?1:340,easing:'cubic-bezier(.5,0,.8,.6)'});
+  setTimeout(()=>{sacudir($('#doc'),7);sfx('golpe');vibrar(40);sfx('fanfarria');confeti(['#fffaf0','#004230','#fcd100'],60)},MOV_REDUCIDO?0:300);
+  /* José, 18-11-2026 («se corta el mensaje final»): en pantalla ancha, arriba a la derecha (en el hueco del escritorio, fuera de la
+     nómina); en el móvil, arriba sobre el encabezamiento, que en el remate es lo que menos importa */
+  {const n=document.createElement('div');n.id='narraR';n.className='narraR'+((st.ext||0)>=150?' fuera':'');$('#esc').appendChild(n)}
+  narra($('#narraR'),'¡Ahora lo entiendo! La nómina dice el bruto; al banco llega el neto, después de cotizar y del IRPF.','bien','',true,c,'prota');
+  if(perfecta)aviso(`+${PUNTOS.cuadra}`,'nómina cuadrada a la primera',1300);
+ },1900);
+ setTimeout(()=>{const b=document.createElement('button');b.type='button';b.className='chapa-btn';b.textContent='Resultado ▶';b.onclick=()=>final(estrellas(st.aciertos));$('#liq').appendChild(b);b.focus({preventScroll:true})},3000);
+}
+/* cuentakilómetros: cada cifra es una columna 0-9 que rueda hasta su número */
+function odometro(el,v){
+ if(!el)return;const t=euros(v).replace(' €','');el.className='odo';el.innerHTML='';
+ const cols=[];for(const ch of t){if(/\d/.test(ch)){const col=document.createElement('span');col.className='col';col.innerHTML=[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9].map(d=>`<span>${d}</span>`).join('');const w=document.createElement('span');w.appendChild(col);el.appendChild(w);cols.push([col,+ch])}else{const s=document.createElement('span');s.className='sep';s.textContent=ch;el.appendChild(s)}}
+ const e=document.createElement('span');e.className='sep';e.textContent=' €';el.appendChild(e);el.setAttribute('role','img');el.setAttribute('aria-label',euros(v));   // el lector dice la cifra, no los dígitos de los rodillos
+ requestAnimationFrame(()=>requestAnimationFrame(()=>cols.forEach(([col,d],i)=>{col.style.transitionDelay=(i*.07)+'s';col.style.transform=`translateY(${-(d+10)*1.1}em)`})));
+ const n=cols.length;for(let i=0;i<n;i++)setTimeout(()=>sfx('tic'),300+i*70);
+}
+function confeti(cols,n){if(MOV_REDUCIDO)return;for(let k=0;k<n;k++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=cols[k%cols.length];c.style.animationDuration=(1.4+Math.random()*1.5)+'s';c.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),3800)}}
+
+/* ---------- tutorial jugable (la primera vez que se entrena el nivel 1) ---------- */
+function tutorial(){
+ const B=BANCO[1].comun,f=t=>Object.assign({},B.find(x=>x.t===t));
+ st.tutoFichas=[f('Salario base'),f('Plus de transporte'),f('Móvil de empresa')];
+ empieza(1,null);
+}
+const TUTO_DIR={s:'izq',n:'der',f:'abj'};
+function tutoMano(){
+ quitaMano();const f=st.f,p=TUTO_DIR[f.b],e=$('#esc');if(!e)return;
+ const m=document.createElement('div');m.className='mano';m.id='mano';m.innerHTML=ico('mano').replace('class="ico"','class="ico" style="width:56px;height:56px"');e.appendChild(m);
+ const d={izq:[-110,0],der:[110,0],abj:[0,150]}[p];
+ if(MOV_REDUCIDO){m.style.transform=`translate(${st.cx-10+d[0]*.6}px,${st.cy+20+d[1]*.6}px)`;}   // sin animar: quieta, señalando hacia su bandeja
+ else m.animate([{transform:`translate(${st.cx-10}px,${st.cy+20}px)`,opacity:0},{transform:`translate(${st.cx-10}px,${st.cy+20}px)`,opacity:1,offset:.15},{transform:`translate(${st.cx-10+d[0]}px,${st.cy+20+d[1]}px)`,opacity:1,offset:.8},{opacity:0}],{duration:1500,iterations:Infinity});
+ tutoDice({0:`Esto es lo que cobras por tu jornada. <b>Desliza a la izquierda</b>: es salario.`,1:`Este plus te compensa el gasto de ir al trabajo. <b>Desliza a la derecha</b>: no es salario.`,2:`El móvil de empresa es una herramienta. <b>Desliza hacia abajo</b>: no va en la nómina.`}[st.i]);
+}
+function quitaMano(){const m=$('#mano');if(m)m.remove()}
+function tutoDice(html){porque('Así se juega',html,true);quita(st.tPorque)}
+function tutoBien(f){
+ if(st.i===2){quita(st.tSig);st.fin=true;ls.set(TUTO,'1');
+  porque('¡Eso es!','Lo que la empresa te da para trabajar no va en la nómina.',true);
+  espera(()=>{const m=$('#marco');if(!m)return;const t=document.createElement('div');t.className='tarjeta';t.innerHTML=`<div class="ficha"><div class="eti">Ya sabes jugar</div><div id="narraT"></div><div class="btns"><button class="btn p" id="tA">▶ Entrenar el nivel 1</button><button class="btn s" id="tM">Volver al menú</button></div></div>`;m.appendChild(t);
+   narra($('#narraT'),'¡Listo! Si dudas, lee la letra pequeña de la ficha: ahí está la pista. Y recuerda: con racha, cada acierto vale el doble.','bien','',true);
+   $('#tA').onclick=()=>{st.tutoFichas=null;presentaNivel(1)};$('#tM').onclick=()=>{st.tutoFichas=null;portada()};$('#tA').focus({preventScroll:true})},1300);
+ }
+}
+
+/* ===== Teclado, pausa, giro y «atrás» (como en la Serpiente y el Muro) ===== */
+function tecla(e){
+ if(e.key==='p'||e.key==='P'||e.key==='Escape'){e.preventDefault();if(!reanuda())pausaManual();return}
+ if(document.getElementById('velo')){if(e.key===' '){e.preventDefault();reanuda()}return}
+ if(st.alFallo){if(!e.repeat&&/^( |Enter|Arrow(Left|Right|Down)|[adsADS1-5])$/.test(e.key)){e.preventDefault();seguirFallo()}return}
+ if(e.target&&e.target.closest&&e.target.closest('button')&&(e.key===' '||e.key==='Enter'))return;
+ const decision=st.modo==='cinta'?/^(Arrow(Left|Right|Down)|[adsADS])$/.test(e.key):st.modo==='nomina'&&/^[1-5]$/.test(e.key);
+ if(decision&&(e.repeat||performance.now()-(st.tLlega||0)<120)){e.preventDefault();return}   // revisión 19-11-2026: la tecla dejada pulsada decidía a ciegas la siguiente
+ if(st.modo==='cinta'){const p={ArrowLeft:'izq',a:'izq',A:'izq',ArrowRight:'der',d:'der',D:'der',ArrowDown:'abj',s:'abj',S:'abj'}[e.key];if(p){e.preventDefault();decide(p)}}
+ else if(st.modo==='nomina'){const z=+e.key;if(z>=1&&z<=5){e.preventDefault();decide3(z)}}
+}
+const jugando=()=>app.classList.contains('jugando')&&!!$('#marco');
+function oculta(e){if(!(document.hidden||e&&(e.type==='blur'||e.type==='pagehide'))||!jugando())return;if(!st.fin)pausa(true)}
+function pausaManual(){if(!jugando()||document.getElementById('velo')||st.fin)return;pausa(true)}
+function reanuda(){const v=document.getElementById('velo');if(!v)return false;v.remove();const f=st.alSeguir;st.alSeguir=null;if(f)f();return true}
+function pausa(si){
+ if(si){if(st.pausa)return;st.pausa=true;sueltaArrastre();fichaEnPausa();app.classList.add('pausado');document.getAnimations&&document.getAnimations().forEach(a=>{try{a.pause()}catch(x){}});menuPausa(()=>pausa(false))}
+ else{st.pausa=false;app.classList.remove('pausado');document.getAnimations&&document.getAnimations().forEach(a=>{try{a.play()}catch(x){}});const v=document.getElementById('velo');if(v)v.remove();st.alSeguir=null;st.t=performance.now()}
+}
+function sueltaArrastre(){
+ if(!st.arr)return;st.arr=null;
+ if(st.modo==='nomina'){document.querySelectorAll('.zona.sobre').forEach(x=>x.classList.remove('sobre'));const a=$('#act');if(a)a.style.transform='scale(.72)'}
+ else if(!st.ocupada)colocaActual(0,0);
+}
+function menuPausa(alSeguir){
+ const m=$('#marco');if(!m)return;const of=st.oficial;
+ const d=document.createElement('div');d.id='velo';d.className='tarjeta tapa';
+ d.innerHTML=`<div class="ficha" role="dialog" aria-modal="true" aria-labelledby="veloT" style="text-align:center"><div class="eti" id="veloT">Pausa</div><div class="caso">El reloj está parado y la ficha, tapada.${st.cambiada?' Al seguir, te tocará otra.':st.sinRap?' Esta ficha ya no suma rapidez.':''}</div>
+  <div class="btns" style="margin-top:6px"><button type="button" class="btn p" data-pausa="sigue">▶ Seguir</button><button type="button" class="btn s" data-pausa="sal">Salir al menú</button></div>
+  ${of?`<p class="libro" style="margin:10px 0 0">Si sales, el intento ${of.intento} de ${INTENTOS} cuenta como jugado y no contará para nota.</p>`:''}</div>`;
+ m.appendChild(d);st.alSeguir=alSeguir;
+ const b=d.querySelector('[data-pausa="sigue"]');b.onclick=reanuda;d.querySelector('[data-pausa="sal"]').onclick=salirPartida;b.focus({preventScroll:true});
+ /* el foco no sale del velo (revisión 19-11-2026) */
+ d.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const bs=[...d.querySelectorAll('button')],i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()});
+}
+async function salirPartida(){
+ const of=st.oficial;
+ if(of&&!(await dialogo('¿Seguro? El intento '+of.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:'Sí, salir',no:'Seguir jugando'})))return;
+ if(of)OFI_VIVA=false;
+ st.fin=true;app.classList.remove('pausado');portada();
+}
+const MQ_GIRO=matchMedia('(orientation:landscape) and (max-height:500px) and (pointer:coarse)');
+{const f=()=>{if(MQ_GIRO.matches)pausaManual()};MQ_GIRO.addEventListener?MQ_GIRO.addEventListener('change',f):MQ_GIRO.addListener(f)}
+const PAUSA_JUEGO=()=>oculta({type:'blur'});
+function guardaAtras(){try{if(!history.state||!history.state.nomina)history.pushState({nomina:1},'')}catch(e){}}
+addEventListener('popstate',()=>{if(typeof OFI_VIVA!=='undefined'&&OFI_VIVA)return;if(jugando()){guardaAtras();oculta({type:'blur'})}});
+
+/* ===== Final de cada nivel ===== */
+function final(est){
+ parar();app.classList.remove('jugando','v','pausado');
+ const l=st.l,antes=rec(st.n);guarda(st.n,st.pts);
+ if(est===3)confeti(['#004230','#ff5900','#fcd100','#2f8a5b'],70);
+ const nombre=b=>st.n===3?ZONAS[b]:Object.values(l.band).find(x=>x.k===b).n;
+ app.innerHTML=`<div class="final">
+  <div class="marca" id="finT" tabindex="-1">Nivel ${st.n} · ${l.titulo}</div>
+  <div class="estrellas" role="img" aria-label="${est} de 3 estrellas">${'★'.repeat(est)}${'☆'.repeat(3-est)}</div>
+  <div class="gran">${st.pts}</div><div>puntos · ${st.aciertos} de 12 bien colocadas</div>
+  ${est<3?`<div class="falta">${faltan(st.aciertos)}${st.maxR>1?` · Mejor racha: ${st.maxR}`:''}</div>`:''}
+  ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
+  ${hayElenco()?`<div class="escena-n" id="escenaF"></div>`:''}
+  ${st.fallos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estas fichas</h2>${st.fallos.map(f=>`<div class="fallo"><img src="${img(f.img)}" alt=""><div>${f.t}${f.s?` <small>· ${f.s}</small>`:''}<b>${nombre(f.b)}</b><small>${f.ex} ${libro(6,APARTADO[st.n])}</small></div></div>`).join('')}</div>`:''}
+  ${st.oficial?bloqueOficial(est):''}
+  <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
+ </div>`;
+ narra($('#escenaF'),cierreNivel(est,st.n),est>=2?'bien':est===1?'piensa':'mal');
+ {const t=$('#finT');if(t)t.focus({preventScroll:true})}   // el lector empieza por el resultado
+ if(st.oficial)return finOficial();
+ $('#otra').onclick=()=>presentaNivel(st.n);
+ $('#menu').onclick=portada;
+ if($('#sigui'))$('#sigui').onclick=()=>presentaNivel(st.n+1);
+}
+/* el apartado del libro de cada nivel (ud06): 6.2.2 devengos, 6.2.3 deducciones y bases, 6.2.1 estructura de la nómina */
+const APARTADO={1:'6.2.2',2:'6.2.3',3:'6.2.1'};
+/* lo que faltó para la estrella siguiente (revisión 19-11-2026) */
+function faltan(a){const m=a>=10?12:a>=8?10:8,f=m-a;return `Te ${f===1?'faltó 1 acierto':'faltaron '+f+' aciertos'} para ${'★'.repeat(estrellas(m))}`}
+function cierreNivel(est,n){
+ const clave={1:'La clave: si te paga tu trabajo, es salario; si te compensa un gasto, no; y lo que la empresa te presta o te da para trabajar no va en la nómina (si lo pagas tú y te lo devuelve, es un suplido).',
+  2:'La clave: casi todo cotiza entero, también el plus de transporte; las dietas y el kilometraje, solo lo que pasa del límite exento; y las indemnizaciones y las horas extra no entran en esta base (las horas extra cotizan aparte).',
+  3:'La clave: arriba quién es quién y cuándo; en medio, lo que cobras y lo que te quitan; abajo, las bases.'}[n];
+ return {3:'¡Impecable! Así lee una nómina quien sabe de esto. Ninguna ficha se te ha resistido.',
+  2:'Muy bien: casi todo en su sitio. Repasa las que se te han escapado y a por las tres estrellas.',
+  1:'Vas cogiendo el criterio, pero varias fichas hay que mirarlas otra vez. '+clave,
+  0:'Hoy se nos han torcido muchas. A mí también me costó al principio: repasa el apartado '+APARTADO[n]+' del libro y vuelve a intentarlo. '+clave}[est];
+}
+/* Revisión del 19-11-2026: la duración es el tiempo de juego (st.tj: sin pausas ni el rato del remate). Antes era el reloj real
+   y el servicio rechazaba una buena partida por una pausa larga o por mirar la nómina antes de pulsar «Resultado ▶» */
+function registraNivel(est){
+ const o=st.oficial;if(!o||o.niveles[st.n-1])return;
+ o.est[st.n-1]=est;o.pts+=st.pts;
+ o.niveles[st.n-1]={p:st.pts,s:Math.round(st.tj),a:st.aciertos};
+ o.fallos=o.fallos.concat(st.fallos.map(f=>`N${st.n} ${f.t}${f.s?' ('+f.s+')':''}`));
+}
+/* se envía al cuadrar la nómina, sin esperar al botón (si se cierra la app al ver el sello, el resultado ya ha salido o está en la
+   cola). Un resultado rechazado no cuenta como tu mejor partida ni da puesto (como en la Serpiente) */
+function enviaOficial(o){
+ const antes=mejorDe(o.codigo);
+ return envia({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,niveles:o.niveles,puntos:o.pts,extra:extraDe(mediaEst(o.est))}).then(ok=>{
+  const mejor=ok==='rechazado'?antes:Math.max(antes,o.pts);
+  if(ok!=='rechazado'){ponMejor(o.codigo,mejor);if(!antes)ls.set('nomina_primer_envio',Date.now())}
+  return {ok,mejor};
+ });
+}
+function bloqueOficial(est){
+ const o=st.oficial;registraNivel(est);
+ if(st.n<3)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.n+1}</button></div>`;
+ const m=mediaEst(o.est);
+ return `<div class="aviso-of"><b>Partida oficial terminada · ${o.pts} puntos</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota (media de tus estrellas): <b>+${extraDe(m)}</b> en el criterio de la nómina (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+}
+function finOficial(){
+ const o=st.oficial;
+ if(st.n<3){$('#ofsig').onclick=()=>presentaNivel(st.n+1,o);return}
+ $('#ofmenu').onclick=portada;
+ (o.envio||(o.envio=enviaOficial(o))).then(({ok,mejor})=>{
+  const e=$('#envio');if(e)e.textContent=textoEnvio(ok);
+  if(mejor)puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
+  else{const d=$('#puesto');if(d)d.textContent=''}
+ });
+}
+/* el reparto (elenco.js) se carga al final de la página: la portada se pinta cuando ya está todo */
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portada,{once:true});else portada();
+</script>
+<style>
+#pcomp{position:fixed;right:14px;top:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+</style>
+<button id="pcomp" type="button">⛶ Pantalla completa</button>
+<script>
+/* Tabletas y ordenadores: igual que en los otros juegos. Mientras se juega (.juego) no se escala: el escenario ya llena la pantalla. */
+(function(){
+ const app=document.getElementById('app'),btn=document.getElementById('pcomp');
+ let midiendo=false;
+ function ajusta(){
+  if(midiendo)return;midiendo=true;
+  const fija=app.querySelector('.juego');
+  btn.style.visibility=fija?'hidden':'';
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
+  const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
+  const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
+  let z=H/alto();
+  if(z>=zw){z=zw}
+  else if(z<1){z=zMin;app.style.maxWidth=Math.floor(innerWidth/z)+'px'}
+  else{
+   for(let k=0;k<3;k++){app.style.maxWidth=Math.floor(innerWidth/z)+'px';z=Math.min(2.4,H/alto())}
+   z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
+  }
+  app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
+  midiendo=false;
+ }
+ new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});
+ addEventListener('resize',ajusta);ajusta();
+ const fs=document.documentElement;
+ function boton(){
+  const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+ }
+ const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ btn.onclick=()=>{salio=false;pide()};
+ let salio=false;
+ function auto(e){
+  if(e&&e.target&&e.target.closest&&e.target.closest('#pcomp'))return;
+  if(salio||innerWidth<700||!(document.fullscreenEnabled||document.webkitFullscreenEnabled))return;
+  if(document.fullscreenElement||document.webkitFullscreenElement)return;
+  pide();
+ }
+ document.addEventListener('click',auto,true);document.addEventListener('touchend',auto,true);
+ const sale=()=>{if(!(document.fullscreenElement||document.webkitFullscreenElement))salio=true};
+ document.addEventListener('fullscreenchange',sale);document.addEventListener('webkitfullscreenchange',sale);
+ document.addEventListener('fullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ document.addEventListener('webkitfullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ addEventListener('resize',boton);boton();
+})();
+</script>
+<script>
+/* Generado por herramientas/juegos_paginas.py: no tocar a mano. */
+const PAGINAS={"UD1": {"HIG": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "IFC": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "ITE": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "STI": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}}, "UD2": {"HIG": {"2.2.3": 9}, "IFC": {"2.2.3": 9}, "ITE": {"2.2.3": 9}, "STI": {"2.2.3": 9}}, "UD3": {"HIG": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "IFC": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "ITE": {"3.6": 17, "3.6.1": 17, "PLS": 19}, "STI": {"3.6": 17, "3.6.1": 18, "PLS": 20}}};
+const ELENCO_GESTOS=["elenco_prota_HIG_bien.jpg"];
+/* ===== Universo plastilina: el reparto común de los juegos (arte, 17-11-2026) =====
+   Los mismos personajes de «Mi primer día» en todos los juegos: por ciclo, una persona protagonista recién titulada y su
+   compañero o compañera de ciclo (ver la ficha del libro, más abajo). Sus imágenes (plastilina, José) van junto a cada juego: elenco_prota_XXX.jpg,
+   elenco_vet_XXX.jpg y elenco_puesto_XXX.jpg (su puesto de trabajo). comun_montar.py mete este archivo y copia las imágenes.
+
+   cicloJugador()                      ciclo del código de lista (o el elegido para entrenar, o uno fijo por dispositivo)
+   personaje(ciclo, 'prota'|'vet')     {nombre, ella, cara, puesto, sector, empresa, visita}
+   fondoPuesto(ciclo)                  url de la escena de su puesto de trabajo
+   presenta(contenedor, {quien, texto, animo, ciclo})   cara + nombre + bocadillo; animo: 'neutro' | 'bien' | 'mal' | 'piensa'
+   reacciona(contenedor, animo, texto)                    cambia gesto y texto del presentador que ya está pintado */
+
+/* FICHA DEL LIBRO (libro/ipe1/ud01_casos.py, PERSONAJES; José, 17-11-2026: «la Alba que elegimos definitivamente en los
+   libros»). Por ciclo, dos personas que ACABAN DE TERMINAR el mismo ciclo y empiezan su primer empleo, cada una en una
+   empresa distinta: la protagonista (19-20 años, primer empleo en la empresa de su formación en empresa) y su compañero o
+   compañera de ciclo (23 años, primer trabajo estable). No hay «veteranos»: se ayudan entre iguales. Las caras salen de las
+   portadas del libro (recursos/libro/img/portada_ud01_XXX.jpg). La clave «vet» se mantiene por compatibilidad: es la
+   persona compañera.
+   vetVisita (José, 17-11-2026, opción B): por qué la persona compañera está ese día en el trabajo de la protagonista
+   (Auxilios y Evacuación), con «para…» y sin posesivos, para que valga en primera y en tercera persona. */
+const ELENCO = {
+  HIG: { prota: 'Alba', ella: true, edad: 20, de: 'Triana', puesto: 'higienista', lugar: 'la clínica dental de Triana',
+         vet: 'Samuel', vetElla: false, vetEdad: 23, vetDe: 'Sevilla', vetPuesto: 'higienista', vetLugar: 'el centro de salud',
+         vetVisita: 'para preparar una campaña de salud bucodental con el centro de salud',
+         sector: 'la clínica dental' },
+  IFC: { prota: 'Rafa', ella: false, edad: 20, de: 'Dos Hermanas', puesto: 'técnico de climatización', lugar: 'los hoteles que mantiene',
+         vet: 'Curro', vetElla: false, vetEdad: 23, vetDe: 'el Cerro del Águila', vetPuesto: 'técnico de climatización', vetLugar: 'la empresa instaladora',
+         vetVisita: 'para cambiar una enfriadora de la sala de máquinas',
+         sector: 'la sala de máquinas' },
+  ITE: { prota: 'Claudia', ella: true, edad: 19, de: 'Alcalá de Guadaíra', puesto: 'instaladora de telecomunicaciones', lugar: 'los hoteles y oficinas donde instala',
+         vet: 'Marcos', vetElla: false, vetEdad: 23, vetDe: 'Bellavista', vetPuesto: 'instalador de telecomunicaciones', vetLugar: 'las azoteas donde instala antenas',
+         vetVisita: 'para instalar la nueva antena del edificio',
+         sector: 'la azotea' },
+  STI: { prota: 'Fran', ella: false, edad: 20, de: 'Mairena del Aljarafe', puesto: 'técnico de sistemas', lugar: 'el centro de datos del aeropuerto',
+         vet: 'Alma', vetElla: true, vetEdad: 23, vetDe: 'la Macarena', vetPuesto: 'técnica de sistemas', vetLugar: 'las empresas clientes',
+         vetVisita: 'para montar la red de una empresa cliente de la terminal',
+         sector: 'el centro de datos' }
+};
+
+function cicloJugador() {
+  try {
+    const m = /^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase());
+    if (m && ELENCO[m[1]]) return m[1];
+    const e = localStorage.getItem('ipe_ciclo_elegido');
+    if (e && ELENCO[e]) return e;
+    let f = localStorage.getItem('ipe_ciclo_dispositivo');
+    if (!f || !ELENCO[f]) { f = Object.keys(ELENCO)[Math.floor(Math.random() * 4)]; localStorage.setItem('ipe_ciclo_dispositivo', f) }
+    return f;
+  } catch (e) { return 'HIG' }
+}
+
+/* Caras con gesto (elenco_prota_HIG_bien.jpg, _mal, _piensa…): comun_montar.py escribe en ELENCO_GESTOS las que existen.
+   Sin el archivo, se usa la cara de siempre y el gesto lo pone el aro de color. */
+const gestoDe = (cara, animo) => { const g = cara.replace(/\.jpg$/, '_' + animo + '.jpg');
+  return typeof ELENCO_GESTOS !== 'undefined' && ELENCO_GESTOS.indexOf(g) >= 0 ? g : cara };
+
+function personaje(ciclo, quien) {
+  const c = ELENCO[ciclo] || ELENCO.HIG, k = ELENCO[ciclo] ? ciclo : 'HIG', vet = quien === 'vet';
+  return { nombre: vet ? c.vet : c.prota, ella: vet ? c.vetElla : c.ella, cara: `elenco_${vet ? 'vet' : 'prota'}_${k}.jpg`,
+    edad: vet ? c.vetEdad : c.edad, de: vet ? c.vetDe : c.de, puesto: vet ? c.vetPuesto : c.puesto,
+    lugar: vet ? c.vetLugar : c.lugar, empresa: vet ? c.vetLugar : c.lugar, sector: c.sector, visita: vet ? c.vetVisita : '' };
+}
+
+const fondoPuesto = ciclo => `elenco_puesto_${ELENCO[ciclo] ? ciclo : 'HIG'}.jpg`;
+
+function presenta(cont, op) {
+  if (!cont) return null;
+  op = op || {};
+  const p = personaje(op.ciclo || cicloJugador(), op.quien || 'prota');
+  const el = document.createElement('div');
+  el.className = 'pres pres-' + (op.animo || 'neutro') + (op.compacto ? ' pres-compacto' : '');
+  el.dataset.cara = p.cara;
+  el.innerHTML = `<div class="pres-cara"><img src="${gestoDe(p.cara, op.animo || 'neutro')}" alt="" draggable="false"></div>
+    <div class="pres-globo" role="status" aria-live="polite"><b>${p.nombre}</b><span class="pres-txt"></span></div>`;
+  el.querySelector('.pres-txt').textContent = op.texto || '';
+  cont.innerHTML = ''; cont.appendChild(el);
+  return el;
+}
+
+function reacciona(cont, animo, texto) {
+  const el = cont && (cont.classList && cont.classList.contains('pres') ? cont : cont.querySelector('.pres'));
+  if (!el) return;
+  el.classList.remove('pres-neutro', 'pres-bien', 'pres-mal', 'pres-piensa');
+  void el.offsetWidth;
+  el.classList.add('pres-' + (animo || 'neutro'));
+  const img = el.querySelector('.pres-cara img');
+  if (img && el.dataset.cara) img.src = gestoDe(el.dataset.cara, animo || 'neutro');
+  if (texto != null) el.querySelector('.pres-txt').textContent = texto;
+}
+
+(function () {
+  const css = document.createElement('style');
+  css.textContent = `
+.pres{display:flex;align-items:flex-end;gap:10px;text-align:left}
+.pres-cara{flex:none;width:64px;height:64px;border-radius:50%;overflow:hidden;background:#e9e2d6;
+ box-shadow:inset 0 -3px 6px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.25);border:3px solid #fff;transform-origin:50% 90%}
+.pres-cara img{width:100%;height:100%;object-fit:cover;display:block}
+.pres-globo{position:relative;flex:1;min-width:0;background:#fffaf0;color:#1d2a30;border-radius:16px;padding:9px 12px;
+ font:15px/1.4 "Helvetica Neue",Arial,sans-serif;box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.18)}
+.pres-globo:before{content:"";position:absolute;left:-7px;bottom:14px;border:8px solid transparent;border-right-color:#fffaf0;border-left:0}
+.pres-globo b{display:block;font:800 14px Aleo,Georgia,serif;color:#004230;margin-bottom:1px}
+.pres-compacto .pres-cara{width:48px;height:48px;border-width:2px}
+.pres-compacto .pres-globo{font-size:14px;padding:7px 10px}
+.pres-bien .pres-cara{box-shadow:0 0 0 3px #2fd47a,0 4px 10px rgba(0,0,0,.25)}
+.pres-mal .pres-cara{box-shadow:0 0 0 3px #c24400,0 4px 10px rgba(0,0,0,.25);filter:saturate(.85)}
+.pres-piensa .pres-cara{box-shadow:0 0 0 3px #fcd100,0 4px 10px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:no-preference){
+ .pres-cara{animation:presRespira 3.2s ease-in-out infinite}
+ .pres-bien .pres-cara{animation:presSalta .55s cubic-bezier(.3,1.6,.5,1) 1,presRespira 3.2s ease-in-out .55s infinite}
+ .pres-mal .pres-cara{animation:presNo .5s ease-in-out 1,presRespira 3.2s ease-in-out .5s infinite}
+ .pres-piensa .pres-cara{animation:presPiensa 1.6s ease-in-out infinite}
+ .pres-globo{animation:presGlobo .28s ease-out}
+}
+@keyframes presRespira{0%,100%{transform:scale(1)}50%{transform:scale(1.025) translateY(-1px)}}
+@keyframes presSalta{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-10px) scale(1.06,.95)}70%{transform:translateY(0) scale(.97,1.04)}100%{transform:none}}
+@keyframes presNo{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
+@keyframes presPiensa{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg) translateY(-1px)}}
+@keyframes presGlobo{from{transform:translateY(6px) scale(.97)}to{transform:none}}   /* sin opacidad: si el navegador congela la animación, el texto se sigue viendo */`;
+  document.head.appendChild(css);
+})();
+/* ===== Común a los tres juegos (José, 9-11-2026): libro, sonido sí/no, accesibilidad e instalable =====
+   Lo meten los montar_*.py antes de </body>, junto con PAGINAS (paginas_libro.js). */
+
+/* «Repasa» con la página del libro de tu ciclo (sale del código de lista; sin código, solo el apartado). */
+function libro(ud, ap, txt) {
+  let c = '';
+  try { c = (/^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase()) || [])[1] || '' } catch (e) {}
+  const p = (((typeof PAGINAS !== 'undefined' && PAGINAS['UD' + ud]) || {})[c] || {})[ap];
+  return `📖 En el libro: UD ${ud}, apartado ${txt || ap}${p ? `, página ${p}` : ''}`;
+}
+
+/* Diálogo propio (fase 2, 17-11-2026): sustituye a alert y confirm del navegador, que en el móvil parecen un error y no
+   llevan los colores del centro. dialogo(texto) avisa; dialogo(texto, {si, no}) pregunta y devuelve true o false. */
+function dialogo(txt, op) {
+  return new Promise(res => {
+    const antes = document.activeElement;
+    const fondo = document.createElement('div'); fondo.className = 'dlg-fondo';
+    const caja = document.createElement('div'); caja.className = 'dlg';
+    caja.setAttribute('role', op ? 'alertdialog' : 'dialog'); caja.setAttribute('aria-modal', 'true');
+    const p = document.createElement('p'); p.id = 'dlg-txt'; p.textContent = txt; caja.setAttribute('aria-describedby', 'dlg-txt');
+    const bs = document.createElement('div'); bs.className = 'dlg-btns';
+    const boton = (texto, clase, v) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = e => { e.stopPropagation(); fin(v) }; bs.appendChild(b); return b };
+    const tecla = e => {
+      e.stopPropagation();                                   // el juego no se entera de las teclas mientras está abierto
+      if (e.key === 'Escape') { e.preventDefault(); fin(!op) }
+      else if (e.key === 'Tab') { const l = [...bs.children], i = l.indexOf(document.activeElement); e.preventDefault(); l[(i + (e.shiftKey ? l.length - 1 : 1)) % l.length].focus() }
+    };
+    const fin = v => { document.removeEventListener('keydown', tecla, true); fondo.remove(); try { antes && antes.focus && antes.focus({ preventScroll: true }) } catch (e) {} res(v) };
+    if (op) boton(op.no || 'No', 'no', false);
+    const si = boton(op ? (op.si || 'Sí') : 'Entendido', 'si', true);
+    caja.append(p, bs); fondo.appendChild(caja);
+    ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach(ev => fondo.addEventListener(ev, e => e.stopPropagation()));
+    document.addEventListener('keydown', tecla, true);
+    document.body.appendChild(fondo); si.focus({ preventScroll: true });
+  });
+}
+
+/* ===== Sonido y respuesta física comunes (fase 5, 17-11-2026) =====
+   Todo sintetizado con WebAudio (sin archivos). Un solo contexto: el «actx» del juego si lo declara (let actx=null) y,
+   si no, uno propio. Pasa por un volumen general y un compresor para que nada sature. Respeta «Sin sonido» (SILENCIO),
+   que también quita la vibración. Se desbloquea con el primer toque (iOS).
+   sfx('toque'|'acierto'|'fallo'|'tic'|'golpe'|'rompe'|'premio'|'fanfarria'|'alarma'|'barrido'|'paso', n) · vibrar(ms o patrón)
+   sacudir(elemento, px) · parada(ms) → promesa (pausa de impacto; el juego decide qué congela) */
+const AUDIO = { ctx: null, maestro: null, ruido: null };
+function audio() {
+  try {
+    let c = typeof actx !== 'undefined' ? actx : AUDIO.ctx;
+    if (!c) { c = new (window.AudioContext || window.webkitAudioContext)(); if (typeof actx !== 'undefined') actx = c; }
+    AUDIO.ctx = c;
+    if (!AUDIO.maestro || AUDIO.maestro.context !== c) {
+      const comp = c.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      AUDIO.maestro = c.createGain(); AUDIO.maestro.gain.value = .8; AUDIO.maestro.connect(comp).connect(c.destination);
+      const b = c.createBuffer(1, c.sampleRate * .5, c.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      AUDIO.ruido = b;
+    }
+    if (c.state === 'suspended' && !window.SILENCIO) c.resume();
+    return c;
+  } catch (e) { return null }
+}
+function nota(f, dur, tipo = 'sine', vol = .2, d = 0, hasta = 0) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, o = c.createOscillator(), g = c.createGain();
+  o.type = tipo; o.frequency.setValueAtTime(f, t0); if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+  g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + .012); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g).connect(AUDIO.maestro); o.start(t0); o.stop(t0 + dur + .03);
+}
+function ruido(dur, vol = .2, filtro = 1200, d = 0, q = 1) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = AUDIO.ruido; f.type = 'bandpass'; f.frequency.value = filtro; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  s.connect(f).connect(g).connect(AUDIO.maestro); s.start(t0); s.stop(t0 + dur + .02);
+}
+const PENTA = [0, 2, 4, 7, 9];
+const escala = n => 523.25 * Math.pow(2, (PENTA[n % 5] + 12 * Math.floor(n / 5)) / 12);   // do pentatónico que sube con n
+function sfx(nombre, n = 0) {
+  switch (nombre) {
+    case 'toque': nota(1400, .035, 'triangle', .12); break;
+    case 'paso': nota(320 + n * 6, .03, 'sine', .05); break;
+    case 'tic': nota(1000, .03, 'square', .07); break;
+    case 'acierto': { const b = escala(Math.min(n, 9)); nota(b, .12, 'triangle', .22); nota(b * 1.5, .16, 'triangle', .2, .07); break }
+    case 'fallo': nota(220, .16, 'square', .14); nota(155, .2, 'square', .14, .12); break;
+    case 'golpe': nota(160, .09, 'sine', .3, 0, 60); ruido(.05, .12, 900); break;
+    case 'rompe': ruido(.09, .22, 1800 + Math.min(n, 12) * 180, 0, 2); nota(escala(Math.min(n, 12)), .07, 'triangle', .1); break;
+    case 'premio': [0, 2, 4].forEach((k, i) => nota(escala(k + 5), .14, 'sine', .18, i * .07)); break;
+    case 'fanfarria': [523, 659, 784, 1047].forEach((f, i) => nota(f, .22, 'triangle', .2, i * .11)); break;
+    case 'alarma': nota(880, .12, 'square', .1); nota(880, .12, 'square', .1, .2); break;
+    case 'barrido': ruido(.25, .08, 600, 0, .7); break;
+  }
+}
+function vibrar(p) { try { if (!window.SILENCIO && navigator.vibrate) navigator.vibrate(p) } catch (e) {} }
+const MOV_REDUCIDO = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } })();
+function sacudir(el, px = 6) {
+  if (!el || MOV_REDUCIDO || !el.animate) return;
+  el.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: 'translate(0,0)' }], { duration: 220, easing: 'ease-out' });
+}
+const parada = ms => new Promise(r => setTimeout(r, MOV_REDUCIDO ? 0 : ms));
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (!window.SILENCIO) audio() }, { capture: true, passive: true }));
+
+/* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
+try {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+    const anima = Element.prototype.animate;
+    Element.prototype.animate = function (k, o) { o = typeof o === 'number' ? 1 : Object.assign({}, o || {}, { duration: 1, iterations: 1 }); return anima.call(this, k, o) };
+  }
+} catch (e) {}
+
+(function () {
+  const L = {
+    get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v } catch (e) { return d } },
+    set: (k, v) => { try { localStorage.setItem(k, v) } catch (e) {} }
+  };
+  const app = document.getElementById('app');
+  const css = document.createElement('style');
+  css.textContent = `
+.libro{display:block;margin-top:5px;color:#004230;font-weight:700;font-size:13px}
+p.libro{margin:0 0 8px}
+.opcs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 4px}
+html,body{overscroll-behavior:none}   /* 18-11-2026: tirar hacia abajo no recarga la página (se perdía la partida) */
+.opc{min-height:44px;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
+.opc[aria-pressed="false"]{background:#5b6b70}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
+.op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
+.op.mal::after{content:"✗";margin-left:auto;font-size:20px;font-weight:900}
+@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+button,a,input,.op,.resp{touch-action:manipulation}
+.dlg-fondo{position:fixed;inset:0;z-index:1000;background:rgba(0,30,22,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{background:#fff;color:#1d2a30;border-radius:18px;max-width:420px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.35);font:16px/1.5 "Helvetica Neue",Arial,sans-serif;text-align:left}
+.dlg p{white-space:pre-line;margin:0 0 18px}
+.dlg-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.dlg button{border:0;border-radius:12px;padding:12px 18px;min-height:44px;font:700 16px Aleo,Georgia,serif;cursor:pointer;background:#004230;color:#fff}
+.dlg button.no{background:#e3efe9;color:#004230}
+/* portada común de la colección (fase 2): la tarjeta oscura de Serpiente, Auxilios y Aventura, para todos */
+:where(.heroe){position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;background:radial-gradient(circle at 85% 10%,var(--brillo,rgba(252,209,0,.28)),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
+:where(.heroe) .hm{font:700 12px "Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+:where(.heroe) h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}
+:where(.heroe h1) span{color:#fcd100}
+:where(.heroe) p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
+:where(.heroe) .chips{display:flex;flex-wrap:wrap;gap:6px}
+:where(.heroe .chips) span{font:700 12px "Helvetica Neue",Arial,sans-serif;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;color:#fff}`;
+  document.head.appendChild(css);
+
+  /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
+  const caja = document.createElement('div');
+  caja.className = 'opcs';
+  /* lee (opcional): de dónde sale el estado real. 18-11-2026: el sonido también se cambia desde el marcador de los juegos; al
+     volver a la portada, el botón se repinta con el estado real (antes enseñaba el antiguo y el primer toque no hacía nada) */
+  function boton(texto, activo, alCambiar, lee) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opc';
+    const pinta = v => { b.setAttribute('aria-pressed', v ? 'true' : 'false'); b.textContent = texto(v) };
+    let v = activo; pinta(v);
+    b.sync = () => { if (lee) { v = lee(); pinta(v) } };
+    b.onclick = e => { e.stopPropagation(); b.sync(); v = !v; pinta(v); alCambiar(v) };
+    caja.appendChild(b);
+    return b;
+  }
+  const muestra = () => { const p = app && app.querySelector('.portada'); [...caja.children].forEach(b => b.sync && b.sync()); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
+  if (app) new MutationObserver(muestra).observe(app, { childList: true });
+
+  /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
+  {
+    const aplica = () => {
+      try {
+        const c = typeof actx !== 'undefined' && actx ? actx : AUDIO.ctx;
+        if (window.SILENCIO) { if (c) c.suspend(); try { window.speechSynthesis && speechSynthesis.cancel() } catch (e) {} }
+        else if (c && c.state === 'suspended') c.resume();
+      } catch (e) {}
+    };
+    window.SILENCIO = L.get('ipe_silencio', '0') === '1';
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() }, () => !window.SILENCIO);
+    aplica();
+    /* si el juego crea el sonido después, se vuelve a silenciar */
+    document.addEventListener('click', () => setTimeout(aplica, 0), true);
+    document.addEventListener('touchend', () => setTimeout(aplica, 0), true);
+  }
+
+  /* Ayuda de colores para daltonismo (solo señales: escribe el color de la señal en el nivel 1). */
+  if (typeof GIRO !== 'undefined') {
+    window.AYUDA_COLOR = L.get('ipe_ayuda_color', '0') === '1';
+    boton(v => v ? '👁 Ayuda de colores: sí' : '👁 Ayuda de colores: no', window.AYUDA_COLOR,
+      v => { window.AYUDA_COLOR = v; L.set('ipe_ayuda_color', v ? '1' : '0') });
+  }
+  muestra();
+
+  /* Instalable (solo en línea desde el 9-11-2026: sw.js no guarda copias, siempre carga de internet). */
+  if ('serviceWorker' in navigator && location.protocol === 'https:')
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
