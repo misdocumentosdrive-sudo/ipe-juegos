@@ -363,7 +363,13 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .placa[data-rot]{border:1px solid rgba(0,0,0,.28)!important;border-radius:10px!important;background:linear-gradient(var(--c1),var(--c2))!important;
  box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.22),0 3px 7px rgba(0,0,0,.32)}
 .bandeja .rot.placa[data-rot],.b-izq .rot.placa[data-rot],.b-der .rot.placa[data-rot]{padding:7px 13px}
-.tres .ley .placa[data-rot]{padding:6px 11px}
+.tres .ley .placa[data-rot]{padding:6px 9px;gap:5px}
+.tres .ley{min-width:0}
+@media (max-width:390px){.tres{gap:5px}.tres .ley .placa[data-rot]{font-size:11.5px;padding:5px 7px;gap:4px}.tres .ley .placa .ico{width:13px;height:13px}}   /* a 360 px se salía 6 px de la tarjeta */
+@media (max-width:340px){.tres{gap:3px}.tres .ley .placa[data-rot]{font-size:10.5px;padding:4px 5px;gap:3px}.tres .ley .placa .ico{width:12px;height:12px}}
+.placa[data-rot]{display:inline-flex!important;align-items:center;justify-content:center;gap:7px;text-align:center}
+.placa[data-rot] .tx{white-space:nowrap;text-align:center;line-height:1.12}
+.bandeja .rot.placa[data-rot],.b-izq .rot.placa[data-rot],.b-der .rot.placa[data-rot],.tres .ley .placa[data-rot]{width:max-content!important;max-width:none!important}
 .placa[data-rot=azul]{--c1:#35375b;--c2:#282944}
 .placa[data-rot=crema]{--c1:#efe9e2;--c2:#c5af95}
 .placa[data-rot=gris]{--c1:#8a807f;--c2:#675f5e}
@@ -1014,7 +1020,7 @@ function precarga(n){
 function presentaNivel(n,oficial){
  parar();app.classList.remove('jugando','v');
  const l=NIVELES[n-1];precarga(n);precarga(n+1);
- const tres=l.band?`<div class="tres">${['izq','der','abj'].map(p=>{const b=l.band[p];return `<div class="ley"><img src="${b.img}" alt=""><span class="placa ${b.oscuro?'grab-o':'grab-c'}" data-rot="${b.rot}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span><small>${{izq:'← desliza a la izquierda',der:'desliza a la derecha →',abj:'↓ desliza hacia abajo'}[p]}</small></div>`}).join('')}</div>`:'';
+ const tres=l.band?`<div class="tres">${['izq','der','abj'].map(p=>{const b=l.band[p];return `<div class="ley"><img src="${b.img}" alt=""><span class="placa ${b.oscuro?'grab-o':'grab-c'}" data-rot="${b.rot}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}<span class="tx">${dosLineas(b.n,'ley')}</span></span><small>${{izq:'← desliza a la izquierda',der:'desliza a la derecha →',abj:'↓ desliza hacia abajo'}[p]}</small></div>`}).join('')}</div>`:'';
  app.innerHTML=`<div class="intro">
   <div class="marca">${oficial?'Partida oficial · ':''}Nivel ${n} de 3</div>
   <h1>${l.titulo}</h1>
@@ -1106,7 +1112,7 @@ function empieza(n,oficial){
  const l=NIVELES[n-1],c=cicloArte();
  const esc=pantalla(oficial,`<span class="pill" id="hp">0 pts</span><span class="pill" id="hf">1/12</span><span class="pill racha" id="hr"></span>`,l.fondo);
  esc.innerHTML=`<div class="cinta" id="cinta" role="img" aria-label="La cinta con las fichas que vienen"></div><canvas class="rodillo r-izq" id="rodI"></canvas><canvas class="rodillo r-der" id="rodD"></canvas>
-  ${['izq','der','abj'].map(p=>{const b=l.band[p];return `<button type="button" class="bandeja b-${p}" data-p="${p}" aria-label="Bandeja: ${b.n}"><img src="${b.img}" alt=""><span class="rot placa ${b.oscuro?'grab-o':'grab-c'}" data-rot="${b.rot}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span></button>`}).join('')}
+  ${['izq','der','abj'].map(p=>{const b=l.band[p];return `<button type="button" class="bandeja b-${p}" data-p="${p}" aria-label="Bandeja: ${b.n}"><img src="${b.img}" alt=""><span class="rot placa ${b.oscuro?'grab-o':'grab-c'}" data-rot="${b.rot}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}<span class="tx">${dosLineas(b.n,p)}</span></span></button>`}).join('')}
   <div class="actual" id="act"><div class="aro" id="aro"><i></i></div><img id="actImg" alt="" draggable="false"><div class="chapa" id="actCh"></div></div>`;
  st={l,n,c,lento:oficial?!!oficial.lento:!st.tutoFichas&&lento(),oficial:oficial||null,fichas:st.tutoFichas||fichasDe(n,c),i:-1,pts:0,aciertos:0,racha:0,fallos:[],tj:0,t:performance.now(),pausa:false,fin:false,maxR:0,obs:st.obs,k:st.k,ext:st.ext,
   tuto:st.tutoFichas?{paso:0}:null,inicio:0,modo:'cinta'};
@@ -1510,11 +1516,27 @@ function guardaAtras(){try{if(!history.state||!history.state.nomina)history.push
 addEventListener('popstate',()=>{if(typeof OFI_VIVA!=='undefined'&&OFI_VIVA)return;if(jugando()){guardaAtras();oculta({type:'blur'})}});
 
 /* ===== Final de cada nivel ===== */
+/* 22-11-2026 (José: «centra y justifica bien los textos»): los letreros de los lados van en dos líneas; el corte lo pongo yo en el punto
+   más equilibrado («No / salarial», «Cotiza / entero», «No entra / en la base») y así el letrero mide justo su texto, con el icono
+   pegado y todo centrado (si el navegador partía la línea, la caja quedaba más ancha y el icono se iba a la esquina) */
+function dosLineas(t,p){
+ const w=String(t).split(' ');if(p==='abj'||w.length<2||t.length<=10)return t;
+ if(p==='ley'){   // en la leyenda, tres columnas estrechas: líneas de hasta 11 letras («Solo lo que / pasa del / límite»)
+  const l=[];let a='';for(const x of w){if(a&&(a+' '+x).length>11){l.push(a);a=x}else a=a?a+' '+x:x}l.push(a);return l.join('<br>')}
+ let mejor=1,dm=1e9;for(let i=1;i<w.length;i++){const a=w.slice(0,i).join(' ').length,b=w.slice(i).join(' ').length,d=Math.max(a,b);if(d<dm){dm=d;mejor=i}}
+ return w.slice(0,mejor).join(' ')+'<br>'+w.slice(mejor).join(' ');
+}
+/* y, ya pintados, los letreros de las bandejas siempre dentro de la pantalla (8 px de margen): las bandejas de los lados sobresalen un
+   poco en los móviles estrechos */
+function encuadraLetreros(){
+ for(const r of document.querySelectorAll('.bandeja .rot')){r.style.marginLeft='';const b=r.getBoundingClientRect(),W=innerWidth;
+  const d=b.left<8?8-b.left:b.right>W-8?W-8-b.right:0;if(d){const k=r.offsetWidth?b.width/r.offsetWidth:1;r.style.marginLeft=Math.round(d/(k||1))+'px'}}
+}
 /* 22-11-2026: una placa de tres líneas («Indemnización por fin de contrato / acaba tu contrato temporal») pisaba el letrero de la
    bandeja de abajo, que va siempre encima de su bandeja (José, 18-11-2026): la bandeja baja lo justo y vuelve con la siguiente ficha */
 function huecoAbajo(){
  const b=document.querySelector('.b-abj'),ch=$('#actCh');if(!b||!ch)return;
- b.style.setProperty('--baja','0px');const r=b.querySelector('.rot');if(!r)return;
+ encuadraLetreros();b.style.setProperty('--baja','0px');const r=b.querySelector('.rot');if(!r)return;
  const ov=Math.ceil(ch.getBoundingClientRect().bottom+6-r.getBoundingClientRect().top);
  const k=b.offsetHeight?b.getBoundingClientRect().height/b.offsetHeight:1;   // la escena puede ir escalada
  if(ov>0)b.style.setProperty('--baja',Math.ceil(ov/(k||1))+'px');
