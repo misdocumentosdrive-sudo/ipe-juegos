@@ -97,10 +97,13 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 .resp .pl{position:absolute;inset:1px;z-index:-1;background:var(--c);border-radius:12px}
 .resp .pl::after{content:'';position:absolute;inset:-1px;border:0 solid transparent;border-radius:13px;background:url(aux_rect_crema.webp) center/100% 100% no-repeat;border-image:url(aux_rect_crema.webp) 52 fill / 15px / 0 stretch;mix-blend-mode:multiply}
 /* sello del expediente: «Cerrado» (verde) al acertar y «Revisar» (rojo) al fallar, con el lacre de la nómina */
-.sello-f{position:absolute;right:-4px;top:-34px;width:74px;height:74px;display:grid;place-items:center;transform:rotate(-12deg);pointer-events:none;z-index:2;animation:sella .32s cubic-bezier(.3,1.8,.5,1) both}
+.sello-f{position:absolute;right:6px;top:-36px;width:82px;height:82px;display:grid;place-items:center;transform:rotate(-12deg);pointer-events:none;z-index:2;animation:sella .32s cubic-bezier(.3,1.8,.5,1) both}
+/* 22-11-2026: «CERRAD»: el sello asomaba 4 px por la derecha de la tarjeta (que recorta) y la palabra no cabía en el disco y tapaba el final del título del veredicto (ahora el título deja sitio al sello). Además, «.veredicto b» (16 px) pisaba la letra
+   del sello: ahora la regla del sello pesa más */
+.veredicto>b:first-child{display:block;padding-right:40px}
 .sello-f img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .sello-f.ok img{filter:hue-rotate(125deg) saturate(.85) brightness(.95) drop-shadow(0 3px 4px rgba(0,0,0,.35))}
-.sello-f b{position:relative;font:800 13px Aleo,Georgia,serif;letter-spacing:1px;color:#fff6e8;text-transform:uppercase;text-shadow:0 -1px 0 rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.25)}
+.veredicto .sello-f b{position:relative;margin:0;font:800 11px Aleo,Georgia,serif;letter-spacing:.3px;color:#fff6e8;text-transform:uppercase;text-shadow:0 -1px 0 rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.25)}
 @media (prefers-reduced-motion:reduce){.ficha,.sello-f{animation:none}.reloj i::after{animation:none}}
 @keyframes entra{from{transform:scale(.85);opacity:0}}
 .ficha .eti{font:800 12px Aleo,Georgia,serif;letter-spacing:1.5px;color:#c24400;text-transform:uppercase}
@@ -174,9 +177,13 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
    translúcidas): marrón; expedientes y racha, naranja. Se estiran en 9 trozos (las esquinas no se deforman) con la misma placa
    entera debajo (tapa las rendijas de las escalas fraccionarias) */
 .hud .pill,.hud .pill.exp,.hud .pill.racha{border:0 solid transparent;border-radius:13px;background:var(--placa,url(aux_rect_marron.webp)) center/100% 100% no-repeat;box-shadow:none;border-image:var(--placa,url(aux_rect_marron.webp)) 52 fill / 15px / 0 stretch!important;
- color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);filter:drop-shadow(0 3px 3px rgba(0,0,0,.38));padding:8px 13px}
+ color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);filter:drop-shadow(0 3px 3px rgba(0,0,0,.38));padding:7px 10px}
 .hud .pill.exp,.hud .pill.racha{--placa:url(aux_rect_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
-@media (max-width:380px){.hud .pill,.hud .pill.exp,.hud .pill.racha{padding:6px 9px}.hud .ctl{gap:4px}}   /* a 320 px, todo en una fila (como antes) */
+@media (max-width:440px){.hud{gap:4px}.hud .pill,.hud .pill.exp,.hud .pill.racha{padding:6px 8px}.hud .ctl{gap:4px}}
+@media (max-width:380px){.hud{gap:3px}.hud .pill,.hud .pill.exp,.hud .pill.racha{padding:5px 5px;font-size:12px}.hud .ctl{gap:3px}.hud .cor,.hud .cor .ico{width:15px;height:15px}.hud .pill.racha .ico{width:13px;height:13px}}
+/* 22-11-2026: con la racha a la vista («×1,5»), el marcador partía en dos filas en el móvil y el ordenador (placas más anchas que las
+   cápsulas lisas). Ahora cabe en una fila de 320 px en adelante con las cinco piezas y 4 vidas */
+@media (max-width:340px){.hud{gap:2px}.hud .pill,.hud .pill.exp,.hud .pill.racha{padding:5px 4px;font-size:11px}.hud .vidas{gap:1px}.hud .cor,.hud .cor .ico{width:13px;height:13px}.hud .pill .ico{width:13px;height:13px}.hud .ctl{gap:2px}.hud .ctl button.pill{min-width:40px;min-height:40px}}
 .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* móvil girado: el campo es vertical; se pide girarlo y la partida se pausa */
 .giro{display:none}
@@ -198,6 +205,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .heroe.escena{background:linear-gradient(180deg,rgba(0,40,29,.7) 0%,rgba(0,34,25,.86) 48%,rgba(0,24,17,.96) 100%),var(--escena) center 35%/cover no-repeat,#062a1f}
 .heroe.escena h1,.heroe.escena .hm,.heroe.escena>p,.escena-n .drama{text-shadow:0 1px 3px rgba(0,0,0,.55)}
 .heroe .narra{margin:12px 0 4px}
+/* 22-11-2026 (José: «mismo margen arriba y abajo y la imagen circular de Samuel abajo a la izquierda, de donde saldrá el bocadillo,
+   como en el móvil»): en el ordenador, el bocadillo centrado en la escena de la presentación (antes, pegado abajo con 56 px encima);
+   el retrato, abajo a la izquierda como siempre */
+@media (min-width:760px){.intro .escena-n{padding:28px 16px}}
 .escena-n{position:relative;border-radius:20px;overflow:hidden;padding:56px 12px 12px;background:linear-gradient(180deg,rgba(0,40,29,.12) 0%,rgba(0,32,23,.78) 58%,rgba(0,24,17,.94) 100%),var(--escena) var(--pos,center 30%)/cover no-repeat,#0b5a40;box-shadow:0 10px 26px rgba(0,66,48,.3)}
 .escena-n .drama{background:none;padding:0}
 .escena-n .drama strong{color:var(--amarillo)}
@@ -959,7 +970,7 @@ function presentaNivel(n,oficial){
   <ul class="cortas">
    <li>${ico('mano')}<span>Desliza el dedo por la mitad de abajo para mover la pala (en el ordenador, ratón o ← →). Toca para lanzar.</span></li>
    <li>${ico('carpeta')}<span>Coge los expedientes que caen: tienes ${SEGUNDOS} s para decir qué tipo de daño es.</span></li>
-   <li>${ico('regalo')}<span>Las cápsulas sorpresa ayudan: cógelas también.</span></li>
+   <li>${ico('regalo')}<span>Las sorpresas ayudan: cógelas también.</span></li>
    <li>${ico('escalera')}<span>Cada ladrillo es un riesgo y su expediente es un daño que nace de ese riesgo. Si lo clasificas bien, los ladrillos vecinos del mismo riesgo quedan <b>controlados</b>: la bola los atraviesa.</span></li>
   </ul>
   <details><summary>Puntos y reglas completas</summary><ul>
@@ -1207,7 +1218,7 @@ function suma(p,x,y,col,peq){
  if(x!==undefined)st.part.push({txt:(p>0?'+':'−')+Math.abs(p),x,y,vy:peq?-55:-40,vida:peq?.8:1,col:col||'#fcd100',tipo:'txt',tam:peq?13:18});
 }
 /* ===== Ladrillos sorpresa (José, 13-11-2026: «como en los juegos de romper ladrillos de siempre») =====
-   Escondidos: no se ven hasta romperlos. Sueltan una cápsula; si la coges, ayuda. No dan ni quitan puntos. */
+   Escondidos: no se ven hasta romperlos. Sueltan una placa sorpresa; si la coges, ayuda. No dan ni quitan puntos. */
 const SORPRESAS={
  equipo:{ic:'equipo',n:'Trabajo en equipo',d:'¡Tres bolas mejor que una!',c:'#1d5fa0'},
  iman:{ic:'iman',n:'Imán',d:'La bola se pega a la pala: toca para lanzarla',c:'#7a3db8'},
@@ -1377,7 +1388,7 @@ function golpea(L){
   const S=SORPRESAS[L.sorpresa],c={x,y,w:40,h:24,vy:vy*.9,vy0:vy*.9,t:0,sorpresa:L.sorpresa};
   /* cada sorpresa se explica la primera vez que sale (fuera de la partida oficial) */
   if(!st.oficial&&marcaVista('s_'+L.sorpresa)){c.mano='¡Cógela!';c.vy=c.vy0*.5;aviso(ico(S.ic)+' Sorpresa: '+S.n,S.d,3200)}
-  else aviso(ico('regalo')+' ¡Sorpresa!','Coge la cápsula con la pala',1200);
+  else aviso(ico('regalo')+' ¡Sorpresa!','Cógela con la pala',1200);
   st.caps.push(c);
  }
 }
@@ -1466,8 +1477,10 @@ function abreCaso(c,pend){
    st.aciertos++;st.racha++;const mult=1+Math.min(st.racha-1,4)*.25;suma(Math.round(PUNTOS.acierto*mult),cx,cy,'#7dffb0');
    sfx('acierto',st.racha-1);vibrar(20);
    let extra='';
-   if(st.racha>=3&&!st.vidaExtra){st.vidaExtra=true;st.vidas++;extra=` · ${ico('salud')} Vigilancia de la salud: ¡una vida más!`}
-   v.className='veredicto ok';v.innerHTML=`<b>¡Correcto! ${R}</b>${caso.ex}<br><small>+${Math.round(PUNTOS.acierto*mult)}${st.racha>1?` · ${ico('llama')} racha ×`+String(mult).replace('.',','):''} · ${ico('chaleco')} EPI: pala ancha durante 10 s${extra}${cad.length?`<br>${ico(F.ic)} Prevención en cadena: ${cad.length===1?'1 ladrillo':cad.length+' ladrillos'} de «${F.n}» ${cad.length===1?'queda controlado':'quedan controlados'}`:''}</small>`;
+   if(st.racha>=3&&!st.vidaExtra){st.vidaExtra=true;st.vidas++;extra=` · ${ico('salud')} +1 vida`}
+   /* 22-11-2026 (José: «¿ves necesario todos?»): la explicación y una línea mínima. La pala ancha (EPI) y la prevención en cadena ya se
+      ven y se avisan al volver a jugar; aquí solo repetían texto */
+   v.className='veredicto ok';v.innerHTML=`<b>¡Correcto! ${R}</b>${caso.ex}<br><small>+${Math.round(PUNTOS.acierto*mult)}${st.racha>1?` · ${ico('llama')} racha ×`+String(mult).replace('.',','):''}${extra}</small>`;
   }else{
    /* fase 4: el fallo cuesta puntos y racha, nada más (la pala no se encoge) */
    if(!pend)st.racha=0;suma(pend?PUNTOS.falloPendiente:PUNTOS.fallo,cx,cy,'#ff8a70');sfx('fallo');vibrar([30,40,30]);
@@ -1498,6 +1511,7 @@ function abreCaso(c,pend){
   if(cad.length)cad.forEach((b,i)=>{b.neutEn=(st.tj||0)+.25+i*.09;st.porNeut.push(b)});
   if(tuto){finTuto();aviso('¡Ya sabes jugar!','Las sorpresas te las explicamos cuando salgan',2600)}
   else if(cad.length)aviso(ico(F.ic)+' Prevención en cadena',`${cad.length===1?'1 ladrillo':cad.length+' ladrillos'} de «${F.n}» bajo control`,1800);
+  else if(ok)aviso(ico('chaleco')+' Pala ancha (EPI)','10 s',1100);   /* 22-11-2026: ya no se dice en la ficha */
   else aviso('¡Sigue!','',700);
  };
  d.querySelectorAll('.resp').forEach(b=>b.onclick=()=>responde(b.dataset.k));
@@ -1628,9 +1642,14 @@ function spriteLeyenda(){
  return sprite('ley|'+ks.join(','),st.W,H,g=>{
   g.fillStyle='rgba(0,14,10,.55)';rr(g,6,3,st.W-12,H-6,10);g.fill();g.strokeStyle='rgba(252,209,0,.18)';g.lineWidth=1;rr(g,6.5,3.5,st.W-13,H-7,10);g.stroke();
   g.textBaseline='middle';g.textAlign='left';g.font='800 10.5px Aleo,Georgia,serif';g.fillStyle='rgba(252,209,0,.95)';g.fillText('RIESGOS DEL MURO',14,11);
-  ks.forEach((k,i)=>{const F=FACTORES[k],x=14+(i%2)*170,y=17+Math.floor(i/2)*alto;
+  /* 22-11-2026 (José): «Máquinas y herramientas» se salía del recuadro (la 2.ª columna empezaba en x=184 fijo). Ahora cada columna es
+     la mitad del recuadro y la letra baja (hasta 10 px) solo si algún nombre no cabe en su columna */
+  const col=(st.W-28)/2;let fs=12.5;
+  const cabe=()=>{g.font=`700 ${fs}px "Helvetica Neue",Arial,sans-serif`;return ks.every(k=>g.measureText(FACTORES[k].n).width<=col-24)};
+  while(fs>10&&!cabe())fs-=.5;
+  ks.forEach((k,i)=>{const F=FACTORES[k],x=14+(i%2)*col,y=17+Math.floor(i/2)*alto;
    arcilla(g,x,y,15,15,4.5,F.claro?F.t:[F.t[0],F.c],{sombra:1.5});if(icoListo(ims[i]))g.drawImage(ims[i],x+2,y+2,11,11);
-   g.fillStyle='#ffffff';g.font='700 12.5px "Helvetica Neue",Arial,sans-serif';g.fillText(F.n,x+20,y+8)});   /* lote 7: a 9,9 px en un móvil pequeño */
+   g.fillStyle='#ffffff';g.font=`700 ${fs}px "Helvetica Neue",Arial,sans-serif`;g.fillText(F.n,x+20,y+8)});   /* lote 7: a 9,9 px en un móvil pequeño */
  },ims);
 }
 function repintaHuecos(){   /* solo los ladrillos que han cambiado: su hueco con la sombra, y los vecinos que pisan ese hueco */
@@ -1681,8 +1700,8 @@ function dibuja(){
   if(icoListo(ic))q.drawImage(ic,21,11,18,18)},[ic]);
  for(const c of st.caps){
   const y=c.y+Math.sin(c.t*6)*2;
-  if(c.sorpresa){const S=SORPRESAS[c.sorpresa],im=icoImg(S.ic,'#ffffff'),sp=sprite('s2_'+c.sorpresa,52,32,q=>{q.fillStyle='rgba(255,255,255,.3)';rr(q,1,1,50,30,15);q.fill();
-    arcilla(q,5,4,42,24,12,[S.c,S.c],{sombra:2.5});if(icoListo(im))q.drawImage(im,17,7,18,18)},[im]);
+  if(c.sorpresa){const S=SORPRESAS[c.sorpresa],im=icoImg(S.ic,'#ffffff'),sp=sprite('s3_'+c.sorpresa,52,32,q=>{q.fillStyle='rgba(255,255,255,.3)';rr(q,1,1,50,30,9);q.fill();
+    arcilla(q,5,4,42,24,6,[S.c,S.c],{sombra:2.5});   /* 22-11-2026 (José): placa rectangular de esquinas suaves (antes, cápsula: radio 12) */if(icoListo(im))q.drawImage(im,17,7,18,18)},[im]);
    g.save();g.translate(c.x,y);g.rotate(Math.sin(c.t*5)*.15);g.drawImage(sp,-26,-16,52,32);g.restore()}
   else{g.save();g.translate(c.x,y);g.rotate(Math.sin(c.t*3)*.12);g.drawImage(exp,-30,-20,60,40);g.restore()}
   if(c.mano)manoQueSenala(g,c.x+30,y+12,c.mano,t);
