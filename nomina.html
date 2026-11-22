@@ -354,6 +354,11 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 /* la placa de la ficha, más ancha: debajo de la ficha hay sitio y así no baja hasta el letrero de abajo */
 .actual .chapa{max-width:296px}
 .actual .chapa.larga{font-size:14px;letter-spacing:-.005em;max-width:340px;padding-left:34px;padding-right:34px}   /* revisión 19-11-2026: los títulos largos, en una línea (en dos, la chapa tapaba el rótulo de la bandeja de abajo) */
+/* 22-11-2026 (José: «rectangular con las esquinas redondeadas suaves»): la placa de la ficha ya no es una cápsula (el texto se apretaba
+   contra los extremos redondos). Placa crema de plastilina hecha con CSS, como los carteles de Señales: luz arriba, canto abajo y
+   sombra. Va al final para ganar a la imagen de la cápsula (que se pone con !important más arriba) y con menos relleno a los lados */
+.chapa,.actual .chapa.larga{border:1px solid rgba(90,60,25,.22)!important;border-radius:12px!important;padding:10px 20px 11px;
+ background:linear-gradient(#f8f1e2,#eadbc0)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -3px 0 rgba(120,85,40,.2),0 4px 9px rgba(0,0,0,.34);filter:none}
 /* José, 19-11-2026 («afina, que respiren y estén justificados todos los títulos»): la chapa del nivel 3 siempre del mismo tamaño,
    con el título y la letra pequeña centrados y equilibrados en el hueco de la pastilla, lejos de las puntas redondeadas */
 .abajo3 .ch3{width:214px;max-width:214px;min-height:96px;box-sizing:border-box;padding:17px 38px 18px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;
