@@ -92,8 +92,10 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 /* respuestas: placas de plastilina en relieve del color de cada tipo (la placa crema da la forma y la luz) */
 @media (max-width:400px){.resps.c4 .resp{padding:10px 11px;font-size:13.5px;gap:6px}.resps.c4 .resp .ico{width:18px;height:18px}}   /* 22-11-2026: a 360 px partía «Enfermedad» */
 .resp kbd{position:absolute;left:8px;top:4px;font:700 10px "Helvetica Neue",Arial,sans-serif;opacity:.75;text-shadow:none}   /* 22-11-2026 (lote 7): las teclas 1-4 ya funcionaban, pero no se veían */
-.resp .pl{position:absolute;inset:0;z-index:-1;background:var(--c);-webkit-mask:url(aux_placa_crema.webp) center/100% 100% no-repeat;mask:url(aux_placa_crema.webp) center/100% 100% no-repeat}
-.resp .pl::after{content:'';position:absolute;inset:0;background:url(aux_placa_crema.webp) center/100% 100% no-repeat;mix-blend-mode:multiply}
+/* 22-11-2026 (José): rectangulares con las esquinas suaves (antes, cápsulas), como en Cada minuto cuenta y Señales. El color va en una capa
+   con las mismas esquinas que la placa (ya no hace falta máscara) y la placa crema rectangular, estirada en 9 trozos, le pone la luz */
+.resp .pl{position:absolute;inset:1px;z-index:-1;background:var(--c);border-radius:12px}
+.resp .pl::after{content:'';position:absolute;inset:-1px;border:0 solid transparent;border-radius:13px;background:url(aux_rect_crema.webp) center/100% 100% no-repeat;border-image:url(aux_rect_crema.webp) 52 fill / 15px / 0 stretch;mix-blend-mode:multiply}
 /* sello del expediente: «Cerrado» (verde) al acertar y «Revisar» (rojo) al fallar, con el lacre de la nómina */
 .sello-f{position:absolute;right:-4px;top:-34px;width:74px;height:74px;display:grid;place-items:center;transform:rotate(-12deg);pointer-events:none;z-index:2;animation:sella .32s cubic-bezier(.3,1.8,.5,1) both}
 .sello-f img{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
@@ -111,7 +113,7 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 @keyframes chispa{from{transform:scale(.8)}to{transform:scale(1.18)}}
 .resps{display:grid;gap:8px}
 .resps.c4{grid-template-columns:repeat(2,minmax(0,1fr))}   /* 22-11-2026 (lote 1): con 1fr no encogían y a 360 px se salían 20 px de la ficha */
-.resp{position:relative;isolation:isolate;min-width:0;min-height:56px;hyphens:manual;border:0;border-radius:40px;background:transparent!important;text-shadow:0 1px 0 rgba(0,0,0,.35);padding:12px 16px;font:700 15px "Helvetica Neue",Arial,sans-serif;color:#fff;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left;line-height:1.2}
+.resp{position:relative;isolation:isolate;min-width:0;min-height:56px;hyphens:manual;border:0;border-radius:13px;background:transparent!important;text-shadow:0 1px 0 rgba(0,0,0,.35);padding:12px 16px;font:700 15px "Helvetica Neue",Arial,sans-serif;color:#fff;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left;line-height:1.2}
 .resp .ico{width:22px;height:22px}
 .resp:disabled{cursor:default;opacity:.35}
 .resp.bien{opacity:1;outline:3px solid #1a8a4a;outline-offset:2px}
@@ -168,6 +170,13 @@ html,body{overscroll-behavior:none}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #fcd100;outline-offset:2px;box-shadow:0 0 0 6px #004230}
 .hud .ctl{display:flex;gap:6px}
 .hud .ctl .ico{width:22px;height:22px}
+/* 22-11-2026 (José): el marcador, con las mismas placas de plastilina rectangulares que Cada minuto cuenta y Señales (antes, cápsulas lisas
+   translúcidas): marrón; expedientes y racha, naranja. Se estiran en 9 trozos (las esquinas no se deforman) con la misma placa
+   entera debajo (tapa las rendijas de las escalas fraccionarias) */
+.hud .pill,.hud .pill.exp,.hud .pill.racha{border:0 solid transparent;border-radius:13px;background:var(--placa,url(aux_rect_marron.webp)) center/100% 100% no-repeat;box-shadow:none;border-image:var(--placa,url(aux_rect_marron.webp)) 52 fill / 15px / 0 stretch!important;
+ color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);filter:drop-shadow(0 3px 3px rgba(0,0,0,.38));padding:8px 13px}
+.hud .pill.exp,.hud .pill.racha{--placa:url(aux_rect_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+@media (max-width:380px){.hud .pill,.hud .pill.exp,.hud .pill.racha{padding:6px 9px}.hud .ctl{gap:4px}}   /* a 320 px, todo en una fila (como antes) */
 .sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* móvil girado: el campo es vertical; se pide girarlo y la partida se pausa */
 .giro{display:none}

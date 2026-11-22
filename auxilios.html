@@ -91,7 +91,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .grafica .ley span{font-weight:700;margin-right:6px;white-space:nowrap}
 .chips112{display:grid;gap:8px;margin-top:12px;width:100%}
 .chip112 small{display:block;font-weight:600;color:#5e4229;font-size:13px;text-shadow:none}
-.chip112.usada{pointer-events:none;--placa:url(aux_placa_gris.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.4)}.chip112.usada small{color:#fff}   /* 19-11-2026 (revisión total, lote 7): antes, opacidad .35 (1,6:1); lote 6: placa gris (4,7:1) */
+.chip112.usada{pointer-events:none;--placa:url(aux_rect_gris.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.4)}.chip112.usada small{color:#fff}   /* 19-11-2026 (revisión total, lote 7): antes, opacidad .35 (1,6:1); lote 6: placa gris (4,7:1) */
 .llamada{width:100%;min-height:54px;margin-top:0;border-radius:22px;background:url(aux_bandeja.webp) center/100% 100% no-repeat,#1c3327;color:#dff3ea;padding:16px 20px;font-size:14px;line-height:1.45;text-align:left;filter:drop-shadow(0 6px 8px rgba(0,0,0,.4))}   /* lote 6: la bandeja verde de plastilina */
 .llamada b{color:#7dffb5}
 .heroe{--brillo:rgba(255,89,0,.35)}   /* 19-11-2026 (lote 7): el resto de la tarjeta de la portada lo pone comun.js (antes, repetido aquí) */
@@ -111,7 +111,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .opciones.textos .op{font-weight:600;font-size:15px;line-height:1.3}
 .rcp{position:fixed;inset:0;background:radial-gradient(circle at 50% 35%,#16332a 0%,#071a14 70%);color:#fff;display:flex;flex-direction:column;align-items:center;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;z-index:5}
 .rcp.pls{background:radial-gradient(circle at 50% 35%,#16304a 0%,#08162a 70%)}
-.rcp .crono{--placa:url(aux_placa_crema.webp);font:800 22px Aleo,Georgia,serif;letter-spacing:1px;padding:7px 18px 8px;min-width:86px;text-align:center;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}   /* lote 6: el reloj, en una placa crema */
+.rcp .crono{--placa:url(aux_rect_crema.webp);font:800 22px Aleo,Georgia,serif;letter-spacing:1px;padding:7px 18px 8px;min-width:86px;text-align:center;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}   /* lote 6: el reloj, en una placa crema */
 .monitor{width:calc(100% - 28px);max-width:492px;margin-top:8px;border-radius:14px;background:#03100c;border:1px solid rgba(125,255,181,.25);box-shadow:inset 0 0 24px rgba(47,212,122,.08),0 6px 20px rgba(0,0,0,.4);position:relative;overflow:hidden;
  background-image:linear-gradient(rgba(125,255,181,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(125,255,181,.07) 1px,transparent 1px);background-size:14px 14px}
 .monitor .ecg{width:100%;height:58px;display:block}   /* fase 5: lienzo a 30 fps, sin filtros (antes, polilínea SVG + drop-shadow en cada fotograma) */
@@ -135,8 +135,8 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .rcp .bpm{font:800 24px Aleo,Georgia,serif;text-align:right;min-width:86px;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
 .rcp .bpm small{display:block;font:600 11px "Helvetica Neue",Arial;opacity:.75}
 .rcp .botones .btn{border-radius:16px;flex:1;font-size:16px;padding:13px 8px}
-.rcp .btn.rel{--placa:url(aux_placa_mostaza.webp);color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.rcp .btn.alarma{--placa:url(aux_placa_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45);animation:late .6s infinite}
+.rcp .btn.rel{--placa:url(aux_rect_mostaza.webp);color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.rcp .btn.alarma{--placa:url(aux_rect_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45);animation:late .6s infinite}
 .rcp .btn[disabled]{opacity:.45;filter:grayscale(.6)}
 @keyframes late{50%{transform:scale(1.04);filter:brightness(1.2) drop-shadow(0 3px 3px rgba(0,0,0,.38))}}
 .rcp .combo{position:absolute;left:0;right:0;top:6%;text-align:center;font:800 26px Aleo,Georgia,serif;color:#7dffb5;text-shadow:0 0 14px rgba(125,255,181,.6);pointer-events:none;opacity:0;transition:opacity .2s;z-index:2}
@@ -146,7 +146,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 /* fase 5: sin destellos a pantalla completa; solo un brillo local sobre el cuerpo (descarga del DEA) */
 .brillo{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 50% 38%,var(--c) 0,transparent 58%);animation:brillo .45s ease-out forwards}
 @keyframes brillo{from{opacity:.6}to{opacity:0}}
-.rcp .tarjeta-rcp .op{--placa:url(aux_placa_crema.webp);position:relative;justify-content:center;text-align:center;padding:12px 38px 13px;font:700 15px/1.25 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}
+.rcp .tarjeta-rcp .op{--placa:url(aux_rect_crema.webp);position:relative;justify-content:center;text-align:center;padding:12px 38px 13px;font:700 15px/1.25 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}
 .rcp .tarjeta-rcp p{margin:0;text-align:center;font-size:15px;line-height:1.4}
 
 /* pausa (18-11-2026, como en «Serpiente PRL»): menú «Seguir / Salir al menú» que tapa la pregunta y el cuerpo con el reloj parado */
@@ -172,12 +172,12 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
 .nivel .n{box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.22)}
 .pill{box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,66,48,.08),0 2px 4px rgba(0,66,48,.08)}
 .icoesc{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:-4px auto 6px;color:#fff;font-size:0;box-shadow:inset 0 3px 0 rgba(255,255,255,.28),inset 0 -4px 0 rgba(0,0,0,.2),0 6px 14px rgba(0,0,0,.18)}
-.chip112{--placa:url(aux_placa_crema.webp);padding:12px 30px 13px;text-align:center;font:700 14.5px/1.25 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;cursor:pointer;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}   /* lote 6: placa crema (antes, borde discontinuo) */
+.chip112{--placa:url(aux_rect_crema.webp);padding:12px 30px 13px;text-align:center;font:700 14.5px/1.25 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;cursor:pointer;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15)}   /* lote 6: placa crema (antes, borde discontinuo) */
 .oficial{box-shadow:inset 0 2px 0 #fff,0 6px 14px rgba(0,66,48,.08)}
 .oficial .btn[disabled]{opacity:1;background:#5b6b70;color:#fff}   /* 19-11-2026 (revisión total, lote 7): «Comprobando tus intentos…» legible (antes 2,8:1) */
-.rcp .pill{--placa:url(aux_placa_marron.webp);color:#fbf6ec;padding:9px 15px;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
+.rcp .pill{--placa:url(aux_rect_marron.webp);color:#fbf6ec;padding:9px 15px;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
 .rcp .tarjeta-rcp{background:url(aux_bandeja.webp) center/100% 100% no-repeat,#1c3327;border-radius:22px;padding:14px 18px;display:grid;gap:8px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))}   /* lote 6: la bandeja de plastilina */
-.rcp .crono.urge{--placa:url(aux_placa_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+.rcp .crono.urge{--placa:url(aux_rect_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
 /* salir de los niveles 3 y 4 */
 .rcp .izq{display:flex;align-items:center;gap:8px}
 .rcp .salir .pic{width:20px;height:20px}
@@ -255,13 +255,13 @@ button:focus-visible,input:focus-visible{outline:3px solid #fcd100;outline-offse
 .ctl{display:flex;gap:6px;flex:none}
 .ctl button{width:44px;height:44px;border:0;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;color:var(--verde);background:#fff;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(0,66,48,.08),0 2px 4px rgba(0,66,48,.08)}
 .ctl .pic{width:20px;height:20px}
-.rcp .ctl button,.cab .ctl button{--placa:url(aux_placa_marron.webp);width:48px;height:46px;color:#fbf6ec}
-.cab{gap:6px}.cab .pill{--placa:url(aux_placa_marron.webp);padding:9px 15px;white-space:nowrap;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
-.rcp .salir{--placa:url(aux_placa_marron.webp);flex:none;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#fbf6ec;width:48px;height:46px}
+.rcp .ctl button,.cab .ctl button{--placa:url(aux_rect_marron.webp);width:48px;height:46px;color:#fbf6ec}
+.cab{gap:6px}.cab .pill{--placa:url(aux_rect_marron.webp);padding:9px 15px;white-space:nowrap;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);font-variant-numeric:tabular-nums}
+.rcp .salir{--placa:url(aux_rect_marron.webp);flex:none;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;color:#fbf6ec;width:48px;height:46px}
 .rcp .arriba{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;padding:12px 14px 0;gap:6px}.rcp .arriba .pill{white-space:nowrap}
 @media (min-width:381px) and (max-width:430px){.rcp .arriba{padding:12px 10px 0;gap:4px}.rcp .izq{gap:4px}.rcp .arriba .pill{padding:9px 12px}.rcp .arriba .crono{padding:7px 13px;min-width:0}.rcp .ctl button,.rcp .salir{width:46px;height:44px}.ctl{gap:4px}}
 @media (max-width:380px){.rcp .arriba{padding:10px 8px 0;gap:3px}.rcp .izq{gap:3px}.rcp .arriba .pill{padding:8px 11px;font-size:13px}.rcp .arriba .crono{font-size:19px;letter-spacing:0;padding:7px 12px;min-width:0}.ctl{gap:3px}.rcp .ctl button,.rcp .salir,.cab .ctl button{width:44px;height:44px}}
-.rcp .btn.vent{--placa:url(aux_placa_azul.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.5)}   /* lote 6: placa azul (texto blanco, más de 10:1) */
+.rcp .btn.vent{--placa:url(aux_rect_azul.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.5)}   /* lote 6: placa azul (texto blanco, más de 10:1) */
 /* RCP en un móvil de 360 px: el marcador se salía por la derecha y arrastraba el botón «¡Relevo!» fuera de la pantalla */
 @media (max-width:380px){.rcp .gauge{width:124px;height:70px}.rcp .cuenta{min-width:78px;font-size:30px}.rcp .bpm{min-width:72px;font-size:21px}}
 /* móvil girado (apaisado y bajo): el cuerpo quedaba diminuto; se pide girarlo y la partida se pausa */
@@ -374,7 +374,13 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
    el tiempo, una mecha que se consume. En la RCP y la PLS, el mismo lenguaje en el marcador, el reloj y los botones (el monitor
    de compresiones sigue siendo un aparato). Solo cambia el aspecto: ni tiempos ni puntos */
 .tarjeta.escenario .preg,.escenario .op,.tarjeta.escenario .sig,.chip112,.escenario .explica,.cab .pill,.cab .ctl button,.rcp .pill,.rcp .ctl button,.rcp .salir,.rcp .crono,.rcp .botones .btn,.rcp .tarjeta-rcp .op{
- border:0;border-radius:999px;box-shadow:none!important;background:var(--placa,url(aux_placa_marron.webp)) center/100% 100% no-repeat!important;filter:drop-shadow(0 3px 3px rgba(0,0,0,.38))}
+ border:0 solid transparent;border-radius:13px;box-shadow:none!important;background:var(--placa,url(aux_rect_marron.webp)) center/100% 100% no-repeat!important;filter:drop-shadow(0 3px 3px rgba(0,0,0,.38));
+ border-image:var(--placa,url(aux_rect_marron.webp)) 52 fill / 15px / 0 stretch!important}
+/* 22-11-2026 (José): las placas, rectangulares con las esquinas suaves y de plastilina, como en la nómina (antes, cápsulas). Son las
+   cápsulas de José pasadas a rectángulo (mismo reborde, luz y textura: aux_rect_<color>.webp) y se estiran en 9 trozos: las esquinas
+   no se deforman con el ancho del botón. Debajo va la misma placa entera, recortada con las mismas esquinas: con escalas de pantalla
+   fraccionarias (2,625 en muchos Android) las 9 piezas dejan rendijas de un píxel y así no se ve el fondo por ellas. Las cápsulas
+   originales siguen en fuente/img/aux_placa_<color>.webp */
 /* el escenario: fijo detrás de todo; velo oscuro arriba (marcador) y abajo (opciones), claro en medio (se ve el puesto) */
 .tras{position:fixed;inset:0;z-index:-1;background-color:#2b3a33;background-image:linear-gradient(180deg,rgba(4,20,14,.7) 0%,rgba(4,20,14,.16) 24%,rgba(4,20,14,.08) 48%,rgba(4,20,14,.5) 74%,rgba(4,20,14,.8) 100%),var(--fondo,none);
  background-size:cover;background-position:center 55%;background-repeat:no-repeat;transition:filter .5s}
@@ -385,23 +391,23 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 #app.midiendo .tarjeta.escenario{flex:none}
 #app.midiendo .tarjeta.escenario .sig{display:block!important;visibility:hidden}   /* el zoom de la tableta deja sitio para «Siguiente» */
 .abajo-e{margin-top:auto;padding-top:10px;display:flex;flex-direction:column;align-items:stretch}
-.tarjeta.escenario .preg{--placa:url(aux_placa_verde.webp);align-self:center;display:flex;align-items:center;justify-content:center;margin:0 0 8px;padding:11px 32px 12px;font:800 18px/1.2 Aleo,Georgia,serif;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.tarjeta.escenario .preg{--placa:url(aux_rect_verde.webp);align-self:center;display:flex;align-items:center;justify-content:center;margin:0 0 8px;padding:11px 32px 12px;font:800 18px/1.2 Aleo,Georgia,serif;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
 .tarjeta.escenario .preg .tel{height:30px;margin:-6px 6px -6px -10px}
 .tarjeta.escenario .opciones{margin-top:0;gap:8px}
-.escenario .op{--placa:url(aux_placa_crema.webp);position:relative;justify-content:center;text-align:center;min-height:56px;padding:13px 38px 14px;font:700 15.5px/1.28 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15);transition:transform .08s,filter .12s}
+.escenario .op{--placa:url(aux_rect_crema.webp);position:relative;justify-content:center;text-align:center;min-height:56px;padding:13px 38px 14px;font:700 15.5px/1.28 ui-rounded,"SF Pro Rounded","Avenir Next","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#3d2a17;text-shadow:0 1px 0 rgba(255,255,255,.6),0 -1px 0 rgba(0,0,0,.15);transition:transform .08s,filter .12s}
 .escenario .op:active:not(:disabled){transform:translateY(2px);filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
-.escenario .op.ok,.rcp .tarjeta-rcp .op.ok{--placa:url(aux_placa_verde.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
-.escenario .op.mal,.rcp .tarjeta-rcp .op.mal{--placa:url(aux_placa_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+.escenario .op.ok,.rcp .tarjeta-rcp .op.ok{--placa:url(aux_rect_verde.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.escenario .op.mal,.rcp .tarjeta-rcp .op.mal{--placa:url(aux_rect_naranja.webp);color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
 .escenario .op::after,.rcp .tarjeta-rcp .op::after{position:absolute;right:16px;top:50%;transform:translateY(-50%);margin:0;font-size:18px}
-.tarjeta.escenario .sig{--placa:url(aux_placa_mostaza.webp);min-height:52px;padding:13px 30px;color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.45)}
-.escenario .explica{--placa:url(aux_placa_marron.webp);padding:14px 30px;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
-.escenario .explica.ok{--placa:url(aux_placa_verde.webp);color:#fbf6ec}
+.tarjeta.escenario .sig{--placa:url(aux_rect_mostaza.webp);min-height:52px;padding:13px 30px;color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.escenario .explica{--placa:url(aux_rect_marron.webp);padding:14px 30px;color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18)}
+.escenario .explica.ok{--placa:url(aux_rect_verde.webp);color:#fbf6ec}
 .escenario .escena{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .llamada .ins{font-size:13px;color:#cfe9de;margin-bottom:4px}
 .llamada .lin{max-height:max(132px,26vh);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(223,243,234,.35) transparent}
 .tarjeta.escenario .chips112{margin-top:0}
 .chips112.hecha{display:none}
-.cab .pill.racha{--placa:url(aux_placa_naranja.webp)}
+.cab .pill.racha{--placa:url(aux_rect_naranja.webp)}
 .cab .pill.racha .pic{color:#ffe08a}
 .cab .pill.racha.no{visibility:hidden}
 /* cada escena, una cuenta de plastilina con su número; la de ahora, amarilla; las hechas, ✓ verde o ✗ naranja */
@@ -1414,7 +1420,7 @@ function precargaVictima(){
 try{speechSynthesis.getVoices()}catch(e){}
 [ARTE.telefono,ARTE.sello,...ARTE.corazon].forEach(sonda);   // piezas pequeñas de la interfaz (unos 30 KB): se ven nada más empezar
 /* 19-11-2026 (revisión total, lote 6): las placas de plastilina de «Cuadra la nómina» (unos 75 KB): opciones, rótulos, marcador y botones */
-const PLACAS=['crema','verde','marron','naranja','mostaza','azul','gris'].map(c=>`aux_placa_${c}.webp`).concat('aux_bandeja.webp');
+const PLACAS=['crema','verde','marron','naranja','mostaza','azul','gris'].map(c=>`aux_rect_${c}.webp`).concat('aux_bandeja.webp');
 PLACAS.forEach(sonda);
 /* 19-11-2026 (revisión total, lote 5): dianas de al menos 24 px de radio en pantalla. A 360 × 640 el dibujo se ve a 0,65 px por
    unidad: el sitio de las manos tenía 17 px de radio y la meta de la PLS 23, y las tres estrellas de la RCP bajaban del 90 % al 78 %

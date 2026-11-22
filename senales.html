@@ -319,10 +319,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--amarillo);outli
 .tras{position:fixed;inset:0;z-index:-1;background-color:#2b3a33;background-image:linear-gradient(180deg,rgba(4,20,14,.78) 0%,rgba(4,20,14,.3) 26%,rgba(4,20,14,.2) 50%,rgba(4,20,14,.6) 76%,rgba(4,20,14,.86) 100%),var(--fondo,none);
  background-size:cover;background-position:center 55%;background-repeat:no-repeat}
 #app:has(>.tras) .marcador{background:linear-gradient(180deg,rgba(4,20,14,.92),rgba(4,20,14,.78) calc(100% - 8px),rgba(4,20,14,0))}
-#app:has(>.tras) .cab .pill,#app:has(>.tras) .ctl button,#app:has(>.tras) .racha{border:0;border-radius:999px;box-shadow:none;background:url(aux_placa_marron.webp) center/100% 100% no-repeat;color:#fbf6ec;
+#app:has(>.tras) .cab .pill,#app:has(>.tras) .ctl button,#app:has(>.tras) .racha{border:0 solid transparent;border-radius:13px;box-shadow:none;background:var(--placa,url(aux_rect_marron.webp)) center/100% 100% no-repeat;border-image:var(--placa,url(aux_rect_marron.webp)) 52 fill / 15px / 0 stretch!important;color:#fbf6ec;
  text-shadow:0 -1px 0 rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.18);filter:drop-shadow(0 3px 3px rgba(0,0,0,.38))}
 #app:has(>.tras) .ctl button .pic{width:22px;height:22px}
-#app:has(>.tras) .racha.on{background-image:url(aux_placa_mostaza.webp);color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+/* 22-11-2026 (José): placas rectangulares con las esquinas suaves y de plastilina, como en Cada minuto cuenta y el Muro (antes, cápsulas);
+   se estiran en 9 trozos (las esquinas no se deforman) con la misma placa entera debajo (tapa las rendijas de las escalas fraccionarias) */
+#app:has(>.tras) .racha.on{--placa:url(aux_rect_mostaza.webp);color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,.4)}
 #app:has(>.tras) .vidas{letter-spacing:0;display:flex;align-items:center}
 .vidas img.vida{width:22px;height:22px;object-fit:contain;margin:0 1px;vertical-align:middle;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}
 #app:has(>.tras) .barra{background:rgba(255,255,255,.18);box-shadow:inset 0 2px 3px rgba(0,0,0,.35)}
@@ -373,6 +375,15 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--amarillo);outli
 #app:has(>.tras) .tarjeta.juega .op{background:#fffdf8;border-color:rgba(61,42,23,.16);box-shadow:0 1px 3px rgba(40,28,15,.14)}
 #app:has(>.tras) .tarjeta.juega .op:hover:not(:disabled){background:#fff}
 #app:has(>.tras) .tarjeta.juega .explica.breve{background:#fffdf8;box-shadow:0 1px 3px rgba(40,28,15,.14)}
+/* 22-11-2026 (José): las respuestas y «Siguiente», placas de plastilina rectangulares con reborde fino (como en Cada minuto cuenta y el
+   Muro) en vez de carteles blancos lisos; se queda la letra Aleo fina y con aire que eligió el 20-11 («está feísimo» era la píldora con
+   letra gruesa). 9 trozos con la misma placa entera debajo (sin costuras ni esquinas deformadas) */
+#app:has(>.tras) .tarjeta.juega .op,#app:has(>.tras) .tarjeta.juega .sig{--placa:url(aux_rect_crema.webp);border:0 solid transparent;border-radius:13px;
+ background:var(--placa) center/100% 100% no-repeat;border-image:var(--placa) 52 fill / 15px / 0 stretch!important;box-shadow:none;filter:drop-shadow(0 2px 3px rgba(40,28,15,.3))}
+#app:has(>.tras) .tarjeta.juega .op:hover:not(:disabled){background:var(--placa) center/100% 100% no-repeat;filter:drop-shadow(0 2px 3px rgba(40,28,15,.3)) brightness(1.04)}
+#app:has(>.tras) .tarjeta.juega .op.ok{--placa:url(aux_rect_verde.webp);background:var(--placa) center/100% 100% no-repeat;color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+#app:has(>.tras) .tarjeta.juega .op.mal{--placa:url(aux_rect_naranja.webp);background:var(--placa) center/100% 100% no-repeat;color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.45)}
+#app:has(>.tras) .tarjeta.juega .sig{--placa:url(aux_rect_marron.webp);color:#fbf6ec;text-shadow:0 -1px 0 rgba(0,0,0,.5)}
 @media (max-width:400px){#app:has(>.tras) .cab .pill{padding:6px 9px}#app:has(>.tras) .ctl button{width:44px;height:44px}.vidas img.vida{width:18px;height:18px;margin:0}#app:has(>.tras) .cab{gap:3px}}   /* 360 px: el marcador en una fila */
 .soporte{display:block;width:min(40vw,150px);margin:0 auto -10px;position:relative;z-index:1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))}
 /* lote 7 (20-11-2026): letra mínima de 13 px, presentación que cabe en el ordenador, repaso de líneas cortas y la ayuda de colores en el tutorial y la pausa */
@@ -1212,7 +1223,10 @@ function envia(d){
 /* 19-11-2026 (revisión total, común): cierre de la oficial igual en todos los juegos. «Tu mejor» y el puesto, solo si el servicio no
    rechaza el resultado (antes se apuntaban antes de saberlo); y sin error si ya no está la pantalla del resultado */
 function cierraOficial(d,pref){
- const antes=mejorDe(d.codigo),mejor=Math.max(antes,+d.puntos||0);
+ /* 22-11-2026: un juego puede ordenar su podio por otra cosa que los puntos (RANK_VAL: el Muro, aciertos y luego puntos, igual que la
+    hoja «Ranking»); RANK_TXT dice cómo se lee ese valor. Sin ellos, los puntos de siempre */
+ const val=typeof RANK_VAL==='function'?RANK_VAL(d):(+d.puntos||0);
+ const antes=mejorDe(d.codigo),mejor=Math.max(antes,val);
  return envia(d).then(ok=>{
   const e=document.getElementById('envio');if(e)e.textContent=textoEnvio(ok);
   if(ok!=='rechazado'){
@@ -1250,7 +1264,7 @@ function textoPuesto(r,pts){
  if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
  const emp=r.empate?` (empatas con ${r.empate===1?'otra persona':r.empate+' personas'}; a igualdad de puntos, cuenta quien llegó antes)`:'';
  const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos)${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${typeof RANK_TXT==='function'?RANK_TXT(pts):pts+' puntos'})${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 
 /* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
