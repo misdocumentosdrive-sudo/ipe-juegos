@@ -356,9 +356,22 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .actual .chapa.larga{font-size:14px;letter-spacing:-.005em;max-width:340px;padding-left:34px;padding-right:34px}   /* revisión 19-11-2026: los títulos largos, en una línea (en dos, la chapa tapaba el rótulo de la bandeja de abajo) */
 /* 22-11-2026 (José: «rectangular con las esquinas redondeadas suaves»): la placa de la ficha ya no es una cápsula (el texto se apretaba
    contra los extremos redondos). Placa crema de plastilina hecha con CSS, como los carteles de Señales: luz arriba, canto abajo y
-   sombra. Va al final para ganar a la imagen de la cápsula (que se pone con !important más arriba) y con menos relleno a los lados */
+   sombra. Va al final para ganar a la imagen de la cápsula (que se pone con !important más arriba) y con menos relleno a los lados.
+   Y lo mismo los letreros de las bandejas (José: «esta también»), cada uno con el color de su placa de antes */
 .chapa,.actual .chapa.larga{border:1px solid rgba(90,60,25,.22)!important;border-radius:12px!important;padding:10px 20px 11px;
  background:linear-gradient(#f8f1e2,#eadbc0)!important;box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -3px 0 rgba(120,85,40,.2),0 4px 9px rgba(0,0,0,.34);filter:none}
+.placa[data-rot]{border:1px solid rgba(0,0,0,.28)!important;border-radius:10px!important;background:linear-gradient(var(--c1),var(--c2))!important;
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.22),0 3px 7px rgba(0,0,0,.32)}
+.bandeja .rot.placa[data-rot],.b-izq .rot.placa[data-rot],.b-der .rot.placa[data-rot]{padding:7px 13px}
+.tres .ley .placa[data-rot]{padding:6px 11px}
+.placa[data-rot=azul]{--c1:#35375b;--c2:#282944}
+.placa[data-rot=crema]{--c1:#efe9e2;--c2:#c5af95}
+.placa[data-rot=gris]{--c1:#8a807f;--c2:#675f5e}
+.placa[data-rot=grisazul]{--c1:#778390;--c2:#58626c}
+.placa[data-rot=marron]{--c1:#70443c;--c2:#54332d}
+.placa[data-rot=mostaza]{--c1:#d1aa68;--c2:#b38536}
+.placa[data-rot=naranja]{--c1:#d55b2b;--c2:#9f4420}
+.placa[data-rot=verde]{--c1:#27704a;--c2:#1d5437}
 /* José, 19-11-2026 («afina, que respiren y estén justificados todos los títulos»): la chapa del nivel 3 siempre del mismo tamaño,
    con el título y la letra pequeña centrados y equilibrados en el hueco de la pastilla, lejos de las puntas redondeadas */
 .abajo3 .ch3{width:214px;max-width:214px;min-height:96px;box-sizing:border-box;padding:17px 38px 18px!important;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -1001,7 +1014,7 @@ function precarga(n){
 function presentaNivel(n,oficial){
  parar();app.classList.remove('jugando','v');
  const l=NIVELES[n-1];precarga(n);precarga(n+1);
- const tres=l.band?`<div class="tres">${['izq','der','abj'].map(p=>{const b=l.band[p];return `<div class="ley"><img src="${b.img}" alt=""><span class="placa ${b.oscuro?'grab-o':'grab-c'}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span><small>${{izq:'← desliza a la izquierda',der:'desliza a la derecha →',abj:'↓ desliza hacia abajo'}[p]}</small></div>`}).join('')}</div>`:'';
+ const tres=l.band?`<div class="tres">${['izq','der','abj'].map(p=>{const b=l.band[p];return `<div class="ley"><img src="${b.img}" alt=""><span class="placa ${b.oscuro?'grab-o':'grab-c'}" data-rot="${b.rot}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span><small>${{izq:'← desliza a la izquierda',der:'desliza a la derecha →',abj:'↓ desliza hacia abajo'}[p]}</small></div>`}).join('')}</div>`:'';
  app.innerHTML=`<div class="intro">
   <div class="marca">${oficial?'Partida oficial · ':''}Nivel ${n} de 3</div>
   <h1>${l.titulo}</h1>
@@ -1093,7 +1106,7 @@ function empieza(n,oficial){
  const l=NIVELES[n-1],c=cicloArte();
  const esc=pantalla(oficial,`<span class="pill" id="hp">0 pts</span><span class="pill" id="hf">1/12</span><span class="pill racha" id="hr"></span>`,l.fondo);
  esc.innerHTML=`<div class="cinta" id="cinta" role="img" aria-label="La cinta con las fichas que vienen"></div><canvas class="rodillo r-izq" id="rodI"></canvas><canvas class="rodillo r-der" id="rodD"></canvas>
-  ${['izq','der','abj'].map(p=>{const b=l.band[p];return `<button type="button" class="bandeja b-${p}" data-p="${p}" aria-label="Bandeja: ${b.n}"><img src="${b.img}" alt=""><span class="rot placa ${b.oscuro?'grab-o':'grab-c'}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span></button>`}).join('')}
+  ${['izq','der','abj'].map(p=>{const b=l.band[p];return `<button type="button" class="bandeja b-${p}" data-p="${p}" aria-label="Bandeja: ${b.n}"><img src="${b.img}" alt=""><span class="rot placa ${b.oscuro?'grab-o':'grab-c'}" data-rot="${b.rot}" style="--placa:url(nomina_rotulo_${b.rot}.webp)">${ico(b.ic)}${b.n}</span></button>`}).join('')}
   <div class="actual" id="act"><div class="aro" id="aro"><i></i></div><img id="actImg" alt="" draggable="false"><div class="chapa" id="actCh"></div></div>`;
  st={l,n,c,lento:oficial?!!oficial.lento:!st.tutoFichas&&lento(),oficial:oficial||null,fichas:st.tutoFichas||fichasDe(n,c),i:-1,pts:0,aciertos:0,racha:0,fallos:[],tj:0,t:performance.now(),pausa:false,fin:false,maxR:0,obs:st.obs,k:st.k,ext:st.ext,
   tuto:st.tutoFichas?{paso:0}:null,inicio:0,modo:'cinta'};
