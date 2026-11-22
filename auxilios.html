@@ -324,7 +324,7 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 }
 /* ===== 19-11-2026 (revisión total, lote 5): sensación de juego ===== */
 /* el marcador de los niveles 1 y 2 se queda arriba al desplazar la página; los puntos salen sobre él (antes tapaban el texto) */
-#app>.cab{position:sticky;top:0;z-index:4;margin:-16px -16px 4px;padding:12px 14px 10px;flex-wrap:wrap;row-gap:2px;background:linear-gradient(180deg,rgba(4,20,14,.9) 0%,rgba(4,20,14,.82) calc(100% - 12px),rgba(4,20,14,0) 100%)}   /* lote 6: con las cuentas y la mecha dentro */
+#app>.cab{position:sticky;top:0;z-index:4;margin:-16px -16px 4px;padding:12px 14px 10px;flex-wrap:wrap;row-gap:2px;background:linear-gradient(180deg,rgb(4,20,14) 0%,rgb(4,20,14) calc(100% - 12px),rgba(4,20,14,0) 100%)}   /* lote 6: con las cuentas y la mecha dentro */
 .escena-cab,#tj{scroll-margin-top:128px}
 .puntos-flota.junto{top:0;left:0;font:800 19px/1 Aleo,Georgia,serif;color:#fff;padding:6px 11px;border-radius:999px;background:var(--c,#178045);z-index:30;white-space:nowrap;
  box-shadow:inset 0 2px 0 rgba(255,255,255,.35),inset 0 -3px 0 rgba(0,0,0,.25),0 4px 10px rgba(0,0,0,.25);animation:subeMarcador 1s ease-out forwards}
@@ -430,7 +430,11 @@ label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--v
 /* tableta y ordenador: el velo del marcador, de lado a lado de la pantalla (no una franja del ancho de la columna) y las tarjetas
    del 112 en dos columnas (placas menos estiradas y «Siguiente» más cerca) */
 @media (min-width:760px){.escenario .op{font-size:16.5px}.escena-cab .pres-globo{font-size:16px}.tarjeta.escenario .chips112{grid-template-columns:1fr 1fr}
- #app>.cab{background:none;border-image:linear-gradient(180deg,rgba(4,20,14,.9) 0%,rgba(4,20,14,.82) calc(100% - 12px),rgba(4,20,14,0) 100%) fill 0/0/0 100vw}}
+ #app>.cab{background:none;border-image:linear-gradient(180deg,rgb(4,20,14) 0%,rgb(4,20,14) calc(100% - 12px),rgba(4,20,14,0) 100%) fill 0/0/0 100vw}}
+/* 22-11-2026 (revisión visual): a 320 px la cabecera de la PLS (salir, puntos, reloj, paso, pausa y sonido) no cabía y «Paso 1/5»
+   tapaba el reloj; y el velo del marcador dejaba ver el texto que pasa por debajo al bajar a «Siguiente» (ahora opaco, como en Señales) */
+@media (max-width:340px){.rcp .arriba{padding:10px 6px 0;gap:2px}.rcp .izq{gap:2px}.rcp .arriba .pill{padding:7px 8px;font-size:12px}
+ .rcp .arriba .crono{font-size:17px;padding:6px 9px}.ctl{gap:2px}.rcp .ctl button,.rcp .salir{width:40px;height:40px}}
 </style>
 <link rel="manifest" href="auxilios.webmanifest">
 <meta name="theme-color" content="#004230">
@@ -788,7 +792,10 @@ function envia(d){
 /* 19-11-2026 (revisión total, común): cierre de la oficial igual en todos los juegos. «Tu mejor» y el puesto, solo si el servicio no
    rechaza el resultado (antes se apuntaban antes de saberlo); y sin error si ya no está la pantalla del resultado */
 function cierraOficial(d,pref){
- const antes=mejorDe(d.codigo),mejor=Math.max(antes,+d.puntos||0);
+ /* 22-11-2026: un juego puede ordenar su podio por otra cosa que los puntos (RANK_VAL: el Muro, aciertos y luego puntos, igual que la
+    hoja «Ranking»); RANK_TXT dice cómo se lee ese valor. Sin ellos, los puntos de siempre */
+ const val=typeof RANK_VAL==='function'?RANK_VAL(d):(+d.puntos||0);
+ const antes=mejorDe(d.codigo),mejor=Math.max(antes,val);
  return envia(d).then(ok=>{
   const e=document.getElementById('envio');if(e)e.textContent=textoEnvio(ok);
   if(ok!=='rechazado'){
@@ -826,7 +833,7 @@ function textoPuesto(r,pts){
  if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
  const emp=r.empate?` (empatas con ${r.empate===1?'otra persona':r.empate+' personas'}; a igualdad de puntos, cuenta quien llegó antes)`:'';
  const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos)${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${typeof RANK_TXT==='function'?RANK_TXT(pts):pts+' puntos'})${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 
 /* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
