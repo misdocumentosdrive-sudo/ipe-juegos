@@ -700,7 +700,10 @@ function envia(d){
 /* 19-11-2026 (revisión total, común): cierre de la oficial igual en todos los juegos. «Tu mejor» y el puesto, solo si el servicio no
    rechaza el resultado (antes se apuntaban antes de saberlo); y sin error si ya no está la pantalla del resultado */
 function cierraOficial(d,pref){
- const antes=mejorDe(d.codigo),mejor=Math.max(antes,+d.puntos||0);
+ /* 22-11-2026: un juego puede ordenar su podio por otra cosa que los puntos (RANK_VAL: el Muro, aciertos y luego puntos, igual que la
+    hoja «Ranking»); RANK_TXT dice cómo se lee ese valor. Sin ellos, los puntos de siempre */
+ const val=typeof RANK_VAL==='function'?RANK_VAL(d):(+d.puntos||0);
+ const antes=mejorDe(d.codigo),mejor=Math.max(antes,val);
  return envia(d).then(ok=>{
   const e=document.getElementById('envio');if(e)e.textContent=textoEnvio(ok);
   if(ok!=='rechazado'){
@@ -738,7 +741,7 @@ function textoPuesto(r,pts){
  if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
  const emp=r.empate?` (empatas con ${r.empate===1?'otra persona':r.empate+' personas'}; a igualdad de puntos, cuenta quien llegó antes)`:'';
  const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
- return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${pts} puntos)${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${typeof RANK_TXT==='function'?RANK_TXT(pts):pts+' puntos'})${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
 }
 
 /* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
@@ -757,6 +760,10 @@ const CLAVE_OF='muro_oficiales';
 /* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
    dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
 const CLAVE_MEJOR='muro_mejor';
+/* 22-11-2026 (decisión 2 de José): el podio del Muro va por aciertos (de 24) y se desempata por puntos (los puntos dependen de la pala).
+   Mismo valor que la hoja «Ranking» y el importador: aciertos × 100.000 + puntos */
+const RANK_VAL=d=>(+d.aciertos||0)*100000+(+d.puntos||0);
+const RANK_TXT=v=>`${Math.floor(v/100000)} aciertos y ${v%100000} puntos`;
 
 /* (el envío de la cola al volver la conexión ya lo pone oficial.js; 22-11-2026: aquí estaba repetido) */
 
@@ -1805,7 +1812,7 @@ function finOficial(){
  if(st.l.n<3){$('#ofsig').onclick=()=>presentaNivel(st.l.n+1,o);return}
  $('#ofmenu').onclick=portada;
  const m=mediaEst(o.est);
- cierraOficial({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,niveles:o.niveles,puntos:o.pts,extra:extraDe(m)},'muro');   /* 19-11-2026: cierre común (oficial.js): «tu mejor» y puesto solo si se acepta */
+ cierraOficial({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,niveles:o.niveles,puntos:o.pts,aciertos:o.niveles.reduce((t,x)=>t+(x?x.a:0),0),extra:extraDe(m)},'muro');   /* 19-11-2026: cierre común (oficial.js): «tu mejor» y puesto solo si se acepta */
 }
 /* arte, 17-11-2026: el reparto (elenco.js) se carga al final de la página; la portada se pinta cuando ya está todo */
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portada,{once:true});else portada();
