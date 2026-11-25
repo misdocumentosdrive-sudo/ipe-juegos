@@ -1,0 +1,23 @@
+{
+ "name": "Tres en red · IPE I",
+ "short_name": "Tres en red",
+ "start_url": "red.html",
+ "scope": "./",
+ "display": "fullscreen",
+ "background_color": "#004230",
+ "theme_color": "#004230",
+ "lang": "es",
+ "icons": [
+  {
+   "src": "icono-red-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icono-red-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}

@@ -1,0 +1,2214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tres en red · IPE I</title>
+<style>@font-face{font-family:"Aleo";src:url(aleo.woff2?v=d7c8feba) format("woff2"),url(aleo.ttf?v=fed0d713) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}</style>
+<style>
+/* «Tres en red» (UD8, La Seguridad Social; CE g RA3 y, con la hucha, el f). Guion: fuente/red/GUION - Tres en red (UD8).md.
+   Misma estructura que los demás juegos (portada, presentación de cada nivel, escenario de 360 × 640 escalado, tutorial jugable,
+   pausa, final y partida oficial), sobre el motor del tablero de fuente/red/tablero.js y los casos de fuente/red/casos.js.
+   25-11-2026: con piezas provisionales (placas de color con icono) hasta que lleguen las láminas de plastilina de José. */
+:root{--verde:#004230;--verde2:#0d6b4f;--naranja:#ff5900;--naranjaAA:#c24400;--amarillo:#fcd100;--fondo:#f4f8f6;--texto:#1d2a30;--gris:#5b6b70;--ok:#178045;--mal:#d33a1f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overscroll-behavior:none}
+body{background:var(--fondo);color:var(--texto);font:16px/1.4 "Helvetica Neue",Helvetica,Arial,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:520px;min-height:100%;display:flex;flex-direction:column;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+h1,h2,.serif{font-family:Aleo,Georgia,serif}
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block}
+.marca{font:800 13px Aleo,Georgia,serif;color:var(--verde);letter-spacing:.3px}
+.confeti{position:fixed;top:-12px;width:10px;height:14px;border-radius:2px;pointer-events:none;animation:caeC linear forwards;z-index:40}
+@keyframes caeC{to{transform:translateY(105vh) rotate(720deg)}}
+/* portada */
+.portada{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;gap:14px}
+.heroe.red{background:linear-gradient(180deg,rgba(0,40,29,.6) 0%,rgba(0,34,25,.85) 50%,rgba(0,22,16,.96) 100%),var(--fondoP,none) center 40%/cover no-repeat,#0a3a2b}
+.heroe.red h1,.heroe.red .hm,.heroe.red>p{text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.heroe .narra{margin:12px 0 6px}
+.heroe .tira{display:flex;gap:6px;margin:10px 0 6px;flex-wrap:wrap}
+.heroe .tira .pz{position:static;width:42px;height:42px;font-size:22px}
+.heroe .tira .pz:nth-child(2n){transform:translateY(-4px) rotate(-6deg)}
+.nivel{border:0;border-radius:18px;padding:14px 16px;text-align:left;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.07);cursor:pointer;display:flex;gap:14px;align-items:center;font:inherit;color:inherit;width:100%}
+.nivel .n{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 20px Aleo,Georgia,serif;color:#fff}
+.nivel b{display:block;font:800 17px Aleo,Georgia,serif;color:var(--verde)}
+.nivel span{font-size:14px;color:var(--gris)}
+.record{font-size:13px;color:var(--gris)}
+.oficial{background:#fff;border:2px solid var(--verde);border-radius:16px;padding:14px;margin:14px 0;text-align:left;display:grid;gap:8px}
+.oficial label span,.oficial small{font-size:13px;opacity:.75}
+.oficial input{font:700 20px/1.2 "Helvetica Neue",Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;padding:10px 12px;border:2px solid #cfd8d3;border-radius:10px;width:100%}
+.oficial input.error{border-color:#c0392b;background:#fdecea}
+.oficial .btn[disabled]{opacity:.5}
+.oficial .primera{margin:8px 0 0;font-size:14px;font-weight:700;color:var(--verde)}
+.entreno{color:var(--verde);font-size:18px;margin:6px 0 4px;text-align:left}
+.aviso-of{background:#fff8d6;border:2px solid #fcd100;border-radius:14px;padding:12px;margin:14px 0;line-height:1.5}
+#envio{margin-top:8px;font-weight:700;color:var(--verde)}
+.libro{font-size:14px;color:var(--verde2)}
+.btns{display:grid;gap:10px;margin-top:16px}
+.btn{border:0;border-radius:14px;padding:14px;font:800 17px Aleo,Georgia,serif;cursor:pointer;min-height:48px}
+.btn.p{background:var(--verde);color:#fff;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25),0 4px 12px rgba(0,66,48,.25)}
+.btn.s{background:#e3ece8;color:var(--verde)}
+.pie{text-align:center;font-size:12px;color:var(--gris);margin-top:auto;padding-top:14px}
+label.lento{display:flex;gap:10px;align-items:flex-start;text-align:left;margin:0 0 4px;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.7);font-size:14px;line-height:1.35;color:var(--gris);cursor:pointer}
+label.lento b{color:var(--verde)}
+label.lento input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--verde)}
+.tutob .n{font-size:24px}
+/* presentación del nivel */
+.intro{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.intro h1{color:var(--verde);margin:0;font-size:27px;line-height:1.15}
+.escena-n{position:relative;border-radius:20px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:170px;padding:22px 16px;
+ background:linear-gradient(180deg,rgba(0,40,29,.1) 0%,rgba(0,32,23,.72) 58%,rgba(0,24,17,.94) 100%),var(--esc,none) center 45%/cover no-repeat,#0b5a40;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.escena-n .pres{width:100%;max-width:640px}
+.reglas{background:#fff;border-radius:16px;padding:12px 16px;font-size:15px;line-height:1.45;box-shadow:0 3px 10px rgba(0,0,0,.06);text-align:left}
+.reglas .cortas{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:8px}
+.reglas .cortas li{display:flex;gap:10px;align-items:flex-start}
+.reglas .cortas .ico{color:var(--naranjaAA);margin-top:2px}
+.reglas details{margin-top:8px;font-size:14px}
+.reglas summary{cursor:pointer;font-weight:700;color:var(--verde);min-height:44px;display:flex;align-items:center}
+.leyendaN{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.leyendaN div{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:var(--texto)}
+.leyendaN .pz{position:static;width:38px;height:38px;font-size:20px;flex:none}
+/* ===== pantalla de juego: escenario lógico fijo de 360 × 640, escalado a la pantalla (como la nómina) ===== */
+#app.jugando{max-width:none;padding:6px 6px calc(6px + env(safe-area-inset-bottom));height:100%;min-height:0;background:linear-gradient(rgba(0,20,14,.25),rgba(0,20,14,.45)),var(--esc,none) center/cover no-repeat,#24453a}
+.juego{flex:1;display:flex;flex-direction:column;min-height:0}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:4px;margin:0 auto 6px;width:100%;flex-wrap:nowrap}
+.hud .pill{border:0;color:#fbf6ec;font-size:13px;font-weight:700;padding:9px 12px;white-space:nowrap;font-variant-numeric:tabular-nums;text-shadow:0 -1px 0 rgba(0,0,0,.5);
+ --placa:url(aux_rect_marron.webp);filter:drop-shadow(0 3px 3px rgba(0,0,0,.3))}
+.hud .pill.hu{--placa:url(aux_rect_mostaza.webp);color:#3d2a10;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.hud .pill.hu.rojo{--placa:url(aux_rect_naranja.webp);color:#fff}
+.hud .pill.racha{--placa:url(aux_rect_naranja.webp);display:none}
+.hud .pill.racha.si{display:inline-block}
+.hud .ctl{display:flex;gap:4px}
+.hud button.pill{cursor:pointer;min-width:46px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;font:inherit;font-weight:800}
+.hud .ctl .ico{width:20px;height:20px}
+.marco{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden}
+.lienzo{position:relative;flex:none}
+.esc{position:absolute;left:0;top:0;width:360px;height:640px;transform-origin:0 0}
+/* la placa del caso: cara con el aro de tiempo y el texto (y, al responder, la línea del porqué en su lugar) */
+.caso{position:absolute;left:6px;top:4px;width:348px;height:120px;display:flex;gap:10px;align-items:center;padding:12px 14px 12px 12px;color:#3d2a17;
+ --placa:url(aux_rect_crema.webp);filter:drop-shadow(0 5px 6px rgba(0,0,0,.35))}
+.caso .cara{position:relative;flex:none;width:70px;height:70px}
+.caso .cara img{position:absolute;left:7px;top:7px;width:56px;height:56px;border-radius:50%;object-fit:cover;background:#e8dcc4}
+.aro{position:absolute;inset:0;pointer-events:none}
+.aro::before{content:"";position:absolute;inset:0;background:url(nomina_aro_verde.webp) center/contain no-repeat;filter:grayscale(1) brightness(.5);opacity:.45}
+.aro i{position:absolute;inset:0;background:var(--aro,url(nomina_aro_verde.webp)) center/contain no-repeat;
+ -webkit-mask:conic-gradient(#000 calc(var(--q,1)*360deg),transparent 0);mask:conic-gradient(#000 calc(var(--q,1)*360deg),transparent 0)}
+.caso .tx{flex:1;min-width:0;font:600 14.5px/1.28 Aleo,Georgia,serif}
+.caso .eti{display:block;font:800 10.5px/1 "Helvetica Neue",Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8a6a48;margin-bottom:4px}
+.caso .eti b{color:#b07a00}
+.caso.bien{--placa:url(aux_rect_verde.webp);color:#f2fbf6}
+.caso.mal{--placa:url(aux_rect_marron.webp);color:#fbf1ea}
+.caso.bien .eti,.caso.mal .eti{color:#fcd100}
+.caso.bien .tx,.caso.mal .tx{font:700 14px/1.32 "Helvetica Neue",Arial,sans-serif}
+.caso .tx small{display:block;font-weight:600;font-size:11.5px;opacity:.8;margin-top:3px}
+.caso .seguir{margin-top:6px;border:0;border-radius:10px;padding:7px 14px;min-height:40px;font:800 14px Aleo,Georgia,serif;color:#fff;--placa:url(aux_rect_verde.webp);cursor:pointer}
+/* el tablero: la red (provisional: cuerdas dibujadas) con las placas atadas a los nudos */
+.tab{position:absolute;left:12px;top:134px;width:336px;height:336px;border-radius:14px;
+ background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(236,222,190,.85) 22px 26px,transparent 26px 48px),repeating-linear-gradient(90deg,transparent 0 22px,rgba(236,222,190,.85) 22px 26px,transparent 26px 48px),rgba(8,30,22,.55);
+ box-shadow:inset 0 0 0 3px rgba(236,222,190,.6),0 8px 16px rgba(0,0,0,.35)}
+.tab.bote{animation:bote .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bote{0%{transform:none}30%{transform:translateY(9px) scaleY(.985)}100%{transform:none}}
+.pz{position:absolute;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:24px;border-radius:9px;border:2px solid rgba(0,0,0,.2);
+ box-shadow:inset 0 2px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(0,0,0,.2),0 3px 3px rgba(0,0,0,.3);transition:transform .15s,opacity .2s,filter .2s;cursor:grab;background-size:100% 100%}
+.pz img{width:100%;height:100%;pointer-events:none}
+.tab .pz.cae{animation:caePz .28s ease-out}
+@keyframes caePz{from{transform:translateY(-36px);opacity:0}to{transform:none;opacity:1}}
+.tab .pz.sube{transform:translateY(-4px) scale(1.1);box-shadow:0 0 0 3px #fcd100,0 6px 10px rgba(0,0,0,.4);z-index:2}
+.tab .pz.sel{box-shadow:0 0 0 3px #fff,0 0 12px rgba(255,255,255,.8)}
+.tab .pz.foco{box-shadow:0 0 0 3px #fcd100}
+.tab .pz.pop{transform:scale(.15) rotate(25deg);opacity:0}
+.tab .pz.cruce{animation:cruce .5s}
+@keyframes cruce{50%{transform:scale(.55) rotate(18deg)}}
+.tab .pz.gris{filter:grayscale(1) brightness(.8)}
+.persona{position:absolute;left:50%;top:-40px;font-size:34px;transform:translateX(-50%);pointer-events:none;z-index:6;animation:persona .95s cubic-bezier(.4,0,.6,1) forwards}
+@keyframes persona{0%{top:-40px}60%{top:42%}76%{top:34%}100%{top:40%;opacity:0}}
+.nada{position:absolute;left:50px;width:260px;top:512px;height:50px;border:0;cursor:pointer;color:#fff;font:800 17px Aleo,Georgia,serif;text-shadow:0 -1px 0 rgba(0,0,0,.5);
+ --placa:url(aux_rect_gris.webp);filter:drop-shadow(0 4px 4px rgba(0,0,0,.35))}
+.leyenda{position:absolute;left:6px;right:6px;top:570px;display:flex;flex-wrap:wrap;justify-content:center;gap:3px 10px;font:700 11.5px/1.2 "Helvetica Neue",Arial,sans-serif;color:#eaf6f0;text-shadow:0 1px 2px rgba(0,0,0,.7)}
+.leyenda span{display:inline-flex;align-items:center;gap:4px}
+.leyenda .pz{position:static;width:20px;height:20px;font-size:11px;border-width:1px;border-radius:5px;cursor:default}
+.flota{position:absolute;font:900 22px Aleo,Georgia,serif;color:#fcd100;text-shadow:0 2px 0 #6b4a00,0 3px 8px rgba(0,0,0,.5);pointer-events:none;white-space:nowrap;z-index:7}
+.flota.mal{color:#ffb39a;text-shadow:0 2px 0 #5c1608,0 3px 8px rgba(0,0,0,.5)}
+.aviso-c{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);padding:12px 22px;color:#fcd100;font:900 28px Aleo,Georgia,serif;text-align:center;pointer-events:none;z-index:9;white-space:nowrap;
+ --placa:url(aux_rect_marron.webp);filter:drop-shadow(0 6px 8px rgba(0,0,0,.4))}
+.aviso-c small{display:block;font:700 15px "Helvetica Neue",Arial,sans-serif;margin-top:6px;color:#fbf6ec}
+.mano{position:absolute;width:56px;height:56px;pointer-events:none;z-index:8;color:#fff;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6))}
+/* la barra del caso: se llena con las placas de su prestación (no dice cuál es) */
+.barra{display:flex;gap:4px;margin-top:6px}
+.barra i{flex:1;height:12px;border-radius:6px;background:rgba(80,55,25,.18);box-shadow:inset 0 2px 2px rgba(0,0,0,.18);transition:background .25s}
+.caso:not(.elegido) .barra{visibility:hidden}
+.barra i.si{background:linear-gradient(#ffe25a,#e0a800);box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),0 0 6px rgba(252,209,0,.7)}
+.caso.bien .barra,.caso.mal .barra{display:none}
+.caso.entra{animation:entra .3s cubic-bezier(.3,1.5,.5,1)}
+@keyframes entra{from{transform:translateY(-14px) scale(.96);opacity:.4}}
+.caso.no{animation:no .3s}
+@keyframes no{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tiempo{position:absolute;left:24px;right:24px;top:475px;height:10px;border-radius:5px;background:rgba(0,0,0,.35);box-shadow:inset 0 2px 3px rgba(0,0,0,.4);overflow:hidden}
+.tiempo i{display:block;height:100%;width:100%;border-radius:8px;background:linear-gradient(#5fd38d,#178045);box-shadow:inset 0 2px 0 rgba(255,255,255,.3)}
+.vuela{z-index:7;pointer-events:none}
+.tab .pz.oro{box-shadow:0 0 0 3px #fcd100,0 0 14px 4px rgba(252,209,0,.85);animation:brilla 1s ease-in-out infinite alternate;z-index:3}
+.tab .pz.oro::after{content:"✨";position:absolute;right:-6px;top:-8px;font-size:15px}
+@keyframes brilla{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+.tab .pz.esp-f{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.55) 0 4px,transparent 4px 9px)}
+.tab .pz.esp-c{background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.55) 0 4px,transparent 4px 9px)}
+.tab .pz.esp-x{background:conic-gradient(#e8823a,#f1d36a,#2f8f5b,#3d7cc4,#8a5cc2,#ec9cbb,#e8823a)!important;box-shadow:0 0 10px rgba(255,255,255,.8)}
+.caso.pregunta .tx{font-size:13.5px}
+.caso .eti .pz{position:static;display:inline-flex;width:18px;height:18px;font-size:10px;border-width:1px;border-radius:4px;vertical-align:-4px}
+.elige .op{display:flex;align-items:center;gap:8px;min-height:44px;width:100%;max-width:none;padding:6px 12px;font:800 14px/1.2 "Helvetica Neue",Arial,sans-serif}
+.elige .op .num{flex:none;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;font-size:13px}
+.elige .op.bien{--placa:url(aux_rect_verde.webp);color:#fff}
+.elige .op.mal{--placa:url(aux_rect_marron.webp);color:#fff}
+.elige{position:absolute;left:10px;right:10px;top:491px;display:flex;flex-direction:column;gap:5px}
+.elige .ch{display:flex;align-items:center;gap:5px;min-height:44px;padding:4px 10px 4px 5px;border:0;cursor:pointer;color:#3d2a17;font:800 12px/1.1 "Helvetica Neue",Arial,sans-serif;text-align:left;
+ --placa:url(aux_rect_crema.webp);filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));max-width:118px}
+.elige .ch .pz{position:static;width:30px;height:30px;font-size:16px;flex:none;cursor:pointer}
+.elige .ch[data-k="nada"]{--placa:url(aux_rect_gris.webp);color:#fff}
+.elige .ch.si{--placa:url(aux_rect_verde.webp);color:#fff;transform:scale(1.06)}
+.elige .ch:disabled:not(.si){opacity:.45}
+.elige .ch.op{max-width:none;width:100%;font-size:14px}
+.elige .ch.op:disabled:not(.bien):not(.mal){opacity:.5}
+.tuto-dice{position:absolute;left:8px;right:8px;top:588px;z-index:8;padding:7px 12px;color:#f2fbf6;font:700 12.5px/1.25 "Helvetica Neue",Arial,sans-serif;--placa:url(aux_rect_verde.webp);filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+.tuto-dice b{color:#fcd100}
+/* 25-11-2026 (José: «nuestras placas rectangulares con esquinas suaves»): como en Señales, el Muro y Cada minuto cuenta, la placa
+   en 9 trozos (las esquinas no se estiran) con la misma placa entera debajo, para que no salgan costuras al escalar */
+.hud .pill,.caso,.elige .ch,.tuto-dice,.tuto-dice .seguir,.primera,.aviso-c,.caso .seguir,.ventanilla{border:0 solid transparent;border-radius:13px;background:var(--placa) center/100% 100% no-repeat;border-image:var(--placa) 52 fill / 15px / 0 stretch}
+/* 25-11-2026: expedientes, ventanilla, efectos, celebración, ayudas y camino de niveles */
+.ventanilla{position:absolute;left:60px;right:60px;top:474px;height:30px;display:flex;align-items:center;justify-content:center;gap:6px;color:#3a2a00;font:800 13px Aleo,Georgia,serif;--placa:url(aux_rect_mostaza.webp)}
+.ventanilla .ico{width:16px;height:16px}
+.tab .pz.exp{box-shadow:0 0 0 3px #fff,0 0 12px 3px rgba(255,255,255,.7);z-index:3;font-size:28px}
+.tab.quieto .pz:not(.exp){filter:saturate(.6) brightness(.85)}
+.efectos{position:absolute;inset:0;pointer-events:none;z-index:6;overflow:hidden}
+.chispa{position:absolute;width:9px;height:9px;border-radius:50%;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+.rayo{position:absolute;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);box-shadow:0 0 18px 6px rgba(255,240,170,.85)}
+.rayo.h{left:12px;width:336px;height:16px;transform:translateY(-50%)}
+.rayo.v{top:134px;height:336px;width:16px;transform:translateX(-50%);background:linear-gradient(180deg,transparent,rgba(255,255,255,.95),transparent)}
+.onda{position:absolute;width:60px;height:60px;border-radius:50%;border:6px solid rgba(255,255,255,.9);box-shadow:0 0 20px rgba(252,209,0,.9)}
+.palabra{position:absolute;left:50%;top:300px;z-index:9;pointer-events:none;white-space:nowrap;font:900 34px/1 Aleo,Georgia,serif;color:#fcd100;
+ text-shadow:0 3px 0 #b06a00,0 -2px 0 #fff3b0,3px 0 0 #6b3d00,-3px 0 0 #6b3d00,0 6px 14px rgba(0,0,0,.5)}
+.palabra.grande{top:250px;font-size:30px;color:#7dffb0;text-shadow:0 3px 0 #0b5a40,3px 0 0 #063524,-3px 0 0 #063524,0 6px 14px rgba(0,0,0,.5)}
+.celebra{position:absolute;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:radial-gradient(circle at 50% 45%,rgba(252,209,0,.35),rgba(0,20,14,.75) 70%);cursor:pointer}
+.celebra .masc{font-size:110px;line-height:1;animation:salto .7s cubic-bezier(.3,1.6,.5,1) infinite alternate}
+.celebra .masc img{width:200px;height:auto}
+.celebra .grande{font:900 40px/1 Aleo,Georgia,serif;color:#fcd100;text-shadow:0 3px 0 #b06a00,3px 0 0 #6b3d00,-3px 0 0 #6b3d00,0 8px 18px rgba(0,0,0,.6)}
+.celebra small{color:#fff;font:700 14px "Helvetica Neue",Arial,sans-serif;opacity:.85}
+@keyframes salto{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-18px) rotate(4deg)}}
+.hud .pill.mov b{font-size:18px}
+.hud .pill.mov.pocos{--placa:url(aux_rect_naranja.webp)}
+.objetivo{display:flex;gap:12px;align-items:center;text-align:left;background:#fff8d6;border:2px solid #fcd100;border-radius:16px;padding:10px 14px}
+.objetivo .obj-ico{font-size:34px}.objetivo b{display:block;color:var(--verde);font:800 16px Aleo,Georgia,serif}.objetivo span{font-size:14.5px}
+.ayudas{text-align:left}.ayudas>b{display:block;color:var(--verde);font:800 16px Aleo,Georgia,serif;margin:4px 0 8px}
+.ayudas-f{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ayuda{border:2px solid #d9e3de;border-radius:14px;background:#fff;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;cursor:pointer;font:inherit;color:inherit}
+.ayuda .ai{font-size:28px}.ayuda b{font:800 13.5px Aleo,Georgia,serif;color:var(--verde)}.ayuda small{font-size:11.5px;color:var(--gris);line-height:1.25}
+.ayuda.si{border-color:var(--verde);background:#e6f4ec;box-shadow:0 0 0 3px rgba(0,66,48,.15)}
+.camino{position:relative;display:grid;gap:14px;padding:6px 0}
+.camino::before{content:"";position:absolute;left:50%;top:10px;bottom:10px;width:10px;transform:translateX(-50%);border-radius:5px;background:repeating-linear-gradient(180deg,#e3c58a 0 14px,#f4dfb3 14px 28px);box-shadow:inset 0 2px 3px rgba(0,0,0,.15)}
+.parada{position:relative;display:flex}.parada.izq{justify-content:flex-start;padding-right:22%}.parada.der{justify-content:flex-end;padding-left:22%}
+.parada .nivel{position:relative;z-index:1}
+.mostr{height:30px;width:auto;margin:-8px 0 -6px -6px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.mascotita{position:absolute;right:-10px;top:472px;width:150px;height:auto;z-index:10;pointer-events:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}
+/* pantallas anchas (ordenador, tableta apaisada): dos columnas. A la izquierda, el tablero y la ventanilla (el escenario sube 124 px, lo
+   que ocupaba la placa del caso); a la derecha, la placa del caso, las respuestas y la mascota. La ventanilla no se oculta al preguntar */
+.esc.ancho .caso{left:372px;top:128px;width:330px;height:130px}
+.esc.ancho .elige{left:372px;right:auto;width:330px;top:272px}
+.esc.ancho .mostrador.oculto{opacity:1}
+.tab .pz.entraV::after{display:none}
+/* placa sello (trío en L o T): un aro de sello que late; papeleo atascado: un montón de papeles (provisional, hasta su lámina) */
+.tab .pz.esp-s::before{content:"";position:absolute;right:-5px;bottom:-5px;width:74%;height:74%;background:url(red_sello.webp) center/contain no-repeat;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45));pointer-events:none;z-index:2;transform:rotate(-14deg);animation:sello 1.4s ease-in-out infinite}
+@keyframes sello{50%{transform:rotate(-14deg) scale(.86) translateY(-3px)}}
+.pz.papel:not(.img){background:linear-gradient(#fbf6ea,#e9dcbf)!important;box-shadow:inset 0 -5px 0 rgba(120,90,40,.25),3px 3px 0 #e6d9bb,6px 6px 0 #d9c9a3,0 6px 8px rgba(0,0,0,.3);border-radius:8px}
+.pz.papel:not(.img)::before{content:"";position:absolute;inset:9px 10px;background:repeating-linear-gradient(180deg,rgba(90,70,40,.35) 0 2px,transparent 2px 7px);border-radius:2px}
+.tab .pz.papel{cursor:not-allowed}
+.cortas .pz.mini{position:static;width:30px;height:30px;flex:none}
+.cortas li.nuevo{background:rgba(252,209,0,.2);border-radius:10px;padding:6px 8px}
+.caso .eti .dev{color:#c0392b;background:rgba(192,57,43,.12);padding:1px 6px;border-radius:6px;margin-right:4px}
+.primera{position:absolute;left:8px;right:8px;top:588px;z-index:9;display:flex;gap:10px;align-items:center;padding:8px 12px;color:#3d2a17;font:600 12.5px/1.3 "Helvetica Neue",Arial,sans-serif;--placa:url(aux_rect_crema.webp);filter:drop-shadow(0 5px 6px rgba(0,0,0,.35));pointer-events:none;transition:opacity .4s}
+.primera img{width:44px;height:auto;flex:none}
+.esc.ancho .primera{left:372px;right:auto;width:330px;top:432px}
+.estrellas span{display:inline-block}
+.estrellas span.sale{animation:estrella .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes estrella{from{transform:scale(2.2) rotate(-25deg);opacity:0}}
+.casi{margin:6px 0;padding:8px 12px;border-radius:12px;background:rgba(255,89,0,.12);color:var(--tinta,#3d2a17)}
+.rachaN{display:flex;gap:10px;align-items:center;justify-content:center;margin:8px 0;font-size:14px}
+.rachaN .cinta{display:inline-flex;gap:4px}
+.rachaN .cinta i{width:18px;height:18px;border-radius:5px;background:rgba(0,0,0,.12);box-shadow:inset 0 -2px 0 rgba(0,0,0,.15)}
+.rachaN .cinta i.si{background:#ff5900;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25)}
+.tab .pz.pista{animation:pista 1s ease-in-out infinite;z-index:3}
+@keyframes pista{50%{transform:scale(1.12);filter:brightness(1.18) drop-shadow(0 0 8px rgba(252,209,0,.95))}}
+.enMostr{position:absolute;width:38px;height:auto;z-index:6;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 5px rgba(0,0,0,.45));transition:opacity .4s}
+.esc.ancho .mostrador{height:206px}.esc.ancho .mostrador .atiende{height:202px}
+.esc.ancho .tuto-dice{left:372px;right:auto;width:330px;top:432px}
+.esc.ancho .mascotita{left:392px;right:auto;top:442px;width:186px}
+.resuelto{position:absolute;left:50%;top:420px;width:96px;height:auto;z-index:10;pointer-events:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}
+.mapa{position:relative;width:calc(100% + 32px);margin:0 -16px;aspect-ratio:1600/893;overflow:hidden;background:url(red_camino.webp) center/cover no-repeat;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+@media(min-width:560px){.mapa{width:100%;margin:0;border-radius:22px}}
+.mapa .nodo{position:absolute;transform:translate(-50%,-26px);display:flex;flex-direction:column;align-items:center;gap:5px;padding:0;background:none;box-shadow:none;width:auto;border-radius:0}
+.mapa .nodo.arr{transform:translate(-50%,calc(-100% + 26px));flex-direction:column-reverse}
+.mapa .nodo .n{flex:none;width:52px;height:52px;font-size:24px;border:4px solid #fff;box-shadow:0 6px 0 rgba(0,0,0,.25),0 10px 16px rgba(0,0,0,.35)}
+.mapa .nodo .et{display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,.92);border-radius:12px;padding:3px 9px;box-shadow:0 3px 8px rgba(0,0,0,.25);white-space:nowrap}
+.mapa .nodo .et b{font:800 13px Aleo,Georgia,serif;color:var(--verde)}.mapa .nodo .et small{font-size:11px;color:var(--gris)}
+@media(min-width:900px){.mapa .nodo{transform:translate(-50%,-34px)}.mapa .nodo.arr{transform:translate(-50%,calc(-100% + 34px))}.mapa .nodo .n{width:68px;height:68px;font-size:30px}.mapa .nodo .et{padding:5px 12px}.mapa .nodo .et b{font-size:16px}.mapa .nodo .et small{font-size:13px}}
+.guia{position:absolute;width:18px;z-index:2;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 6px,rgba(252,209,0,.95) 6px 9px,transparent 9px 16px);
+ -webkit-mask:linear-gradient(180deg,transparent,#000 20%);mask:linear-gradient(180deg,transparent,#000 20%);animation:guia 1s linear infinite}
+@keyframes guia{from{background-position:0 0}to{background-position:0 16px}}
+.tab .pz.exp::after{content:"▼";position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);font-size:13px;color:#fcd100;text-shadow:0 1px 2px rgba(0,0,0,.7);animation:baja .8s ease-in-out infinite alternate}
+@keyframes baja{to{transform:translate(-50%,4px)}}
+.expi{height:1.5em;width:auto;vertical-align:-.45em;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.caso .eti .expi{height:22px;vertical-align:-7px}
+.hud .expi{height:20px;vertical-align:-5px}
+.objetivo .obj-ico .expi{height:54px}
+.mostrador{position:absolute;left:0;right:0;top:478px;height:160px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none;transition:opacity .2s}
+.mostrador.oculto{opacity:0}
+.mostrador .atiende{height:156px;width:auto;filter:drop-shadow(0 8px 10px rgba(0,0,0,.45))}
+.mostrador .cuenta{margin-top:-14px;padding:4px 14px;border-radius:12px;background:linear-gradient(#ffe25a,#e0a800);color:#3a2a00;font:900 13px Aleo,Georgia,serif;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.elige{z-index:5}
+/* las piezas de plastilina de José (lámina 1): ya traen su placa; las especiales se pintan encima */
+.pz.img{background:none!important;border:0;box-shadow:none}
+.pz.img img{width:104%;height:104%;margin:-2%;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.tab .pz.esp-f,.tab .pz.esp-c{background-image:none}
+.tab .pz.esp-f::before,.tab .pz.esp-c::before,.tab .pz.esp-x::before{content:"";position:absolute;inset:4px;border-radius:8px;pointer-events:none;z-index:1}
+.tab .pz.esp-f::before{background:repeating-linear-gradient(0deg,rgba(255,255,255,.6) 0 4px,transparent 4px 9px)}
+.tab .pz.esp-c::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.6) 0 4px,transparent 4px 9px)}
+.tab .pz.esp-x::before{inset:-2px;border-radius:11px;background:conic-gradient(#e8823a,#f1d36a,#2f8f5b,#3d7cc4,#8a5cc2,#ec9cbb,#e8823a);opacity:.85;mix-blend-mode:hard-light;animation:gira 2s linear infinite}
+@keyframes gira{to{filter:hue-rotate(360deg)}}
+/* tarjetas, pausa y giro */
+.tarjeta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,20,14,.55);backdrop-filter:blur(2px);z-index:20;overflow-y:auto}
+.tarjeta.tapa{background:#0b1f19;backdrop-filter:none}
+.ficha{width:100%;max-width:440px;background:#fbf6ea;border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.45);border-top:8px solid var(--naranja);margin:auto 0}
+.ficha .eti{font:800 14px Aleo,Georgia,serif;letter-spacing:1.5px;color:#c24400;text-transform:uppercase}
+.ficha #narraT{margin:14px 0 16px}
+.ficha .pres-globo,.ficha .pres-compacto .pres-globo{font-size:16.5px;padding:10px 13px}
+.ficha .pres-globo b{font-size:16px}
+.tuto-dice{pointer-events:auto}
+.tuto-dice .seguir{display:block;margin:8px 0 0 auto;border:0;padding:6px 16px;min-height:40px;cursor:pointer;color:#3a2a00;font:800 14px Aleo,Georgia,serif;--placa:url(aux_rect_mostaza.webp)}
+.ficha .caso2{font:600 18px/1.4 Aleo,Georgia,serif;color:var(--texto);margin:6px 0 10px}
+.saltar{position:absolute;top:6px;right:6px;z-index:12;min-height:44px;border:0;border-radius:999px;padding:8px 14px;background:rgba(0,0,0,.55);color:#fff;font:700 13px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.giro{display:none}
+@media (orientation:landscape) and (max-height:500px) and (pointer:coarse){.juego .giro{display:flex;position:fixed;inset:0;z-index:30;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#0d2a20;color:#fff;font:800 20px Aleo,Georgia,serif;text-align:center;padding:20px}.giro span{font-size:46px}}
+/* final */
+.final{text-align:center}
+.final .gran{font:800 56px Aleo,Georgia,serif;color:var(--verde);margin:4px 0}
+#finT:focus{outline:none}
+.final .falta{margin-top:4px;font-weight:700;color:#8a4a00}
+.estrellas{font-size:34px;letter-spacing:4px;color:var(--amarillo);text-shadow:0 1px 0 #c9a400}
+.final .escena-n{margin:12px 0 4px;text-align:left}
+.balance{background:#eaf6ef;border:2px solid #9fd3b6;border-radius:14px;padding:12px;margin:12px 0;text-align:left;line-height:1.45}
+.fallos{text-align:left;margin-top:16px}
+.fallo{background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:8px;font-size:14px;display:flex;gap:10px;align-items:center}
+.fallo .pz{position:static;width:40px;height:40px;font-size:20px;flex:none;cursor:default}
+.fallo b{display:block;color:var(--verde);margin-top:2px}
+.fallo small{color:var(--gris)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #fcd100;outline-offset:2px;box-shadow:0 0 0 6px #004230}
+@media (prefers-reduced-motion:reduce){.tab.bote,.persona,.tab .pz.cae,.tab .pz.cruce{animation:none}.persona{display:none}}
+</style>
+<link rel="manifest" href="red.webmanifest">
+<meta name="theme-color" content="#004230">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tres en red">
+<link rel="apple-touch-icon" href="icono-red-192.png">
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===== «Tres en red» (UD8) · el tablero, sin dibujos (25-11-2026) =====
+   Todo lo que decide el juego y se puede probar sin pantalla: crear el tablero, ver qué trío forma un cambio, resolver tríos,
+   cascadas y relleno, y la GARANTÍA CIEGA del guion (apartado 2): todas las prestaciones del nivel tienen siempre al menos un trío
+   posible y el tablero no sabe cuál es la respuesta del caso, así que mirarlo no ayuda a acertar.
+
+   Tipos: números 0..n-1 = prestaciones del nivel (en el orden de la leyenda y de las teclas 1-6); MONEDA = la cotización.
+   Tablero: array plano de F×C (fila a fila, la fila 0 arriba). Una casilla vacía vale -1 solo durante la resolución.
+
+   rng(semilla)                         generador repetible (las pruebas repiten partidas con la misma semilla)
+   crea(n, F, C, r)                     tablero sin tríos hechos y con la garantía cumplida
+   grupos(t, F, C)                      tríos (o más) en línea: [{tipo, celdas}]
+   jugadas(t, F, C)                     cambios posibles: [{a, b, tipos}] (tipos = los de los tríos que forma)
+   porTipo(t, F, C, n)                  cuántas jugadas forma cada tipo (la moneda en la posición n)
+   prueba(t, F, C, a, b)                lo que haría el cambio a↔b sin tocar nada: {valido, tipos, respuesta, moneda, grupos}
+   resuelve(t, F, C, n, r, a, b)        hace el cambio y todas las cascadas; devuelve los pasos para animarlos y si hubo que recolocar
+   garantia(t, F, C, n)                 ¿todas las prestaciones tienen al menos una jugada?
+
+   © José Carlos González Acedo. Todos los derechos reservados. */
+const RED_TAB = (() => {
+ const MONEDA = 99, EXP = 98;   // EXP: el expediente que baja por el tablero hasta la ventanilla (no se junta ni lo rompen las especiales)
+ const PAPEL = 97;   // papeleo atascado (nivel 2): no se mueve, no cae y tapa el paso; se rompe con un trío pegado o con una especial
+ const ESPECIAL = v => v === 'f' || v === 'c' || v === 'x' || v === 's';
+
+ function rng(semilla) {
+  let a = (semilla >>> 0) || 1;
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 };
+ }
+ const tiposDe = n => { const v = []; for (let i = 0; i < n; i++) v.push(i); v.push(MONEDA); return v };
+
+ /* ¿forma trío la casilla i con lo que tiene a la izquierda o arriba? (para crear sin tríos hechos) */
+ function haceTrio(t, C, i, v) {
+  const f = Math.floor(i / C), c = i % C;
+  if (c >= 2 && t[i - 1] === v && t[i - 2] === v) return true;
+  if (f >= 2 && t[i - C] === v && t[i - 2 * C] === v) return true;
+  return false;
+ }
+
+ function grupos(t, F, C) {
+  const g = [];
+  for (let f = 0; f < F; f++) for (let c = 0; c < C;) {
+   const v = t[f * C + c]; let k = c + 1;
+   while (k < C && t[f * C + k] === v) k++;
+   if (v >= 0 && v !== EXP && v !== PAPEL && k - c >= 3) { const cel = []; for (let x = c; x < k; x++) cel.push(f * C + x); g.push({ tipo: v, celdas: cel }) }
+   c = k;
+  }
+  for (let c = 0; c < C; c++) for (let f = 0; f < F;) {
+   const v = t[f * C + c]; let k = f + 1;
+   while (k < F && t[k * C + c] === v) k++;
+   if (v >= 0 && v !== EXP && v !== PAPEL && k - f >= 3) { const cel = []; for (let y = f; y < k; y++) cel.push(y * C + c); g.push({ tipo: v, celdas: cel }) }
+   f = k;
+  }
+  return g;
+ }
+
+ /* los tríos que nacen de un cambio: solo los que tocan una de las dos casillas cambiadas */
+ function gruposDelCambio(t, F, C, a, b) {
+  const u = t.slice(); [u[a], u[b]] = [u[b], u[a]];
+  return { u, g: grupos(u, F, C).filter(x => x.celdas.includes(a) || x.celdas.includes(b)) };
+ }
+ const vecinas = (C, a, b) => { const fa = Math.floor(a / C), fb = Math.floor(b / C); return (fa === fb && Math.abs(a - b) === 1) || Math.abs(a - b) === C };
+
+ function prueba(t, F, C, a, b) {
+  if (!vecinas(C, a, b) || t[a] === t[b]) return { valido: false, tipos: [], respuesta: null, moneda: false, grupos: [] };
+  const { g } = gruposDelCambio(t, F, C, a, b);
+  const presta = [...new Set(g.map(x => x.tipo).filter(v => v !== MONEDA))], moneda = g.some(x => x.tipo === MONEDA);
+  /* dos prestaciones distintas a la vez: no vale como respuesta (guion, apartado 2) */
+  const valido = g.length > 0 && presta.length <= 1;
+  return { valido, tipos: presta, respuesta: presta.length === 1 ? presta[0] : null, moneda, grupos: g };
+ }
+
+ function jugadas(t, F, C) {
+  const j = [];
+  for (let i = 0; i < F * C; i++) for (const k of [i + 1, i + C]) {
+   if (k >= F * C || (k === i + 1 && k % C === 0) || t[i] === t[k]) continue;
+   const { g } = gruposDelCambio(t, F, C, i, k);
+   if (g.length) j.push({ a: i, b: k, tipos: [...new Set(g.map(x => x.tipo))] });
+  }
+  return j;
+ }
+ function porTipo(t, F, C, n) {
+  const cu = new Array(n + 1).fill(0);
+  for (const x of jugadas(t, F, C)) {
+   const p = x.tipos.filter(v => v !== MONEDA);
+   if (p.length === 1) cu[p[0]]++;          // solo las jugadas que valen como respuesta de una prestación
+   if (x.tipos.includes(MONEDA)) cu[n]++;
+  }
+  return cu;
+ }
+ const garantia = (t, F, C, n) => porTipo(t, F, C, n).slice(0, n).every(x => x >= 1);
+
+ /* tablero nuevo: fichas repartidas por igual entre los tipos (±1), sin tríos hechos y con la garantía. La garantía no sabe nada
+    del caso: es la misma para todas las prestaciones */
+ function crea(n, F, C, r) {
+  const T = tiposDe(n);
+  for (let intento = 0; intento < 500; intento++) {
+   const bolsa = [];
+   for (let i = 0; i < F * C; i++) bolsa.push(T[i % T.length]);
+   for (let i = bolsa.length - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [bolsa[i], bolsa[k]] = [bolsa[k], bolsa[i]] }
+   const t = new Array(F * C).fill(-1); let ok = true;
+   for (let i = 0; i < F * C && ok; i++) {
+    let k = bolsa.findIndex(v => !haceTrio(t, C, i, v));
+    if (k < 0) { ok = false; break }
+    t[i] = bolsa[k]; bolsa.splice(k, 1);
+   }
+   if (ok && !grupos(t, F, C).length && garantia(t, F, C, n)) return t;
+  }
+  throw new Error('No se pudo crear un tablero con la garantía');
+ }
+
+ /* relleno dirigido: cada casilla vacía (de abajo arriba) recibe el tipo que menos fichas tiene en el tablero entre los que no
+    hacen trío al caer. Así casi nunca hace falta recolocar, y sigue siendo ciego a la respuesta */
+ function rellena(t, F, C, n, r) {
+  const T = tiposDe(n);
+  for (let i = F * C - 1; i >= 0; i--) {
+   if (t[i] !== -1) continue;
+   const cuenta = new Map(T.map(v => [v, 0])); for (const v of t) if (v >= 0) cuenta.set(v, cuenta.get(v) + 1);
+   const cand = T.filter(v => !haceTrioAlRellenar(t, F, C, i, v));
+   const lista = cand.length ? cand : T, minimo = Math.min(...lista.map(v => cuenta.get(v)));
+   const pocos = lista.filter(v => cuenta.get(v) <= minimo + 1);
+   t[i] = pocos[Math.floor(r() * pocos.length)];
+  }
+ }
+ function haceTrioAlRellenar(t, F, C, i, v) {
+  const u = t.slice(); u[i] = v;
+  return grupos(u, F, C).some(g => g.celdas.includes(i));   // las vacías (-1) no forman grupo
+ }
+
+ function cae(t, F, C) {
+  const mov = [];
+  for (let c = 0; c < C; c++) {
+   let hueco = F - 1;
+   for (let f = F - 1; f >= 0; f--) {
+    const i = f * C + c;
+    if (t[i] !== -1) { const d = hueco * C + c; if (d !== i) { t[d] = t[i]; t[i] = -1; mov.push({ de: i, a: d }) } hueco-- }
+   }
+  }
+  return mov;
+ }
+
+ /* recoloca sin mirar el caso: baraja las fichas que hay hasta que no haya tríos hechos y se cumpla la garantía */
+ function recoloca(t, F, C, n, r) {
+  const v = t.slice();
+  for (let intento = 0; intento < 300; intento++) {
+   for (let i = v.length - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [v[i], v[k]] = [v[k], v[i]] }
+   if (!grupos(v, F, C).length && garantia(v, F, C, n)) { for (let i = 0; i < t.length; i++) t[i] = v[i]; return true }
+  }
+  const nuevo = crea(n, F, C, r); for (let i = 0; i < t.length; i++) t[i] = nuevo[i]; return true;
+ }
+
+ /* hace el cambio y todas las cascadas. Devuelve {pasos:[{grupos, caidas, nuevas}], cascadas, recolocado} */
+ function resuelve(t, F, C, n, r, a, b) {
+  [t[a], t[b]] = [t[b], t[a]];
+  const pasos = []; let primera = true;
+  for (let vuelta = 0; vuelta < 50; vuelta++) {
+   const g = primera ? grupos(t, F, C).filter(x => x.celdas.includes(a) || x.celdas.includes(b)) : grupos(t, F, C);
+   const todos = primera ? grupos(t, F, C) : g;
+   if (!todos.length) break;
+   const quitar = new Set(); for (const x of todos) for (const i of x.celdas) quitar.add(i);
+   for (const i of quitar) t[i] = -1;
+   const caidas = cae(t, F, C);
+   const vacias = t.map((v, i) => v === -1 ? i : -1).filter(i => i >= 0);
+   rellena(t, F, C, n, r);
+   pasos.push({ grupos: todos, propios: primera ? g : [], caidas, nuevas: vacias.map(i => ({ i, tipo: t[i] })) });
+   primera = false;
+  }
+  const arreglo = repara(t, F, C, n, r);
+  return { pasos, cascadas: Math.max(0, pasos.length - 1), arreglo: arreglo.cambios, recolocado: arreglo.recolocado };
+ }
+
+ /* reparación mínima y ciega: si alguna prestación se ha quedado sin trío posible, se intercambian dos placas cualesquiera (las
+    que menos se notan: primero las de las filas de arriba) hasta que todas vuelven a tener jugada. La regla mira a TODAS las
+    prestaciones, nunca al caso. Solo si no basta con 3 intercambios se recoloca todo */
+ function repara(t, F, C, n, r) {
+  const cambios = []; const faltan = u => porTipo(u, F, C, n).slice(0, n).filter(x => x < 1).length;
+  for (let paso = 0; paso < 3; paso++) {
+   const f0 = faltan(t); if (!f0) return { cambios, recolocado: false };
+   const N = F * C, pares = [];
+   for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) if (t[i] !== t[j]) pares.push([i, j]);
+   for (let i = pares.length - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [pares[i], pares[k]] = [pares[k], pares[i]] }
+   pares.sort((x, y) => (Math.floor(x[0] / C) + Math.floor(x[1] / C)) - (Math.floor(y[0] / C) + Math.floor(y[1] / C)));
+   let mejor = null, mejorF = f0;
+   for (const [i, j] of pares) {
+    const u = t.slice(); [u[i], u[j]] = [u[j], u[i]];
+    if (grupos(u, F, C).length) continue;
+    const f = faltan(u); if (f < mejorF) { mejor = [i, j]; mejorF = f; if (!f) break }
+   }
+   if (!mejor) break;
+   [t[mejor[0]], t[mejor[1]]] = [t[mejor[1]], t[mejor[0]]]; cambios.push(mejor);
+  }
+  if (!garantia(t, F, C, n)) { recoloca(t, F, C, n, r); return { cambios: [], recolocado: true } }
+  return { cambios, recolocado: false };
+ }
+
+
+ /* ===== Juego de juntar tres con placas especiales (25-11-2026, formato de José: «lo primero es eliminar filas y después las
+    preguntas, rápidas y directas»). e[] guarda lo especial de cada casilla: '' normal, 'f' limpia su fila, 'c' su columna,
+    'x' comodín (cambiado con una vecina, limpia todas las de su tipo; dentro de un trío, todas las del suyo) y 'o' dorada (la
+    pregunta: la juega el juego; si se acierta, el juego pide limpiar su fila y su columna con «cruz») ===== */
+ function valida(t, e, F, C, a, b) {
+  if (!vecinas(C, a, b)) return false;
+  if (t[a] === PAPEL || t[b] === PAPEL) return false;
+  if ((e[a] === 'x' && t[b] === EXP) || (e[b] === 'x' && t[a] === EXP)) return false;
+  if (e[a] === 'x' || e[b] === 'x') return true;
+  if (ESPECIAL(e[a]) && ESPECIAL(e[b])) return true;   // dos especiales se combinan aunque no hagan trío
+  if (t[a] === t[b]) return false;
+  return gruposDelCambio(t, F, C, a, b).g.length > 0;
+ }
+ function jugadasEsp(t, e, F, C) {
+  const j = [];
+  for (let i = 0; i < F * C; i++) for (const k of [i + 1, i + C]) {
+   if (k >= F * C || (k === i + 1 && k % C === 0)) continue;
+   if (valida(t, e, F, C, i, k)) j.push({ a: i, b: k });
+  }
+  return j;
+ }
+ function caeEsp(t, e, F, C) {
+  for (let c = 0; c < C; c++) {
+   let hueco = F - 1;
+   for (let f = F - 1; f >= 0; f--) {
+    const i = f * C + c;
+    if (t[i] === PAPEL) { hueco = f - 1; continue }   // el papeleo hace de suelo: lo de encima no pasa
+    if (t[i] !== -1) { const d = hueco * C + c; if (d !== i) { t[d] = t[i]; e[d] = e[i]; t[i] = -1; e[i] = '' } hueco-- }
+   }
+  }
+ }
+ function rellenaAzar(t, e, F, C, n, r) {
+  const T = tiposDe(n);
+  for (let i = F * C - 1; i >= 0; i--) {
+   if (t[i] !== -1) continue;
+   const cand = T.filter(v => !haceTrioAlRellenar(t, F, C, i, v)), lista = cand.length ? cand : T;
+   t[i] = lista[Math.floor(r() * lista.length)]; e[i] = '';
+  }
+ }
+ /* el papeleo pegado a lo que se quita también se rompe (una vez: el papel roto no rompe a su vecino) */
+ function rompePapeles(t, F, C, quita) {
+  let n = 0; const nuevos = [];
+  for (const i of quita) { if (t[i] === PAPEL) { n++; continue } const f = Math.floor(i / C), c = i % C;
+   for (const k of [f > 0 ? i - C : -1, f < F - 1 ? i + C : -1, c > 0 ? i - 1 : -1, c < C - 1 ? i + 1 : -1]) if (k >= 0 && t[k] === PAPEL && !quita.has(k)) nuevos.push(k) }
+  for (const k of nuevos) if (!quita.has(k)) { quita.add(k); n++ }
+  return n;
+ }
+ /* lo que se lleva cada placa especial que salta (y las que salten por ella, en cadena) */
+ function activa(t, e, F, C, quita) {
+  const cola = [...quita];
+  while (cola.length) {
+   const i = cola.pop(), f = Math.floor(i / C), c = i % C, mas = [];
+   if (e[i] === 'f') for (let x = 0; x < C; x++) mas.push(f * C + x);
+   else if (e[i] === 'c') for (let y = 0; y < F; y++) mas.push(y * C + c);
+   else if (e[i] === 'x') for (let k = 0; k < F * C; k++) if (t[k] === t[i]) mas.push(k);
+   else if (e[i] === 's') for (let y = f - 1; y <= f + 1; y++) for (let x = c - 1; x <= c + 1; x++) if (y >= 0 && y < F && x >= 0 && x < C) mas.push(y * C + x);
+   for (const k of mas) if (!quita.has(k) && t[k] !== EXP) { quita.add(k); cola.push(k) }
+  }
+ }
+ /* hace el cambio a↔b y todas las cascadas. cruz: casilla (ya cambiada) cuya fila y columna se limpian (la dorada acertada).
+    Devuelve los pasos para animar: [{quita, creadas, grupos, especiales}] */
+ function mueve(t, e, F, C, n, r, a, b, cruz) {
+  [t[a], t[b]] = [t[b], t[a]]; [e[a], e[b]] = [e[b], e[a]];
+  const pasos = []; let combo = '';
+  for (let vuelta = 0; vuelta < 40; vuelta++) {
+   const quita = new Set(), creadas = [];
+   let g = [];
+   if (vuelta === 0 && (e[a] === 'x' || e[b] === 'x')) {
+    const x = e[a] === 'x' ? a : b, otro = x === a ? b : a;
+    if (e[otro] === 'x') { for (let k = 0; k < F * C; k++) quita.add(k); combo = 'xx' }
+    else if (ESPECIAL(e[otro])) {   // comodín + especial: todas las de ese tipo se vuelven esa especial y saltan
+     const sp = e[otro]; combo = 'x' + sp;
+     for (let k = 0; k < F * C; k++) if (t[k] === t[otro]) { e[k] = sp === 'f' || sp === 'c' ? (r() < .5 ? 'f' : 'c') : sp; quita.add(k) }
+     quita.add(x);
+    }
+    else { for (let k = 0; k < F * C; k++) if (t[k] === t[otro]) quita.add(k); quita.add(x) }
+    e[x] = '';
+   } else if (vuelta === 0 && ESPECIAL(e[a]) && ESPECIAL(e[b])) {
+    /* dos especiales: rayada + rayada, cruz; sello + rayada, cruz de tres filas y tres columnas; sello + sello, 5 × 5 */
+    const sellos = (e[a] === 's') + (e[b] === 's'), f0 = Math.floor(b / C), c0 = b % C, an = sellos === 0 ? 0 : sellos === 1 ? 1 : 2;
+    combo = sellos === 0 ? 'rr' : sellos === 1 ? 'sr' : 'ss'; e[a] = ''; e[b] = ''; quita.add(a); quita.add(b);
+    if (sellos === 2) { for (let y = f0 - 2; y <= f0 + 2; y++) for (let x = c0 - 2; x <= c0 + 2; x++) if (y >= 0 && y < F && x >= 0 && x < C) quita.add(y * C + x) }
+    else for (let d = -an; d <= an; d++) {
+     const y = f0 + d, x = c0 + d;
+     if (y >= 0 && y < F) for (let k = 0; k < C; k++) quita.add(y * C + k);
+     if (x >= 0 && x < C) for (let k = 0; k < F; k++) quita.add(k * C + x);
+    }
+   } else {
+    g = grupos(t, F, C);
+    if (!g.length) break;
+    for (const x of g) for (const i of x.celdas) quita.add(i);
+    if (vuelta === 0) {   // el sello nace donde se cruzan un trío horizontal y uno vertical del mismo tipo (en L o en T)
+     const hor = x => x.celdas[1] - x.celdas[0] === 1;
+     for (const h of g) for (const v of g) {
+      if (!hor(h) || hor(v) || h.tipo !== v.tipo || h.usado || v.usado || h.celdas.length >= 5 || v.celdas.length >= 5) continue;
+      const cruce = h.celdas.find(i => v.celdas.includes(i)); if (cruce === undefined || t[cruce] === EXP) continue;
+      creadas.push({ i: cruce, esp: 's', tipo: t[cruce] }); h.usado = v.usado = true;
+     }
+    }
+    if (vuelta === 0) for (const x of g) {   // las especiales nacen del trío de 4 o de 5 que hace quien juega
+     if (x.usado || x.celdas.length < 4) continue;
+     const donde = x.celdas.includes(b) ? b : x.celdas.includes(a) ? a : x.celdas[1];
+     if (creadas.some(q => q.i === donde)) continue;
+     const hor = x.celdas[1] - x.celdas[0] === 1, esp = x.celdas.length >= 5 ? 'x' : hor ? 'f' : 'c';
+     creadas.push({ i: donde, esp, tipo: t[donde] });
+    }
+   }
+   if (vuelta === 0 && cruz >= 0) { const f = Math.floor(cruz / C), c = cruz % C; for (let k = 0; k < C; k++) quita.add(f * C + k); for (let k = 0; k < F; k++) quita.add(k * C + c) }
+   for (const q of creadas) quita.delete(q.i);
+   const antes = new Set(quita); activa(t, e, F, C, quita); const papeles = rompePapeles(t, F, C, quita);
+   const especiales = [...quita].filter(i => !antes.has(i)).length;
+   for (const q of creadas) quita.delete(q.i);
+   for (const i of [...quita]) if (t[i] === EXP) quita.delete(i);
+   for (const i of quita) { t[i] = -1; e[i] = '' }
+   for (const q of creadas) e[q.i] = q.esp;
+   caeEsp(t, e, F, C); rellenaAzar(t, e, F, C, n, r);
+   pasos.push({ quita: [...quita], creadas, grupos: g, especiales, papeles, combo: vuelta === 0 ? combo : '' });
+   if (!grupos(t, F, C).length) break;
+  }
+  let recolocado = false;
+  if (!jugadasEsp(t, e, F, C).length) { recolocaEsp(t, e, F, C, n, r); recolocado = true }
+  return { pasos, cascadas: Math.max(0, pasos.length - 1), recolocado };
+ }
+ function retira(t, e, F, C, n, r, celdas, activar) {
+  const pasos = []; let quita = new Set(celdas);
+  for (let vuelta = 0; vuelta < 40; vuelta++) {
+   if (vuelta > 0) { quita = new Set(); for (const x of grupos(t, F, C)) for (const i of x.celdas) quita.add(i); if (!quita.size) break }
+   if (activar || vuelta > 0) activa(t, e, F, C, quita);
+   const papeles = vuelta > 0 || activar ? rompePapeles(t, F, C, quita) : 0;
+   for (const i of [...quita]) if (t[i] === EXP && !celdas.includes(i)) quita.delete(i);
+   for (const i of quita) { t[i] = -1; e[i] = '' }
+   caeEsp(t, e, F, C); rellenaAzar(t, e, F, C, n, r);
+   pasos.push({ quita: [...quita], creadas: [], grupos: [], especiales: 0, papeles });
+   if (!grupos(t, F, C).length) break;
+  }
+  const recolocado = asegura(t, e, F, C, n, r);
+  return { pasos, cascadas: Math.max(0, pasos.length - 1), recolocado };
+ }
+ /* si no queda ninguna jugada, baraja (sin mover el expediente) y dice que lo ha hecho; el juego lo usa también al poner un expediente */
+ function asegura(t, e, F, C, n, r) {
+  if (jugadasEsp(t, e, F, C).length) return false;
+  recolocaEsp(t, e, F, C, n, r); return true;
+ }
+ /* baraja las placas sin tríos hechos y con alguna jugada. El expediente NO se mueve (25-11-2026: antes se barajaba con el resto y
+    podía subir, bajar hasta la entrega o, si había que crear un tablero nuevo, desaparecer) */
+ function recolocaEsp(t, e, F, C, n, r) {
+  const sitios = [...t.keys()].filter(i => t[i] !== EXP && t[i] !== PAPEL), orden = sitios.slice();
+  for (let intento = 0; intento < 300; intento++) {
+   for (let i = orden.length - 1; i > 0; i--) { const k = Math.floor(r() * (i + 1)); [orden[i], orden[k]] = [orden[k], orden[i]] }
+   const u = t.slice(), w = e.slice(); sitios.forEach((s, k) => { u[s] = t[orden[k]]; w[s] = e[orden[k]] });
+   if (!grupos(u, F, C).length && jugadasEsp(u, w, F, C).length) { for (let i = 0; i < t.length; i++) { t[i] = u[i]; e[i] = w[i] } return }
+  }
+  for (let intento = 0; intento < 100; intento++) {
+   const nuevo = crea(n, F, C, r), w = new Array(t.length).fill(''); t.forEach((v, i) => { if (v === EXP || v === PAPEL) nuevo[i] = v });
+   if (!grupos(nuevo, F, C).length && jugadasEsp(nuevo, w, F, C).length) { for (let i = 0; i < t.length; i++) { t[i] = nuevo[i]; e[i] = w[i] } return }
+  }
+ }
+
+ return { MONEDA, rng, crea, grupos, jugadas, porTipo, prueba, resuelve, repara, garantia, vecinas, valida, jugadasEsp, mueve, retira, activa, asegura, recolocaEsp, EXP, PAPEL };
+})();
+if (typeof module !== 'undefined') module.exports = RED_TAB;
+
+/* ===== «Tres en red» (UD8) · prestaciones y casos (25-11-2026) =====
+   Comprobados en el BOE consolidado el 24-11-2026 (fuente/red/normativa_ss_2026.md). Cada caso: [texto, respuesta, porqué (≤ 90),
+   norma, ciclo o '' si es común, dorado, y en los de «nada» la prestación que tienta]. Respuesta: la clave de PRESTA o 'nada'.
+   REVISAR (fecha de revisión de lo que puede cambiar pronto, como COTIZA_2026 en la nómina): las 19 semanas (RDL 9/2025, hay un
+   compromiso de 20) y las edades de jubilación (67 en 2027).
+   © José Carlos González Acedo. Todos los derechos reservados. */
+const REVISAR = '2027-06-30';
+const PRESTA = {
+ it:  { n: 'Incapacidad temporal', c: 'contributiva' },
+ nac: { n: 'Nacimiento y cuidado de menor', c: 'contributiva' },
+ rie: { n: 'Riesgo durante el embarazo o la lactancia', c: 'contributiva' },
+ des: { n: 'Desempleo', c: 'contributiva' },
+ jub: { n: 'Jubilación', c: 'contributiva', larga: true },
+ ip:  { n: 'Incapacidad permanente', c: 'contributiva', larga: true },
+ mys: { n: 'Muerte y supervivencia', c: 'contributiva' },
+ nc:  { n: 'No contributivas', c: 'impuestos' }
+};
+/* prestaciones de cada nivel, en el orden de la leyenda y de las teclas 1-6 */
+const NIVEL_PRESTA = { 1: ['it', 'nac', 'des', 'jub'], 2: ['it', 'nac', 'rie', 'des'], 3: ['it', 'ip', 'jub', 'mys', 'nc'] };
+const CASOS = {
+ 1: [
+  ['Rafa se cae de la escalera arreglando el aire de una habitación del hotel.', 'it', 'Accidente de trabajo: cobra desde el día siguiente y sin cotización previa.', 'LGSS 156 y 172', 'IFC'],
+  ['Alma, con tres años en el centro de datos, pasa una neumonía con dos semanas de baja.', 'it', 'Enfermedad común con 180 días cotizados en 5 años: cobra desde el 4.º día.', 'LGSS 172-173', 'STI'],
+  ['Samuel, con un año en el centro de salud, y su pareja acaban de tener un bebé.', 'nac', '19 semanas para cada progenitor, al 100 % de la base reguladora.', 'ET 48.4; LGSS 178-179', 'HIG'],
+  ['Una compañera de Claudia, de 19 años y con dos meses cotizados, da a luz.', 'nac', 'Con menos de 21 años no se exige cotización previa.', 'LGSS 178', 'ITE'],
+  ['La clínica cierra y despide a Alba tras año y medio en ella.', 'des', 'Despido con 360 días cotizados o más: paro contributivo.', 'LGSS 267 y 269', 'HIG'],
+  ['Acaba el contrato temporal de Marcos tras catorce meses en la subcontrata.', 'des', 'Fin de contrato temporal y 360 días cotizados: paro contributivo.', 'LGSS 267.1.a.6.º y 269', 'ITE'],
+  ['Despiden a Curro a los dos meses de su primer empleo; nunca había trabajado.', 'nada', 'Despido, sí, pero sin 90 días cotizados no hay paro ni subsidio.', 'LGSS 269 y 274', 'IFC', false, 'des'],
+  ['Antonio, jefe de mantenimiento, cumple 65 años con 40 años cotizados.', 'jub', 'Con 38 años y medio cotizados te puedes jubilar a los 65.', 'LGSS 205 y DT 7.ª', 'IFC', true],
+  ['Pepi, la recepcionista, cumple la edad de jubilación con 20 años cotizados.', 'jub', 'Edad ordinaria y al menos 15 años cotizados: pensión de jubilación.', 'LGSS 205', ''],
+  ['Una higienista de la clínica se pincha con una sonda usada y le dan la baja.', 'it', 'Lesión trabajando: accidente de trabajo, cobra desde el día siguiente.', 'LGSS 156 y 172', 'HIG'],
+  ['Marcos se corta la mano pelando cable en una azotea: diez días de baja.', 'it', 'Accidente de trabajo: baja pagada desde el día siguiente, sin cotización previa.', 'LGSS 156 y 172', 'ITE'],
+  ['A Fran, con dos años en el centro de datos, le operan de apendicitis: tres semanas de baja.', 'it', 'Enfermedad común con 180 días cotizados: incapacidad temporal desde el 4.º día.', 'LGSS 172-173', 'STI'],
+  ['Un técnico con cinco años en su empresa se rompe una pierna esquiando un sábado.', 'it', 'Accidente no laboral: hay baja sin cotización previa, desde el 4.º día.', 'LGSS 158 y 172', ''],
+  ['Curro, con un año en el hotel, coge una gripe fuerte y el médico le da cinco días de baja.', 'it', 'Gripe con más de 180 días cotizados: cobra la baja desde el 4.º día.', 'LGSS 172-173', 'IFC'],
+  ['Fran se tuerce el tobillo en el pasillo del centro de datos durante su turno.', 'it', 'En el trabajo y en horario: se presume accidente de trabajo.', 'LGSS 156.3', 'STI'],
+  ['La pareja de Samuel, que trabaja en una farmacia desde hace tres años, adopta a un niño.', 'nac', 'La adopción también da la prestación por nacimiento y cuidado de menor.', 'LGSS 177', 'HIG'],
+  ['Un compañero de Fran, con dos años en el aeropuerto, acaba de ser padre.', 'nac', 'Los padres también tienen 19 semanas, 6 de ellas justo después del parto.', 'ET 48.4; LGSS 177', 'STI'],
+  ['El jefe de recepción del hotel, con años en la empresa, acaba de tener una hija.', 'nac', 'Nacimiento: 19 semanas para cada progenitor, al 100 % de la base.', 'ET 48.4; LGSS 179', 'IFC'],
+  ['Una técnica de 24 años, con tres años cotizados, da a luz.', 'nac', 'De 21 a 25 años bastan 90 días cotizados en los últimos 7 años.', 'LGSS 178', ''],
+  ['La clínica no renueva a una auxiliar tras un contrato de sustitución de catorce meses.', 'des', 'Fin de contrato de sustitución con 360 días cotizados: paro.', 'LGSS 267.1.a.6.º', 'HIG'],
+  ['El hotel despide por causas económicas a un técnico de mantenimiento con tres años.', 'des', 'Despido objetivo: situación legal de desempleo y paro contributivo.', 'LGSS 267.1.a.4.º', 'IFC'],
+  ['Cierra el servicio del aeropuerto y despiden a un compañero de Fran con cuatro años.', 'des', 'Despido por cierre del servicio: paro contributivo.', 'LGSS 267 y 269', 'STI'],
+  ['Lucía, de 19 años, acaba su primer contrato, de 5 meses; no tiene cargas ni otros ingresos.', 'des', 'Con 150 días cotizados, subsidio de 5 meses (reforma de 2024).', 'LGSS 274 y 277.2', ''],
+  ['Una empresa de limpieza despide a una limpiadora con 6 años al perder la contrata.', 'des', 'Despido con más de 360 días cotizados: paro contributivo.', 'LGSS 267 y 269', ''],
+  ['Paco, encargado de la subcontrata, cumple la edad de jubilación con 35 años cotizados.', 'jub', 'Edad ordinaria y al menos 15 años cotizados: pensión de jubilación.', 'LGSS 205', 'ITE'],
+  ['La jefa de turno del aeropuerto cumple 67 años con 38 cotizados y deja de trabajar.', 'jub', 'Con la edad ordinaria y más de 15 años cotizados, pensión de jubilación.', 'LGSS 205 y DT 7.ª', 'STI'],
+  ['La dentista de la clínica, que trabaja por cuenta ajena, cumple la edad de jubilación con 42 años cotizados.', 'jub', 'Edad ordinaria y años cotizados de sobra: pensión de jubilación.', 'LGSS 205', 'HIG'],
+  ['Un aprendiz del hotel, en su primer mes de trabajo, tiene gripe y le dan cuatro días de baja.', 'nada', 'Enfermedad común sin 180 días cotizados en 5 años: no cobra la baja.', 'LGSS 172.a', 'IFC', false, 'it'],
+  ['Un técnico deja su empresa porque otra le paga más; tarda un mes en empezar en la nueva.', 'nada', 'Dimitir no da paro, aunque vayas a otro empleo.', 'LGSS 267.2.a', '', false, 'des'],
+  ['Un técnico de 60 años con 12 años cotizados quiere jubilarse.', 'nada', 'Hacen falta la edad y al menos 15 años cotizados.', 'LGSS 205', 'ITE', false, 'jub'],
+ ],
+ 2: [
+  ['Curro, con dos años en el hotel, lo deja porque quiere cambiar de aires.', 'nada', 'Dimitir sin causa no es situación legal de desempleo: no hay paro.', 'LGSS 267.2.a', 'IFC', false, 'des'],
+  ['La subcontrata despide a Marcos, con dos años en ella, por faltas de puntualidad.', 'des', 'El despido disciplinario también da paro, aunque lo recurras.', 'LGSS 267.1.a y 268.4', 'ITE', true],
+  ['Lola, despedida tras cinco años en un hotel, entra en otro y la empresa no la deja pasar la prueba.', 'des', 'Si la empresa te corta en la prueba y el cese anterior daba paro, sí hay paro.', 'LGSS 267.1.a.7.º', '', true],
+  ['A Fran le cambian a turno de noche sin su acuerdo, le perjudica y extingue el contrato.', 'des', 'Dejarlo por una modificación sustancial que te perjudica sí da paro.', 'LGSS 267.1.a.5.º; ET 41.3', 'STI'],
+  ['Muere el dueño del taller donde trabaja Rafa, que era empresario individual, y el taller cierra.', 'des', 'La muerte del empresario individual que cierra el negocio da paro.', 'LGSS 267.1.a.2.º', 'IFC'],
+  ['La clínica y una compañera de Alba, con tres años en ella, pactan acabar el contrato de mutuo acuerdo.', 'nada', 'El mutuo acuerdo no es situación legal de desempleo.', 'LGSS 267.1', 'HIG', false, 'des'],
+  ['Curro, con dos años en el hotel, pide un año de excedencia voluntaria para estudiar.', 'nada', 'La excedencia voluntaria la pides tú: no hay prestación.', 'ET 46.2; LGSS 267.1', 'IFC', false, 'des'],
+  ['Falta trabajo y el hotel hace un ERTE: Curro, con tres años en él, pasa a media jornada.', 'des', 'ERTE: paro por la parte no trabajada, y se gasta por horas.', 'LGSS 267.1.c y 269.5', 'IFC'],
+  ['Una higienista embarazada trabaja con rayos X y la clínica no tiene otro puesto.', 'rie', 'Riesgo durante el embarazo: el 100 % de la base, lo paga la mutua (o el INSS).', 'LGSS 186-187', 'HIG'],
+  ['Una técnica que da el pecho trabaja con disolventes y no hay otro puesto.', 'rie', 'Riesgo durante la lactancia: se cobra hasta que el bebé cumple 9 meses.', 'LGSS 188-189', ''],
+  ['Marcos está cobrando el paro y se rompe un brazo.', 'it', 'Cobrando el paro, la baja se paga como IT, en la misma cuantía.', 'LGSS 283', 'ITE'],
+  ['Claudia se cae con la moto yendo al trabajo por su camino de siempre.', 'it', 'Al ir o volver del trabajo: es accidente de trabajo (in itinere).', 'LGSS 156.2.a', 'ITE', true],
+  ['Samuel pide las 8 semanas de permiso parental para cuidar a su hijo de 3 años.', 'nada', 'El permiso parental de 8 semanas existe, pero no está pagado.', 'ET 48 bis', 'HIG', true, 'nac'],
+  ['Samuel coge las 2 semanas que le quedan del permiso por nacimiento; su hija tiene 2 años.', 'nac', '2 semanas pagadas hasta los 8 años, para nacidos desde agosto de 2024.', 'ET 48.4; RDL 9/2025', 'HIG'],
+  ['Rafa, con 3 meses en su primer empleo, tiene una gastroenteritis de 5 días.', 'nada', 'Estás de baja, pero sin 180 días cotizados en 5 años no cobras el subsidio.', 'LGSS 172.a', 'IFC', false, 'it'],
+  ['Una higienista embarazada trabaja con desinfectantes peligrosos para el feto y no hay otro puesto.', 'rie', 'Sin puesto compatible: riesgo durante el embarazo, 100 %, mutua (o INSS).', 'LGSS 186-187; LPRL 26', 'HIG'],
+  ['Una técnica embarazada maneja gases refrigerantes a presión y la empresa no puede cambiarla de puesto.', 'rie', 'Riesgo durante el embarazo: suspende el contrato y cobra el 100 %.', 'LGSS 186-187', 'IFC'],
+  ['Una trabajadora embarazada, con dos años en la empresa, coge una gripe fuerte y le dan la baja.', 'it', 'Una gripe en el embarazo es una baja común, no riesgo durante el embarazo.', 'LGSS 169 y 172', ''],
+  ['Marcos, con un año en la subcontrata, tiene una hernia discal y está dos meses de baja.', 'it', 'Enfermedad común con 180 días cotizados: incapacidad temporal.', 'LGSS 169 y 172', 'ITE'],
+  ['Samuel, con dos años en el centro de salud, se rompe una pierna yendo a una boda un domingo.', 'it', 'No va ni vuelve del trabajo: accidente no laboral, pero sí hay baja.', 'LGSS 158 y 172', 'HIG'],
+  ['Fran está de baja por una operación y, mientras, se le acaba el contrato temporal.', 'it', 'Si el contrato acaba estando de baja, sigues en IT hasta el alta.', 'LGSS 283', 'STI', true],
+  ['Un compañero de Marcos acoge a un niño de 4 años en acogimiento familiar de más de un año.', 'nac', 'El acogimiento de al menos un año también da esta prestación.', 'LGSS 177', 'ITE'],
+  ['Una técnica de 30 años, con solo 3 meses cotizados en toda su vida, da a luz.', 'nac', 'Sin cotización suficiente, la madre cobra el subsidio especial por nacimiento.', 'LGSS 181-182', '', true],
+  ['El encargado de la subcontrata disfruta las 6 semanas tras nacer su hijo.', 'nac', 'Las 6 primeras semanas tras el parto son obligatorias para cada progenitor.', 'ET 48.4', 'ITE'],
+  ['Las dos madres de un recién nacido, ambas con años cotizados, piden su permiso.', 'nac', 'Cada progenitora tiene sus 19 semanas, intransferibles.', 'ET 48.4; LGSS 177', ''],
+  ['La empresa de Alma hace un despido colectivo y ella sale tras tres años.', 'des', 'Despido colectivo: situación legal de desempleo y paro contributivo.', 'LGSS 267.1.a.3.º', 'STI'],
+  ['A un técnico con cuatro años le trasladan a otra provincia y decide extinguir el contrato.', 'des', 'Dejarlo por un traslado que te obliga a cambiar de casa da paro.', 'LGSS 267.1.a.5.º; ET 40', ''],
+  ['La empresa no paga las nóminas desde hace tres meses y Claudia pide al juez acabar el contrato.', 'des', 'Romper el contrato por impago grave de la empresa (ET 50) sí da paro.', 'LGSS 267.1.a.5.º; ET 50', 'ITE'],
+  ['Un técnico fijo discontinuo del hotel acaba la temporada y espera el llamamiento.', 'des', 'Entre temporadas, el fijo discontinuo está en situación legal de desempleo.', 'LGSS 267.1.d', 'IFC'],
+  ['Una técnica deja el trabajo para cuidar de su padre enfermo, sin pedir nada a la empresa.', 'nada', 'Dejar el trabajo por tu cuenta es una dimisión: no hay paro.', 'LGSS 267.2.a', '', false, 'des']
+ ],
+ 3: [
+  ['Un compañero de Marcos se opera de la rodilla tras caer de una torre: tres meses de baja y volverá.', 'it', 'Sigue en tratamiento y volverá: incapacidad temporal, no permanente.', 'LGSS 169', 'ITE'],
+  ['Un compañero de Marcos, tras caer de una torre, no podrá volver a subir, pero sí hacer otro trabajo.', 'ip', 'Incapacidad permanente total: no puede con su oficio, sí con otro.', 'LGSS 194 y DT 26.ª', 'ITE'],
+  ['A un higienista le reconocen la incapacidad permanente total y la clínica lo pasa a recepción.', 'ip', 'IP total: pensión y otro trabajo; la empresa debe intentar recolocarte.', 'LGSS 196; ET 49.1.n', 'HIG', true],
+  ['Tras una baja muy larga, a la tía de una compañera de Fran la declaran incapaz para cualquier trabajo.', 'ip', 'Incapacidad permanente absoluta: pensión para toda la vida.', 'LGSS 194 y 196', 'STI'],
+  ['La madre de una compañera de Alba cumple la edad de jubilación con 30 años cotizados.', 'jub', 'Con la edad y al menos 15 años cotizados, pensión de jubilación.', 'LGSS 205', 'HIG'],
+  ['Pepi, de 65 años y con 36 cotizados, pide jubilarse ya.', 'jub', 'Anticipada voluntaria: hasta 2 años antes de tu edad, con 35 años cotizados.', 'LGSS 208', '', true],
+  ['Un técnico de 40 años con 20 años cotizados quiere jubilarse ya.', 'nada', 'La jubilación exige la edad: ni la anticipada llega tan pronto.', 'LGSS 205 y 208', '', false, 'jub'],
+  ['Fallece el padre de una compañera de Alma, que llevaba 20 años trabajando. Deja mujer y un hijo de 15.', 'mys', 'Viudedad para la pareja y orfandad para los hijos menores de 21.', 'LGSS 219 y 224', 'STI'],
+  ['Una vecina de 30 años, sola desde hace 5, agotó el paro y el subsidio y no tiene ingresos.', 'nc', 'Agotado el paro, sin ingresos y con 23 años o más: ingreso mínimo vital.', 'Ley 19/2021, arts. 4 y 10', ''],
+  ['La abuela de Curro tiene 70 años, nunca cotizó y no tiene ingresos.', 'nc', 'Sin cotizar, con 65 años y sin rentas: pensión no contributiva (impuestos).', 'LGSS 369 y 109', 'IFC'],
+  ['Tras un infarto, a un técnico le dan la baja; los médicos esperan que vuelva en unos meses.', 'it', 'Si se espera la curación, es incapacidad temporal.', 'LGSS 169', ''],
+  ['Una higienista lleva casi un año de baja por la espalda y el INSS le prorroga la baja.', 'it', 'Pasados 365 días, el INSS puede prorrogar la baja 180 días más.', 'LGSS 169 y 174', 'HIG'],
+  ['Curro sufre un esguince grave trabajando: seis semanas de baja y volverá a su puesto.', 'it', 'Volverá a su puesto: incapacidad temporal por accidente de trabajo.', 'LGSS 156 y 169', 'IFC'],
+  ['Una técnica pierde algo de movilidad en una mano en un accidente laboral, pero sigue en su oficio.', 'ip', 'Incapacidad permanente parcial: pago único y sigue en su trabajo.', 'LGSS 194 y 196; DT 26.ª', ''],
+  ['Un técnico de climatización desarrolla una alergia grave a los refrigerantes que le impide su oficio.', 'ip', 'No puede con su oficio, sí con otro: incapacidad permanente total.', 'LGSS 194; DT 26.ª', 'IFC'],
+  ['Tras un accidente de tráfico, una trabajadora necesita ayuda de otra persona para vestirse y comer.', 'ip', 'Gran incapacidad: pensión más un complemento para quien la cuida.', 'LGSS 194 y 196', ''],
+  ['Un técnico de sistemas pierde casi toda la vista y no puede trabajar en nada.', 'ip', 'Incapacidad permanente absoluta: ninguna profesión, pensión vitalicia.', 'LGSS 194 y 196', 'STI'],
+  ['Un técnico de 68 años, con 40 cotizados, deja ahora de trabajar.', 'jub', 'Puedes jubilarte después de la edad ordinaria: no se pierde el derecho.', 'LGSS 205', 'STI'],
+  ['El jefe de mantenimiento cumple 67 años con 16 cotizados, dos de ellos en los últimos quince.', 'jub', 'Bastan 15 años cotizados, 2 de ellos dentro de los últimos 15.', 'LGSS 205.1.b', 'IFC'],
+  ['Paco cumple 65 años con 39 años cotizados y quiere jubilarse.', 'jub', 'Con 38 años y medio cotizados, jubilación ordinaria a los 65.', 'LGSS 205 y DT 7.ª', 'ITE'],
+  ['La recepcionista de la clínica cumple la edad de jubilación con 25 años cotizados.', 'jub', 'Edad ordinaria y más de 15 años cotizados: pensión de jubilación.', 'LGSS 205', 'HIG'],
+  ['Fallece un técnico de la subcontrata en un accidente de trabajo; deja dos hijos de 8 y 12 años.', 'mys', 'Orfandad para los hijos menores de 21 y, por accidente, indemnización.', 'LGSS 216 y 224', 'ITE'],
+  ['Muere la madre, que cotizaba desde hacía años, de un estudiante de 23 que no trabaja.', 'mys', 'Orfandad hasta los 25 si no trabajas o ganas menos del SMI.', 'LGSS 224', ''],
+  ['La familia de un compañero fallecido paga el entierro y pide la ayuda a la Seguridad Social.', 'mys', 'El auxilio por defunción es una de las prestaciones por muerte.', 'LGSS 216 y 218', ''],
+  ['Un vecino de 40 años con una discapacidad del 70 %, que nunca ha podido trabajar, no tiene ingresos.', 'nc', 'Sin cotizar y con discapacidad del 65 % o más: pensión no contributiva.', 'LGSS 363', '', true],
+  ['Una madre sola con dos hijos agotó el subsidio y no tiene ingresos.', 'nc', 'Ingreso mínimo vital: protege a hogares sin ingresos suficientes.', 'Ley 19/2021', ''],
+  ['El abuelo de Claudia, de 75 años, vive en España desde hace 12 años, nunca cotizó y no tiene rentas.', 'nc', 'Con 65 años, 10 de residencia y sin rentas: pensión no contributiva.', 'LGSS 369', 'ITE'],
+  ['Un chico de 19 años vive con sus padres, no trabaja, nunca ha cotizado y pide el IMV para él solo.', 'nada', 'Para una persona sola, el IMV pide en general al menos 23 años.', 'Ley 19/2021, arts. 4 y 10', '', false, 'nc'],
+  ['Un técnico sano de 50 años, cansado de su oficio, pide la incapacidad permanente.', 'nada', 'La incapacidad permanente exige una lesión o enfermedad grave y definitiva.', 'LGSS 193', '', false, 'ip'],
+  ['Tras un mes de baja por gripe, una higienista se cura y vuelve a trabajar.', 'nada', 'Con el alta se acaba la incapacidad temporal: vuelve a cobrar su sueldo.', 'LGSS 174', 'HIG', false, 'it']
+ ]
+};
+if (typeof module !== 'undefined') module.exports = { REVISAR, PRESTA, NIVEL_PRESTA, CASOS };
+
+/* ===== «Tres en red» (UD8) · preguntas rápidas de cada placa (25-11-2026) =====
+   Salen al juntar un trío con la placa DORADA de ese tipo (formato de José: «primero eliminar filas y después las preguntas,
+   rápidas, directas y que dañen lo mínimo la jugabilidad»). Comprobadas con la ficha del BOE del 24-11-2026
+   (fuente/red/normativa_ss_2026.md). Cada una: [pregunta, [respuesta buena, otras…], porqué (≤ 90), norma]. Las respuestas se
+   barajan al salir. Además de estas, la mitad de las veces sale un caso del banco (casos.js) con «¿Qué cobra?» y tres respuestas.
+   La placa de la moneda (cotizar) pregunta por cómo se financia y quién gestiona: el CE f).
+   © José Carlos González Acedo. Todos los derechos reservados. */
+const PREGUNTAS = {
+ it: [
+  ['Baja por enfermedad común: ¿desde qué día se cobra?', ['Desde el 4.º día', 'Desde el 1.º', 'Desde el día 21'], 'Enfermedad común o accidente no laboral: desde el 4.º día.', 'LGSS 173'],
+  ['Baja por accidente de trabajo: ¿desde cuándo se cobra?', ['Desde el día siguiente', 'Desde el 4.º día', 'Desde el día 16'], 'Accidente de trabajo: desde el día siguiente a la baja, al 75 %.', 'LGSS 173'],
+  ['Para la baja por enfermedad común, ¿cuánto hay que haber cotizado?', ['180 días en 5 años', 'Nada', '360 días en 6 años'], 'Enfermedad común: 180 días en los 5 años anteriores.', 'LGSS 172'],
+  ['¿Hay que llevar el parte de baja a la empresa?', ['No: le llega solo', 'Sí, en 3 días', 'Sí, al volver al trabajo'], 'Desde 2023 el parte no se entrega: la empresa lo recibe del INSS.', 'RD 1060/2022'],
+  ['Baja común: ¿quién paga los días 4 a 15?', ['La empresa', 'El INSS', 'El SEPE'], 'Días 4 a 15 de una baja común: los paga la empresa.', 'LGSS 173.1'],
+  ['¿Cuánto dura como máximo una baja?', ['365 días y 180 de prórroga', '90 días', 'Sin límite'], 'Máximo 365 días, prorrogables 180 si se espera el alta.', 'LGSS 169']
+ ],
+ nac: [
+  ['Nacimiento: ¿cuántas semanas tiene cada progenitor?', ['19', '16', '24'], 'Desde 2025, 19 semanas por progenitor (32 en familia monoparental).', 'ET 48.4; RDL 9/2025'],
+  ['¿Cuántas semanas son obligatorias justo después del parto?', ['6', '2', '12'], 'Las 6 primeras semanas tras el parto son obligatorias para cada progenitor.', 'ET 48.4'],
+  ['Prestación por nacimiento: ¿cuánto se cobra?', ['El 100 % de la base', 'El 60 %', 'El 75 %'], 'Nacimiento y cuidado de menor: el 100 % de la base reguladora.', 'LGSS 179'],
+  ['¿Puede un padre ceder sus semanas a la madre?', ['No: son intransferibles', 'Sí, todas', 'Sí, la mitad'], 'El derecho es individual: cada progenitor tiene las suyas.', 'ET 48.4'],
+  ['Con menos de 21 años, ¿cuánto hay que haber cotizado?', ['Nada', '90 días', '180 días'], 'Con menos de 21 años no se exige cotización previa.', 'LGSS 178'],
+  ['El permiso parental de 8 semanas, ¿se cobra?', ['No', 'Sí, al 100 %', 'Sí, al 60 %'], 'El permiso parental de 8 semanas existe, pero no está pagado.', 'ET 48 bis']
+ ],
+ rie: [
+  ['Riesgo durante el embarazo: ¿qué contingencia es?', ['Profesional', 'Común', 'Ninguna: es un permiso'], 'Es contingencia profesional, como un accidente de trabajo.', 'LGSS 186'],
+  ['Riesgo durante el embarazo: ¿cuánto se cobra?', ['El 100 % de la base', 'El 60 %', 'El 75 %'], 'El 100 % de la base reguladora, desde que se suspende el contrato.', 'LGSS 187'],
+  ['¿Cuándo se cobra el riesgo durante el embarazo?', ['Si no hay otro puesto compatible', 'Siempre que estés embarazada', 'Solo desde el 7.º mes'], 'Solo si la empresa no puede cambiarte a un puesto sin riesgo.', 'LGSS 186; LPRL 26'],
+  ['Riesgo durante la lactancia: ¿hasta cuándo?', ['Hasta los 9 meses del bebé', 'Hasta 1 año', 'Hasta 2 años'], 'Se cobra hasta que el bebé cumple 9 meses.', 'LGSS 189'],
+  ['Riesgo durante el embarazo: ¿quién lo paga?', ['La mutua (o el INSS)', 'La empresa', 'El SEPE'], 'Lo paga la mutua o el INSS, según quién cubra los riesgos profesionales.', 'LGSS 187.4']
+ ],
+ des: [
+  ['Paro contributivo: ¿cuánto hay que haber cotizado?', ['360 días en 6 años', '180 días en 5 años', '90 días'], 'Hacen falta 360 días cotizados en los 6 años anteriores.', 'LGSS 269.1'],
+  ['Paro: ¿cuánto se cobra los primeros 180 días?', ['El 70 % de la base', 'El 100 %', 'El 50 %'], 'El 70 % los primeros 180 días y el 60 % después.', 'LGSS 270'],
+  ['Paro: ¿cuánto se cobra desde el día 181?', ['El 60 %', 'El 70 %', 'El 50 %'], 'Desde el día 181, el 60 % de la base reguladora.', 'LGSS 270'],
+  ['Paro contributivo: ¿cuánto dura como máximo?', ['720 días', '360 días', 'Sin límite'], 'Como mucho 720 días, con 2.160 o más cotizados.', 'LGSS 269.1'],
+  ['¿En qué plazo hay que pedir el paro?', ['15 días hábiles', '3 meses', '1 año'], 'En los 15 días siguientes; si no, se pierden los días de retraso.', 'LGSS 268'],
+  ['¿Quién paga el paro?', ['El SEPE', 'El INSS', 'La empresa'], 'Las prestaciones por desempleo las gestiona y paga el SEPE.', 'LGSS 262 y ss.'],
+  ['Joven sin cargas ni rentas con 90 días cotizados: ¿cobra algo?', ['Subsidio de 3 meses', 'Nada', 'Paro contributivo de 4 meses'], 'Desde 2024, con 90 días cotizados hay subsidio de 3 meses.', 'LGSS 274 y 277.2']
+ ],
+ jub: [
+  ['¿Cuál es la edad ordinaria de jubilación en 2027?', ['67 años', '65 años', '70 años'], 'En 2027, 67 años (o 65 con 38 años y medio cotizados).', 'LGSS 205 y DT 7.ª'],
+  ['Jubilación: ¿cuántos años cotizados como mínimo?', ['15', '10', '35'], 'Mínimo 15 años cotizados, 2 de ellos en los últimos 15.', 'LGSS 205.1.b'],
+  ['En 2027, ¿con cuántos años cotizados te jubilas a los 65?', ['38 y medio', '30', '25'], 'Con 38 años y 6 meses cotizados, a los 65.', 'LGSS 205 y DT 7.ª'],
+  ['Jubilación anticipada voluntaria: ¿cuánto antes como mucho?', ['2 años', '5 años', '10 años'], 'Hasta 2 años antes de tu edad, con 35 años cotizados.', 'LGSS 208'],
+  ['¿Quién paga la pensión de jubilación?', ['El INSS', 'El SEPE', 'La empresa'], 'Las pensiones contributivas las gestiona y paga el INSS.', 'LGSS 66.1.a']
+ ],
+ ip: [
+  ['No puedes con tu oficio, pero sí con otro: ¿qué grado es?', ['Total', 'Absoluta', 'Parcial'], 'Incapacidad permanente total: no tu oficio, sí otros.', 'LGSS 194; DT 26.ª'],
+  ['No puedes trabajar en nada: ¿qué grado es?', ['Absoluta', 'Total', 'Parcial'], 'Absoluta: inhabilita para cualquier profesión u oficio.', 'LGSS 194; DT 26.ª'],
+  ['Necesitas ayuda de otra persona para comer y vestirte: ¿qué grado es?', ['Gran incapacidad', 'Absoluta', 'Total'], 'Gran incapacidad: pensión más un complemento para quien te cuida.', 'LGSS 194 y 196'],
+  ['Incapacidad permanente parcial: ¿cómo se cobra?', ['Un pago único', 'Una pensión mensual', 'Nada'], 'La parcial se cobra a tanto alzado, de una vez.', 'LGSS 196'],
+  ['Desde 2025, ¿la incapacidad total acaba sola con el contrato?', ['No: antes se intenta adaptar el puesto', 'Sí, siempre', 'Solo si lo pide la empresa'], 'La empresa debe intentar ajustes o un cambio de puesto.', 'ET 49.1.n (Ley 2/2025)']
+ ],
+ mys: [
+  ['Fallece una madre trabajadora: ¿qué cobran sus hijos menores de 21?', ['Orfandad', 'Viudedad', 'Nada'], 'Orfandad para los hijos menores de 21 (o 25 si no trabajan).', 'LGSS 224'],
+  ['Pareja de hecho con hijos en común: ¿cuánta convivencia pide la viudedad?', ['2 años', '5 años', '10 años'], 'Con hijos en común, 2 años de convivencia empadronada.', 'LGSS 221.2 (RDL 31/2026)'],
+  ['Orfandad: ¿hasta qué edad si no trabajas?', ['25 años', '18 años', '30 años'], 'Hasta los 25 si no trabajas o ganas menos del SMI.', 'LGSS 224'],
+  ['¿Hay alguna ayuda para pagar el entierro?', ['Sí: el auxilio por defunción', 'No', 'Solo si fue accidente de trabajo'], 'El auxilio por defunción es una de las prestaciones por muerte.', 'LGSS 216 y 218']
+ ],
+ nc: [
+  ['Las prestaciones no contributivas, ¿con qué se pagan?', ['Con impuestos', 'Con cotizaciones', 'Con lo que pone la empresa'], 'Se pagan con aportaciones del Estado, es decir, con impuestos.', 'LGSS 109'],
+  ['Pensión no contributiva de jubilación: ¿desde qué edad?', ['65 años', '67 años', '60 años'], 'Desde los 65, sin rentas y con 10 años de residencia.', 'LGSS 369'],
+  ['Ingreso mínimo vital para quien vive solo: ¿desde qué edad, en general?', ['23 años', '18 años', '30 años'], 'En general, desde los 23 años (con excepciones de 18 a 22).', 'Ley 19/2021, arts. 4 y 10'],
+  ['Para una pensión no contributiva, ¿hay que haber cotizado?', ['No', 'Sí, 15 años', 'Sí, 2 años'], 'No: se cobra por necesidad, sin cotización previa.', 'LGSS 363 y 369']
+ ],
+ moneda: [
+  ['¿Cuándo debe darte de alta la empresa?', ['Antes de empezar a trabajar', 'En el primer mes', 'Al acabar la prueba'], 'El alta, siempre antes de empezar a trabajar.', 'RD 84/1996, art. 32'],
+  ['¿Quién da las altas y cobra las cotizaciones?', ['La Tesorería (TGSS)', 'El SEPE', 'El INSS'], 'La TGSS lleva afiliación, altas, bajas y cobro de cuotas.', 'LGSS 74'],
+  ['Las pensiones de hoy, ¿con qué se pagan?', ['Con las cotizaciones de hoy', 'Con lo que ahorró cada pensionista', 'Con lo que pone cada empresa'], 'Sistema de reparto: lo que se cotiza hoy paga las pensiones de hoy.', 'LGSS 109-110'],
+  ['¿Qué es una mutua colaboradora?', ['Una asociación de empresas sin ánimo de lucro', 'Un seguro privado que pagas tú', 'Una oficina del SEPE'], 'La elige la empresa y colabora con la Seguridad Social.', 'LGSS 80'],
+  ['¿Dónde ves cuánto has cotizado?', ['En tu informe de vida laboral', 'En tu contrato', 'En tu nómina'], 'El informe de vida laboral, en Importass (TGSS).', 'LGSS 74'],
+  ['¿Quién cotiza más por tu sueldo, la empresa o tú?', ['La empresa', 'Tú', 'Lo mismo'], 'La empresa paga la mayor parte de la cotización.', 'Orden PJC/297/2026']
+ ]
+};
+const NOMBRE_PLACA = { moneda: 'Cotizar' };
+if (typeof module !== 'undefined') module.exports = { PREGUNTAS, NOMBRE_PLACA };
+
+/* Apertura y cierre de la oficial de cada grupo: se ponen al abrir el juego (con permiso de José), iguales en
+   servicio_intentos/Codigo.js y en herramientas/juegos_importar.py */
+const APERTURAS={HIG:'',IFC:'',ITE:'',STI:''};
+const CIERRES={HIG:'',IFC:'',ITE:'',STI:''};
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+/* ===== Partida oficial: común a todos los juegos (fase 2, 17-11-2026) =====
+   Antes estaba copiado en cada plantilla; cada arreglo había que hacerlo siete veces. Los montar_*.py lo meten donde la
+   plantilla tiene la marca de oficial (comun_montar.py). Cada juego define antes, o después, sus propios datos:
+   JUEGO, INTENTOS, CLAVE_OF, CLAVE_MEJOR, CIERRES, DIAS, MESES y arrancaOficial(código, intento); y si quiere,
+   OFI_ABAJO (por defecto «los niveles de abajo») y OFI_AVISO() (una frase más antes de «¿Empezamos?»). */
+
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+const RX_COD=/^(1HIG|1IFC|1ITE|1STI|[12]TEST)-\d{1,2}$/;   /* solo los grupos reales (16-11-2026: alguien jugó como 1HBD en vez de 1HIG y quedó fuera de su grupo) */
+const RANKING='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2cIxoYCpfiDMB0VZ3aItkmhC94xzF-Yue0JJ-DKumX5zx5oHSCCVF2esZ5qoJUclpaxrSheyDKHSu/pub?gid=1235634482&single=true&output=csv';
+const PODIO=['1','0,75','0,50'];
+/* Servicio «Juegos IPE · intentos» (Apps Script de José, juegos/servicio_intentos): cuenta AL MOMENTO y apunta cada inicio. */
+const SERVICIO='https://script.google.com/macros/s/AKfycbw56Jq-wbMnwqNgdTatBKiyfdN3TP8fM0IarXeM2YD1d79qJKXgrPpOLip2Bb0BFRhqrQ/exec';
+const grupoDe=c=>(/^[12]([A-Z]{2,5})-/.exec(c||'')||[])[1]||'';
+const normCod=c=>{const m=/^([12][A-Z]{2,5})-0*(\d{1,2})$/.exec(String(c||'').toUpperCase().replace(/\s+/g,''));return m&&RX_COD.test(m[1]+'-'+m[2])?m[1]+'-'+m[2]:''};
+/* el código tal como se guarda y se envía: siempre con dos cifras (17-11-2026: 1HIG-7 y 1HIG-07 salían como dos códigos) */
+const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'').trim().toUpperCase().replace(/\s+/g,'');
+
+/* Apertura y cierre de cada grupo (José, 18-11-2026: «apertura y cierre en todos los juegos»). Cada juego pone APERTURAS y
+   CIERRES ({HIG:'2026-12-03T00:00:00',…}); sin apertura, la oficial está abierta; sin cierre, no caduca. Aquí solo se avisa
+   con la hora del móvil: quien decide es el servidor (las mismas fechas en servicio_intentos/Codigo.js). */
+const fechasDe_=n=>{try{return (n==='a'?APERTURAS:CIERRES)||{}}catch(e){return {}}};   // un juego sin APERTURAS no se rompe
+function apertura(c){const l=fechasDe_('a')[grupoDe(c)];return l?new Date(l):null}
+function plazo(c){const l=fechasDe_('c')[grupoDe(c)];return l?new Date(l):null}
+const sinAbrir=c=>{const a=apertura(c);return !!a&&new Date()<a};
+const fechaTxt=(f,hora)=>`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]}`+
+ (hora||f.getHours()||f.getMinutes()?` a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`:'');
+function textoPlazo(c){const a=apertura(c),f=plazo(c);
+ if(a&&new Date()<a)return `⏰ La partida oficial de tu grupo se abre ${fechaTxt(a)}${f?' y se podrá jugar hasta '+fechaTxt(f,1):''}. Mientras tanto, entrena todo lo que quieras.`;
+ if(!f)return '';
+ const fecha=fechaTxt(f,1);
+ return new Date()>f?`⏰ El plazo de tu grupo terminó ${fecha}. Puedes seguir entrenando, pero la partida oficial ya no cuenta para nota.`:`⏰ Plazo de tu grupo: hasta ${fecha}.`}
+const avisoSinAbrir=(c,abajo,l)=>{const a=l?new Date(l):apertura(c);   // l: la fecha que manda el servidor
+ return 'La partida oficial de tu grupo todavía no está abierta'+(a&&!isNaN(a)?': se abre '+fechaTxt(a):'')+'.\n\nMientras tanto puedes entrenar en '+abajo+' todo lo que quieras.'};
+
+/* récord oficial POR CÓDIGO (16-11-2026: en un dispositivo compartido salía la puntuación de otra persona). El récord antiguo era del
+   dispositivo: solo se le asigna a este código si en el dispositivo no ha jugado partidas oficiales ningún otro código. */
+function mejorDe(c){c=normCod(c);if(!c)return 0;const v=ls.get(CLAVE_MEJOR+'_'+c,null);if(v!==null)return +v||0;const viejo=+ls.get(CLAVE_MEJOR,0);if(!viejo)return 0;
+ let mio=false,otro=false;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.indexOf(CLAVE_OF+'_')!==0||!(+localStorage.getItem(k)>0))continue;if(k===CLAVE_OF+'_'+c)mio=true;else otro=true}}catch(e){}
+ return mio&&!otro?viejo:0}
+const ponMejor=(c,v)=>{if(normCod(c))ls.set(CLAVE_MEJOR+'_'+normCod(c),v)};
+
+/* ===== Intentos por CÓDIGO y en todos los dispositivos (José, 9-11-2026: «que avise y se bloquee un 4.º intento») ===== */
+function locales(c){
+ const k=CLAVE_OF+'_'+normCod(c), v=ls.get(k,null);
+ if(v!==null)return +v||0;
+ return normCod(ls.get('ipe_codigo',''))===normCod(c)?+ls.get(CLAVE_OF,0):0;   // contador antiguo (por dispositivo)
+}
+function ponLocales(c,n){ls.set(CLAVE_OF+'_'+normCod(c),n)}
+const pendientes=c=>enCola().filter(t=>normCod(t.cod||(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(t)||[])[1])===normCod(c)).length;
+/* 18-11-2026: 28 s de espera (el servicio puede tardar 15 s en apuntar si hay cola) y, para «inicio», un id del clic: si se
+   reintenta, el servicio devuelve el mismo intento en vez de gastar otro */
+async function pideServicio(a,c,rid){
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),28000);
+  const r=await fetch(SERVICIO+'?a='+a+'&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(c))+(rid?'&rid='+rid:'')+'&t='+Date.now(),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  clearTimeout(tt);
+  return typeof r.n==='number'?r:r&&r.error==='datos'?{sinJuego:true}:null;   // 19-11-2026: el servidor aún no tiene este juego ≠ sin conexión
+ }catch(e){return null}
+}
+/* 18-11-2026: con conexión manda el servidor (si José devuelve un intento borrando su fila, el móvil ya no lo bloquea) */
+async function intentosDe(c){const r=await pideServicio('consulta',c),l=locales(c);return r&&r.sinJuego?{n:l,sinJuego:true}:{n:r===null?l:r.n,sin:r===null}}
+const noPreparada=abajo=>'La partida oficial de este juego todavía no está preparada en el servidor. Tu profe te avisará cuando se abra.\n\nMientras tanto puedes entrenar en '+abajo+' todo lo que quieras.';
+function pintaOfi(n,estado){
+ const b=document.getElementById('ofi');if(!b)return;
+ if(estado==='mirando'){b.disabled=true;b.textContent='Comprobando tus intentos…';return}
+ if(estado==='sinred'){b.disabled=false;b.textContent='Sin conexión · pulsa para reintentar';return}   // 18-11-2026: antes se quedaba desactivado
+ if(estado==='sinjuego'){b.disabled=false;b.textContent='Partida oficial aún no preparada · entrena abajo';return}
+ if(estado==='libre'){b.disabled=false;b.textContent='Partida oficial';return}
+ b.disabled=n>=INTENTOS;
+ const ic=document.getElementById('cod'),f=ic&&plazo(ic.value);   // 18-11-2026: aviso con la hora del móvil; quien decide es el servidor
+ const a=ic&&sinAbrir(ic.value)&&apertura(ic.value);
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':a?'Se abre '+fechaTxt(a)+' · entrena abajo':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+}
+let tOfi=0;
+/* 19-11-2026: la portada consultaba el servicio en cada vuelta al menú (cada consulta lee las hojas enteras; con un grupo entrenando se
+   acerca al límite de Apps Script). Se recuerda 60 s; «Partida oficial» siempre pregunta de nuevo */
+const INT_MEM={};
+let ofiEnMarcha=false;   // 18-11-2026: mientras se comprueba y se apunta un intento, nada vuelve a activar el botón (dos oficiales a la vez)
+function revisaOfi(){
+ if(ofiEnMarcha)return;
+ clearTimeout(tOfi);
+ {const i=document.getElementById('cod');if(i&&normCod(i.value))pintaOfi(0,'mirando')}
+ tOfi=setTimeout(async()=>{
+  const i=document.getElementById('cod');if(!i)return;
+  const c=i.value;if(!normCod(c)){pintaOfi(0,'libre');return}
+  const k=normCod(c),m=INT_MEM[k];
+  const r=m&&Date.now()-m.t<60000?m.r:(pintaOfi(0,'mirando'),await intentosDe(c));
+  if(!r.sin)INT_MEM[k]={t:m&&m.r===r?m.t:Date.now(),r};
+  if(document.getElementById('cod')===i&&i.value===c)pintaOfi(r.n,r.sinJuego?'sinjuego':r.sin?'sinred':'');
+ },400);
+}
+async function empiezaOficial(c){
+ if(ofiEnMarcha)return;ofiEnMarcha=true;
+ /* 19-11-2026 (revisión total, común): mientras se comprueba y se apunta el intento (hasta 28 + 28 s) la página no responde. Antes se
+    podía entrar a entrenar y la oficial llegaba encima (en Señales, un reloj del entrenamiento seguía vivo y hundía la oficial). Los
+    diálogos van fuera de #app y siguen funcionando */
+ const app=document.getElementById('app');if(app)app.inert=true;
+ try{return await empiezaOficial_(c)}finally{ofiEnMarcha=false;if(app)app.inert=false}
+}
+async function empiezaOficial_(c){
+ const abajo=typeof OFI_ABAJO!=='undefined'?OFI_ABAJO:'los niveles de abajo', aviso=typeof OFI_AVISO!=='undefined'?OFI_AVISO():'';
+ const yaJugadas='Con el código '+c+' ya se han jugado las '+INTENTOS+' partidas oficiales (en este o en otro dispositivo). Una más no contaría para nota, así que no se puede empezar.\n\nPuedes seguir entrenando en '+abajo+'.';
+ const b=document.getElementById('ofi');b.disabled=true;b.textContent='Comprobando tus intentos…';
+ const r=await intentosDe(c);pintaOfi(r.n,r.sinJuego?'sinjuego':r.sin?'sinred':'');
+ if(r.sinJuego){dialogo(noPreparada(abajo));return}
+ if(r.sin){dialogo('Para la partida oficial necesitas conexión a internet: así el juego comprueba cuántos intentos llevas de verdad.\n\nConéctate y vuelve a pulsar «Partida oficial». Mientras tanto puedes entrenar en '+abajo+'.');return}
+ if(r.n>=INTENTOS){dialogo(yaJugadas);return}
+ if(sinAbrir(c)){dialogo(avisoSinAbrir(c,abajo));return}
+ if(!(await dialogo('Vas a gastar el intento '+(r.n+1)+' de '+INTENTOS+' con el código '+c+'.\n\n'+aviso+'¿Empezamos?',{si:'Sí, empezar',no:'Ahora no'})))return;
+ /* el intento se apunta en el servicio AL EMPEZAR: si se abandona, también cuenta */
+ const b2=document.getElementById('ofi');if(b2){b2.disabled=true;b2.textContent='Apuntando tu intento…'}
+ const rid=Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+ let ini=await pideServicio('inicio',c,rid);
+ if(!ini){if(b2)b2.textContent='Reintentando…';ini=await pideServicio('inicio',c,rid)}   // mismo clic: no gasta otro intento
+ if(ini&&ini.sinJuego){pintaOfi(r.n,'sinjuego');dialogo(noPreparada(abajo));return}
+ if(!ini){pintaOfi(r.n,'sinred');dialogo('No se ha podido conectar para apuntar tu intento. Comprueba la conexión a internet y vuelve a pulsar «Partida oficial».');return}
+ if(!ini.ok&&ini.sinabrir){pintaOfi(ini.n);dialogo(avisoSinAbrir(c,abajo,ini.abre));return}
+ if(!ini.ok&&ini.cerrado){pintaOfi(ini.n);dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en '+abajo+'.');return}
+ if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
+ ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
+ OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 25-11-2026 (José): sin vía sin vista en ningún juego; el servidor puede seguir mandando sinVista, se ignora   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
+}
+
+/* ===== Subida de nota ===== */
+const extraDe=e=>e>=3?'0,50':e>=2?'0,25':e>=1?'0,10':'0';
+/* José, 17-11-2026: la subida sale de la MEDIA de estrellas de los niveles, redondeada hacia abajo (antes, del peor nivel) */
+const mediaEst=a=>Math.floor(a.reduce((s,e)=>s+(+e||0),0)/a.length+1e-9);
+
+/* ===== Envío del resultado (fase 3, 17-11-2026): al servicio, no al formulario. Va con el «ref» que dio el servicio al
+   empezar; el servicio comprueba puntos y duración y lo apunta en la hoja. Si no hay red, se guarda en el dispositivo y se
+   envía solo al volver la conexión (o la próxima vez que se abra el juego). ===== */
+const COLA=()=>'cola_envios_'+JUEGO;
+const claveRef=(c,n)=>'ofi_ref_'+JUEGO+'_'+normCod(c)+'_'+n;
+/* true = apuntado; 'rechazado' = el servicio no lo acepta (no se reintenta); false = sin conexión (se reintenta) */
+async function manda(e){
+ if(typeof e==='string')e={txt:e,cod:(/\|\s*([0-9A-Z]+-\d+)\s*\|/i.exec(e)||[])[1]||'',ref:''};   // envíos guardados antes de la fase 3
+ try{
+  const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),30000);   // 19-11-2026: 30 s (con 30 envíos a la vez, el servicio puede tardar 15 s solo en dar turno)
+  const r=await fetch(SERVICIO+'?a=resultado&j='+encodeURIComponent(JUEGO)+'&cod='+encodeURIComponent(normCod(e.cod))+'&ref='+encodeURIComponent(e.ref||'')+'&l='+encodeURIComponent(e.txt)+(e.nv?'&nv='+encodeURIComponent(e.nv):''),{signal:ctl.signal}).then(r=>{if(!r.ok)throw 0;return r.json()});
+  clearTimeout(tt);
+  return r.ok?true:r.error?'rechazado':false;
+ }catch(x){return false}
+}
+function enCola(){try{return JSON.parse(localStorage.getItem(COLA())||'[]')}catch(e){return[]}}
+function guardaCola(c){try{localStorage.setItem(COLA(),JSON.stringify(c))}catch(e){}}
+let vaciando=false;
+async function vaciaCola(){
+ if(vaciando)return;vaciando=true;   // 17-11-2026: «online» y el arranque a la vez podían mandar dos veces lo mismo
+ try{const c=enCola();if(!c.length)return;
+  /* 18-11-2026: al terminar se vuelve a leer la cola y se quita solo lo enviado (antes se perdía lo que entraba mientras tanto) */
+  const hechos=new Set();for(const t of c){if(EN_VUELO.has(JSON.stringify(t)))continue;if((await manda(t))!==false)hechos.add(JSON.stringify(t))}
+  guardaCola(enCola().filter(t=>!hechos.has(JSON.stringify(t))))}finally{vaciando=false}
+}
+/* 19-11-2026: lo que queda en la cola se reintenta también en esta misma visita, cada vez más espaciado (antes, solo al volver
+   la conexión o al abrir otra vez el juego); el servicio responde «ok» si ese resultado ya le había llegado */
+function reintenta(){[20000,60000,180000].forEach(ms=>setTimeout(vaciaCola,ms))}
+addEventListener('online',vaciaCola);addEventListener('online',()=>revisaOfi());setTimeout(vaciaCola,1500);
+function fallosTxt(d){                // los fallos de la partida oficial, para el informe de errores del profesor
+ const l=[...new Set((Array.isArray(d)?d:(d&&d.fallos)||[]).map(x=>String(x).replace(/[|\n\r]/g,' ').replace(/\s+/g,' ').trim().slice(0,60)).filter(Boolean))].slice(0,25);
+ return l.length?' | fallos: '+l.join('; '):'';
+}
+const ahora=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`};
+const EN_VUELO=new Set();   // lo que está mandando envia(): vaciaCola no lo manda a la vez
+function envia(d){
+ const est=d.est||[d.n1,d.n2,d.n3];
+ const txt=`${JUEGO} | ${d.codigo} | intento ${d.intento} | jugada ${ahora()} | ${est.map((e,i)=>'N'+(i+1)+' '+e).join(' | ')}${fallosTxt(d)} | ${d.puntos} pts | +${d.extra}`;
+ const nv=Array.isArray(d.niveles)&&d.niveles.length?d.niveles.map(x=>[x.p,x.s,x.a].map(v=>Math.round(+v||0)).join(',')).join(';'):'';   // puntos, segundos y aciertos de cada nivel (18-11-2026)
+ const mem=OFI_REF&&OFI_REF.cod===normCod(d.codigo)&&OFI_REF.n==d.intento?OFI_REF.ref:'';   // el justificante también en memoria, en todos los juegos
+ const e={txt,cod:d.codigo,ref:d.ref||mem||ls.get(claveRef(d.codigo,d.intento),''),nv};
+ /* 19-11-2026 (revisión total, común): primero a la cola y luego se manda; al llegar respuesta se quita. Antes solo se guardaba si fallaba,
+    y si se cerraba la app durante el envío (hasta 30 s) el resultado se perdía con el intento gastado. El servicio ignora un reenvío */
+ const k=JSON.stringify(e);EN_VUELO.add(k);{const c=enCola();c.push(e);guardaCola(c)}
+ return manda(e).then(ok=>{
+  EN_VUELO.delete(k);
+  if(!OFI_REF||!e.ref||OFI_REF.ref===e.ref)OFI_VIVA=false;   // la respuesta de una oficial anterior no desprotege la que está en marcha
+  if(ok!==false)guardaCola(enCola().filter(t=>JSON.stringify(t)!==k));else reintenta();
+  return ok});
+}
+/* 19-11-2026 (revisión total, común): cierre de la oficial igual en todos los juegos. «Tu mejor» y el puesto, solo si el servicio no
+   rechaza el resultado (antes se apuntaban antes de saberlo); y sin error si ya no está la pantalla del resultado */
+function cierraOficial(d,pref){
+ /* 22-11-2026: un juego puede ordenar su podio por otra cosa que los puntos (RANK_VAL: el Muro, aciertos y luego puntos, igual que la
+    hoja «Ranking»); RANK_TXT dice cómo se lee ese valor. Sin ellos, los puntos de siempre */
+ const val=typeof RANK_VAL==='function'?RANK_VAL(d):(+d.puntos||0);
+ const antes=mejorDe(d.codigo),mejor=Math.max(antes,val);
+ return envia(d).then(ok=>{
+  const e=document.getElementById('envio');if(e)e.textContent=textoEnvio(ok);
+  if(ok!=='rechazado'){
+   ponMejor(d.codigo,mejor);if(!antes)ls.set(pref+'_primer_envio',Date.now());
+   puesto(d.codigo,mejor,true).then(r=>{const q=document.getElementById('puesto');if(q)q.innerHTML=textoPuesto(r,mejor)});
+  }else{const q=document.getElementById('puesto');if(q)q.textContent=''}
+  return ok;
+ });
+}
+
+/* lo que ve el alumno al terminar */
+function textoEnvio(ok){
+ return ok===true?'✔ Resultado enviado a tu profe.':ok==='rechazado'?'⚠ Este resultado no se ha podido aceptar. Tu profe lo revisará.':
+  '⚠ Se ha cortado la conexión y tu resultado no ha llegado todavía. Se queda guardado en este dispositivo y se enviará solo en cuanto vuelva internet: vuelve a abrir el juego con conexión.';
+}
+
+/* ===== Puesto en el ranking del grupo (tabla pública con grupo, puntos y juego; sin códigos ni nombres) ===== */
+let RANK_MEM=null;   // 19-11-2026: la clasificación se recuerda 60 s (antes se descargaba en cada vuelta al menú)
+async function puesto(codigo,pts,nuevo){
+ try{
+  let txt=!nuevo&&RANK_MEM&&Date.now()-RANK_MEM.t<60000?RANK_MEM.txt:null;
+  if(txt===null){
+   const ctl=new AbortController(),tt=setTimeout(()=>ctl.abort(),10000);   // 17-11-2026: sin esto podía quedarse en «Consultando…»
+   txt=await fetch(RANKING+'&t='+Date.now(),{signal:ctl.signal}).then(r=>r.text());clearTimeout(tt);RANK_MEM={t:Date.now(),txt};
+  }
+  const g=grupoDe(codigo), sinJuego=JUEGO==='UD2 Señales';   // las primeras filas (solo Señales) no tenían la columna del juego
+  const lista=txt.split(/\r?\n/).slice(1).map(l=>l.split(',')).filter(f=>f[0]===g&&(sinJuego&&!f[2]||(f[2]||'').trim()===JUEGO)).map(f=>parseInt(String(f[1]||'').replace(/\D/g,''),10)||0);   // 18-11-2026: «12.345» (con punto de miles) también se lee bien
+  const pos=1+lista.filter(x=>x>pts).length, total=Math.max(lista.length+(nuevo?1:0),pos);
+  const empate=Math.max(0,lista.filter(x=>x===pts).length-(nuevo?0:1));   // 19-11-2026: otras personas con los mismos puntos
+  return {pos,total,empate};
+ }catch(e){return null}
+}
+const recien=()=>Date.now()-(+ls.get(CLAVE_OF.replace(/_oficiales$/,'')+'_primer_envio',0))<10*60*1000;
+function textoPuesto(r,pts){
+ if(!r)return 'No se ha podido consultar la clasificación. Inténtalo más tarde desde el menú.';
+ const emp=r.empate?` (empatas con ${r.empate===1?'otra persona':r.empate+' personas'}; a igualdad de puntos, cuenta quien llegó antes)`:'';
+ const podio=r.pos<=3?`<br><b>¡Estás en el podio!</b> Si sigues ahí cuando se cierre el plazo, la nota del criterio sube <b>+${PODIO[r.pos-1]}</b>.`:'';
+ return `🏆 Vas <b>${r.pos}.º de ${r.total}</b> en tu grupo con tu mejor partida (${typeof RANK_TXT==='function'?RANK_TXT(pts):pts+' puntos'})${emp}.${podio}<br><small>Clasificación provisional: se actualiza cada pocos minutos.</small>`;
+}
+
+/* ===== Que la partida oficial no se pierda con un gesto (18-11-2026, todos los juegos) =====
+   Desde «Sí, empezar» hasta el envío del resultado: aviso al recargar o cerrar, y el «atrás» de Android o del navegador no
+   sale de la página (si el juego define PAUSA_JUEGO(), además la pausa). Tirar hacia abajo ya no recarga (comun.js). */
+var OFI_VIVA=false,OFI_REF=null;
+addEventListener('beforeunload',e=>{if(OFI_VIVA){e.preventDefault();e.returnValue=''}});
+addEventListener('popstate',()=>{if(!OFI_VIVA)return;try{history.pushState({ofi:1},'')}catch(e){}if(typeof PAUSA_JUEGO==='function')PAUSA_JUEGO()});
+
+function arrancaOficial(c,n,ref,mas){presentaNivel(1,{codigo:c,intento:n,ref:ref||'',lento:!!mas,est:[],pts:0,niveles:[],fallos:[]})}   // lo llama empiezaOficial (oficial.js)
+const $cod0=()=>(ls.get('ipe_codigo','')||'').toUpperCase();
+const INTENTOS=3;
+const JUEGO='UD8 Tres en red';
+const CLAVE_OF='red_oficiales';
+const CLAVE_MEJOR='red_mejor';
+const OFI_ABAJO='los niveles de abajo';
+const OFI_AVISO=()=>tutoPendiente()?'Aún no has entrenado en este dispositivo: si es tu primera vez, prueba antes «Cómo se juega».\n\n':'';
+/* podio por aciertos, como el Muro y Carril: primero saber y luego la rapidez */
+const RANK_VAL=d=>(+d.aciertos||0)*100000+(+d.puntos||0);
+const RANK_TXT=v=>`${Math.floor(v/100000)} aciertos y ${v%100000} puntos`;
+
+/* ===== El juego ===== */
+const $=s=>document.querySelector(s), app=$('#app');
+const baraja=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const rec=n=>+ls.get('red_record_'+n,0)||0;
+const guarda=(n,p)=>{if(p>rec(n))ls.set('red_record_'+n,p)};
+const ciclo=()=>grupoDe(ls.get('ipe_codigo',''));
+const hayElenco=()=>typeof ELENCO!=='undefined'&&typeof personaje==='function'&&typeof presenta==='function';
+const cicloArte=()=>{const c=ciclo();return c||(hayElenco()?cicloJugador():'HIG')};
+/* las piezas: con arte de plastilina si montar_red.py lo encuentra (red_pieza_<clave>.webp); si no, provisionales (color e icono) */
+const ARTE=["red_atiende.webp", "red_atiende_mal.webp", "red_atiende_ok.webp", "red_camino.webp", "red_campanilla.webp", "red_exp_resuelto.webp", "red_fondo_1.webp", "red_fondo_1_h.webp", "red_fondo_2.webp", "red_fondo_2_h.webp", "red_fondo_3.webp", "red_fondo_3_h.webp", "red_mascota.webp", "red_mascota_oh.webp", "red_mascota_ok.webp", "red_pieza_des.webp", "red_pieza_exp.webp", "red_pieza_ip.webp", "red_pieza_it.webp", "red_pieza_jub.webp", "red_pieza_moneda.webp", "red_pieza_mys.webp", "red_pieza_nac.webp", "red_pieza_nc.webp", "red_pieza_papel.webp", "red_pieza_rie.webp", "red_sello.webp", "red_ventanilla.webp"];
+const PIEZA={it:{col:'#2f8f5b',ico:'🌡️',c:'Baja (IT)'},nac:{col:'#f1d36a',ico:'👶',c:'Nacimiento'},rie:{col:'#ec9cbb',ico:'🛡️',c:'Riesgo embarazo'},des:{col:'#e8823a',ico:'📦',c:'Desempleo'},
+ jub:{col:'#3d7cc4',ico:'⏱️',c:'Jubilación'},ip:{col:'#8a5cc2',ico:'⚙️',c:'Incap. permanente'},mys:{col:'#9a9a8f',ico:'🕯️',c:'Muerte y superv.'},nc:{col:'#2a9aa2',ico:'🏠',c:'No contributivas'},
+ moneda:{col:'#e2b53a',ico:'🪙',c:'Cotizar'},exp:{col:'#d9b77a',ico:'📁',c:'Expediente'},papel:{col:'#efe4cc',ico:'',c:'Papeleo atascado'},nada:{col:'#a3a39a',ico:'✋',c:'No cobra nada'}};
+const piezaHtml=(k,cl,attr)=>{const im=ARTE.includes('red_pieza_'+k+'.webp');return `<div class="pz${im?' img':''}${cl?' '+cl:''}" ${attr||''}${im?'':` style="background-color:${PIEZA[k].col}"`}>${im?`<img src="red_pieza_${k}.webp" alt="">`:PIEZA[k].ico}</div>`};
+
+const ICO={
+ pausa:'<rect x="6" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none"/><rect x="14" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none"/>',
+ altavoz:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/>',
+ mudo:'<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5"/>',
+ mano:'<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4 14.5a1.5 1.5 0 0 1 2.4-1.8L9 15"/>',
+ racha:'<path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-4 2.5-5 .3 2 1.3 3 2.5 3-1.5-3-.5-6 0-8z" fill="currentColor"/>',
+ red:'<path d="M3 6h18M3 12h18M3 18h18M6 3v18M12 3v18M18 3v18"/>',
+ hucha:'<path d="M5 11a7 6 0 0 1 13-2h2v4h-1.5a7 6 0 0 1-2.5 3V19h-3v-2h-3v2H7v-3.5A6 6 0 0 1 5 11z"/><path d="M11 6.5h3"/>',
+ sello:'<path d="M9 3h6v5l3 3v3H6v-3l3-3z"/><path d="M4 18h16v3H4z"/>'
+};
+const ico=(n,cl)=>`<svg class="ico${cl?' '+cl:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[n]||''}</svg>`;
+
+/* Los niveles (guion, apartado 3) */
+const NIVELES=[
+ {n:1,titulo:'¿Qué prestación?',sub:'Baja, nacimiento, paro o jubilación: lo básico, con alguna trampa.',col:'#0d6b4f',fondo:'red_fondo_1.webp',movs:40,
+  drama:'Lo básico: la baja, el nacimiento, el paro y la jubilación. <strong>Baja los expedientes a la ventanilla</strong> y demuestra lo que sabes.'},
+ {n:2,titulo:'¿Te cubre?',sub:'Suspensión y extinción del contrato: despidos, dimisiones, ERTE, la prueba, el embarazo…',col:'#c24400',fondo:'red_fondo_2.webp',movs:44,papeles:[21,23,25,27,36,38,40],
+  drama:'Ahora, lo que más se confunde: <strong>no todo fin de contrato da paro</strong>, y no toda baja se cobra. Estos expedientes vienen con trampa.'},
+ {n:3,titulo:'Toda una vida',sub:'Baja o incapacidad permanente, jubilación, viudedad y orfandad, y lo no contributivo.',col:'#004230',fondo:'red_fondo_3.webp',movs:36,dobles:true,
+  drama:'Toda una vida de trabajo: <strong>¿volverá o no podrá volver?</strong> ¿Ha cotizado o se paga con impuestos? Lo que se cotiza hoy paga las pensiones de hoy.'}
+];
+const F=7,C=7,CEL=48,MON=RED_TAB.MONEDA,PAPEL=RED_TAB.PAPEL;
+/* 25-11-2026 (informe «Lecciones de Candy Crush», José: «aplícalo todo, del 1 al 6»): cada nivel enseña una cosa nueva
+   (nivel 2, papeleo atascado; nivel 3, dos ventanillas), con sus movimientos ajustados por simulación */
+const movsDe=l=>l.movs||MOVIMIENTOS;
+const expsDe=t=>t.reduce((a,v,i)=>{if(v===EXP)a.push(i);return a},[]);
+/* 25-11-2026 (José, con un vídeo de referencia: «buscar un momento coherente y justo para preguntar»): niveles cortos de
+   movimientos con un objetivo, como en los juegos de este género. Bajan EXPEDIENTES carpetas por el tablero; al llegar a la
+   última fila caen a la ventanilla (la funcionaria, debajo del tablero) y sale su pregunta (José, 25-11: sin franja ni cinta).
+   Llegar a la última fila cuesta casi el doble que a la penúltima (simulación): por eso nacen en la 2.ª fila. Con la placa sello y
+   las combinaciones (25-11), movimientos por nivel simulados para unas 5,6 entregas de 6 de media: 40, 44 (papeleo) y 36 (dos a la vez). Todos tienen las mismas 5 preguntas por nivel: si se acaban los movimientos,
+   las que falten se preguntan igual, sin premio (el juego cuenta para los puntos y el podio; la nota, solo saber) */
+const MOVIMIENTOS=40, EXPEDIENTES=6, FILA_VENTANILLA=F-1, FILA_NACE=1;   // 6 preguntas por nivel: contestar al azar sube nota en menos del 3 % (pruebas)
+const T_PREG=10;           // segundos para contestar (×2 con «más tiempo»)
+const PUNTOS={placa:10,especial:50,pregunta:300,choque:-20,papel:30};
+const PTS_JUEGO_MAX=4000;  // los puntos de juego (placas, cascadas, especiales y lluvia), como mucho por nivel: tope exacto en el servidor
+const estrellas=(a,n)=>a>=6?3:a>=5?2:a>=4?1:0;   // expedientes resueltos de 6
+let st={}, raf=0;
+
+/* el reparto común: la persona compañera de ciclo acompaña */
+function quien(c,q){c=c||cicloArte();return hayElenco()?personaje(c,q):{nombre:q==='vet'?'Alguien de tu ciclo':'Alba',ella:q!=='vet',cara:''}}
+function narra(cont,texto,animo,html,compacto,c,q){
+ if(!cont||!hayElenco())return null;
+ const el=presenta(cont,{quien:q||'vet',ciclo:c||cicloArte(),texto,animo,compacto});if(!el)return null;
+ if(html)el.querySelector('.pres-txt').innerHTML=html;
+ return el;
+}
+
+/* ===== Los casos de cada partida: los del ciclo primero (como mucho 2) y el resto comunes o de otros ciclos; el dorado, uno de los
+   candidatos del nivel; un mismo personaje no sale dos veces (guion, apartado 1) ===== */
+const persona=t=>(t.match(/\b(Alba|Samuel|Rafa|Curro|Claudia|Marcos|Fran|Alma|Pepi|Antonio|Lola|Paco|Lucía)\b/)||[])[1]||null;
+function casosDe(n,c){
+ const B=CASOS[n].map(x=>({t:x[0],r:x[1],ex:x[2],nor:x[3],ci:x[4],oro:!!x[5]}));
+ const propios=baraja(B.filter(x=>x.ci===c)).slice(0,2),resto=baraja(B.filter(x=>!propios.includes(x)));
+ const sale=[],vistos=new Set();
+ for(const x of propios.concat(resto)){if(sale.length>=CASOS_N)break;const p=persona(x.t);if(p&&vistos.has(p))continue;if(p)vistos.add(p);sale.push(x)}
+ for(const x of resto){if(sale.length>=CASOS_N)break;if(!sale.includes(x))sale.push(x)}
+ const r=baraja(sale),oros=r.filter(x=>x.oro),oro=oros.length?baraja(oros)[0]:null;
+ return r.map(x=>Object.assign({},x,{oro:x===oro}));
+}
+
+/* ===== Portada ===== */
+const lento=()=>ls.get('red_lento','')==='1';
+const TUTO='red_tutorial';
+const tutoPendiente=()=>!ls.get(TUTO,'');
+const BOTON_TUTO=()=>`<button class="nivel tutob" id="tutob"><span class="n" style="background:#c24400">?</span><span style="flex:1"><b>Cómo se juega</b><span>Tutorial: tríos y cómo bajar un expediente a la ventanilla.</span></span></button>`;
+function portada(){
+ parar();app.classList.remove('jugando','pausado');app.style.removeProperty('--esc');
+ const c=cicloArte(),hecho=!tutoPendiente();
+ app.innerHTML=`<div class="portada">
+  <div class="heroe red" id="heroe" style="--brillo:rgba(252,209,0,.3)${ARTE.includes('red_fondo_3.webp')?';--fondoP:url(red_fondo_3.webp)':''}">
+   <div class="hm">IPE I · Unidad 8 · La Seguridad Social</div>
+   <h1>Tres<br><span>en red</span></h1>
+   <div class="tira" aria-hidden="true">${['it','nac','des','jub','mys','moneda'].map(k=>piezaHtml(k)).join('')}</div>
+   <div class="narra" id="narraP"></div>
+   <p><b>Junta tríos</b> y baja los <b>expedientes</b> ${EXPI()} hasta la ventanilla: allí, su pregunta. Con 4 en raya, placa rayada; en L o en T, placa sello; con 5, comodín. Cada nivel, ${EXPEDIENTES} expedientes y unos ${MOVIMIENTOS} movimientos.</p>
+   <div class="chips">${NIVELES.map(l=>`<span>${l.titulo}</span>`).join('')}</div>
+  </div>
+  ${hecho?'':BOTON_TUTO()}
+  <div class="oficial">
+   <label for="cod"><b>Tu código de lista</b> <span>(te lo da tu profe; p. ej. 1HIG-07). No escribas tu nombre.</span></label>
+   <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="${ls.get('ipe_codigo','')}">
+   <button class="btn p" id="ofi" ${normCod($cod0())?'disabled':''}>${normCod($cod0())?'Comprobando tus intentos…':'Partida oficial'}</button>
+   <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
+   <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
+  </div>
+  ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
+  ${hecho?BOTON_TUTO():''}
+  <h2 class="serif entreno">Entrena cuando quieras</h2>
+  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por caso y, si fallas, sigues cuando hayas leído la explicación. Solo al entrenar.</span></label>
+  ${ARTE.includes('red_camino.webp')?`<div class="mapa" aria-label="El camino de los niveles">${NIVELES.map((l,i)=>`<button class="nivel nodo ${PLAZAS[i][2]}" data-n="${l.n}" style="left:${PLAZAS[i][0]}%;top:${PLAZAS[i][1]}%"><span class="n" style="background:${l.col}">${l.n}</span><span class="et"><b>${l.titulo}</b><small>${EXPI()} ${rec(l.n)?'récord '+rec(l.n):EXPEDIENTES+' expedientes'}</small></span></button>`).join('')}</div>`:
+  `<div class="camino" aria-label="El camino de los niveles">${NIVELES.map((l,i)=>`<div class="parada ${i%2?'der':'izq'}"><button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">${EXPI()} ${EXPEDIENTES} expedientes · ${movsDe(l)} movimientos${rec(l.n)?' · récord '+rec(l.n):''}</span></span></button></div>`).join('')}</div>`}
+ </div><div class="pie">CPIFP Los Viveros · LGSS (RDLeg 8/2015), Estatuto de los Trabajadores y Ley 19/2021 del ingreso mínimo vital</div>`;
+ $('#lento').onchange=e=>ls.set('red_lento',e.target.checked?'1':'');
+ app.querySelectorAll('.nivel[data-n]').forEach(b=>b.onclick=()=>presentaNivel(+b.dataset.n));
+ $('#tutob').onclick=tutorial;
+ $('#cod').oninput=()=>{revisaOfi();const t=textoPlazo($('#cod').value.trim().toUpperCase().replace(/\s+/g,''));const d=$('#plazo');d.innerHTML=t;d.style.display=t?'':'none'};
+ narra($('#narraP'),'Soy '+quien(c,'vet').nombre+'. En la ventanilla se nos acumulan los expedientes: bajas, bebés, despidos, jubilaciones… ¿Me ayudas a bajarlos y resolverlos?','neutro','',true,c,'vet');
+ if(mejorDe(ls.get('ipe_codigo','')))puesto(ls.get('ipe_codigo',''),mejorDe(ls.get('ipe_codigo','')),recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejorDe(ls.get('ipe_codigo','')))});
+ $('#ofi').onclick=()=>{
+  const c=codOficial($('#cod').value);
+  if(!RX_COD.test(c)){dialogo('Ese código no es de ningún grupo. Escríbelo tal cual te lo dio tu profe: curso, letras de tu grupo (HIG, IFC, ITE o STI), guion y tu número de lista. Por ejemplo: 1HIG-07.');$('#cod').classList.add('error');$('#cod').focus();return}
+  {const f=plazo(c);if(f&&new Date()>f){dialogo('El plazo de tu grupo ya ha terminado: la partida oficial no cuenta para nota. Puedes seguir entrenando en los niveles de abajo.');return}}
+  empiezaOficial(c);
+ };
+ revisaOfi();
+}
+
+/* ===== Presentación de cada nivel ===== */
+/* antes de cada nivel (José, 25-11-2026: «lo de elegir ayuda ayuda a saber qué se va a encontrar»): objetivo, lo nuevo y una
+   ayuda a elegir, la misma oferta para todo el mundo (también en la oficial) */
+/* las plazas del camino de plastilina (red_camino.webp, horizontal 16:9), en % de la imagen: del nivel 1 (izquierda) al 3 (derecha,
+   junto a la fuente); el rótulo del 2 va encima para que no choque con los de los lados en el móvil */
+const PLAZAS=[[18.5,48,''],[50,48,'arr'],[80,48,'']];
+const AYUDAS=[{k:'f',ico:'〰️',n:'Placa rayada',d:'Empiezas con una placa que limpia una fila o una columna.'},{k:'x',ico:'🌈',n:'Comodín',d:'Empiezas con un comodín: cámbialo con una vecina y limpia todas las de ese tipo.'},{k:'mov',ico:'➕',n:'+3 movimientos',d:'Juegas con 3 movimientos más de los que trae el nivel.'}];
+function presentaNivel(n,oficial){
+ parar();app.classList.remove('jugando','pausado');
+ const l=NIVELES[n-1],keys=NIVEL_PRESTA[n];let ayuda=ls.get('red_ayuda','f');if(!AYUDAS.some(a=>a.k===ayuda))ayuda='f';
+ app.innerHTML=`<div class="intro">
+  <div class="marca">${oficial?'Partida oficial · ':''}Nivel ${n} de 3 · ${l.titulo}</div>
+  <div class="objetivo"><div class="obj-ico">${EXPI()}</div><div><b>Objetivo</b><span>Lleva <b>${EXPEDIENTES} expedientes</b> a la ventanilla en <b>${movsDe(l)} movimientos</b> y resuélvelos.</span></div></div>
+  <div class="escena-n" id="escenaN" ${ARTE.includes(l.fondo)?`style="--esc:url(${l.fondo})"`:''}></div>
+  <div class="reglas"><b>Lo que vas a encontrar</b>
+  <ul class="cortas">
+   <li>${ico('mano')}<span><b>Junta tríos</b> arrastrando una placa a su vecina. Con 4 en raya, placa rayada; en L o en T, placa sello; con 5, comodín. <b>Junta dos especiales</b> y se combinan. Un cambio que no hace trío <b>resta ${-PUNTOS.choque}</b>.</span></li>
+   ${l.papeles?`<li class="nuevo">${piezaHtml('papel','mini')}<span><b>Nuevo: papeleo atascado.</b> No se mueve y tapa el paso al expediente: rómpelo con un trío pegado o con una placa especial.</span></li>`:''}
+   ${l.dobles?`<li class="nuevo">${EXPI()}${EXPI()}<span><b>Nuevo: dos ventanillas.</b> Bajan dos expedientes a la vez: decide a cuál ayudar primero.</span></li>`:''}
+   <li>${EXPI()}<span>El <b>expediente</b> no se junta: baja si quitas lo de debajo, y cada trío pegado a él lo <b>empuja</b> una fila.</span></li>
+   <li>${ico('sello')}<span>Bájalo hasta <b>la última fila</b> y caerá en la <b>ventanilla</b>. Allí, su pregunta: tres respuestas, ${T_PREG} s. Si aciertas, +${PUNTOS.pregunta} y estalla la fila de abajo.</span></li>
+  </ul>
+  <div class="leyendaN">${keys.map(k=>`<div>${piezaHtml(k)}<span>${PRESTA[k].n}</span></div>`).join('')}<div>${piezaHtml('moneda')}<span>Cotizar</span></div></div>
+  <details><summary>Puntos y estrellas</summary><ul>
+   <li>Estrellas por expedientes resueltos (bien contestados): ★ con 4, ★★ con 5 y ★★★ con los ${EXPEDIENTES}.</li>
+   <li>Si se acaban los movimientos, los expedientes que falten se preguntan igual, pero sin puntos. Los movimientos que sobren caen en <b>lluvia de cotizaciones</b>: más puntos.</li>
+   <li>Teclado: <b>flechas</b> para moverte y <b>Espacio</b> para coger y cambiar; <b>1</b>, <b>2</b> y <b>3</b> contestan; <b>P</b> pausa.</li>
+  </ul></details></div>
+  <div class="ayudas"><b>Elige una ayuda para empezar</b><div class="ayudas-f">${AYUDAS.map(a=>`<button type="button" class="ayuda${a.k===ayuda?' si':''}" data-k="${a.k}" aria-pressed="${a.k===ayuda}"><span class="ai">${a.ico}</span><b>${a.n}</b><small>${a.d}</small></button>`).join('')}</div></div>
+  <div class="btns"><button class="btn p" id="vamos">▶ ¡Vamos allá!</button><button class="btn s" id="menu">${oficial?'Abandonar la partida oficial':'Volver al menú'}</button></div>
+ </div>`;
+ narra($('#escenaN'),'','neutro',l.drama);
+ app.querySelectorAll('.ayuda').forEach(b=>b.onclick=()=>{ayuda=b.dataset.k;ls.set('red_ayuda',ayuda);app.querySelectorAll('.ayuda').forEach(x=>{x.classList.toggle('si',x===b);x.setAttribute('aria-pressed',x===b)})});
+ $('#vamos').onclick=()=>empieza(n,oficial,null,ayuda);
+ $('#menu').onclick=async()=>{if(oficial&&!(await dialogo('¿Seguro? El intento '+oficial.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:'Sí, salir',no:'Seguir jugando'})))return;if(oficial)OFI_VIVA=false;portada()};
+}
+
+/* ===== Pantalla de juego (escenario de 360 × 640 escalado, como la nómina) ===== */
+const W=360,H=640,WA=710,HA=562,SUBE=124;   // WA × HA: el escenario en dos columnas (pantallas anchas; abajo, sitio para la funcionaria más grande)
+function parar(){cancelAnimationFrame(raf);raf=0;if(st.obs)st.obs.disconnect();removeEventListener('keydown',tecla);
+ document.removeEventListener('visibilitychange',oculta);removeEventListener('blur',oculta);removeEventListener('pagehide',oculta);st.esperas=[]}
+function pantalla(oficial,escenario){
+ parar();
+ app.style.zoom='';app.style.maxWidth='';app.style.minHeight='';
+ app.classList.add('jugando');escActual=escenario;if(ARTE.includes(escenario))app.style.setProperty('--esc',`url(${escenario})`);else app.style.removeProperty('--esc');
+ app.innerHTML=`<div class="juego">
+  <div class="hud" id="hud"><span class="pill mov" id="hm"></span><span class="pill" id="hc"></span><span class="pill" id="hp">0 pts</span><span class="ctl"><button type="button" class="pill" id="bpa" aria-label="Pausa">${ico('pausa')}</button><button type="button" class="pill" id="bso" aria-label="Quitar el sonido"></button></span></div>
+  <div class="marco" id="marco"><div class="lienzo" id="lienzo"><div class="esc" id="esc"></div></div></div>
+  <div class="sr" id="avisoSR" role="status" aria-live="polite"></div>
+  <div class="giro" aria-live="assertive"><span aria-hidden="true">↻</span>Gira el móvil: se juega en vertical</div>
+ </div>`;
+ st.obs=new ResizeObserver(ajusta);st.obs.observe($('#marco'));ajusta();
+ const suelta=(b,e)=>{if(e.detail)b.blur()};
+ $('#bpa').onclick=e=>{suelta(e.currentTarget,e);if(!reanuda())pausaManual()};
+ {const bs=$('#bso'),pinta=()=>{bs.innerHTML=ico(window.SILENCIO?'mudo':'altavoz');bs.setAttribute('aria-label',window.SILENCIO?'Poner el sonido':'Quitar el sonido')};
+  pinta();bs.onclick=e=>{suelta(bs,e);window.SILENCIO=!window.SILENCIO;ls.set('ipe_silencio',window.SILENCIO?'1':'0');pinta()}}
+ addEventListener('keydown',tecla);
+ document.addEventListener('visibilitychange',oculta);addEventListener('blur',oculta);addEventListener('pagehide',oculta);
+ if(!oficial)guardaAtras();
+ return $('#esc');
+}
+let escActual='';
+function ajusta(){
+ const m=$('#marco'),lz=$('#lienzo'),e=$('#esc');if(!m||!lz||!e)return;
+ const r=m.getBoundingClientRect();if(r.width<10||r.height<10)return;
+ const kv=Math.min(r.width/W,r.height/H),ka=Math.min(r.width/WA,r.height/HA),ancho=ka>kv*1.05,k=ancho?ka:kv;
+ e.classList.toggle('ancho',ancho);st.ancho=ancho;
+ {const h=escActual.replace('.webp','_h.webp'),f=(ancho||r.width>r.height*1.15)&&ARTE.includes(h)?h:escActual;   // en pantallas anchas, el escenario horizontal (en el vertical ampliado, lo de las esquinas salía gigante)
+  if(ARTE.includes(f)&&app.style.getPropertyValue('--esc')!==`url(${f})`)app.style.setProperty('--esc',`url(${f})`)}
+ lz.style.width=Math.floor((ancho?WA:W)*k)+'px';lz.style.height=Math.floor((ancho?HA:H)*k)+'px';
+ e.style.transform=ancho?`translateY(${-SUBE*k}px) scale(${k})`:`scale(${k})`;st.k=k;
+ // en dos columnas, el juego se corre a la derecha (con lo que sobre de ancho) para dejar libre el lado izquierdo del fondo (las ventanas)
+ const corre=ancho?Math.round(Math.max(0,r.width-WA*k)/2*.85):0;lz.style.left=corre+'px';
+ {const h=$('#hud');if(h){h.style.maxWidth=Math.max((ancho?WA:W)*k,340)+'px';h.style.transform=corre?`translateX(${corre}px)`:''}}
+}
+function decir(t){const s=$('#avisoSR');if(s)s.textContent=t}
+
+function empieza(n,oficial,tuto,ayuda){
+ const l=NIVELES[n-1],c=cicloArte(),keys=NIVEL_PRESTA[n],r=RED_TAB.rng((Math.random()*4294967296)>>>0);
+ const esc=pantalla(oficial,l.fondo),len=oficial?!!oficial.lento:!tuto&&lento();
+ st={l,n,c,keys,r,oficial:oficial||null,lento:len,tuto:tuto||null,obs:st.obs,k:st.k,ayuda:ayuda||null,
+  pts:0,ptsJuego:0,aciertos:0,preguntas:0,racha:0,maxR:0,fallos:[],choques:0,especiales:0,tj:0,te:0,t:performance.now(),esperas:[],
+  TP:T_PREG*(len?2:1),movs:tuto?99:movsDe(l)+(ayuda==='mov'?3:0),entregados:0,total:tuto?1:EXPEDIENTES,cola:baraja(keys.concat('moneda')),
+  tab:null,esp:null,q:null,pausa:false,fin:false,fase:'juego',pausaGratis:false,sel:null,cur:24,cambiando:false,toque:0,pista:null};
+ st.tab=RED_TAB.crea(keys.length,F,C,r);st.esp=new Array(F*C).fill('');
+ if(!tuto&&l.papeles)for(const i of l.papeles){st.tab[i]=PAPEL;st.esp[i]=''}
+ ponExpediente(tuto?4:FILA_NACE);if(!tuto&&l.dobles)ponExpediente(FILA_NACE);
+ const libre=()=>{const v=st.tab.map((x,i)=>i).filter(i=>st.tab[i]!==EXP&&st.tab[i]!==PAPEL&&!st.esp[i]&&Math.floor(i/C)>1);return v[Math.floor(Math.random()*v.length)]};
+ if(ayuda==='f'||ayuda==='x')st.esp[libre()]=ayuda==='f'?(Math.random()<.5?'f':'c'):'x';
+ st.regalo=!oficial&&!tuto&&+ls.get('red_racha','0')>=3;if(st.regalo)st.esp[libre()]=Math.random()<.5?'f':'c';   // regalo de la racha (solo al entrenar)
+ esc.innerHTML=`<div class="caso" id="caso"><div class="cara"><img id="caraI" alt=""><div class="aro" id="aro"><i></i></div></div><div class="tx"><div id="casoT"></div></div></div>
+  <div class="tab" id="tab" role="grid" aria-label="El tablero: placas de las prestaciones y monedas"><div class="guia" id="guia" aria-hidden="true"></div></div>
+  <div class="mostrador" id="vent" aria-hidden="true">${ARTE.includes('red_atiende.webp')?'<img class="atiende" id="atiendeI" src="red_atiende.webp" alt="">':ARTE.includes('red_ventanilla.webp')?'<img class="atiende" src="red_ventanilla.webp" alt="">':''}</div>
+  <div class="elige" id="elige" role="group" aria-label="Respuestas"></div><div class="efectos" id="fx" aria-hidden="true"></div>`;
+ {const p=quien(c,'vet');if(p.cara)$('#caraI').src=p.cara;else $('#caraI').style.visibility='hidden'}
+ pintaTablero();ponGestos();hud();reposo();
+ if(tuto){const b=document.createElement('button');b.type='button';b.className='saltar';b.textContent='Saltar la explicación';b.onclick=()=>{ls.set(TUTO,'1');portada()};$('#marco').appendChild(b);tutoPaso()}
+ raf=requestAnimationFrame(bucle);
+ if(!tuto){if(st.regalo)espera(()=>aviso('¡Regalo de racha!','Empiezas con una placa rayada',1600),500);
+  if(l.papeles)espera(()=>primeraVez('p'),st.regalo?2300:600);if(l.dobles)espera(()=>primeraVez('d'),600)}
+ if(MQ_GIRO.matches)pausaManual();
+}
+const EXP=RED_TAB.EXP;
+/* un expediente nuevo en la fila de arriba (o en la que se diga), en una columna al azar */
+function ponExpediente(fila){const es=expsDe(st.tab),cs=[...Array(C).keys()].filter(c=>st.tab[fila*C+c]!==PAPEL&&!es.some(k=>k%C===c)),c=cs.length?cs[Math.floor(Math.random()*cs.length)]:Math.floor(Math.random()*C),i=fila*C+c;st.tab[i]=EXP;st.esp[i]='';return RED_TAB.asegura(st.tab,st.esp,F,C,st.keys.length,st.r)}
+/* el expediente tal como se ve en el tablero (o el emoji, si aún no hay arte) */
+const EXPI=()=>ARTE.includes('red_pieza_exp.webp')?'<img class="expi" src="red_pieza_exp.webp" alt="expediente">':'📁';
+const tipoK=v=>v===MON?'moneda':v===EXP?'exp':v===PAPEL?'papel':st.keys[v];
+function pintaTablero(cambiadas){
+ const tb=$('#tab');if(!tb)return;tb.querySelectorAll('.pz').forEach(p=>p.remove());
+ st.tab.forEach((v,i)=>{const k=tipoK(v),e=st.esp[i],cl=[cambiadas&&cambiadas.has(i)?'cae':'',e?'esp-'+e:'',k==='exp'?'exp':'',k==='papel'?'papel':''].filter(Boolean).join(' ');
+  const et=k==='exp'?'Expediente: llévalo a la ventanilla':k==='moneda'?'Moneda':k==='papel'?'Papeleo atascado: rómpelo con un trío pegado':PRESTA[k].n;
+  tb.insertAdjacentHTML('beforeend',piezaHtml(k,cl,`data-i="${i}" role="gridcell" aria-label="${et}${e==='f'?', limpia su fila':e==='c'?', limpia su columna':e==='x'?', comodín':e==='s'?', placa sello':''}"`));
+  const d=tb.lastElementChild;d.style.left=(i%C)*CEL+2+'px';d.style.top=Math.floor(i/C)*CEL+2+'px'});
+ if(st.teclado){const q=pz(st.cur);if(q)q.classList.add('foco')}
+ guia();
+}
+/* la guía: flechas que bajan desde cada expediente hasta el borde de abajo (o hasta el papeleo que le tapa el paso) */
+function guia(){
+ const tb=$('#tab');if(!tb)return;tb.querySelectorAll('.guia').forEach(g=>g.remove());
+ for(const k of expsDe(st.tab)){
+  const f=Math.floor(k/C);if(f>=FILA_VENTANILLA)continue;let fin=F;for(let y=f+1;y<F;y++)if(st.tab[y*C+k%C]===PAPEL){fin=y;break}
+  if(fin<=f+1)continue;const g=document.createElement('div');g.className='guia';g.setAttribute('aria-hidden','true');
+  g.style.left=(k%C)*CEL+CEL/2-9+'px';g.style.top=(f+1)*CEL+'px';g.style.height=(fin-f-1)*CEL+'px';tb.prepend(g);
+ }
+}
+const pz=i=>document.querySelector(`#tab .pz[data-i="${i}"]`);
+function hud(){
+ const e=(id,t)=>{const x=document.getElementById(id);if(x&&x.innerHTML!==t)x.innerHTML=t};
+ e('hm',`<b>${st.movs>90?'∞':st.movs}</b> mov.`);e('hp',String(st.pts).replace('-','−')+' pts');e('hc',`${EXPI()} ${st.entregados}/${st.total}`);
+ const m=$('#hm');if(m)m.classList.toggle('pocos',st.movs<=5);
+}
+function reposo(txt){
+ const ca=$('#caso');if(!ca||st.q)return;ca.className='caso';
+ $('#casoT').innerHTML=txt||`<span class="eti">Lleva este expediente ${EXPI()} a la ventanilla</span>Junta tríos <b>debajo</b> o <b>pegados</b> a él: bájalo hasta la última fila y caerá en la ventanilla. Allí, su pregunta.`;
+ const ar=$('#aro');if(ar)ar.style.setProperty('--q',1);
+}
+
+/* ===== El reloj: solo cuenta el tiempo de juego (para el servidor) y el de la pregunta ===== */
+function bucle(t){
+ raf=requestAnimationFrame(bucle);
+ const dt=Math.min(.25,Math.max(0,(t-st.t)/1000));st.t=t;
+ if(st.pausa)return;
+ st.te+=dt;
+ if(st.esperas.length){const ya=st.esperas.filter(e=>e.at<=st.te);if(ya.length){st.esperas=st.esperas.filter(e=>e.at>st.te);ya.forEach(e=>e.fn())}}
+ if(st.fin)return;
+ if(st.q){const q=Math.max(0,1-(st.te-st.q.t0)/st.TP),ar=$('#aro');
+  if(ar){ar.style.setProperty('--q',q.toFixed(3));const col=q<.25?'naranja':q<.55?'amarillo':'verde';if(ar.dataset.c!==col){ar.dataset.c=col;ar.style.setProperty('--aro',`url(nomina_aro_${col}.webp)`)}}
+  if(q<=0&&!st.tuto)responde(null);return}
+ st.tj+=dt;
+ if(!st.tuto&&!st.pista&&st.fase==='juego'&&!st.cambiando&&!st.entregando&&st.movs>0&&st.tj-st.toque>=10)ponPista();
+}
+function espera(fn,ms){const e={at:st.te+ms/1000,fn};st.esperas.push(e);return e}
+
+/* ===== La pregunta del expediente ===== */
+const nombre=k=>k==='nada'?'No cobra nada':k==='moneda'?'Cotizar':PRESTA[k].n;
+/* el expediente devuelto: lo fallado vuelve en el siguiente entrenamiento del mismo nivel (con sello rojo y doble premio si se
+   subsana). Se guarda en este dispositivo; en la partida oficial no sale, para que todo el mundo tenga las mismas preguntas */
+const DEV='red_devueltos';
+function devueltos(){try{return JSON.parse(ls.get(DEV,'{}'))||{}}catch(e){return {}}}
+function devuelve(q){if(st.tuto||!q.id)return;const o=devueltos(),l=o[st.n]||[];if(!l.includes(q.id)){l.push(q.id);o[st.n]=l.slice(-20);ls.set(DEV,JSON.stringify(o))}}
+function subsana(q){const o=devueltos();o[st.n]=(o[st.n]||[]).filter(x=>x!==q.id);ls.set(DEV,JSON.stringify(o))}
+const deCaso=(x,k)=>{const op=[x[1]];for(const o of [k,'nada',...baraja(st.keys)])if(op.length<3&&!op.includes(o))op.push(o);return {k,id:x[0],txt:`${x[0]} <b>¿Qué cobra?</b>`,ops:baraja(op.map(nombre)),ok:nombre(x[1]),ex:x[2],nor:x[3]}};
+const deFija=(x,k)=>({k,id:x[0],txt:x[0],ops:baraja(x[1]),ok:x[1][0],ex:x[2],nor:x[3]});
+function preguntaDe(k){
+ const casos=k==='moneda'?[]:CASOS[st.n].filter(x=>x[1]===k||x[1]==='nada'&&x[6]===k),fijas=PREGUNTAS[k]||[];
+ const libres=a=>a.filter(x=>!st.usadas.has(x[0]));st.usadas=st.usadas||new Set();
+ if(!st.oficial&&!st.tuto){const ids=devueltos()[st.n]||[],c=libres(casos).find(x=>ids.includes(x[0])),f=libres(fijas).find(x=>ids.includes(x[0]));
+  if(c||f){const x=c||f;st.usadas.add(x[0]);return Object.assign(c?deCaso(c,k):deFija(f,k),{devuelto:true})}}
+ const usaCaso=casos.length&&(Math.random()<.5||!libres(fijas).length);
+ if(usaCaso){const c=libres(casos).length?libres(casos):casos,x=c[Math.floor(Math.random()*c.length)];st.usadas.add(x[0]);return deCaso(x,k)}
+ const f=libres(fijas).length?libres(fijas):fijas,x=f[Math.floor(Math.random()*f.length)];st.usadas.add(x[0]);
+ return deFija(x,k);
+}
+/* pendiente: el expediente no llegó (se acabaron los movimientos): se pregunta igual, sin premio */
+function pregunta(alAcabar,pendiente){
+ const k=st.cola[st.preguntas%st.cola.length],q=preguntaDe(k);
+ st.q=Object.assign(q,{t0:st.te,alAcabar,pendiente});st.preguntas++;
+ const ca=$('#caso');ca.className='caso entra pregunta';
+ $('#casoT').innerHTML=`<span class="eti">${q.devuelto?'<b class="dev">↩ Devuelto</b> ':''}${EXPI()} Expediente ${st.preguntas} de ${st.total}${pendiente?' (sin entregar)':''} · ${piezaHtml(k)} ${nombre(k)}</span>${q.txt}`;
+ const el=$('#elige');el.innerHTML=q.ops.map((o,i)=>`<button type="button" class="ch op" data-i="${i}" aria-keyshortcuts="${i+1}"><span class="num">${i+1}</span><span>${o}</span></button>`).join('');
+ el.querySelectorAll('.op').forEach(bt=>bt.onclick=()=>responde(q.ops[+bt.dataset.i]));
+ const tb=$('#tab');if(tb)tb.classList.add('quieto');{const v=$('#vent');if(v)v.classList.add('oculto')}
+ if(st.tuto)tutoPregunta();
+ hud();decir(`Expediente: ${q.txt.replace(/<[^>]*>/g,'')} ${q.ops.map((o,i)=>(i+1)+': '+o).join('. ')}`);sfx('toque');
+}
+function responde(o,sinResp){
+ const q=st.q;if(!q)return;st.q=null;
+ const ok=o===q.ok;
+ const el=$('#elige');el.querySelectorAll('.op').forEach(bt=>{const v=q.ops[+bt.dataset.i];bt.disabled=true;bt.classList.toggle('bien',v===q.ok);bt.classList.toggle('mal',v===o&&!ok)});
+ if(ok){st.aciertos++;st.racha++;st.maxR=Math.max(st.maxR,st.racha);if(!q.pendiente){const p=PUNTOS.pregunta*(st.racha>=3||q.devuelto?2:1);suma(p);flota('+'+p,{x:180,y:470})}
+  if(q.devuelto)subsana(q);
+  sfx('fanfarria');vibrar(15);palabra(q.devuelto?'¡Subsanado!':q.pendiente?'¡Resuelto!':st.racha>=3?'¡Imparable!':'¡Expediente resuelto!',true);selloResuelto()}
+ else{st.racha=0;st.fallos.push({q,dada:o,sinResp});devuelve(q);sfx('fallo');vibrar([30,40,30])}
+ mascotita(ok?'ok':'oh');atiende(ok?'ok':'mal');
+ {const m=$('#enMostr');if(m){setTimeout(()=>{m.style.opacity=0},700);setTimeout(()=>m.remove(),1150)}}   // la funcionaria lo recoge
+ setTimeout(()=>{el.innerHTML='';const v=$('#vent');if(v)v.classList.remove('oculto')},650);
+ const ca=$('#caso');ca.className='caso '+(ok?'bien':'mal');
+ const cab=ok?'¡Bien!':sinResp?'Sin responder (pausa) · Era: '+q.ok:o==null?'¡Tiempo! Era: '+q.ok:'No era · Era: '+q.ok;
+ $('#casoT').innerHTML=`<span class="eti">${cab}</span>${q.ex}<small>${q.nor}</small>`;decir(`${cab}. ${q.ex}`);
+ hud();
+ setTimeout(()=>{el.innerHTML='';const tb=$('#tab');if(tb)tb.classList.remove('quieto');{const v=$('#vent');if(v)v.classList.remove('oculto')}if(q.alAcabar)q.alAcabar(ok)},ok?1500:2400);
+}
+
+/* ===== El tablero ===== */
+function ponGestos(){
+ const tb=$('#tab');let d=null;
+ const celda=e=>{const r=tb.getBoundingClientRect(),s=r.width/(C*CEL),x=Math.floor((e.clientX-r.left)/s/CEL),y=Math.floor((e.clientY-r.top)/s/CEL);return x<0||y<0||x>=C||y>=F?-1:y*C+x};
+ tb.onpointerdown=e=>{if(st.cambiando||st.pausa||st.fin||st.q||st.fase!=='juego')return;quitaPista();const i=celda(e);if(i<0)return;e.preventDefault();try{tb.setPointerCapture(e.pointerId)}catch(x){}
+  if(st.sel!=null&&st.sel!==i&&RED_TAB.vecinas(C,st.sel,i)){const a=st.sel;quitaSel();intenta(a,i);return}
+  d={i,x:e.clientX,y:e.clientY,b:-1}};
+ tb.onpointermove=e=>{if(!d||st.cambiando)return;const s=(tb.getBoundingClientRect().width/(C*CEL))||1,dx=(e.clientX-d.x)/s,dy=(e.clientY-d.y)/s;let b=-1;
+  if(Math.max(Math.abs(dx),Math.abs(dy))>CEL*.35){const f=Math.floor(d.i/C),c=d.i%C;
+   if(Math.abs(dx)>Math.abs(dy)){if(dx>0&&c<C-1)b=d.i+1;if(dx<0&&c>0)b=d.i-1}else{if(dy>0&&f<F-1)b=d.i+C;if(dy<0&&f>0)b=d.i-C}}
+  if(b>=0){intenta(d.i,b);d=null}};
+ tb.onpointerup=()=>{if(!d)return;const x=d;d=null;if(st.sel===x.i)quitaSel();else{quitaSel();st.sel=x.i;const q=pz(x.i);if(q)q.classList.add('sel')}};
+ tb.onpointercancel=()=>{d=null};
+}
+function quitaSel(){if(st.sel!=null){const q=pz(st.sel);if(q)q.classList.remove('sel')}st.sel=null}
+function limpia(){document.querySelectorAll('#tab .pz').forEach(p=>{p.classList.remove('sube');p.style.transform=''})}
+function cruza(a,b){const A=pz(a),B=pz(b),dx=((b%C)-(a%C))*CEL,dy=(Math.floor(b/C)-Math.floor(a/C))*CEL;if(A)A.style.transform=`translate(${dx}px,${dy}px)`;if(B)B.style.transform=`translate(${-dx}px,${-dy}px)`}
+function intenta(a,b){
+ quitaPista();
+ if(st.tab[a]===PAPEL||st.tab[b]===PAPEL){const p=pz(st.tab[a]===PAPEL?a:b);if(p&&p.animate)p.animate([{transform:'rotate(-6deg)'},{transform:'rotate(6deg)'},{transform:'none'}],{duration:240});flota('Rómpelo con un trío pegado',{x:180,y:300});return}
+ if(st.cambiando||st.entregando||st.pausa||st.fin||st.q||st.fase!=='juego'||st.movs<=0)return;
+ if(!RED_TAB.valida(st.tab,st.esp,F,C,a,b)){choca(a,b);return}
+ st.movs--;hazMovimiento(a,b);
+}
+/* un cambio que no hace trío resta (como chocar en la Serpiente) y no gasta movimiento */
+function choca(a,b){
+ st.choques++;suma(PUNTOS.choque);flota(String(PUNTOS.choque).replace('-','−'),{x:180,y:300},true);sfx('golpe');vibrar(25);
+ cruza(a,b);setTimeout(()=>{const A=pz(a),B=pz(b);if(A)A.style.transform='';if(B)B.style.transform='';const t=$('#tab');if(t&&t.animate)t.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'none'}],{duration:180})},170);
+}
+const xyDe=i=>({x:12+(i%C)*CEL+CEL/2,y:134+Math.floor(i/C)*CEL+CEL/2});
+function hazMovimiento(a,b){
+ st.cambiando=true;quitaSel();
+ const sw=x=>x===a?b:x===b?a:x,antes=st.tab.slice(),espSw=st.esp.slice(),tSw=st.tab.slice();[espSw[a],espSw[b]]=[espSw[b],espSw[a]];[tSw[a],tSw[b]]=[tSw[b],tSw[a]];
+ const exps0=expsDe(st.tab).map(sw);
+ const res=RED_TAB.mueve(st.tab,st.esp,F,C,st.keys.length,st.r,a,b,-1);
+ /* los tríos que tocan un expediente lo empujan una fila hacia la ventanilla (si no hay papeleo ni otro expediente debajo) */
+ let baraja=!!res.recolocado;const p0=res.pasos[0],cols=new Set();
+ if(p0)for(const iep of exps0){
+  if(!p0.quita.some(i=>RED_TAB.vecinas(C,i,iep)))continue;
+  const k=expsDe(st.tab).filter(x=>x%C===iep%C&&!cols.has(x)).sort((x,y)=>y-x)[0];
+  if(k===undefined||Math.floor(k/C)>=F-1||st.tab[k+C]===PAPEL||st.tab[k+C]===EXP)continue;
+  const d=k+C;[st.tab[k],st.tab[d]]=[st.tab[d],st.tab[k]];[st.esp[k],st.esp[d]]=[st.esp[d],st.esp[k]];cols.add(d);
+ }
+ const empuja=cols.size>0;if(empuja&&RED_TAB.retira(st.tab,st.esp,F,C,st.keys.length,st.r,[]).recolocado)baraja=true;
+ let pj=0,papeles=0;res.pasos.forEach((ps,k)=>{pj+=PUNTOS.placa*ps.quita.length*(k+1)+PUNTOS.especial*ps.creadas.length;st.especiales+=ps.creadas.length;papeles+=ps.papeles||0});
+ pj+=PUNTOS.papel*papeles;
+ juego(pj);
+ cruza(a,b);
+ setTimeout(()=>{
+  if(p0){for(const i of p0.quita){const q=pz(sw(i));if(q)q.classList.add('pop')}
+   efectos(p0,tSw,espSw,!!p0.combo);
+   for(const g of p0.grupos){const m=g.celdas[Math.floor(g.celdas.length/2)];flota('+'+PUNTOS.placa*g.celdas.length,xyDe(m))}}
+  const cas=res.pasos.length;
+  if(p0&&p0.combo)palabra(COMBO[p0.combo]||'¡Combinación!',true);
+  else if(cas>=4)palabra('¡Imparable!');else if(cas===3)palabra('¡De red!');else if(cas===2)palabra('¡Genial!');else if(papeles)palabra('¡Papeleo fuera!');else if(p0&&p0.creadas.length)palabra('¡Placa especial!');
+  sfx('rompe',Math.min(cas*2,10));
+ },150);
+ setTimeout(()=>{
+  const cambiadas=new Set();st.tab.forEach((v,i)=>{if(v!==antes[i])cambiadas.add(i)});
+  pintaTablero(cambiadas);st.cambiando=false;hud();
+  if(empuja)for(const k of expsDe(st.tab)){const q=pz(k);if(q&&q.animate)q.animate([{transform:'translateY(-30px)'},{transform:'none'}],{duration:260,easing:'cubic-bezier(.3,1.6,.5,1)'})}
+  if(baraja)barajado();
+  if(p0)for(const q of p0.creadas)primeraVez(q.esp);
+  if(st.tuto&&st.tuto.paso===0)tutoTrio();
+  trasJugada();tutoSigue();
+ },420);
+}
+/* ¿ha llegado el expediente a la ventanilla? ¿se han acabado los movimientos o los expedientes? */
+function trasJugada(){
+ if(st.fin||st.entregando)return;
+ const k=expsDe(st.tab).find(i=>Math.floor(i/C)>=FILA_VENTANILLA);
+ if(k!==undefined){entrega(k);return}
+ if(st.entregados>=st.total||st.movs<=0)return acabaNivel();
+}
+function entrega(k){
+ st.cambiando=true;st.entregando=true;
+ /* cae del tablero al mostrador, delante de la funcionaria (como si ella lo recogiera): un arco, un botecito y se queda allí */
+ const q=pz(k);if(q&&q.animate){const x0=12+(k%C)*CEL+CEL/2,y0=134+Math.floor(k/C)*CEL+CEL/2,dx=180-x0,dy=(st.ancho?604:568)-y0;q.style.zIndex=20;q.classList.add('entraV');
+  q.animate([{transform:'none'},{transform:`translate(${dx*.45}px,${dy*.25}px) scale(1.1)`,offset:.35},{transform:`translate(${dx}px,${dy}px) scale(.8)`,offset:.8},{transform:`translate(${dx}px,${dy-10}px) scale(.82)`,offset:.9},{transform:`translate(${dx}px,${dy}px) scale(.8)`,opacity:.9}],{duration:640,easing:'ease-in',fill:'forwards'})}
+ {const v=$('#vent');if(v&&v.animate)v.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:320,delay:520})}
+ sfx('premio');
+ setTimeout(()=>{
+  {const e=$('#esc');if(e&&st.ancho&&ARTE.includes('red_pieza_exp.webp')){const m=document.createElement('img');m.src='red_pieza_exp.webp';m.alt='';m.className='enMostr';m.id='enMostr';
+   m.style.left='180px';m.style.top='604px';e.appendChild(m)}}   // en dos columnas se queda en el mostrador mientras se contesta (en el móvil, ahí van las respuestas)
+  st.entregados++;let baraja=RED_TAB.retira(st.tab,st.esp,F,C,st.keys.length,st.r,[k]).recolocado;
+  if(st.entregados+expsDe(st.tab).length<st.total&&!st.tuto&&ponExpediente(FILA_NACE))baraja=true;
+  if(baraja)espera(barajado,200);
+  pintaTablero();hud();st.cambiando=false;
+  pregunta(ok=>{
+   if(ok){st.cambiando=true;const vic=[];for(let i=(F-1)*C;i<F*C;i++)if(st.tab[i]!==EXP)vic.push(i);
+    efectos({quita:vic,grupos:[]},st.tab.slice(),st.esp.slice(),true);juego(PUNTOS.placa*vic.length);
+    const r2=RED_TAB.retira(st.tab,st.esp,F,C,st.keys.length,st.r,vic);if(r2.recolocado)espera(barajado,350);vic.forEach(i=>{const p=pz(i);if(p)p.classList.add('pop')});
+    setTimeout(()=>{pintaTablero(new Set(vic));st.cambiando=false;st.entregando=false;reposo();if(st.tuto)return tutoRespondida();trasJugada()},320)}
+   else{st.entregando=false;reposo();if(st.tuto)return tutoRespondida();trasJugada()}
+  });
+ },720);
+}
+/* fin del nivel: los expedientes que falten se preguntan igual (sin premio) y los movimientos que sobren caen en «lluvia de cotizaciones» */
+function acabaNivel(){
+ if(st.fase!=='juego')return;st.fase='cierre';
+ {const es=expsDe(st.tab);st.casi=!st.tuto&&st.entregados<st.total&&es.length?Math.min(...es.map(k=>F-1-Math.floor(k/C))):null}   // lo que le faltó al expediente más cercano
+ const pend=()=>{
+  if(st.preguntas<st.total){aviso('¡Sin movimientos!',`Quedan ${st.total-st.preguntas} expedientes por resolver`,1500);espera(()=>pregunta(()=>{reposo();pend()},true),1500);return}
+  lluvia();
+ };
+ pend();
+}
+function lluvia(){
+ if(st.movs<=0)return celebra();
+ aviso('¡Lluvia de cotizaciones!',`${st.movs} movimientos de premio · toca para acelerar`,1300);
+ st.rapido=false;{const m=$('#marco');if(m)m.addEventListener('pointerdown',()=>{st.rapido=true},{once:true})}
+ const tira=()=>{
+  if(st.movs<=0||st.fin)return espera(celebra,700);
+  st.movs--;hud();
+  const v=st.tab.map((x,i)=>i).filter(i=>st.tab[i]!==EXP&&st.tab[i]!==PAPEL&&!st.esp[i]),i=v[Math.floor(Math.random()*v.length)];
+  st.esp[i]=Math.random()<.5?'f':'c';pintaTablero();
+  const tSw=st.tab.slice(),eSw=st.esp.slice(),quita=new Set([i]);RED_TAB.activa(st.tab,st.esp,F,C,quita);
+  efectos({quita:[...quita],grupos:[]},tSw,eSw,true);juego(PUNTOS.especial+PUNTOS.placa*quita.size);
+  [...quita].forEach(j=>{const p=pz(j);if(p)p.classList.add('pop')});sfx('rompe',8);
+  setTimeout(()=>{RED_TAB.retira(st.tab,st.esp,F,C,st.keys.length,st.r,[...quita].filter(j=>st.tab[j]!==EXP));pintaTablero(new Set(quita));espera(tira,st.rapido?110:380)},st.rapido?90:260);
+ };
+ espera(tira,1300);
+}
+function celebra(){
+ if(st.fin)return;
+ const e=$('#esc');if(!e)return terminaNivel();
+ const est=estrellas(st.aciertos,st.total);
+ const d=document.createElement('div');d.className='celebra';
+ const fm=est>=1?'red_mascota.webp':'red_mascota_oh.webp';d.innerHTML=`<div class="masc">${ARTE.includes(fm)?`<img src="${fm}" alt="">`:'☂️'}</div><div class="grande">${est===3?'¡Red completa!':est===2?'¡Muy bien!':est===1?'¡Superado!':'¡A repasar!'}</div><small>Toca para seguir</small>`;
+ e.appendChild(d);confeti(['#004230','#ff5900','#fcd100','#2f8a5b','#3d7cc4'],est===3?90:40);sfx(est>=2?'fanfarria':'premio');
+ const sigue=()=>{d.remove();terminaNivel()};d.onclick=sigue;espera(sigue,2600);
+}
+/* ===== Efectos: trocitos de plastilina, rayos de las especiales, palabras y puntos ===== */
+function efectos(paso,tSw,eSw,fuerte){
+ const fx=$('#fx');if(!fx||MOV_REDUCIDO)return;
+ const lista=paso.quita.slice(0,40);
+ for(const i of lista){const k=tipoK(tSw[i]);if(k==='exp')continue;const {x,y}=xyDe(i),col=(PIEZA[k]||PIEZA.moneda).col;
+  for(let n=0;n<(fuerte?3:4);n++){const p=document.createElement('i');p.className='chispa';p.style.left=x+'px';p.style.top=y+'px';p.style.background=col;fx.appendChild(p);
+   const ang=Math.random()*6.283,dist=20+Math.random()*34;p.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(ang)*dist}px),calc(-50% + ${Math.sin(ang)*dist+12}px)) scale(.3)`,opacity:0}],{duration:520+Math.random()*200,easing:'cubic-bezier(.2,.7,.4,1)'}).onfinish=()=>p.remove()}}
+ /* los rayos de las placas especiales que saltan en este paso */
+ for(const i of paso.quita){const e=eSw[i];if(e!=='f'&&e!=='c'&&e!=='x')continue;const {x,y}=xyDe(i),r=document.createElement('i');
+  if(e==='x'){r.className='onda';r.style.left=x+'px';r.style.top=y+'px';fx.appendChild(r);r.animate([{transform:'translate(-50%,-50%) scale(.2)',opacity:1},{transform:'translate(-50%,-50%) scale(5)',opacity:0}],{duration:600}).onfinish=()=>r.remove();continue}
+  r.className='rayo '+(e==='f'?'h':'v');if(e==='f')r.style.top=y+'px';else r.style.left=x+'px';fx.appendChild(r);
+  r.animate([{opacity:0,transform:e==='f'?'translateY(-50%) scaleY(.2)':'translateX(-50%) scaleX(.2)'},{opacity:1,offset:.25},{opacity:0,transform:e==='f'?'translateY(-50%) scaleY(1.6)':'translateX(-50%) scaleX(1.6)'}],{duration:480}).onfinish=()=>r.remove()}
+ if(paso.quita.length>=10||fuerte){const t=$('#tab');if(t&&t.animate)t.animate([{transform:'translate(0,0)'},{transform:'translate(-3px,2px)'},{transform:'translate(3px,-2px)'},{transform:'none'}],{duration:220})}
+}
+function palabra(t,grande){
+ const e=$('#esc');if(!e||MOV_REDUCIDO&&!grande)return;const d=document.createElement('div');d.className='palabra'+(grande?' grande':'');d.textContent=t;e.appendChild(d);
+ if(d.animate)d.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(-8deg)',opacity:0},{transform:'translate(-50%,-50%) scale(1.15) rotate(-4deg)',opacity:1,offset:.3},{transform:'translate(-50%,-50%) scale(1) rotate(-4deg)',opacity:1,offset:.75},{transform:'translate(-50%,-70%) scale(1) rotate(-4deg)',opacity:0}],{duration:1100,easing:'ease-out'}).onfinish=()=>d.remove();else setTimeout(()=>d.remove(),1100);
+}
+/* la mascota asoma un momento sin tapar el tablero: en dos columnas, grande bajo las respuestas; en el móvil, bajo el tablero, a la
+   derecha de la ventanilla: pulgar arriba si aciertas, sorprendida si fallas */
+function selloResuelto(){
+ const e=$('#esc');if(!e||!ARTE.includes('red_exp_resuelto.webp')||MOV_REDUCIDO)return;
+ const m=document.createElement('img');m.src='red_exp_resuelto.webp';m.alt='';m.className='resuelto';e.appendChild(m);
+ if(m.animate)m.animate([{transform:'translate(-50%,0) scale(.3) rotate(-20deg)',opacity:0},{transform:'translate(-50%,-30px) scale(1.1) rotate(4deg)',opacity:1,offset:.3},{transform:'translate(-50%,-40px) scale(1) rotate(0)',opacity:1,offset:.75},{transform:'translate(-50%,-120px) scale(.5)',opacity:0}],{duration:1300}).onfinish=()=>m.remove();else setTimeout(()=>m.remove(),1300);
+}
+/* la persona de la ventanilla: atiende; al acertar sella el expediente; al fallar se queda pensando (si hay su imagen) */
+function atiende(pose){
+ const i=$('#atiendeI');if(!i)return;const f='red_atiende_'+pose+'.webp';if(!ARTE.includes(f))return;
+ i.src=f;setTimeout(()=>{const j=$('#atiendeI');if(j)j.src='red_atiende.webp'},2300);
+}
+function mascotita(pose){
+ const e=$('#esc'),f='red_mascota_'+pose+'.webp';if(!e||!ARTE.includes(f))return;
+ const m=document.createElement('img');m.src=f;m.alt='';m.className='mascotita';
+ e.appendChild(m);
+ {const d=$('#tutoD');if(st.ancho&&d){d.style.visibility='hidden';setTimeout(()=>{d.style.visibility=''},1500)}}   // en dos columnas, el cartel del tutorial deja su sitio a la mascota
+ if(m.animate)m.animate([{transform:'translateY(60px) scale(.6)',opacity:0},{transform:'translateY(-8px) scale(1.05)',opacity:1,offset:.25},{transform:'none',opacity:1,offset:.8},{transform:'translateY(40px)',opacity:0}],{duration:1500,easing:'ease-out'}).onfinish=()=>m.remove();else setTimeout(()=>m.remove(),1500);
+}
+/* palabras de las combinaciones de especiales */
+const COMBO={rr:'¡En cruz!',sr:'¡Gran sello!',ss:'¡Sellazo!',xf:'¡Ventanilla única!',xc:'¡Ventanilla única!',xs:'¡Ventanilla única!',xx:'¡Limpieza total!'};
+/* la primera vez de cada cosa (una vez por dispositivo): la mascota lo explica en una línea, sin parar el juego */
+const PRIMERA={f:'<b>¡Placa rayada!</b> Cámbiala con una vecina: limpia toda su fila o su columna. Si juntas dos especiales, se combinan.',
+ x:'<b>¡Comodín!</b> Cámbialo con cualquier placa y se van todas las de ese tipo. Con otra especial, ¡todas se vuelven especiales!',
+ s:'<b>¡Placa sello!</b> Nace de un trío en L o en T. Al saltar, limpia todo lo que tiene alrededor.',
+ p:'<b>¡Papeleo atascado!</b> No se mueve y tapa el paso al expediente: rómpelo con un trío pegado o con una placa especial.',
+ d:'<b>¡Dos ventanillas!</b> Ahora bajan dos expedientes a la vez: decide a cuál ayudar primero.'};
+function primeraVez(cual){
+ const k=cual==='c'?'f':cual,v=ls.get('red_visto','');if(st.tuto||!PRIMERA[k]||v.includes(k))return;ls.set('red_visto',v+k);
+ const e=$('#esc');if(!e)return;{const o=$('#primera');if(o)o.remove()}
+ const d=document.createElement('div');d.id='primera';d.className='primera';d.setAttribute('role','status');
+ d.innerHTML=`${ARTE.includes('red_mascota.webp')?'<img src="red_mascota.webp" alt="">':''}<span>${PRIMERA[k]}</span>`;e.appendChild(d);decir(d.textContent);sfx('toque');
+ setTimeout(()=>{d.style.opacity=0;setTimeout(()=>d.remove(),450)},4200);
+}
+/* sin jugadas: el tablero se baraja solo (gratis, como en los juegos de este género) y se avisa; el expediente no se mueve */
+function barajado(){
+ aviso('¡Sin jugadas!','Barajamos el tablero',1300);sfx('toque');
+ document.querySelectorAll('#tab .pz').forEach(p=>{if(p.animate&&!MOV_REDUCIDO&&!p.classList.contains('exp'))p.animate([{transform:'rotate(0) scale(1)'},{transform:'rotate(180deg) scale(.6)',offset:.5},{transform:'rotate(360deg) scale(1)'}],{duration:600,easing:'ease-in-out'})});
+}
+/* pista: si pasan 10 s de juego sin tocar el tablero (José), laten dos placas de una jugada, la que más baja el expediente */
+function ponPista(){const j=jugadaTuto(true);if(!j)return;st.pista=[j.a,j.b];st.pista.forEach(i=>{const p=pz(i);if(p)p.classList.add('pista')})}
+function quitaPista(){if(st.pista){st.pista.forEach(i=>{const p=pz(i);if(p)p.classList.remove('pista')});st.pista=null}st.toque=st.tj}
+function suma(p){st.pts+=p;hud()}
+function juego(p){const q=Math.min(p,PTS_JUEGO_MAX-st.ptsJuego);if(q>0){st.ptsJuego+=q;st.pts+=q;hud()}}
+function flota(t,pos,mal){
+ const e=$('#esc');if(!e)return;const d=document.createElement('div');d.className='flota'+(mal?' mal':'');d.textContent=t;d.style.left=(pos.x-30)+'px';d.style.top=(pos.y-30)+'px';e.appendChild(d);
+ if(d.animate)d.animate([{transform:'translateY(0) scale(.7)'},{transform:'translateY(-12px) scale(1.1)',opacity:1,offset:.25},{transform:'translateY(-40px) scale(1)',opacity:0}],{duration:850,easing:'ease-out'}).onfinish=()=>d.remove();else setTimeout(()=>d.remove(),850);
+}
+function aviso(t,sub,ms){
+ const e=$('#esc');if(!e)return;let a=$('#avisoC');if(a)a.remove();
+ a=document.createElement('div');a.id='avisoC';a.className='aviso-c';a.innerHTML=t+(sub?`<small>${sub}</small>`:'');e.appendChild(a);
+ setTimeout(()=>a.remove(),ms||1200);
+}
+
+/* ===== Final de cada nivel ===== */
+function terminaNivel(){
+ if(st.fin)return;st.fin=true;st.q=null;st.pts=Math.max(0,st.pts);
+ final(estrellas(st.aciertos,st.total));
+}
+function final(est){
+ parar();app.classList.remove('jugando','pausado');
+ const l=st.l,antes=rec(st.n);guarda(st.n,st.pts);
+ if(est===3)confeti(['#004230','#ff5900','#fcd100','#2f8a5b'],70);
+ const sost=st.cot+st.impN;
+ app.innerHTML=`<div class="final">
+  <div class="marca" id="finT" tabindex="-1">Nivel ${st.n} · ${l.titulo}</div>
+  <div class="estrellas" id="estrF" role="img" aria-label="${est} de 3 estrellas">${'<span>☆</span>'.repeat(3)}</div>
+  <div class="gran">${st.aciertos}<small style="font-size:26px;color:var(--gris)">/${st.total}</small></div><div>expedientes resueltos · ${st.entregados} entregados · <b id="ptsF">0</b> puntos${st.especiales?' · '+st.especiales+' placas especiales':''}${st.choques?' · '+st.choques+(st.choques===1?' choque':' choques'):''}</div>
+  ${est<3?`<div class="falta">${faltan(st.aciertos)}${st.maxR>1?` · Mejor racha: ${st.maxR}`:''}</div>`:''}
+  ${st.casi!=null?`<div class="casi">Entregaste ${st.entregados} de ${st.total}: el expediente más cercano se quedó a <b>${st.casi} ${st.casi===1?'fila':'filas'}</b> de la ventanilla.</div>`:''}
+  ${!st.oficial&&est<3?`<div class="btns"><button class="btn p" id="otra2">↻ Reintentar</button></div>`:''}
+  ${!st.oficial?rachaHtml(est):''}
+  ${st.pts>antes?'<p style="color:var(--ok);font-weight:700">¡Nuevo récord!</p>':''}
+  <div class="balance">${ico('red')} Cada prestación de hoy la han pagado las cotizaciones de quienes trabajan hoy (y las no contributivas, los impuestos). <b>Sin cotizar, no hay red.</b></div>
+  ${hayElenco()?`<div class="escena-n" id="escenaF"></div>`:''}
+  ${st.fallos.length?`<div class="fallos"><h2 class="serif" style="color:var(--verde);font-size:19px;margin:8px 0">Repasa estos expedientes</h2>${st.fallos.map(f=>`<div class="fallo">${piezaHtml(f.q.k)}<div>${f.q.txt}<b>${f.q.ok}</b><small>${f.sinResp?'Sin responder (pausa). ':f.dada?'Dijiste: '+f.dada+'. ':'Se acabó el tiempo. '}${f.q.ex} (${f.q.nor})</small></div></div>`).join('')}</div>`:''}
+  ${st.oficial?bloqueOficial(est):''}
+  <div class="btns" ${st.oficial?'style="display:none"':''}><button class="btn p" id="otra">Jugar otra vez</button>${st.n<3?`<button class="btn s" id="sigui">Siguiente nivel</button>`:''}<button class="btn s" id="menu">Volver al menú</button></div>
+ </div>`;
+ narra($('#escenaF'),cierreNivel(est,st.n),est>=2?'bien':est===1?'piensa':'mal');
+ /* las estrellas caen una a una y los puntos suben contando */
+ {const sp=[...document.querySelectorAll('#estrF span')];for(let i=0;i<est;i++)setTimeout(()=>{if(!sp[i])return;sp[i].textContent='★';sp[i].classList.add('sale');sfx('premio',i*3)},MOV_REDUCIDO?0:350+i*420);
+  const pf=$('#ptsF'),t0=performance.now(),dur=MOV_REDUCIDO?0:900,fin=st.pts;(function cuenta(t){if(!pf)return;const q=dur?Math.min(1,(t-t0)/dur):1;pf.textContent=Math.round(fin*q);if(q<1)requestAnimationFrame(cuenta)})(t0)}
+ if($('#otra2'))$('#otra2').onclick=()=>presentaNivel(st.n);
+ {const t=$('#finT');if(t)t.focus({preventScroll:true})}
+ if(st.oficial)return finOficial();
+ $('#otra').onclick=()=>presentaNivel(st.n);
+ $('#menu').onclick=portada;
+ if($('#sigui'))$('#sigui').onclick=()=>presentaNivel(st.n+1);
+}
+/* racha de niveles (solo al entrenar): superar niveles seguidos con ★★ llena una cinta de 3; llena, el siguiente nivel empieza con
+   una placa rayada de regalo; con menos de ★★, vuelve a cero */
+function rachaHtml(est){
+ const antes=+ls.get('red_racha','0'),r=est>=2?Math.min(3,antes+1):0;ls.set('red_racha',String(r));
+ const cinta=[0,1,2].map(i=>`<i class="${i<r?'si':''}"></i>`).join('');
+ const t=r===3?'<b>¡Racha completa!</b> El próximo nivel empieza con una placa rayada de regalo.':r>0?`Racha ${r} de 3: supera niveles seguidos con ★★ y gana una placa rayada.`:antes>0?'Se rompió la racha. Con ★★ vuelve a empezar.':'Supera niveles seguidos con ★★ y gana una placa rayada.';
+ return `<div class="rachaN"><span class="cinta" aria-hidden="true">${cinta}</span><span>${t}</span></div>`;
+}
+function faltan(a){const m=a>=5?6:a>=4?5:4,f=m-a;return `Te ${f===1?'faltó 1 expediente':'faltaron '+f+' expedientes'} para ${'★'.repeat(estrellas(m))}`}
+function cierreNivel(est,n){
+ const clave={1:'La clave: una baja es incapacidad temporal; un bebé, nacimiento; perder el empleo, desempleo; y la edad con años cotizados, jubilación. Pero ojo: hace falta haber cotizado lo suficiente.',
+  2:'La clave: si lo decides tú (dimitir, pactar, pedir una excedencia), normalmente no hay paro; si lo decide la empresa o hay una causa, sí. Y una baja por enfermedad común exige 180 días cotizados.',
+  3:'La clave: si volverá, incapacidad temporal; si no podrá volver, permanente. Si ha cotizado, contributiva; si no, la pagan los impuestos.'}[n];
+ return {3:'¡Impecable! Nadie se ha quedado sin red.',2:'Muy bien: casi todos los casos protegidos. Repasa los que se te han escapado.',
+  1:'Vas cogiendo el criterio, pero varios casos hay que mirarlos otra vez. '+clave,0:'Hoy se nos han escapado muchos. A mí también me costó: vuelve a intentarlo. '+clave}[est];
+}
+function registraNivel(est){
+ const o=st.oficial;if(!o||o.niveles[st.n-1])return;
+ o.est[st.n-1]=est;o.pts+=st.pts;o.aciertos=(o.aciertos||0)+st.aciertos;
+ o.niveles[st.n-1]={p:st.pts,s:Math.round(st.tj),a:st.aciertos};
+ o.fallos=o.fallos.concat(st.fallos.map(f=>`N${st.n} «${(f.q.txt||'').replace(/<[^>]*>/g,'').slice(0,40)}»`));
+}
+function enviaOficial(o){
+ const antes=mejorDe(o.codigo);
+ return envia({codigo:o.codigo,intento:o.intento,ref:o.ref,fallos:o.fallos,est:o.est,niveles:o.niveles,puntos:o.pts,aciertos:o.aciertos,extra:extraDe(mediaEst(o.est))}).then(ok=>{
+  const mejor=ok==='rechazado'?antes:Math.max(antes,o.pts);
+  if(ok!=='rechazado')ponMejor(o.codigo,mejor);
+  return {ok,mejor};
+ });
+}
+function bloqueOficial(est){
+ const o=st.oficial;registraNivel(est);
+ if(st.n<3)return `<div class="aviso-of">Partida oficial · intento ${o.intento} de ${INTENTOS}</div><div class="btns"><button class="btn p" id="ofsig">Seguir al nivel ${st.n+1}</button></div>`;
+ const m=mediaEst(o.est);
+ return `<div class="aviso-of"><b>Partida oficial terminada · ${o.aciertos} aciertos · ${o.pts} puntos</b><br>Estrellas: ${o.est.map((e,i)=>'N'+(i+1)+' '+'★'.repeat(e)+'☆'.repeat(3-e)).join(' · ')}<br>Subida de nota (media de tus estrellas): <b>+${extraDe(m)}</b> en el criterio de las prestaciones (cuenta tu mejor intento)<div id="envio">Enviando resultado…</div></div><div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div><div class="btns"><button class="btn p" id="ofmenu">Volver al menú</button></div>`;
+}
+function finOficial(){
+ const o=st.oficial;
+ if(st.n<3){$('#ofsig').onclick=()=>presentaNivel(st.n+1,o);return}
+ $('#ofmenu').onclick=portada;
+ (o.envio||(o.envio=enviaOficial(o))).then(({ok,mejor})=>{
+  const e=$('#envio');if(e)e.textContent=textoEnvio(ok);
+  if(mejor)puesto(o.codigo,mejor,recien()).then(r=>{const d=$('#puesto');if(d)d.innerHTML=textoPuesto(r,mejor)});
+  else{const d=$('#puesto');if(d)d.textContent=''}
+ });
+}
+function confeti(cols,n){if(MOV_REDUCIDO)return;for(let k=0;k<n;k++){const c=document.createElement('i');c.className='confeti';c.style.left=Math.random()*100+'vw';c.style.background=cols[k%cols.length];c.style.animationDuration=(1.4+Math.random()*1.5)+'s';c.style.animationDelay=Math.random()*.5+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),3800)}}
+
+/* ===== Tutorial jugable (como en la Serpiente: la primera vez, encima de la oficial; luego, debajo). Menos de 30 s:
+   1) hacer un trío; 2) empujar el expediente hasta la ventanilla y contestar su pregunta ===== */
+function tutorial(){empieza(1,null,{paso:0})}
+function tutoDice(html){let d=$('#tutoD');if(!d){d=document.createElement('div');d.id='tutoD';d.className='tuto-dice';$('#esc').appendChild(d)}d.innerHTML=html;decir(d.textContent)}
+function tutoMano(a,b){
+ quitaMano();if(a==null)return;const e=$('#esc');if(!e)return;
+ const m=document.createElement('div');m.className='mano';m.id='mano';m.innerHTML=ico('mano').replace('class="ico"','class="ico" style="width:56px;height:56px"');e.appendChild(m);
+ const xy=i=>[12+(i%C)*CEL+14,134+Math.floor(i/C)*CEL+20],[x0,y0]=xy(a),[x1,y1]=xy(b);
+ if(MOV_REDUCIDO||!m.animate){m.style.transform=`translate(${x1}px,${y1}px)`;return}
+ m.animate([{transform:`translate(${x0}px,${y0}px)`,opacity:0},{transform:`translate(${x0}px,${y0}px)`,opacity:1,offset:.15},{transform:`translate(${x1}px,${y1}px)`,opacity:1,offset:.75},{opacity:0}],{duration:1500,iterations:Infinity});
+}
+function quitaMano(){const m=$('#mano');if(m)m.remove()}
+/* una jugada cualquiera o, si se pide, la que más baja el expediente (se prueba cada una en una copia, con el empujón); si
+   ninguna lo baja, la más cercana a él (sus cascadas suelen abrirle camino). Así el tutorial no se atasca en la penúltima fila */
+function jugadaTuto(exp){
+ const js=RED_TAB.jugadasEsp(st.tab,st.esp,F,C);if(!exp)return js[0];
+ const es=expsDe(st.tab),fila=t=>expsDe(t).reduce((s,i)=>s+Math.floor(i/C),0),dist=i=>Math.min(...es.map(e=>Math.abs(i%C-e%C)+Math.abs(Math.floor(i/C)-Math.floor(e/C))));
+ let mejor=js[0],mf=-1,md=99;
+ for(const j of js){const t=st.tab.slice(),e=st.esp.slice(),sw=x=>x===j.a?j.b:x===j.b?j.a:x,ep=es.map(sw);
+  const res=RED_TAB.mueve(t,e,F,C,st.keys.length,RED_TAB.rng(7),j.a,j.b,-1),p0=res.pasos[0];
+  let f=fila(t);if(p0)for(const x of ep)if(Math.floor(x/C)<F-1&&p0.quita.some(i=>RED_TAB.vecinas(C,i,x)))f++;
+  const d=Math.min(dist(j.a),dist(j.b));if(f>mf||(f===mf&&d<md)){mf=f;md=d;mejor=j}}
+ return mejor;
+}
+function tutoPaso(){
+ const t=st.tuto;
+ if(t.paso===0){reposo('<span class="eti">Así se juega</span>Haz <b>tres en raya</b>: arrastra una placa hasta su vecina.');const j=jugadaTuto();tutoMano(j.a,j.b);
+  tutoDice('Junta tríos: cada placa da puntos. ¡Ojo! Un cambio que no hace trío <b>resta</b>, como chocar.');return}
+ if(t.paso===1){const j=jugadaTuto(true);tutoMano(j.a,j.b);
+  reposo(`<span class="eti">El expediente ${EXPI()}</span>Bájalo hasta la <b>última fila</b> y caerá en la ventanilla. Junta tríos debajo o pegados a él.`);tutoDice(`Cada trío pegado al ${EXPI()} lo <b>empuja</b> una fila hacia abajo. En la última fila, cae a la ventanilla.`);return}
+}
+function tutoTrio(){const t=st.tuto;if(t.paso!==0)return;t.paso=1;quitaMano();espera(tutoPaso,500)}
+const tutoPregunta=()=>{quitaMano();tutoDice(`¡Ha llegado! Contesta ${st.ancho?'aquí arriba':'abajo'}. Así se resuelve cada expediente.`)};
+function tutoRespondida(){
+ /* José (25-11-2026): la tarjeta final no sale sola; quien juega pulsa «Continuar» cuando ha leído */
+ st.tuto.paso=2;ls.set(TUTO,'1');tutoDice(`¡Así! En cada nivel, <b>${EXPEDIENTES} expedientes</b> y unos ${MOVIMIENTOS} movimientos.<button type="button" class="seguir" id="tC">Continuar ▶</button>`);
+ {const b=$('#tC');if(b){b.onclick=tutoFin;setTimeout(()=>{const x=$('#tC');if(x)x.focus({preventScroll:true})},2000)}}
+}
+function tutoFin(){
+ {const d=$('#tutoD');if(d)d.remove()}
+ {st.fin=true;const m=$('#marco');if(!m)return;const d=document.createElement('div');d.className='tarjeta';d.innerHTML=`<div class="ficha"><div class="eti">Ya sabes jugar</div><div id="narraT"></div><div class="btns"><button class="btn p" id="tA">▶ Entrenar el nivel 1</button><button class="btn s" id="tM">Volver al menú</button></div></div>`;m.appendChild(d);
+  narra($('#narraT'),'¡Listo! Junta tríos, baja los expedientes a la ventanilla y resuélvelos. Las respuestas acertadas son las que dan estrellas.','bien','',true);
+  $('#tA').onclick=()=>presentaNivel(1);$('#tM').onclick=portada;$('#tA').focus({preventScroll:true})}
+}
+/* durante el tutorial, cada jugada nueva vuelve a señalar el expediente */
+const tutoSigue=()=>{if(st.tuto&&st.tuto.paso===1&&!st.q)tutoPaso()};
+
+/* ===== Teclado, pausa, giro y «atrás» (como en los demás juegos) ===== */
+function tecla(e){
+ if(e.key==='p'||e.key==='P'||e.key==='Escape'){e.preventDefault();if(!reanuda())pausaManual();return}
+ if(document.getElementById('velo')){if(e.key===' '){e.preventDefault();reanuda()}return}
+ if(e.target&&e.target.closest&&e.target.closest('button')&&(e.key===' '||e.key==='Enter'))return;
+ if(st.pausa||e.repeat)return;
+ /* con una pregunta: 1, 2, 3 */
+ if(st.q){if(/^[1-3]$/.test(e.key)){const o=st.q.ops[+e.key-1];if(o!=null){e.preventDefault();responde(o)}}return}
+ /* flechas: el marco del tablero; Espacio o Intro: coger la placa y, con otra flecha y Espacio, cambiarla con su vecina */
+ const mv={ArrowLeft:-1,ArrowRight:1,ArrowUp:-C,ArrowDown:C}[e.key];
+ if(mv!=null){e.preventDefault();st.teclado=true;const c=st.cur,n=c+mv;if(n<0||n>=F*C||(mv===1&&n%C===0)||(mv===-1&&c%C===0))return;
+  const q=pz(st.cur);if(q)q.classList.remove('foco');st.cur=n;const r=pz(n);if(r){r.classList.add('foco');decir(`Fila ${Math.floor(n/C)+1}, columna ${n%C+1}: ${r.getAttribute('aria-label')||''}`)}return}
+ if(e.key===' '||e.key==='Enter'){e.preventDefault();st.teclado=true;if(st.cambiando)return;
+  if(st.sel==null){st.sel=st.cur;const q=pz(st.cur);if(q)q.classList.add('sel');return}
+  if(st.sel===st.cur){quitaSel();return}
+  if(RED_TAB.vecinas(C,st.sel,st.cur)){const a=st.sel;quitaSel();intenta(a,st.cur)}else{quitaSel();st.sel=st.cur;const q=pz(st.cur);if(q)q.classList.add('sel')}}
+}
+const jugando=()=>app.classList.contains('jugando')&&!!$('#marco');
+function oculta(e){if(!(document.hidden||e&&(e.type==='blur'||e.type==='pagehide'))||!jugando())return;if(!st.fin)pausa(true)}
+function pausaManual(){if(!jugando()||document.getElementById('velo')||st.fin)return;pausa(true)}
+function reanuda(){const v=document.getElementById('velo');if(!v)return false;v.remove();const f=st.alSeguir;st.alSeguir=null;if(f)f();return true}
+/* pausa sin atajos (decisión 6 de José): con un caso a la vista, la 1.ª pausa del nivel lo deja igual; desde la 2.ª, al seguir cuenta
+   como «sin responder» (ni acierto ni −50, corta la racha y va al repaso) */
+function pausa(si){
+ if(si){if(st.pausa)return;st.pausa=true;limpia();quitaSel();st.tecla=null;
+  st.conCaso=!!st.q&&!st.tuto;st.saltaAlSeguir=st.conCaso&&st.pausaGratis;if(st.conCaso)st.pausaGratis=true;
+  app.classList.add('pausado');menuPausa(()=>pausa(false))}
+ else{st.pausa=false;app.classList.remove('pausado');const v=document.getElementById('velo');if(v)v.remove();st.alSeguir=null;st.t=performance.now();
+  if(st.saltaAlSeguir){st.saltaAlSeguir=false;if(st.q)responde(null,true)}}
+}
+function menuPausa(alSeguir){
+ const m=$('#marco');if(!m)return;const of=st.oficial;
+ const d=document.createElement('div');d.id='velo';d.className='tarjeta tapa';
+ d.innerHTML=`<div class="ficha" role="dialog" aria-modal="true" aria-labelledby="veloT" style="text-align:center"><div class="eti" id="veloT">Pausa</div><div class="caso2">El reloj está parado y el tablero, tapado.${st.conCaso?(st.saltaAlSeguir?' Al seguir, esta pregunta contará como sin responder: solo la primera pausa de cada nivel es gratis.':' Es tu pausa gratis: al seguir, la misma pregunta.'):''}</div>
+  <div class="btns" style="margin-top:6px"><button type="button" class="btn p" data-pausa="sigue">▶ Seguir</button><button type="button" class="btn s" data-pausa="sal">Salir al menú</button></div>
+  ${of?`<p class="libro" style="margin:10px 0 0">Si sales, el intento ${of.intento} de ${INTENTOS} cuenta como jugado y no contará para nota.</p>`:''}</div>`;
+ m.appendChild(d);st.alSeguir=alSeguir;
+ const b=d.querySelector('[data-pausa="sigue"]');b.onclick=reanuda;d.querySelector('[data-pausa="sal"]').onclick=salirPartida;b.focus({preventScroll:true});
+ d.addEventListener('keydown',e=>{if(e.key!=='Tab')return;const bs=[...d.querySelectorAll('button')],i=bs.indexOf(document.activeElement);e.preventDefault();bs[(i+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()});
+}
+async function salirPartida(){
+ const of=st.oficial;
+ if(of&&!(await dialogo('¿Seguro? El intento '+of.intento+' de '+INTENTOS+' ya está gastado y esta partida no contará para nota.',{si:'Sí, salir',no:'Seguir jugando'})))return;
+ if(of)OFI_VIVA=false;
+ st.fin=true;app.classList.remove('pausado');portada();
+}
+const MQ_GIRO=matchMedia('(orientation:landscape) and (max-height:500px) and (pointer:coarse)');
+{const f=()=>{if(MQ_GIRO.matches)pausaManual()};MQ_GIRO.addEventListener?MQ_GIRO.addEventListener('change',f):MQ_GIRO.addListener(f)}
+const PAUSA_JUEGO=()=>oculta({type:'blur'});
+function guardaAtras(){try{if(!history.state||!history.state.red)history.pushState({red:1},'')}catch(e){}}
+addEventListener('popstate',()=>{if(typeof OFI_VIVA!=='undefined'&&OFI_VIVA)return;if(jugando()){guardaAtras();oculta({type:'blur'})}});
+/* el reparto (elenco.js) se carga al final de la página: la portada se pinta cuando ya está todo */
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portada,{once:true});else portada();
+</script>
+<style>
+/* 24-11-2026 (José, jugando): arriba a la derecha y sin flotar, para no tapar el contenido al bajar */
+#pcomp{position:absolute;right:14px;top:14px;z-index:20;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.92);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;display:none}
+</style>
+<button id="pcomp" type="button">⛶ Pantalla completa</button>
+<script>
+/* Tabletas y ordenadores: igual que en los otros juegos. Mientras se juega (.juego) no se escala: el escenario ya llena la pantalla. */
+(function(){
+ const app=document.getElementById('app'),btn=document.getElementById('pcomp');
+ let midiendo=false;
+ /* 25-11-2026 (José: «dentro de la franja oscura de arriba»; «todos los juegos deben quedar igual»): el botón va dentro de la
+    cabecera de la portada, a la derecha y a la altura de la línea «IPE I · Unidad…» (.hm), en los ocho juegos */
+ function colocaBtn(){
+  const hm=app.querySelector('.portada .hm, .hm'),cab=hm&&(hm.closest('.heroe')||hm.parentElement);
+  if(!hm||!cab||btn.style.display==='none'){btn.style.top='';btn.style.right='';return}
+  const r=hm.getBoundingClientRect(),c=cab.getBoundingClientRect(),banda=r.top-c.top<4&&r.height<64;   // Señales: la línea es una franja propia
+  btn.style.minHeight=banda?Math.max(30,Math.round(r.height-10))+'px':'';btn.style.padding=banda?'4px 14px':'';
+  const h=btn.offsetHeight||44,top=(banda?r.top+(r.height-h)/2:Math.max(c.top+8,r.top+(r.height-h)/2))+scrollY;
+  btn.style.top=Math.round(top)+'px';btn.style.right=Math.max(8,Math.round(innerWidth-c.right+14))+'px';
+ }
+ function ajusta(){
+  if(midiendo)return;midiendo=true;
+  const fija=app.querySelector('.juego');
+  btn.style.visibility=app.querySelector('.portada')?'':'hidden';
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;requestAnimationFrame(colocaBtn);return}
+  app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
+  const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
+  const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
+  let z=H/alto();
+  if(z>=zw){z=zw}
+  else if(z<1){z=zMin;app.style.maxWidth=Math.floor(innerWidth/z)+'px'}
+  else{
+   for(let k=0;k<3;k++){app.style.maxWidth=Math.floor(innerWidth/z)+'px';z=Math.min(2.4,H/alto())}
+   z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
+  }
+  app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
+  midiendo=false;requestAnimationFrame(colocaBtn);
+ }
+ new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});
+ addEventListener('resize',ajusta);ajusta();
+ const fs=document.documentElement;
+ function boton(){
+  const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700&&matchMedia('(pointer:fine),(min-height:600px)').matches;
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';colocaBtn();
+ }
+ const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
+ btn.onclick=()=>{salio=false;pide()};
+ let salio=false;
+ function auto(e){
+  if(e&&e.target&&e.target.closest&&e.target.closest('#pcomp'))return;
+  if(salio||innerWidth<700||!(document.fullscreenEnabled||document.webkitFullscreenEnabled))return;
+  if(document.fullscreenElement||document.webkitFullscreenElement)return;
+  pide();
+ }
+ document.addEventListener('click',auto,true);document.addEventListener('touchend',auto,true);
+ const sale=()=>{if(!(document.fullscreenElement||document.webkitFullscreenElement))salio=true};
+ document.addEventListener('fullscreenchange',sale);document.addEventListener('webkitfullscreenchange',sale);
+ document.addEventListener('fullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ document.addEventListener('webkitfullscreenchange',()=>{boton();setTimeout(ajusta,150)});
+ addEventListener('resize',boton);boton();
+})();
+</script>
+<script>
+/* Generado por herramientas/juegos_paginas.py: no tocar a mano. */
+const PAGINAS={"UD1": {"HIG": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "IFC": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "ITE": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}, "STI": {"1.2": 6, "1.3": 9, "1.3.1": 9, "1.3.2": 10, "1.3.3": 12}}, "UD2": {"HIG": {"2.2.3": 9}, "IFC": {"2.2.3": 9}, "ITE": {"2.2.3": 9}, "STI": {"2.2.3": 9}}, "UD3": {"HIG": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "IFC": {"3.6": 17, "3.6.1": 18, "PLS": 20}, "ITE": {"3.6": 17, "3.6.1": 17, "PLS": 19}, "STI": {"3.6": 17, "3.6.1": 18, "PLS": 20}}};
+const ELENCO_GESTOS=["elenco_prota_HIG_bien.jpg"];
+/* ===== Universo plastilina: el reparto común de los juegos (arte, 17-11-2026) =====
+   Los mismos personajes de «Mi primer día» en todos los juegos: por ciclo, una persona protagonista recién titulada y su
+   compañero o compañera de ciclo (ver la ficha del libro, más abajo). Sus imágenes (plastilina, José) van junto a cada juego: elenco_prota_XXX.jpg,
+   elenco_vet_XXX.jpg y elenco_puesto_XXX.jpg (su puesto de trabajo). comun_montar.py mete este archivo y copia las imágenes.
+
+   cicloJugador()                      ciclo del código de lista (o el elegido para entrenar, o uno fijo por dispositivo)
+   personaje(ciclo, 'prota'|'vet')     {nombre, ella, cara, puesto, sector, empresa, visita}
+   fondoPuesto(ciclo)                  url de la escena de su puesto de trabajo
+   presenta(contenedor, {quien, texto, animo, ciclo})   cara + nombre + bocadillo; animo: 'neutro' | 'bien' | 'mal' | 'piensa'
+   reacciona(contenedor, animo, texto)                    cambia gesto y texto del presentador que ya está pintado */
+
+/* FICHA DEL LIBRO (libro/ipe1/ud01_casos.py, PERSONAJES; José, 17-11-2026: «la Alba que elegimos definitivamente en los
+   libros»). Por ciclo, dos personas que ACABAN DE TERMINAR el mismo ciclo y empiezan su primer empleo, cada una en una
+   empresa distinta: la protagonista (19-20 años, primer empleo en la empresa de su formación en empresa) y su compañero o
+   compañera de ciclo (23 años, primer trabajo estable). No hay «veteranos»: se ayudan entre iguales. Las caras salen de las
+   portadas del libro (recursos/libro/img/portada_ud01_XXX.jpg). La clave «vet» se mantiene por compatibilidad: es la
+   persona compañera.
+   vetVisita (José, 17-11-2026, opción B): por qué la persona compañera está ese día en el trabajo de la protagonista
+   (Auxilios y Evacuación), con «para…» y sin posesivos, para que valga en primera y en tercera persona. */
+const ELENCO = {
+  HIG: { prota: 'Alba', ella: true, edad: 20, de: 'Triana', puesto: 'higienista', lugar: 'la clínica dental de Triana',
+         vet: 'Samuel', vetElla: false, vetEdad: 23, vetDe: 'Sevilla', vetPuesto: 'higienista', vetLugar: 'el centro de salud',
+         vetVisita: 'para preparar una campaña de salud bucodental con el centro de salud',
+         sector: 'la clínica dental' },
+  IFC: { prota: 'Rafa', ella: false, edad: 20, de: 'Dos Hermanas', puesto: 'técnico de climatización', lugar: 'los hoteles que mantiene',
+         vet: 'Curro', vetElla: false, vetEdad: 23, vetDe: 'el Cerro del Águila', vetPuesto: 'técnico de climatización', vetLugar: 'la empresa instaladora',
+         vetVisita: 'para cambiar una enfriadora de la sala de máquinas',
+         sector: 'la sala de máquinas' },
+  ITE: { prota: 'Claudia', ella: true, edad: 19, de: 'Alcalá de Guadaíra', puesto: 'instaladora de telecomunicaciones', lugar: 'los hoteles y oficinas donde instala',
+         vet: 'Marcos', vetElla: false, vetEdad: 23, vetDe: 'Bellavista', vetPuesto: 'instalador de telecomunicaciones', vetLugar: 'las azoteas donde instala antenas',
+         vetVisita: 'para instalar la nueva antena del edificio',
+         sector: 'la azotea' },
+  STI: { prota: 'Fran', ella: false, edad: 20, de: 'Mairena del Aljarafe', puesto: 'técnico de sistemas', lugar: 'el centro de datos del aeropuerto',
+         vet: 'Alma', vetElla: true, vetEdad: 23, vetDe: 'la Macarena', vetPuesto: 'técnica de sistemas', vetLugar: 'las empresas clientes',
+         vetVisita: 'para montar la red de una empresa cliente de la terminal',
+         sector: 'el centro de datos' }
+};
+
+function cicloJugador() {
+  try {
+    const m = /^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase());
+    if (m && ELENCO[m[1]]) return m[1];
+    const e = localStorage.getItem('ipe_ciclo_elegido');
+    if (e && ELENCO[e]) return e;
+    let f = localStorage.getItem('ipe_ciclo_dispositivo');
+    if (!f || !ELENCO[f]) { f = Object.keys(ELENCO)[Math.floor(Math.random() * 4)]; localStorage.setItem('ipe_ciclo_dispositivo', f) }
+    return f;
+  } catch (e) { return 'HIG' }
+}
+
+/* Caras con gesto (elenco_prota_HIG_bien.jpg, _mal, _piensa…): comun_montar.py escribe en ELENCO_GESTOS las que existen.
+   Sin el archivo, se usa la cara de siempre y el gesto lo pone el aro de color. */
+const gestoDe = (cara, animo) => { const g = cara.replace(/\.jpg$/, '_' + animo + '.jpg');
+  return typeof ELENCO_GESTOS !== 'undefined' && ELENCO_GESTOS.indexOf(g) >= 0 ? g : cara };
+
+function personaje(ciclo, quien) {
+  const c = ELENCO[ciclo] || ELENCO.HIG, k = ELENCO[ciclo] ? ciclo : 'HIG', vet = quien === 'vet';
+  return { nombre: vet ? c.vet : c.prota, ella: vet ? c.vetElla : c.ella, cara: `elenco_${vet ? 'vet' : 'prota'}_${k}.jpg`,
+    edad: vet ? c.vetEdad : c.edad, de: vet ? c.vetDe : c.de, puesto: vet ? c.vetPuesto : c.puesto,
+    lugar: vet ? c.vetLugar : c.lugar, empresa: vet ? c.vetLugar : c.lugar, sector: c.sector, visita: vet ? c.vetVisita : '' };
+}
+
+const fondoPuesto = ciclo => `elenco_puesto_${ELENCO[ciclo] ? ciclo : 'HIG'}.jpg`;
+
+function presenta(cont, op) {
+  if (!cont) return null;
+  op = op || {};
+  const p = personaje(op.ciclo || cicloJugador(), op.quien || 'prota');
+  const el = document.createElement('div');
+  el.className = 'pres pres-' + (op.animo || 'neutro') + (op.compacto ? ' pres-compacto' : '');
+  el.dataset.cara = p.cara;
+  el.innerHTML = `<div class="pres-cara"><img src="${gestoDe(p.cara, op.animo || 'neutro')}" alt="" draggable="false"></div>
+    <div class="pres-globo" role="status" aria-live="polite"><b>${p.nombre}</b><span class="pres-txt"></span></div>`;
+  el.querySelector('.pres-txt').textContent = op.texto || '';
+  cont.innerHTML = ''; cont.appendChild(el);
+  return el;
+}
+
+function reacciona(cont, animo, texto) {
+  const el = cont && (cont.classList && cont.classList.contains('pres') ? cont : cont.querySelector('.pres'));
+  if (!el) return;
+  el.classList.remove('pres-neutro', 'pres-bien', 'pres-mal', 'pres-piensa');
+  void el.offsetWidth;
+  el.classList.add('pres-' + (animo || 'neutro'));
+  const img = el.querySelector('.pres-cara img');
+  if (img && el.dataset.cara) img.src = gestoDe(el.dataset.cara, animo || 'neutro');
+  if (texto != null) el.querySelector('.pres-txt').textContent = texto;
+}
+
+(function () {
+  const css = document.createElement('style');
+  css.textContent = `
+.pres{display:flex;align-items:flex-end;gap:10px;text-align:left}
+.pres-cara{flex:none;width:64px;height:64px;border-radius:50%;overflow:hidden;background:#e9e2d6;
+ box-shadow:inset 0 -3px 6px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.25);border:3px solid #fff;transform-origin:50% 90%}
+.pres-cara img{width:100%;height:100%;object-fit:cover;display:block}
+.pres-globo{position:relative;flex:1;min-width:0;background:#fffaf0;color:#1d2a30;border-radius:16px;padding:9px 12px;
+ font:15px/1.4 "Helvetica Neue",Arial,sans-serif;box-shadow:inset 0 2px 0 rgba(255,255,255,.8),inset 0 -3px 0 rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.18)}
+.pres-globo:before{content:"";position:absolute;left:-7px;bottom:14px;border:8px solid transparent;border-right-color:#fffaf0;border-left:0}
+.pres-globo b{display:block;font:800 14px Aleo,Georgia,serif;color:#004230;margin-bottom:1px}
+.pres-compacto .pres-cara{width:48px;height:48px;border-width:2px}
+.pres-compacto .pres-globo{font-size:14px;padding:7px 10px}
+.pres-bien .pres-cara{box-shadow:0 0 0 3px #2fd47a,0 4px 10px rgba(0,0,0,.25)}
+.pres-mal .pres-cara{box-shadow:0 0 0 3px #c24400,0 4px 10px rgba(0,0,0,.25);filter:saturate(.85)}
+.pres-piensa .pres-cara{box-shadow:0 0 0 3px #fcd100,0 4px 10px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:no-preference){
+ .pres-cara{animation:presRespira 3.2s ease-in-out infinite}
+ .pres-bien .pres-cara{animation:presSalta .55s cubic-bezier(.3,1.6,.5,1) 1,presRespira 3.2s ease-in-out .55s infinite}
+ .pres-mal .pres-cara{animation:presNo .5s ease-in-out 1,presRespira 3.2s ease-in-out .5s infinite}
+ .pres-piensa .pres-cara{animation:presPiensa 1.6s ease-in-out infinite}
+ .pres-globo{animation:presGlobo .28s ease-out}
+}
+@keyframes presRespira{0%,100%{transform:scale(1)}50%{transform:scale(1.025) translateY(-1px)}}
+@keyframes presSalta{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-10px) scale(1.06,.95)}70%{transform:translateY(0) scale(.97,1.04)}100%{transform:none}}
+@keyframes presNo{0%,100%{transform:rotate(0)}25%{transform:rotate(-7deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
+@keyframes presPiensa{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg) translateY(-1px)}}
+@keyframes presGlobo{from{transform:translateY(6px) scale(.97)}to{transform:none}}   /* sin opacidad: si el navegador congela la animación, el texto se sigue viendo */`;
+  document.head.appendChild(css);
+})();
+/* ===== Común a los tres juegos (José, 9-11-2026): libro, sonido sí/no, accesibilidad e instalable =====
+   Lo meten los montar_*.py antes de </body>, junto con PAGINAS (paginas_libro.js). */
+
+/* «Repasa» con la página del libro de tu ciclo (sale del código de lista; sin código, solo el apartado). */
+function libro(ud, ap, txt) {
+  let c = '';
+  try { c = (/^[12]([A-Z]{2,5})-/.exec((localStorage.getItem('ipe_codigo') || '').toUpperCase()) || [])[1] || '' } catch (e) {}
+  const p = (((typeof PAGINAS !== 'undefined' && PAGINAS['UD' + ud]) || {})[c] || {})[ap];
+  return `📖 En el libro: UD ${ud}, apartado ${txt || ap}${p ? `, página ${p}` : ''}`;
+}
+
+/* Diálogo propio (fase 2, 17-11-2026): sustituye a alert y confirm del navegador, que en el móvil parecen un error y no
+   llevan los colores del centro. dialogo(texto) avisa; dialogo(texto, {si, no}) pregunta y devuelve true o false. */
+function dialogo(txt, op) {
+  return new Promise(res => {
+    const antes = document.activeElement;
+    const fondo = document.createElement('div'); fondo.className = 'dlg-fondo';
+    const caja = document.createElement('div'); caja.className = 'dlg';
+    caja.setAttribute('role', op ? 'alertdialog' : 'dialog'); caja.setAttribute('aria-modal', 'true');
+    const p = document.createElement('p'); p.id = 'dlg-txt'; p.textContent = txt; caja.setAttribute('aria-describedby', 'dlg-txt');
+    const bs = document.createElement('div'); bs.className = 'dlg-btns';
+    const boton = (texto, clase, v) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = e => { e.stopPropagation(); fin(v) }; bs.appendChild(b); return b };
+    const tecla = e => {
+      e.stopPropagation();                                   // el juego no se entera de las teclas mientras está abierto
+      if (e.key === 'Escape') { e.preventDefault(); fin(!op) }
+      else if (e.key === 'Tab') { const l = [...bs.children], i = l.indexOf(document.activeElement); e.preventDefault(); l[(i + (e.shiftKey ? l.length - 1 : 1)) % l.length].focus() }
+    };
+    const fin = v => { document.removeEventListener('keydown', tecla, true); fondo.remove(); try { antes && antes.focus && antes.focus({ preventScroll: true }) } catch (e) {} res(v) };
+    if (op) boton(op.no || 'No', 'no', false);
+    const si = boton(op ? (op.si || 'Sí') : 'Entendido', 'si', true);
+    caja.append(p, bs); fondo.appendChild(caja);
+    ['pointerdown', 'touchstart', 'mousedown', 'click'].forEach(ev => fondo.addEventListener(ev, e => e.stopPropagation()));
+    document.addEventListener('keydown', tecla, true);
+    document.body.appendChild(fondo); si.focus({ preventScroll: true });
+  });
+}
+
+/* ===== Sonido y respuesta física comunes (fase 5, 17-11-2026) =====
+   Todo sintetizado con WebAudio (sin archivos). Un solo contexto: el «actx» del juego si lo declara (let actx=null) y,
+   si no, uno propio. Pasa por un volumen general y un compresor para que nada sature. Respeta «Sin sonido» (SILENCIO),
+   que también quita la vibración. Se desbloquea con el primer toque (iOS).
+   sfx('toque'|'acierto'|'fallo'|'tic'|'golpe'|'rompe'|'premio'|'fanfarria'|'alarma'|'barrido'|'paso', n) · vibrar(ms o patrón)
+   sacudir(elemento, px) · parada(ms) → promesa (pausa de impacto; el juego decide qué congela) */
+const AUDIO = { ctx: null, maestro: null, ruido: null };
+function audio() {
+  try {
+    let c = typeof actx !== 'undefined' ? actx : AUDIO.ctx;
+    if (!c) { c = new (window.AudioContext || window.webkitAudioContext)(); if (typeof actx !== 'undefined') actx = c; }
+    AUDIO.ctx = c;
+    if (!AUDIO.maestro || AUDIO.maestro.context !== c) {
+      const comp = c.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+      AUDIO.maestro = c.createGain(); AUDIO.maestro.gain.value = .8; AUDIO.maestro.connect(comp).connect(c.destination);
+      const b = c.createBuffer(1, c.sampleRate * .5, c.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      AUDIO.ruido = b;
+    }
+    if (c.state === 'suspended' && !window.SILENCIO) c.resume();
+    return c;
+  } catch (e) { return null }
+}
+function nota(f, dur, tipo = 'sine', vol = .2, d = 0, hasta = 0) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, o = c.createOscillator(), g = c.createGain();
+  o.type = tipo; o.frequency.setValueAtTime(f, t0); if (hasta) o.frequency.exponentialRampToValueAtTime(hasta, t0 + dur);
+  g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + .012); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  o.connect(g).connect(AUDIO.maestro); o.start(t0); o.stop(t0 + dur + .03);
+}
+function ruido(dur, vol = .2, filtro = 1200, d = 0, q = 1) {
+  const c = audio(); if (!c || window.SILENCIO) return;
+  const t0 = c.currentTime + d, s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+  s.buffer = AUDIO.ruido; f.type = 'bandpass'; f.frequency.value = filtro; f.Q.value = q;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+  s.connect(f).connect(g).connect(AUDIO.maestro); s.start(t0); s.stop(t0 + dur + .02);
+}
+const PENTA = [0, 2, 4, 7, 9];
+const escala = n => 523.25 * Math.pow(2, (PENTA[n % 5] + 12 * Math.floor(n / 5)) / 12);   // do pentatónico que sube con n
+function sfx(nombre, n = 0) {
+  switch (nombre) {
+    case 'toque': nota(1400, .035, 'triangle', .12); break;
+    case 'paso': nota(320 + n * 6, .03, 'sine', .05); break;
+    case 'tic': nota(1000, .03, 'square', .07); break;
+    case 'acierto': { const b = escala(Math.min(n, 9)); nota(b, .12, 'triangle', .22); nota(b * 1.5, .16, 'triangle', .2, .07); break }
+    case 'fallo': nota(220, .16, 'square', .14); nota(155, .2, 'square', .14, .12); break;
+    case 'golpe': nota(160, .09, 'sine', .3, 0, 60); ruido(.05, .12, 900); break;
+    case 'rompe': ruido(.09, .22, 1800 + Math.min(n, 12) * 180, 0, 2); nota(escala(Math.min(n, 12)), .07, 'triangle', .1); break;
+    case 'premio': [0, 2, 4].forEach((k, i) => nota(escala(k + 5), .14, 'sine', .18, i * .07)); break;
+    case 'fanfarria': [523, 659, 784, 1047].forEach((f, i) => nota(f, .22, 'triangle', .2, i * .11)); break;
+    case 'alarma': nota(880, .12, 'square', .1); nota(880, .12, 'square', .1, .2); break;
+    case 'barrido': ruido(.25, .08, 600, 0, .7); break;
+  }
+}
+function vibrar(p) { try { if (!window.SILENCIO && navigator.vibrate) navigator.vibrate(p) } catch (e) {} }
+const MOV_REDUCIDO = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches } catch (e) { return false } })();
+function sacudir(el, px = 6) {
+  if (!el || MOV_REDUCIDO || !el.animate) return;
+  el.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${-px}px,${px / 2}px)` }, { transform: `translate(${px}px,${-px / 2}px)` }, { transform: `translate(${-px / 2}px,0)` }, { transform: 'translate(0,0)' }], { duration: 220, easing: 'ease-out' });
+}
+const parada = ms => new Promise(r => setTimeout(r, MOV_REDUCIDO ? 0 : ms));
+['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (!window.SILENCIO) audio() }, { capture: true, passive: true }));
+
+/* Movimiento reducido (fase 2): si el sistema lo pide, también las animaciones hechas con JavaScript duran un instante. */
+try {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate) {
+    const anima = Element.prototype.animate;
+    Element.prototype.animate = function (k, o) { o = typeof o === 'number' ? 1 : Object.assign({}, o || {}, { duration: 1, iterations: 1 }); return anima.call(this, k, o) };
+  }
+} catch (e) {}
+
+(function () {
+  const L = {
+    get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v } catch (e) { return d } },
+    set: (k, v) => { try { localStorage.setItem(k, v) } catch (e) {} }
+  };
+  const app = document.getElementById('app');
+  const css = document.createElement('style');
+  css.textContent = `
+.libro{display:block;margin-top:5px;color:#004230;font-weight:700;font-size:13px}
+p.libro{margin:0 0 8px}
+.opcs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0 4px}
+html,body{overscroll-behavior:none}   /* 18-11-2026: tirar hacia abajo no recarga la página (se perdía la partida) */
+.opc{min-height:44px;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;background:#004230;color:#fff;cursor:pointer}
+.opc[aria-pressed="false"]{background:#5b6b70}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #fcd100;outline-offset:2px}
+.op.ok::after{content:"✓";margin-left:auto;font-size:20px;font-weight:900}
+.op.mal::after{content:"✗";margin-left:auto;font-size:20px;font-weight:900}
+@media (prefers-reduced-motion:reduce){.confeti{display:none}.sacude{animation:none}*{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+button,a,input,.op,.resp{touch-action:manipulation}
+.dlg-fondo{position:fixed;inset:0;z-index:1000;background:rgba(0,30,22,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{background:#fff;color:#1d2a30;border-radius:18px;max-width:420px;width:100%;padding:22px 20px 18px;box-shadow:0 18px 50px rgba(0,0,0,.35);font:16px/1.5 "Helvetica Neue",Arial,sans-serif;text-align:left}
+.dlg p{white-space:pre-line;margin:0 0 18px}
+.dlg-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.dlg button{border:0;border-radius:12px;padding:12px 18px;min-height:44px;font:700 16px Aleo,Georgia,serif;cursor:pointer;background:#004230;color:#fff}
+.dlg button.no{background:#e3efe9;color:#004230}
+/* portada común de la colección (fase 2): la tarjeta oscura de Serpiente, Auxilios y Aventura, para todos */
+:where(.heroe){position:relative;border-radius:24px;padding:22px 18px 18px;text-align:left;color:#fff;overflow:hidden;background:radial-gradient(circle at 85% 10%,var(--brillo,rgba(252,209,0,.28)),transparent 45%),linear-gradient(160deg,#0b5a40,#062a1f 70%);box-shadow:0 14px 30px rgba(0,66,48,.35)}
+:where(.heroe) .hm{font:700 12px "Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#a8e6cc}
+:where(.heroe) h1{color:#fff;font-size:40px;line-height:1;margin:8px 0 4px}
+:where(.heroe h1) span{color:#fcd100}
+:where(.heroe) p{color:#d8efe6;font-size:14.5px;line-height:1.45;margin:6px 0 10px}
+:where(.heroe) .chips{display:flex;flex-wrap:wrap;gap:6px}
+:where(.heroe .chips) span{font:700 12px "Helvetica Neue",Arial,sans-serif;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;color:#fff}`;
+  document.head.appendChild(css);
+
+  /* Botones de opciones: al final de la portada, para no tapar nada mientras se juega. */
+  const caja = document.createElement('div');
+  caja.className = 'opcs';
+  /* lee (opcional): de dónde sale el estado real. 18-11-2026: el sonido también se cambia desde el marcador de los juegos; al
+     volver a la portada, el botón se repinta con el estado real (antes enseñaba el antiguo y el primer toque no hacía nada) */
+  function boton(texto, activo, alCambiar, lee) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'opc';
+    const pinta = v => { b.setAttribute('aria-pressed', v ? 'true' : 'false'); b.textContent = texto(v) };
+    let v = activo; pinta(v);
+    b.sync = () => { if (lee) { v = lee(); pinta(v) } };
+    b.onclick = e => { e.stopPropagation(); b.sync(); v = !v; pinta(v); alCambiar(v) };
+    caja.appendChild(b);
+    return b;
+  }
+  const muestra = () => { const p = app && app.querySelector('.portada'); [...caja.children].forEach(b => b.sync && b.sync()); if (p && caja.children.length && caja.parentNode !== p) p.appendChild(caja) };
+  if (app) new MutationObserver(muestra).observe(app, { childList: true });
+
+  /* Sonido sí/no: en todos los juegos desde la fase 5 (también quita la vibración). */
+  {
+    const aplica = () => {
+      try {
+        const c = typeof actx !== 'undefined' && actx ? actx : AUDIO.ctx;
+        if (window.SILENCIO) { if (c) c.suspend(); try { window.speechSynthesis && speechSynthesis.cancel() } catch (e) {} }
+        else if (c && c.state === 'suspended') c.resume();
+      } catch (e) {}
+    };
+    window.SILENCIO = L.get('ipe_silencio', '0') === '1';
+    boton(v => v ? '🔊 Sonido y vibración' : '🔇 Sin sonido ni vibración', !window.SILENCIO, v => { window.SILENCIO = !v; L.set('ipe_silencio', v ? '0' : '1'); aplica() }, () => !window.SILENCIO);
+    aplica();
+    /* si el juego crea el sonido después, se vuelve a silenciar */
+    document.addEventListener('click', () => setTimeout(aplica, 0), true);
+    document.addEventListener('touchend', () => setTimeout(aplica, 0), true);
+  }
+
+  /* Ayuda de colores para daltonismo (solo señales: escribe el color de la señal en el nivel 1). */
+  if (typeof GIRO !== 'undefined') {
+    window.AYUDA_COLOR = L.get('ipe_ayuda_color', '0') === '1';
+    boton(v => v ? '👁 Ayuda de colores: sí' : '👁 Ayuda de colores: no', window.AYUDA_COLOR,
+      v => { window.AYUDA_COLOR = v; L.set('ipe_ayuda_color', v ? '1' : '0') });
+  }
+  muestra();
+
+  /* Instalable (solo en línea desde el 9-11-2026: sw.js no guarda copias, siempre carga de internet). */
+  if ('serviceWorker' in navigator && location.protocol === 'https:')
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
