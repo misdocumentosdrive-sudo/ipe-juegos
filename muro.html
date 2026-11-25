@@ -560,10 +560,13 @@ const codOficial=c=>normCod(c)?normCod(c).replace(/-(\d)$/,'-0$1'):String(c||'')
 const fechasDe_=n=>{try{return (n==='a'?APERTURAS:CIERRES)||{}}catch(e){return {}}};   // un juego sin APERTURAS no se rompe
 function apertura(c){const l=fechasDe_('a')[grupoDe(c)];return l?new Date(l):null}
 function plazo(c){const l=fechasDe_('c')[grupoDe(c)];return l?new Date(l):null}
-const sinAbrir=c=>{const a=apertura(c);return !!a&&new Date()<a};
+/* 'sin fecha' (25-11-2026): el juego está dado de alta pero la oficial sigue cerrada hasta que José ponga la fecha */
+const sinFecha=c=>fechasDe_('a')[grupoDe(c)]==='sin fecha';
+const sinAbrir=c=>{if(sinFecha(c))return true;const a=apertura(c);return !!a&&!isNaN(a)&&new Date()<a};
 const fechaTxt=(f,hora)=>`el ${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]}`+
  (hora||f.getHours()||f.getMinutes()?` a las ${String(f.getHours()).padStart(2,'0')}:${String(f.getMinutes()).padStart(2,'0')}`:'');
 function textoPlazo(c){const a=apertura(c),f=plazo(c);
+ if(sinFecha(c))return '⏰ La partida oficial de tu grupo aún no tiene fecha: tu profe te avisará cuando se abra. Mientras tanto, entrena todo lo que quieras.';
  if(a&&new Date()<a)return `⏰ La partida oficial de tu grupo se abre ${fechaTxt(a)}${f?' y se podrá jugar hasta '+fechaTxt(f,1):''}. Mientras tanto, entrena todo lo que quieras.`;
  if(!f)return '';
  const fecha=fechaTxt(f,1);
@@ -608,7 +611,7 @@ function pintaOfi(n,estado){
  b.disabled=n>=INTENTOS;
  const ic=document.getElementById('cod'),f=ic&&plazo(ic.value);   // 18-11-2026: aviso con la hora del móvil; quien decide es el servidor
  const a=ic&&sinAbrir(ic.value)&&apertura(ic.value);
- b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':a?'Se abre '+fechaTxt(a)+' · entrena abajo':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
+ b.textContent=n>=INTENTOS?'🔒 Has agotado tus 3 intentos oficiales':ic&&sinFecha(ic.value)?'Partida oficial aún sin fecha · entrena abajo':a?'Se abre '+fechaTxt(a)+' · entrena abajo':f&&new Date()>f?'Plazo cerrado · puedes entrenar abajo':'Partida oficial · intento '+(n+1)+' de '+INTENTOS;
 }
 let tOfi=0;
 /* 19-11-2026: la portada consultaba el servicio en cada vuelta al menú (cada consulta lee las hojas enteras; con un grupo entrenando se
