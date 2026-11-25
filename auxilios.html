@@ -191,6 +191,7 @@ h1,h2,.serif{font-family:Aleo,Georgia,serif}
  background:radial-gradient(circle at 40% 32%,#2d5e4c,#123a2d 70%);box-shadow:inset 0 4px 0 rgba(255,255,255,.16),inset 0 -8px 0 rgba(0,0,0,.32),0 0 0 3px #7dffb5,0 10px 24px rgba(0,0,0,.45)}
 .tuto .pad .pic{width:44px;height:44px}
 .tuto .fb{min-height:22px;font-weight:700}
+.tuto .saltar.listo{background:#fcd100;border-color:#fcd100;color:#1d2a30;font-weight:800}
 .tuto .saltar{background:transparent;border:2px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:9px 18px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;cursor:pointer}
 /* fase 6, 17-11-2026: entrenamiento «Compresión con profundidad» */
 .rcp .cm{font:800 30px Aleo,Georgia,serif;text-align:center;font-variant-numeric:tabular-nums;min-width:96px}
@@ -736,7 +737,7 @@ async function empiezaOficial_(c){
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento,!!ini.sinVista);   // 23-11-2026: ini.sinVista = vía sin vista que da el profe (SIN_VISTA; solo ¡Evacuación!)   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
  /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
@@ -979,14 +980,17 @@ function pausa(){
  v.setAttribute('role','dialog');v.setAttribute('aria-modal','true');v.setAttribute('aria-labelledby','pausaT');
  v.innerHTML=`<b id="pausaT">Pausa</b><span>El tiempo está parado.</span><div class="pausa-btns"><button type="button" class="btn p" data-pausa="sigue">Seguir</button><button type="button" class="btn s" data-pausa="sal">Salir al menú</button></div>${st.oficial?'<small>Si sales, este intento oficial cuenta como jugado.</small>':''}`;
  document.body.appendChild(v);app.inert=true;
- if(st.enPausa)try{st.enPausa()}catch(e){}   // 19-11-2026 (decisión 2): detrás de la pausa, otra escena, las tarjetas del 112 barajadas o la PLS sin rapidez
+ st.avisoPausa='';if(st.enPausa)try{st.enPausa()}catch(e){}   // 19-11-2026 (decisión 2): detrás de la pausa, la escena sin rapidez (25-11-2026: desde la 2.ª, «sin responder»), las tarjetas del 112 barajadas o la PLS sin rapidez
+ if(st.avisoPausa){const sp=v.querySelector('span');if(sp)sp.textContent+=st.avisoPausa}
  try{v.querySelector('.btn.p').focus({preventScroll:true})}catch(e){}
  return true;
 }
 function sigue(){
  if(!st.parado)return false;
  st.pausadoT=(st.pausadoT||0)+(performance.now()-st.parado);st.parado=0;st.ultimo=0;st.inter=[];
- quitaPausa();return true;
+ quitaPausa();
+ if(st.saltaAlSeguir){const f=st.saltaAlSeguir;st.saltaAlSeguir=null;f()}
+ return true;
 }
 function quitaPausa(){
  const v=$('#pausaJ');if(!v)return;
@@ -1096,7 +1100,7 @@ function portada(){
   </div>
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
-  <label class="lento"><input type="checkbox" id="lento" ${lentoLs()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo en cada escena y en la posición lateral de seguridad (sin puntos de rapidez)</span></label>
+  <label class="lento"><input type="checkbox" id="lento" ${lentoLs()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo en cada escena y en la posición lateral de seguridad (sin puntos de rapidez). Solo al entrenar.</span></label>
   ${NIVELES.every(l=>estDe(l.n)===3)?'<div class="sello-aux" role="img" aria-label="Sello: tres estrellas en los cuatro niveles">Tres estrellas en los cuatro niveles</div>':''}
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos${mEst(l.n)}</span></span><span class="ico">${ico(['escudo','fonendo','lateral','corazon'][l.n-1])}</span></button>`).join('')}
   <button class="nivel" data-n="${PROF.n}"><span class="n" style="background:${PROF.col}">+</span><span style="flex:1"><b>${PROF.titulo}</b><span>${PROF.sub}</span><br><span class="record">Tu récord: ${rec(PROF.n)} puntos${mEst(PROF.n)}</span></span><span class="ico">${ico('profundidad')}</span></button>
@@ -1195,15 +1199,9 @@ function pintaCab(){
  if(cu){cu.innerHTML=cuentasIn();const b=cu.children[st.i];if(b&&b.animate&&(st.marcas||[])[st.i]!=null)b.animate([{transform:'scale(.4)'},{transform:'scale(1.25)',offset:.6},{transform:'scale(1)'}],{duration:340,easing:'ease-out'})}
  if(v){const antes=v.querySelectorAll('img').length?v.innerHTML:null;v.innerHTML=vidasHtml();if(antes!==null&&antes!==v.innerHTML&&v.animate)v.animate([{transform:'scale(1)'},{transform:'scale(1.2)',offset:.35},{transform:'scale(1)'}],{duration:320});v.setAttribute('aria-label','Vidas: '+Math.max(0,st.vidas)+' de 3')}
 }
-/* 19-11-2026 (revisión total, decisión 2): pausa sin ventaja, como en «Cuadra la nómina». Antes, pausar (o cambiar de aplicación) con una
-   escena a la vista devolvía la misma escena con el mismo tiempo: daba tiempo para pensarla. Ahora, detrás de la pausa se cambia por
-   otra del mismo montón (su sector o las comunes del mismo nivel) que no haya salido, con el tiempo que le quedaba y sin puntos de
-   rapidez. Las del núcleo del nivel 2 no se cambian en la oficial (tienen que salir): se quedan, sin rapidez */
-function repuesto(s){
- if(s.tipo||st.oficial&&s.nu)return null;
- const fuera=new Set((st.fuera||[]).concat(st.lista)), temas=new Set(st.lista.filter(x=>x!==s&&x.g).map(x=>x.g));
- return baraja(BANCOS[st.l.banco].filter(x=>x.s===s.s&&!x.ll&&!fuera.has(x)&&!(x.g&&temas.has(x.g))&&!(st.oficial&&x.nu)))[0]||null;
-}
+/* Pausa sin ventaja (19-11-2026, decisión 2; 25-11-2026, decisión 6 de José en «Tres en red»): con una escena a la vista, la 1.ª pausa
+   del nivel la deja igual, sin puntos de rapidez (una llamada no castiga); desde la 2.ª, al seguir cuenta como «sin responder»: ni
+   acierto, ni resta, ni vida; corta la racha y va al repaso. Antes se cambiaba por otra escena: se podía pausar hasta que tocara una fácil */
 function pregunta(resto){   // resto: ms que le quedaban a la escena que se ha cambiado en la pausa
  clearInterval(st.reloj);
  if(st.i>=st.lista.length||st.vidas<=0)return final();
@@ -1224,13 +1222,13 @@ function pregunta(resto){   // resto: ms que le quedaban a la escena que se ha c
  ponTras();narraEscena(s);bloqueaToques();alPrincipio();
  const T=st.l.t*K()*1000,t0=ahoraJ()-(resto==null?0:T-resto),barra=$('#t');
  let hecha=false;
- st.enPausa=()=>{if(hecha)return;st.sinRap=true;const r=repuesto(s);if(!r)return;(st.fuera=st.fuera||[]).push(s);st.lista[st.i]=r;pregunta(T-(ahoraJ()-t0))};
+ st.enPausa=()=>{if(hecha)return;st.sinRap=true;if(st.pausaGratis){st.saltaAlSeguir=()=>responde(null,true);st.avisoPausa=' Al seguir, esta escena contará como sin responder: solo la primera pausa de cada nivel es gratis.'}else{st.pausaGratis=true;st.avisoPausa=' Es tu pausa gratis: al seguir, la misma escena, pero ya no suma rapidez.'}};
  st.reloj=setInterval(()=>{const q=1-(ahoraJ()-t0)/T;quemaMecha(barra,q);if(q<=0)responde(null)},50);   // lote 7: sin recolocar la página (lote 6: la mecha, con recorte y transform)
  quemaMecha(barra,1-(ahoraJ()-t0)/T);
  latido(()=>1-(ahoraJ()-t0)/T);
- const responde=k=>{
+ const responde=(k,sinResp)=>{
   if(k!==null&&tocaPronto())return;   // segundo toque de un doble toque
-  hecha=true;clearInterval(st.reloj);calla();
+  if(hecha)return;hecha=true;clearInterval(st.reloj);calla();
   const elegido=k===null?null:ops[k], ok=elegido===s.ok, seg=Math.min(T/1000,(ahoraJ()-t0)/1000);
   (st.marcas=st.marcas||[])[st.i]=ok;barra.classList.add('apagada');   // lote 6: la cuenta de esta escena, ✓ o ✗; la chispa se apaga
   st.tj=(st.tj||0)+seg;   // tiempo de juego del nivel (para el servidor): solo mientras corre el reloj de la escena
@@ -1242,10 +1240,10 @@ function pregunta(resto){   // resto: ms que le quedaban a la escena que se ha c
    st.pts+=g;flota('+'+g,'var(--ok)');sfx('acierto',st.racha-1);   // fase 5: el tono sube con la racha
    if(!explicaEscena(true,`<b>¡Correcto!</b> ${s.e}`)){ex.className='explica ok';ex.innerHTML=`<b>¡Correcto!</b>${s.e}`}
   }else{
-   st.racha=0;st.vidas--;st.fallos.push(s);
-   const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');
-   $('#tj').classList.add('sacude');fallo();
-   if(!explicaEscena(false,`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto.'}</b> Lo correcto: «${s.ok}». ${s.e}`)){ex.className='explica mal';ex.innerHTML=`<b>${k===null?'¡Se acabó el tiempo!':'No es correcto'}</b>Lo correcto: «${s.ok}». ${s.e}`}
+   st.racha=0;st.fallos.push(s);
+   if(!sinResp){st.vidas--;const r=Math.min(RESTA,st.pts);st.pts-=r;if(r)flota('−'+r,'var(--mal)');$('#tj').classList.add('sacude');fallo()}
+   const cab=sinResp?'Sin responder (pausa).':k===null?'¡Se acabó el tiempo!':'No es correcto.';
+   if(!explicaEscena(false,`<b>${cab}</b> Lo correcto: «${s.ok}». ${s.e}`)){ex.className='explica mal';ex.innerHTML=`<b>${cab}</b>Lo correcto: «${s.ok}». ${s.e}`}
   }
   pintaCab();
   const b=$('#sig');b.style.display='block';setTimeout(()=>muestraRespuesta(b),150);
@@ -1258,7 +1256,7 @@ function pregunta(resto){   // resto: ms que le quedaban a la escena que se ha c
    Cabecera con el puesto desenfocado y oscurecido; la protagonista cuenta la escena y, al responder, reacciona con la
    explicación en su bocadillo. Va encima de las opciones (no las tapa nunca). Sin elenco.js, la tarjeta de siempre. */
 /* 19-11-2026 (revisión total, lote 7): al pasar de escena, la página vuelve arriba y el foco va a la pregunta (antes volvía al principio del documento) */
-function alPrincipio(){if(st.i>0||st.fuera){window.scrollTo(0,0);const q=app.querySelector('.preg');if(q){q.tabIndex=-1;try{q.focus({preventScroll:true})}catch(e){}}}}
+function alPrincipio(){if(st.i>0){window.scrollTo(0,0);const q=app.querySelector('.preg');if(q){q.tabIndex=-1;try{q.focus({preventScroll:true})}catch(e){}}}}
 function cabEscena(s,fondo){
  /* 19-11-2026 (revisión total, lote 6): el escenario va a toda pantalla detrás de la escena (ponTras), no en una cabecera desenfocada */
  if(!hayElenco()){st.fondoEsc=ARTE.escena.HIG?`url('${ARTE.escena.HIG}')`:'none';return `<div class="icoesc" style="background:${st.l.col}">${ico(s.tipo==='llamada'?'telefono':st.l.banco==='pas'?'escudo':'fonendo')}</div>${s.tipo==='llamada'?'':`<div class="escena">${s.t}</div>`}`}
@@ -1904,7 +1902,9 @@ function tutorial(){
    fb.style.color=bien?'#7dffb5':'#ffb27a';
   }
   ult=ahora;$('#tn').textContent=n+'/'+TUTO_N;
-  if(n>=TUTO_N){clearInterval(st.metro);fb.style.color='#fcd100';fb.textContent='¡Ya lo tienes! Ahora, con la persona.';st.tutoT=tras(1200,fin)}
+  if(n>=TUTO_N){clearInterval(st.metro);clearTimeout(st.tutoT);fb.style.color='#fcd100';fb.textContent='¡Ya lo tienes! Ahora, con la persona.';
+   /* 25-11-2026 (José, como en Tres en red): no se pasa sola a la persona; se pulsa «Continuar» */
+   const b=$('#tsal');if(b){b.innerHTML='Continuar '+ico('avance');b.classList.add('listo');b.focus({preventScroll:true})}}
  };
  pad.onpointerdown=golpe;
  pad.onkeydown=ev=>{if((ev.key===' '||ev.key==='Enter')&&!ev.repeat)golpe(ev)};pad.onclick=ev=>ev.preventDefault();   // teclado (lote 7)
@@ -2316,8 +2316,9 @@ function finOficial(){
 portada();
 </script>
 <style>
-#pcomp{position:fixed;right:14px;top:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
- background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+/* 24-11-2026 (José, jugando): arriba a la derecha y sin flotar, para no tapar el contenido al bajar */
+#pcomp{position:absolute;right:14px;top:14px;z-index:20;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.92);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;vertical-align:-4px;margin-right:6px"><path d="M4 9V4h5"/><path d="M15 4h5v5"/><path d="M20 15v5h-5"/><path d="M9 20H4v-5"/></svg>Pantalla completa</button>
 <script>
@@ -2327,11 +2328,21 @@ portada();
  const app=document.getElementById('app'),btn=document.getElementById('pcomp');
  let midiendo=false;
  const ANCHO_MAX=680;   // 19-11-2026 (revisión total, lote 7): líneas de lectura cómodas en el ordenador (antes llegaban a 1.350 px a 1440)
+ /* 25-11-2026 (José: «dentro de la franja oscura de arriba»; «todos los juegos deben quedar igual»): el botón va dentro de la
+    cabecera de la portada, a la derecha y a la altura de la línea «IPE I · Unidad…» (.hm), en los ocho juegos */
+ function colocaBtn(){
+  const hm=app.querySelector('.portada .hm, .hm'),cab=hm&&(hm.closest('.heroe')||hm.parentElement);
+  if(!hm||!cab||btn.style.display==='none'){btn.style.top='';btn.style.right='';return}
+  const r=hm.getBoundingClientRect(),c=cab.getBoundingClientRect(),banda=r.top-c.top<4&&r.height<64;   // Señales: la línea es una franja propia
+  btn.style.minHeight=banda?Math.max(30,Math.round(r.height-10))+'px':'';btn.style.padding=banda?'4px 14px':'';
+  const h=btn.offsetHeight||44,top=(banda?r.top+(r.height-h)/2:Math.max(c.top+8,r.top+(r.height-h)/2))+scrollY;
+  btn.style.top=Math.round(top)+'px';btn.style.right=Math.max(8,Math.round(innerWidth-c.right+14))+'px';
+ }
  function ajusta(){
   if(midiendo)return;midiendo=true;
   const fija=app.querySelector('.rcp');           // pantallas de juego a pantalla completa: sin escalar
   btn.style.visibility=fija||app.querySelector('#tj')?'hidden':'';   // el botón no tapa el juego (18-11-2026: en la tableta tapaba la última opción de las escenas)
-  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;requestAnimationFrame(colocaBtn);return}
   app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';app.classList.add('midiendo');   // lote 6: la escena no se estira mientras se mide
   const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].filter(c=>c.id!=='tras').map(c=>c.getBoundingClientRect().bottom))-t+16};   // lote 6: sin el escenario de fondo (fijo, a toda pantalla)
   const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
@@ -2343,14 +2354,14 @@ portada();
    z=Math.max(1,z);app.style.maxWidth=Math.min(ANCHO_MAX,Math.floor(innerWidth/z))+'px';
   }
   app.classList.remove('midiendo');app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
-  midiendo=false;
+  midiendo=false;requestAnimationFrame(colocaBtn);
  }
  new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});   // 19-11-2026 (revisión total, lote 7): solo al cambiar de pantalla (con subtree, al salir la explicación la tarjeta encogía un 15 % y volvía a crecer)
  addEventListener('resize',ajusta);ajusta();
  const fs=document.documentElement;
  function boton(){
   const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
-  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';colocaBtn();
  }
  const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
  btn.onclick=()=>{salio=false;pide()};

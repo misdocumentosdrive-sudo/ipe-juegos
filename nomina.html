@@ -729,7 +729,7 @@ async function empiezaOficial_(c){
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento,!!ini.sinVista);   // 23-11-2026: ini.sinVista = vía sin vista que da el profe (SIN_VISTA; solo ¡Evacuación!)   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
  /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
@@ -983,7 +983,7 @@ function portada(){
   </div>
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
-  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por ficha y, si fallas, sigues cuando hayas leído la explicación (sin puntos de rapidez)</span></label>
+  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por ficha y, si fallas, sigues cuando hayas leído la explicación (sin puntos de rapidez). Solo al entrenar.</span></label>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos</span></span></button>`).join('')}
   <p class="cifras">Cifras de ${COTIZA.año} (${COTIZA.norma} y Reglamento del IRPF): tu libro trae las de 2024. Contingencias comunes, ${pct(r2(COTIZA.trab.cc+COTIZA.trab.mei))} (con el MEI); dietas exentas hasta ${euros(COTIZA.dietaSin)} al día sin dormir fuera y ${euros(COTIZA.dietaCon)} durmiendo fuera; kilometraje, ${String(COTIZA.km).replace('.',',')} €/km.</p>
  </div><div class="pie">CPIFP Los Viveros · ET (arts. 26 a 29), LGSS (art. 147) y ${COTIZA.norma}</div>`;
@@ -1214,19 +1214,19 @@ function siguiente(){
 function pintaFicha(f){const im=$('#actImg');im.src=img(f.img);st.sinImg=!im.complete;if(st.sinImg)im.onload=im.onerror=()=>{st.sinImg=false};   // revisión 19-11-2026: sin dibujo todavía (mala cobertura), el reloj espera
  $('#actCh').classList.toggle('larga',f.t.length>26);$('#actCh').innerHTML=`${junto(f.t)}${f.s?`<small>${junto(f.s)}</small>`:''}`;huecoAbajo()}
 function decirFicha(f){decir(`${f.t}${f.s?', '+f.s:''}. ${st.modo==='nomina'?'¿En qué parte de la nómina va?':'¿'+Object.values(st.l.band).map(b=>b.n).join(', ')+'?'}`)}
-/* Pausa sin ventaja (revisión del 19-11-2026): quien pausa con una ficha a la vista no gana tiempo para pensarla. En los niveles
-   1 y 2 se cambia por otra de la misma bandeja que aún no ha salido (con el tiempo que le quedaba); en el nivel 3 (12 piezas
-   fijas) se queda, pero sin puntos de rapidez */
-function repuesto(f){
- const B=BANCO[st.n],usadas=new Set(st.fichas.map(x=>x.t)),pool=st.n===3?piezas(st.c):B?(B[st.c]||[]).concat(B.comun):[];
- const cand=baraja(pool.filter(x=>x.b===f.b&&!usadas.has(x.t))),dib=new Set(st.fichas.map(x=>x.img));
- const r=cand.find(x=>!dib.has(x.img))||cand[0];
- return r?Object.assign({},r,{oro:!!f.oro}):null;
-}
+/* Pausa sin ventaja (revisión del 19-11-2026; 25-11-2026, decisión 6 de José en «Tres en red»): la 1.ª pausa del nivel con una
+   ficha a la vista la deja igual, sin puntos de rapidez (una llamada no castiga); las siguientes la cuentan como «sin responder» al
+   seguir: ni acierto ni −50, corta la racha y va al repaso. Antes se cambiaba por otra de la misma bandeja: se podía saltar la difícil */
 function fichaEnPausa(){
- st.cambiada=st.sinRap=false;if(!st.f||st.ocupada||st.tuto||st.fin)return;
+ st.sinRap=false;if(!st.f||st.ocupada||st.tuto||st.fin)return;
  st.fPausa=st.sinRap=true;
- {const r=repuesto(st.f);if(r){st.fichas[st.i]=r;st.f=r;pintaFicha(r);st.cambiada=true}}
+ if(st.pausaGratis)st.saltaAlSeguir=true;else st.pausaGratis=true;
+}
+function sinResponder(){
+ st.saltaAlSeguir=false;const f=st.f;if(!f||st.ocupada||st.fin)return;st.ocupada=true;st.racha=0;st.fallos.push(f);sfx('fallo');
+ if(st.n===3){porque('Sin responder (pausa) · '+f.t+' → '+ZONAS[f.b],f.ex,false);trasFallo(()=>{encaja(f.b,false);st.tSig=espera(siguiente3,1100)},420);return}
+ const buena=Object.keys(st.l.band).find(k=>st.l.band[k].k===f.b);
+ porque('Sin responder (pausa) · '+f.t+' → '+st.l.band[buena].n,f.ex,false);trasFallo(()=>{vuela(buena,false);st.tSig=espera(siguiente,650)},420);
 }
 function decide(p){
  if(st.ocupada||st.pausa||st.fin||!st.f)return;
@@ -1461,11 +1461,15 @@ function quitaMano(){const m=$('#mano');if(m)m.remove()}
 function tutoDice(html){porque('Así se juega',html,true);quita(st.tPorque)}
 function tutoBien(f){
  if(st.i===2){quita(st.tSig);st.fin=true;ls.set(TUTO,'1');
-  porque('¡Eso es!','Lo que la empresa te da para trabajar no va en la nómina.',true);
-  espera(()=>{const m=$('#marco');if(!m)return;const t=document.createElement('div');t.className='tarjeta';t.innerHTML=`<div class="ficha"><div class="eti">Ya sabes jugar</div><div id="narraT"></div><div class="btns"><button class="btn p" id="tA">▶ Entrenar el nivel 1</button><button class="btn s" id="tM">Volver al menú</button></div></div>`;m.appendChild(t);
-   narra($('#narraT'),'¡Listo! Si dudas, lee la letra pequeña de la ficha: ahí está la pista. Y recuerda: con racha, cada acierto vale el doble.','bien','',true);
-   $('#tA').onclick=()=>{st.tutoFichas=null;presentaNivel(1)};$('#tM').onclick=()=>{st.tutoFichas=null;portada()};$('#tA').focus({preventScroll:true})},1300);
+  /* 25-11-2026 (José, como en Tres en red): la tarjeta final no sale sola; se pulsa «Continuar» cuando se ha leído */
+  porque('¡Eso es!','Lo que la empresa te da para trabajar no va en la nómina.',true);quita(st.tPorque);
+  {const d=$('#porque');if(d){const b=document.createElement('button');b.type='button';b.className='chapa-btn seguir';b.textContent='Continuar ▶';b.onclick=e=>{e.stopPropagation();d.remove();tutoTarjeta()};d.appendChild(b);setTimeout(()=>b.focus({preventScroll:true}),600)}}
  }
+}
+function tutoTarjeta(){
+ {{const m=$('#marco');if(!m)return;const t=document.createElement('div');t.className='tarjeta';t.innerHTML=`<div class="ficha"><div class="eti">Ya sabes jugar</div><div id="narraT"></div><div class="btns"><button class="btn p" id="tA">▶ Entrenar el nivel 1</button><button class="btn s" id="tM">Volver al menú</button></div></div>`;m.appendChild(t);
+   narra($('#narraT'),'¡Listo! Si dudas, lee la letra pequeña de la ficha: ahí está la pista. Y recuerda: con racha, cada acierto vale el doble.','bien','',true);
+   $('#tA').onclick=()=>{st.tutoFichas=null;presentaNivel(1)};$('#tM').onclick=()=>{st.tutoFichas=null;portada()};$('#tA').focus({preventScroll:true})}}
 }
 
 /* ===== Teclado, pausa, giro y «atrás» (como en la Serpiente y el Muro) ===== */
@@ -1485,7 +1489,7 @@ function pausaManual(){if(!jugando()||document.getElementById('velo')||st.fin)re
 function reanuda(){const v=document.getElementById('velo');if(!v)return false;v.remove();const f=st.alSeguir;st.alSeguir=null;if(f)f();return true}
 function pausa(si){
  if(si){if(st.pausa)return;st.pausa=true;sueltaArrastre();fichaEnPausa();app.classList.add('pausado');document.getAnimations&&document.getAnimations().forEach(a=>{try{a.pause()}catch(x){}});menuPausa(()=>pausa(false))}
- else{st.pausa=false;app.classList.remove('pausado');document.getAnimations&&document.getAnimations().forEach(a=>{try{a.play()}catch(x){}});const v=document.getElementById('velo');if(v)v.remove();st.alSeguir=null;st.t=performance.now()}
+ else{st.pausa=false;app.classList.remove('pausado');document.getAnimations&&document.getAnimations().forEach(a=>{try{a.play()}catch(x){}});const v=document.getElementById('velo');if(v)v.remove();st.alSeguir=null;st.t=performance.now();if(st.saltaAlSeguir)sinResponder()}
 }
 function sueltaArrastre(){
  if(!st.arr)return;st.arr=null;
@@ -1495,7 +1499,7 @@ function sueltaArrastre(){
 function menuPausa(alSeguir){
  const m=$('#marco');if(!m)return;const of=st.oficial;
  const d=document.createElement('div');d.id='velo';d.className='tarjeta tapa';
- d.innerHTML=`<div class="ficha" role="dialog" aria-modal="true" aria-labelledby="veloT" style="text-align:center"><div class="eti" id="veloT">Pausa</div><div class="caso">El reloj está parado y la ficha, tapada.${st.cambiada?' Al seguir, te tocará otra.':st.sinRap?' Esta ficha ya no suma rapidez.':''}</div>
+ d.innerHTML=`<div class="ficha" role="dialog" aria-modal="true" aria-labelledby="veloT" style="text-align:center"><div class="eti" id="veloT">Pausa</div><div class="caso">El reloj está parado y la ficha, tapada.${st.saltaAlSeguir?' Al seguir, esta ficha contará como sin responder: solo la primera pausa de cada nivel es gratis.':st.sinRap?' Es tu pausa gratis: la ficha te espera, pero ya no suma rapidez.':''}</div>
   <div class="btns" style="margin-top:6px"><button type="button" class="btn p" data-pausa="sigue">▶ Seguir</button><button type="button" class="btn s" data-pausa="sal">Salir al menú</button></div>
   ${of?`<p class="libro" style="margin:10px 0 0">Si sales, el intento ${of.intento} de ${INTENTOS} cuenta como jugado y no contará para nota.</p>`:''}</div>`;
  m.appendChild(d);st.alSeguir=alSeguir;
@@ -1615,8 +1619,9 @@ function finOficial(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portada,{once:true});else portada();
 </script>
 <style>
-#pcomp{position:fixed;right:14px;top:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
- background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+/* 24-11-2026 (José, jugando): arriba a la derecha y sin flotar, para no tapar el contenido al bajar */
+#pcomp{position:absolute;right:14px;top:14px;z-index:20;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.92);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button">⛶ Pantalla completa</button>
 <script>
@@ -1624,11 +1629,21 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
  const app=document.getElementById('app'),btn=document.getElementById('pcomp');
  let midiendo=false;
+ /* 25-11-2026 (José: «dentro de la franja oscura de arriba»; «todos los juegos deben quedar igual»): el botón va dentro de la
+    cabecera de la portada, a la derecha y a la altura de la línea «IPE I · Unidad…» (.hm), en los ocho juegos */
+ function colocaBtn(){
+  const hm=app.querySelector('.portada .hm, .hm'),cab=hm&&(hm.closest('.heroe')||hm.parentElement);
+  if(!hm||!cab||btn.style.display==='none'){btn.style.top='';btn.style.right='';return}
+  const r=hm.getBoundingClientRect(),c=cab.getBoundingClientRect(),banda=r.top-c.top<4&&r.height<64;   // Señales: la línea es una franja propia
+  btn.style.minHeight=banda?Math.max(30,Math.round(r.height-10))+'px':'';btn.style.padding=banda?'4px 14px':'';
+  const h=btn.offsetHeight||44,top=(banda?r.top+(r.height-h)/2:Math.max(c.top+8,r.top+(r.height-h)/2))+scrollY;
+  btn.style.top=Math.round(top)+'px';btn.style.right=Math.max(8,Math.round(innerWidth-c.right+14))+'px';
+ }
  function ajusta(){
   if(midiendo)return;midiendo=true;
   const fija=app.querySelector('.juego');
   btn.style.visibility=fija?'hidden':'';
-  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;requestAnimationFrame(colocaBtn);return}
   app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
   const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
   const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
@@ -1640,14 +1655,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
   }
   app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
-  midiendo=false;
+  midiendo=false;requestAnimationFrame(colocaBtn);
  }
  new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});
  addEventListener('resize',ajusta);ajusta();
  const fs=document.documentElement;
  function boton(){
   const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
-  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';colocaBtn();
  }
  const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
  btn.onclick=()=>{salio=false;pide()};

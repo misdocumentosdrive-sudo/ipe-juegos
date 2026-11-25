@@ -658,7 +658,7 @@ async function empiezaOficial_(c){
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento,!!ini.sinVista);   // 23-11-2026: ini.sinVista = vía sin vista que da el profe (SIN_VISTA; solo ¡Evacuación!)   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
  /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
@@ -1010,6 +1010,14 @@ const TUTO='muro_tutorial', VISTAS='muro_vistas';
 const vistas=()=>{try{return JSON.parse(ls.get(VISTAS,'{}'))||{}}catch(e){return {}}};
 const marcaVista=k=>{const v=vistas();if(v[k])return false;v[k]=1;ls.set(VISTAS,JSON.stringify(v));return true};
 const tutoPendiente=()=>!ls.get(TUTO,'');
+/* fin del tutorial: el juego espera parado a que se pulse «Continuar» (antes era un rótulo de 2,6 s con la bola en marcha) */
+function finTutoTarjeta(){
+ const m=$('#marco');if(!m)return;st.tarjeta=true;
+ const d=document.createElement('div');d.className='tarjeta';d.id='tarjetaTuto';
+ d.innerHTML=`<div class="ficha" role="dialog" aria-modal="true" aria-labelledby="tfT"><div class="eti" id="tfT">¡Ya sabes jugar!</div><p class="tuto-msg">Rompe el muro, recoge los expedientes y clasifícalos. Las sorpresas te las explicamos cuando salgan.</p><div class="btns"><button class="btn p" id="tfSigue">Continuar ▶</button></div></div>`;
+ m.appendChild(d);const b=$('#tfSigue');b.focus({preventScroll:true});
+ b.onclick=()=>{d.remove();st.tarjeta=false;st.t=performance.now()};
+}
 function finTuto(){
  if(!st.tuto)return;st.tuto=null;ls.set(TUTO,'1');
  const b=document.getElementById('saltar');if(b)b.remove();
@@ -1504,7 +1512,7 @@ function abreCaso(c,pend){
   /* 22-11-2026 (lote 1): en un móvil pequeño, el veredicto y «Seguir» quedaban debajo de la ficha sin que nada lo indicara */
   requestAnimationFrame(()=>{v.scrollIntoView({block:'nearest'});s.scrollIntoView({block:'nearest'})});
   /* fase 4: solo en el nivel 1 se cierra sola la explicación del acierto; en el 2 y el 3 se lee con calma */
-  auto=ok&&l.n===1&&!tuto?setTimeout(()=>s.click(),4500):0;
+  auto=ok&&l.n===1&&!tuto&&!st.lento?setTimeout(()=>s.click(),4500):0;   // con «Más tiempo para leer», también espera (25-11-2026)
   s.onclick=()=>{clearTimeout(auto);cierra()};
  };
  const cierra=()=>{
@@ -1513,7 +1521,7 @@ function abreCaso(c,pend){
   /* el EPI cuenta desde que se vuelve a jugar (17-11-2026: en tiempo de juego); solo tras un acierto */
   if(ok)st.efecto={tipo:'epi',hasta:(st.tj||0)+10};
   if(cad.length)cad.forEach((b,i)=>{b.neutEn=(st.tj||0)+.25+i*.09;st.porNeut.push(b)});
-  if(tuto){finTuto();aviso('¡Ya sabes jugar!','Las sorpresas te las explicamos cuando salgan',2600)}
+  if(tuto){finTuto();finTutoTarjeta()}   // 25-11-2026 (José, como en Tres en red): se sigue con «Continuar», no sola
   else if(cad.length)aviso(ico(F.ic)+' Prevención en cadena',`${cad.length===1?'1 ladrillo':cad.length+' ladrillos'} de «${F.n}» bajo control`,1800);
   else if(ok)aviso(ico('chaleco')+' Pala ancha (EPI)','10 s',1100);   /* 22-11-2026: ya no se dice en la ficha */
   else aviso('¡Sigue!','',700);
@@ -1850,8 +1858,9 @@ function finOficial(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',portada,{once:true});else portada();
 </script>
 <style>
-#pcomp{position:fixed;right:max(10px,env(safe-area-inset-right,0px));top:max(10px,env(safe-area-inset-top,0px));opacity:.85;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
- background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+/* 24-11-2026 (José, jugando): arriba a la derecha y sin flotar, para no tapar el contenido al bajar */
+#pcomp{position:absolute;right:14px;top:14px;z-index:20;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.92);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button" aria-label="Pantalla completa">⛶ Pantalla completa</button>   <!-- 22-11-2026 (lote 7): arriba, donde no tapa nada -->
 <script>
@@ -1859,11 +1868,21 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
  const app=document.getElementById('app'),btn=document.getElementById('pcomp');
  let midiendo=false;
+ /* 25-11-2026 (José: «dentro de la franja oscura de arriba»; «todos los juegos deben quedar igual»): el botón va dentro de la
+    cabecera de la portada, a la derecha y a la altura de la línea «IPE I · Unidad…» (.hm), en los ocho juegos */
+ function colocaBtn(){
+  const hm=app.querySelector('.portada .hm, .hm'),cab=hm&&(hm.closest('.heroe')||hm.parentElement);
+  if(!hm||!cab||btn.style.display==='none'){btn.style.top='';btn.style.right='';return}
+  const r=hm.getBoundingClientRect(),c=cab.getBoundingClientRect(),banda=r.top-c.top<4&&r.height<64;   // Señales: la línea es una franja propia
+  btn.style.minHeight=banda?Math.max(30,Math.round(r.height-10))+'px':'';btn.style.padding=banda?'4px 14px':'';
+  const h=btn.offsetHeight||44,top=(banda?r.top+(r.height-h)/2:Math.max(c.top+8,r.top+(r.height-h)/2))+scrollY;
+  btn.style.top=Math.round(top)+'px';btn.style.right=Math.max(8,Math.round(innerWidth-c.right+14))+'px';
+ }
  function ajusta(){
   if(midiendo)return;midiendo=true;
   const fija=app.querySelector('.juego');
   btn.style.visibility=fija?'hidden':'';
-  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;requestAnimationFrame(colocaBtn);return}
   app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
   const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
   const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
@@ -1875,14 +1894,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
   }
   app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
-  midiendo=false;
+  midiendo=false;requestAnimationFrame(colocaBtn);
  }
  new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true});
  addEventListener('resize',ajusta);ajusta();
  const fs=document.documentElement;
  function boton(){
   const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
-  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';colocaBtn();
  }
  const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
  btn.onclick=()=>{salio=false;pide()};

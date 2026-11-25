@@ -706,7 +706,7 @@ async function empiezaOficial_(c){
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento,!!ini.sinVista);   // 23-11-2026: ini.sinVista = vía sin vista que da el profe (SIN_VISTA; solo ¡Evacuación!)   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
  /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
@@ -924,12 +924,12 @@ function portada(){
    <input id="cod" maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="1HIG-07" value="" aria-describedby="plazo">
    <button class="btn p" id="ofi">Partida oficial</button>
    <div class="aviso-of" id="plazo" style="${textoPlazo($cod0())?'':'display:none'}">${textoPlazo($cod0())}</div>
-   <small>${ULT} niveles seguidos · 3 intentos · cuenta el mejor · necesita internet</small>
+   <small>La partida oficial son los tres niveles seguidos y cuenta para nota. Cuenta tu mejor intento. Solo valen tus 3 primeras partidas oficiales, juegues en el dispositivo que juegues. Para la partida oficial necesitas conexión a internet. Los tres mejores de cada grupo suben +1, +0,75 y +0,50.</small>
   </div>
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   ${tutoHecho?BOTON_TUTO():''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
-  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · la serpiente va más despacio y tienes ${Math.round(TIEMPO*LENTO_T)} s por nivel en vez de ${TIEMPO}</span></label>
+  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · la serpiente va más despacio y tienes ${Math.round(TIEMPO*LENTO_T)} s por nivel en vez de ${TIEMPO}. Solo al entrenar.</span></label>
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span style="flex:1"><b>${l.titulo}</b><span>${l.sub}</span>${rec(l.n)?`<br><span class="record">Tu mejor: <span class="est-min" role="img" aria-label="${estDe(l.n)} de 3 estrellas">${'★'.repeat(estDe(l.n))}${'☆'.repeat(3-estDe(l.n))}</span> · ${rec(l.n)} puntos</span>`:''}</span></button>`).join('')}
  </div><div class="pie">CPIFP Los Viveros · Ley 31/1995, de Prevención de Riesgos Laborales · LGSS (RDL 8/2015, arts. 156 y 157) · RD 1299/2006</div>`;
  app.querySelectorAll('.nivel[data-n]').forEach(b=>b.onclick=()=>empieza(+b.dataset.n));
@@ -1789,7 +1789,7 @@ function tutoCome(f){
  }
  ñam(1);chispas(f,f.oro?'#fcd100':'#7dffb5');traga();
  if(T.paso===0){flotaEn(f,'¡Bien!','#7dffb5');tutoDice('¡Genial! Así se comen las fichas.');st.tTuto=setTimeout(()=>tutoPaso(1),1500);return}
- if(T.paso===1){flotaEn(f,'+100','#7dffb5');tutoSuma(100);tutoDice('¡Eso es! Solo vale lo que pide el cartel.');st.tTuto=setTimeout(()=>tutoPaso(2),1700);return}
+ if(T.paso===1){flotaEn(f,'+100','#7dffb5');tutoSuma(100);return tutoCongela('¡Eso es! Solo vale lo que pide el cartel.',()=>tutoPaso(2))}   // 25-11-2026 (José): las reglas esperan al toque
  // paso 3: la serie
  T.k++;st.racha=T.k;pintaRacha();const pts=Math.round(100*multi(T.k)*(f.oro?3:1)*(T.k>5?2:1));
  if(f.oro){flotaEn(f,'¡Oro! +'+pts,'#fcd100');sfx('premio');destello('#fcd100')}else flotaEn(f,'+'+pts,T.k>5?'#fcd100':'#7dffb5');
@@ -1803,7 +1803,7 @@ function tutoCome(f){
  if(T.k===5){fiebre();st.fiebre=1e9;   // en el tutorial la fiebre dura hasta acabar el paso
   return tutoCongela('¡<b>FIEBRE</b>! Llevas 5 fichas buenas seguidas: las <b>3 siguientes valen el doble</b>. Si fallas o chocas, se acaba.',()=>{tutoSiguiente();tutoDice('¡Cómete otra en fiebre!')})}
  if(T.k<6){tutoSiguiente();return}
- T.fin=true;st.tTuto=setTimeout(()=>{T.paso=5;tutoFin()},2600);   // de la serie, directo al cierre
+ return tutoCongela(dice,()=>{T.paso=5;tutoFin()});   // de la serie al cierre, cuando se ha leído (25-11-2026, José: nada de saltar solo)
 }
 /* toque o gesto mientras hay una tarjeta o un mensaje: sigue */
 /* momento congelado (José, 18-11-2026): en la serie, cuando sale la dorada y cuando entra la fiebre, la serpiente se para,
@@ -1985,8 +1985,9 @@ window.addEventListener('resize',()=>requestAnimationFrame(remide));
 portada();
 </script>
 <style>
-#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
- background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none}
+/* 24-11-2026 (José, jugando): arriba a la derecha y sin flotar, para no tapar el contenido al bajar */
+#pcomp{position:absolute;right:14px;top:14px;z-index:20;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.92);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button">⛶ Pantalla completa</button>
 <script>
@@ -1995,11 +1996,21 @@ portada();
 (function(){
  const app=document.getElementById('app'),btn=document.getElementById('pcomp');
  let midiendo=false;
+ /* 25-11-2026 (José: «dentro de la franja oscura de arriba»; «todos los juegos deben quedar igual»): el botón va dentro de la
+    cabecera de la portada, a la derecha y a la altura de la línea «IPE I · Unidad…» (.hm), en los ocho juegos */
+ function colocaBtn(){
+  const hm=app.querySelector('.portada .hm, .hm'),cab=hm&&(hm.closest('.heroe')||hm.parentElement);
+  if(!hm||!cab||btn.style.display==='none'){btn.style.top='';btn.style.right='';return}
+  const r=hm.getBoundingClientRect(),c=cab.getBoundingClientRect(),banda=r.top-c.top<4&&r.height<64;   // Señales: la línea es una franja propia
+  btn.style.minHeight=banda?Math.max(30,Math.round(r.height-10))+'px':'';btn.style.padding=banda?'4px 14px':'';
+  const h=btn.offsetHeight||44,top=(banda?r.top+(r.height-h)/2:Math.max(c.top+8,r.top+(r.height-h)/2))+scrollY;
+  btn.style.top=Math.round(top)+'px';btn.style.right=Math.max(8,Math.round(innerWidth-c.right+14))+'px';
+ }
  function ajusta(){
   if(midiendo)return;midiendo=true;
   const fija=app.querySelector('.rcp,.juego');           // pantallas de juego a pantalla completa: sin escalar
   btn.style.visibility=fija||app.querySelector('.final')?'hidden':'';   // ni en el tablero ni en los resultados (pisaba los botones)                 // el botón no tapa el tablero mientras se juega
-  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;requestAnimationFrame(colocaBtn);return}
   app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
   const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
   const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
@@ -2011,14 +2022,14 @@ portada();
    z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
   }
   app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
-  midiendo=false;
+  midiendo=false;requestAnimationFrame(colocaBtn);
  }
  new MutationObserver(()=>requestAnimationFrame(ajusta)).observe(app,{childList:true,subtree:true});
  addEventListener('resize',ajusta);ajusta();
  const fs=document.documentElement;
  function boton(){
   const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700;
-  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';colocaBtn();
  }
  const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
  btn.onclick=()=>{salio=false;pide()};

@@ -1161,7 +1161,7 @@ async function empiezaOficial_(c){
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento,!!ini.sinVista);   // 23-11-2026: ini.sinVista = vía sin vista que da el profe (SIN_VISTA; solo ¡Evacuación!)   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
  /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
@@ -1346,7 +1346,7 @@ function portada(){
   </div>
   ${mejorDe(ls.get('ipe_codigo',''))?`<div class="aviso-of" id="puesto">Consultando tu puesto en la clasificación…</div>`:''}
   <h2 class="serif entreno">Entrena cuando quieras</h2>
-  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por señal y, si fallas, sigues cuando hayas leído la explicación (sin puntos de rapidez)</span></label>
+  <label class="lento"><input type="checkbox" id="lento" ${lento()?'checked':''}><span><b>Más tiempo para leer</b> · el doble de tiempo por señal y, si fallas, sigues cuando hayas leído la explicación (sin puntos de rapidez). Solo al entrenar.</span></label>
   ${conCod?'':`<div class="ciclos" role="group" aria-label="Tu ciclo para entrenar"><span>Entrenas en:</span>${CICLOS4.map(k=>`<button type="button" data-c="${k}" aria-pressed="${k===cicloJ()}">${k}</button>`).join('')}</div>`}
   ${dominadas().length?`<p class="tablon">Señales dominadas: <b>${dominadas().length}</b> de ${SEN.length}</p>`:''}
   ${NIVELES.map(l=>`<button class="nivel" data-n="${l.n}"><span class="n" style="background:${l.col}">${l.n}</span><span><b>${l.titulo}</b><span>${l.sub}</span><br><span class="record">Tu récord: ${rec(l.n)} puntos${recEst(l.n)>=0?` · <span class="est-rec" aria-label="mejor: ${recEst(l.n)} de 3 estrellas">${'★'.repeat(recEst(l.n))}${'☆'.repeat(3-recEst(l.n))}</span>`:''}</span></span></button>`).join('')}
@@ -1563,6 +1563,16 @@ function pregunta(){
   }
   const pp=document.querySelector('.cab .pill');if(pp)pp.textContent=st.pts+' pts';
  };
+ /* 25-11-2026 (decisión 6 de José en «Tres en red»): desde la 2.ª pausa del nivel con la pregunta a la vista, al seguir cuenta como
+    «sin responder»: ni acierto, ni resta, ni vida; corta la racha y va al repaso */
+ st.sinResp=()=>{
+  clearInterval(st.reloj);st.activa=false;barraT(performance.now());st.tj+=Math.min((performance.now()-st.t0)/1000,T/1000);
+  app.querySelectorAll('.op').forEach(b=>{b.disabled=true;if(b.dataset.k===correcta)b.classList.add('ok')});
+  st.racha=0;st.fallos.push(s);pintaRacha(false);suena('fallo');
+  const ex=$('#ex'),txt='Sin responder (pausa). '+lineaFallo(s,undefined,modo);ex.className='explica mal breve';ex.textContent=txt;anuncia(txt);
+  const b=$('#sig');b.style.display='block';b.textContent=(st.vidas<=0||st.i+1>=st.lista.length)?'Ver resultado':'Seguir';b.onclick=avanza;b.focus({preventScroll:true});
+  if(!st.lento)st.tSig=setTimeout(avanza,2500);
+ };
  app.querySelectorAll('.op').forEach(b=>b.onclick=()=>{if(performance.now()-pintada<350||st.parado||!st.activa)return;responde(b.dataset.k)});   // 17-11-2026: el segundo toque de «Siguiente» ya no responde la pregunta nueva
 }
 /* 20-11-2026 (revisión total, lote 5): acertar y fallar con peso. Al acertar, la placa se aplasta y rebota, saltan bolitas de plastilina
@@ -1646,26 +1656,21 @@ function pausa(auto){
  st.foco=document.activeElement;
  const m=document.createElement('div');m.className='menu-pausa';m.id='mpausa';
  m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-labelledby','mpT');
- m.innerHTML=`<div class="caja"><b id="mpT">Pausa</b><span>El tiempo está parado.${st.cambia?(st.l.modo==='sit'?' Al seguir, esta situación ya no suma rapidez.':' Al seguir, otra señal del mismo tipo y sin puntos de rapidez.'):''}</span><div class="btns"><button class="btn p" type="button" data-pausa="sigue">Seguir</button><button class="btn s" type="button" data-pausa="sal">Salir al menú</button></div>${st.oficial?'<small>Si sales, este intento oficial cuenta como jugado.</small>':''}${ayudaC()}</div>`;
+ m.innerHTML=`<div class="caja"><b id="mpT">Pausa</b><span>El tiempo está parado.${st.cambia?(st.pausaGratis?' Al seguir, esta pregunta contará como sin responder: solo la primera pausa de cada nivel es gratis.':' Es tu pausa gratis: al seguir, la misma pregunta, pero ya no suma rapidez.'):''}</span><div class="btns"><button class="btn p" type="button" data-pausa="sigue">Seguir</button><button class="btn s" type="button" data-pausa="sal">Salir al menú</button></div>${st.oficial?'<small>Si sales, este intento oficial cuenta como jugado.</small>':''}${ayudaC()}</div>`;
  m.onclick=e=>{const b=e.target.closest('[data-pausa]');if(!b)return;if(b.dataset.pausa==='sigue')sigue();else salirPartida()};
  document.body.appendChild(m);app.inert=true;app.setAttribute('aria-hidden','true');pintaAyudaC();
  m.querySelector('[data-pausa="sigue"]').focus({preventScroll:true});
 }
 function quitaPausa(){const m=$('#mpausa');if(m)m.remove();app.inert=false;app.removeAttribute('aria-hidden')}
-/* 20-11-2026 (revisión total, lote 4; decisión de José, la recomendada): pausa sin ventaja, como en la nómina. Quien pausa con la pregunta a la
-   vista y el reloj en marcha (al cambiar de app salta sola) podía buscarla y conservaba la rapidez. En los niveles 1 y 2 sale otra señal del
-   mismo tipo que no haya salido (si era trampa, otra trampa) y sin rapidez; en el nivel 3, la misma situación, sin rapidez */
-function repuesto(s){
- const usadas=new Set(st.lista.map(x=>x.cod).concat(st.oficial?[].concat(...st.oficial.listas.map(l=>l.map(x=>x.cod))):[]));
- const r=baraja(SEN.filter(x=>x.tipo===s.tipo&&!usadas.has(x.cod)&&!usadas.has(PAR[x.cod])))[0];
- return r?(s.trampa?haceTrampa(r,new Set()):r):null;
-}
+/* 20-11-2026 (revisión total, lote 4): pausa sin ventaja, como en la nómina; quien pausa con la pregunta a la vista pierde la rapidez.
+   25-11-2026 (decisión 6 de José en «Tres en red»): la 1.ª pausa del nivel deja la misma pregunta; las siguientes, «sin responder».
+   Antes salía otra señal del mismo tipo: se podía pausar hasta que tocara una fácil */
 function sigue(){
  if(!$('#mpausa'))return;
  if(st.cambia&&st.activa){
   st.cambia=false;st.sinRapI=st.i;
-  const r=st.l.modo!=='sit'&&repuesto(st.lista[st.i]);
-  if(r){st.lista[st.i]=r;clearInterval(st.reloj);st.activa=false;st.parado=0;return pregunta()}
+  if(st.pausaGratis){quitaPausa();if(st.parado){st.t0+=performance.now()-st.parado;st.parado=0}return st.sinResp()}
+  st.pausaGratis=true;   // la 1.ª pausa del nivel: la misma pregunta, sin rapidez
  }
  st.cambia=false;
  quitaPausa();
@@ -1954,8 +1959,9 @@ function inspFinal(){
 portada();
 </script>
 <style>
-#pcomp{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:999px;padding:10px 16px;font:700 14px "Helvetica Neue",Arial,sans-serif;
- background:rgba(0,66,48,.88);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;display:none;min-height:44px}
+/* 24-11-2026 (José, jugando): arriba a la derecha y sin flotar, para no tapar el contenido al bajar */
+#pcomp{position:absolute;right:14px;top:14px;z-index:20;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:10px 16px;min-height:44px;font:700 14px "Helvetica Neue",Arial,sans-serif;
+ background:rgba(0,66,48,.92);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;display:none}
 </style>
 <button id="pcomp" type="button">⛶ Pantalla completa</button>
 <script>
@@ -1964,13 +1970,23 @@ portada();
 (function(){
  const app=document.getElementById('app'),btn=document.getElementById('pcomp');
  let midiendo=false;
+ /* 25-11-2026 (José: «dentro de la franja oscura de arriba»; «todos los juegos deben quedar igual»): el botón va dentro de la
+    cabecera de la portada, a la derecha y a la altura de la línea «IPE I · Unidad…» (.hm), en los ocho juegos */
+ function colocaBtn(){
+  const hm=app.querySelector('.portada .hm, .hm'),cab=hm&&(hm.closest('.heroe')||hm.parentElement);
+  if(!hm||!cab||btn.style.display==='none'){btn.style.top='';btn.style.right='';return}
+  const r=hm.getBoundingClientRect(),c=cab.getBoundingClientRect(),banda=r.top-c.top<4&&r.height<64;   // Señales: la línea es una franja propia
+  btn.style.minHeight=banda?Math.max(30,Math.round(r.height-10))+'px':'';btn.style.padding=banda?'4px 14px':'';
+  const h=btn.offsetHeight||44,top=(banda?r.top+(r.height-h)/2:Math.max(c.top+8,r.top+(r.height-h)/2))+scrollY;
+  btn.style.top=Math.round(top)+'px';btn.style.right=Math.max(8,Math.round(innerWidth-c.right+14))+'px';
+ }
  function ajusta(){
   if(midiendo)return;
   if(app.querySelector('#tj.juega .explica.ok,#tj.juega .explica.mal'))return;   // 18-11-2026: tras responder, el tamaño no salta (se baja con la rueda hasta «Siguiente»)
   midiendo=true;
   const fija=app.querySelector('.rcp,.juego');           // pantallas de juego a pantalla completa: sin escalar
   btn.style.visibility=app.querySelector('.portada')?'':'hidden';   // 20-11-2026 (lote 7): solo en la portada (tapaba el bocadillo y, en tableta, «Empezar la ronda»)   // el botón no tapa el tablero ni las respuestas mientras se juega (18-11-2026: antes tapaba la última opción)
-  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;return}
+  if(innerWidth<700||fija){app.style.zoom='';app.style.minHeight='';app.style.maxWidth='';midiendo=false;requestAnimationFrame(colocaBtn);return}
   app.style.zoom='1';app.style.minHeight='0';app.style.maxWidth='';
   const alto=()=>{const t=app.getBoundingClientRect().top;return Math.max(...[...app.children].map(c=>c.getBoundingClientRect().bottom))-t+16};
   const H=innerHeight-8,zw=innerWidth/540,zMin=innerWidth>=1000?1.35:1.15;
@@ -1982,7 +1998,7 @@ portada();
    z=Math.max(1,z);app.style.maxWidth=Math.floor(innerWidth/z)+'px';
   }
   app.style.zoom=Math.max(1,Math.min(z,2.4)).toFixed(3);
-  midiendo=false;
+  midiendo=false;requestAnimationFrame(colocaBtn);
  }
  /* 20-11-2026 (lote 7): la cifra que sube en el final no vuelve a medir la página (248 medidas en 2,6 s en tableta) */
  new MutationObserver(ms=>{if(ms.every(m=>(m.target.id||m.target.parentNode&&m.target.parentNode.id)==='gran'))return;requestAnimationFrame(ajusta)}).observe(app,{childList:true,subtree:true});
@@ -1990,7 +2006,7 @@ portada();
  const fs=document.documentElement;
  function boton(){
   const puede=(document.fullscreenEnabled||document.webkitFullscreenEnabled)&&innerWidth>=700&&matchMedia('(pointer:fine),(min-height:600px)').matches;   // lote 7: no en el móvil girado
-  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';
+  btn.style.display=puede&&!(document.fullscreenElement||document.webkitFullscreenElement)?'block':'none';colocaBtn();
  }
  const pide=()=>{try{const r=(fs.requestFullscreen||fs.webkitRequestFullscreen).call(fs);if(r&&r.catch)r.catch(()=>{})}catch(e){}};
  btn.onclick=()=>{salio=false;pide()};
