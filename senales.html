@@ -1161,7 +1161,7 @@ async function empiezaOficial_(c){
  if(!ini.ok){pintaOfi(ini.n);dialogo(yaJugadas);return}
  ls.set('ipe_codigo',c);ponLocales(c,ini.n);ls.set(claveRef(c,ini.n),ini.ref||'');   // fase 3: el resultado tendrá que traer este «ref»
  OFI_VIVA=true;OFI_REF={cod:normCod(c),n:ini.n,ref:ini.ref||''};try{if(!history.state||!history.state.ofi)history.pushState({ofi:1},'')}catch(e){}   // desde aquí, la oficial no se pierde con un gesto
- arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento,!!ini.sinVista);   // 23-11-2026: ini.sinVista = vía sin vista que da el profe (SIN_VISTA; solo ¡Evacuación!)   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
+ arrancaOficial(c,ini.n,ini.ref||'',!!ini.lento);   // 25-11-2026 (José): sin vía sin vista en ningún juego; el servidor puede seguir mandando sinVista, se ignora   // 18-11-2026: el ref viaja también en memoria (si el almacenamiento está lleno o bloqueado, no se pierde)
  /* 19-11-2026: ini.lento = «más tiempo» que el servidor da a los códigos que apunta el profe (solo en los juegos que lo tienen) */
 }
 
